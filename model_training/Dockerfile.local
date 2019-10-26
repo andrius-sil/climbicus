@@ -1,0 +1,28 @@
+FROM python:3.6
+MAINTAINER GoCardless Data <data@gocardless.com>
+
+# install graphviz for visualisation
+RUN apt-get update && apt-get install -y graphviz xdg-utils
+
+# install nodejs for jupyter lab extensions
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash
+RUN set -x && \
+    apt-get update && \
+    apt-get install -y nodejs libsnappy-dev && \
+    apt-get clean
+RUN npm install --global yarn
+RUN echo npm -v
+
+RUN pip install -U -I pip setuptools
+COPY ./requirements.txt /requirements.txt
+RUN pip install -r requirements.txt
+
+# set up jupyter notebook extensions
+RUN jupyter contrib nbextension install --system
+RUN jupyter nbextensions_configurator enable --system
+RUN jupyter nbextension enable --py widgetsnbextension
+RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager
+
+WORKDIR /srv/app
+
+EXPOSE 8899
