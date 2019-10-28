@@ -16,7 +16,3 @@ Capfile
 ipynb_projects/
 notebooks/
 .cache
-*data/
-*archive_models/
-model_training/data/
-model_training/archive_models/

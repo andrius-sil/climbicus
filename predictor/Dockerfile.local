@@ -1,0 +1,21 @@
+FROM python:3.6
+
+# install graphviz for visualisation
+RUN apt-get update && apt-get install -y graphviz xdg-utils
+
+# install nodejs for jupyter lab extensions
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash
+RUN set -x && \
+    apt-get update && \
+    apt-get install -y nodejs libsnappy-dev && \
+    apt-get clean
+RUN npm install --global yarn
+RUN echo npm -v
+
+RUN pip install -U -I pip setuptools
+COPY ./requirements.txt /requirements.txt
+RUN pip install -r requirements.txt
+
+WORKDIR /srv/app
+
+EXPOSE 8899
