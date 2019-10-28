@@ -1,8 +1,23 @@
 version: '2'
 services:
+  db:
+    build:
+      dockerfile: Dockerfile
+      context: ./db
+    environment:
+      - POSTGRES_DB=climbicus
+      - POSTGRES_USER=climbicus
+      - POSTGRES_PASSWORD=climber
+    ports:
+      - "5432:5432"
+    command:
+      postgres -c track_commit_timestamp=on
   server:
     build:
       dockerfile: Dockerfile
       context: ./server
     ports:
       - "5000:5000"
+    depends_on:
+      - db
+
