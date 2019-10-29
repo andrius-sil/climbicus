@@ -6,3 +6,4 @@
 *.jupyter
 *.jpg
 *.pkl
+__pycache__

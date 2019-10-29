@@ -1,0 +1,8 @@
+version: '2'
+services:
+  server:
+    environment:
+      - FLASK_ENV=development
+    volumes:
+      - ./server/:/app
+

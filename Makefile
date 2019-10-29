@@ -11,3 +11,5 @@ docker-build: docker-build-server docker-build-db
 docker-run:
 		docker-compose up
 
+docker-run-prod:
+		docker-compose -f docker-compose.yml up
