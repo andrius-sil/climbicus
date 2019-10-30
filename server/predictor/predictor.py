@@ -6,7 +6,7 @@ import numpy as np
 from keras.models import load_model
 from PIL import Image
 
-base_path = "/app/predictor/"    # TODO: set this outside
+base_path = "/app/predictor/"  # TODO: set this outside
 model_name = "castle_30_vgg_fine_tuned.h5"
 MODEL_PATH = os.path.join(base_path, model_name)
 CLASS_INDICES_PATH = os.path.join(base_path, "class_indices.pkl")
