@@ -9,7 +9,8 @@ docker-build-db:
 docker-build: docker-build-server docker-build-db
 
 docker-run:
-		docker-compose up
+		docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
 
 docker-run-prod:
 		docker-compose -f docker-compose.yml up
+
