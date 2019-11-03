@@ -16,6 +16,10 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./server
+    environment:
+      - POSTGRES_DB=climbicus
+      - POSTGRES_USER=climbicus
+      - POSTGRES_PASSWORD=climber
     ports:
       - "5000:5000"
     depends_on:
