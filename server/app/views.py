@@ -18,12 +18,12 @@ def predict():
     imagefile = request.files.get("image")
     if imagefile is None:
         abort(400, description="Image file is missing")
-    predicted_class = load_and_predict(imagefile)
-    response = predicted_class
+    predicted_class_id = load_and_predict(imagefile)
+    response = predicted_class_id
 
-    saved_image_path = store_image(imagefile, predicted_class)
-    # TODO: call for actual route_id
-    database.add_instance(RouteImages, route_id=1, path=saved_image_path)
+    saved_image_path = store_image(imagefile, predicted_class_id)
+    route_id = Routes.query.filter_by(class_id=predicted_class_id).all()[0].id
+    database.add_instance(RouteImages, route_id=route_id, path=saved_image_path)
     return response
 
 
