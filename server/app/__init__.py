@@ -1,6 +1,6 @@
 from flask import Flask
 from app.views import main_blueprint
-from app.db import DATABASE_CONNECTION_URI, db
+from app.models import DATABASE_CONNECTION_URI, db
 
 
 def create_app():
