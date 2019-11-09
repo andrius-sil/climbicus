@@ -8,7 +8,7 @@ class Users(db.Model):
 
 class Gyms(db.Model):
     id = db.Column(db.Integer, db.Sequence('gym_id_seq'), primary_key=True)
-    name = db.Column(db.String(120), unique=True, nullable=False)
+    name = db.Column(db.String(120), nullable=False)
 
 
 class Routes(db.Model):
@@ -17,7 +17,7 @@ class Routes(db.Model):
     # TODO: class_id and id should have a 1-1 relationship
     class_id = db.Column(db.String(120), unique=True, nullable=False)
     # TODO: preset list of possible grades
-    grade = db.Column(db.String(120), unique=True, nullable=False)
+    grade = db.Column(db.String(120), nullable=False)
 
 
 class RouteImages(db.Model):
@@ -32,4 +32,4 @@ class UserRouteLog(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     gym_id = db.Column(db.Integer, db.ForeignKey('gyms.id'), nullable=False)
     status = db.Column(db.String(120), nullable=False)
-    log_date = db.Column(db.DateTime, unique=True, nullable=False)
+    log_date = db.Column(db.DateTime, nullable=False)
