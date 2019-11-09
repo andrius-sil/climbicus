@@ -1,6 +1,18 @@
 from flask import Flask
 from app.views import main_blueprint
-from app.models import DATABASE_CONNECTION_URI, db
+from flask_sqlalchemy import SQLAlchemy
+import os
+
+
+user = os.environ["POSTGRES_USER"]
+password = os.environ["POSTGRES_PASSWORD"]
+host = "db"
+database = os.environ["POSTGRES_DB"]
+port = "5432"
+
+DATABASE_CONNECTION_URI = f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}"
+
+db = SQLAlchemy()
 
 
 def create_app():
