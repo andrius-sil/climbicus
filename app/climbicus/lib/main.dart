@@ -1,110 +1,80 @@
 import 'dart:io';
 
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:image_picker/image_picker.dart';
 
-Future<void> main() async {
-  final cameras = await availableCameras();
-
-  final firstCamera = cameras.first;
-
+void main() {
   runApp(
     MaterialApp(
       theme: ThemeData.dark(),
-      home: TakePictureScreen(
-        camera: firstCamera,
-      ),
+      home: HomeScreen(),
     ),
   );
 }
 
-class TakePictureScreen extends StatefulWidget {
-  final CameraDescription camera;
-
-  const TakePictureScreen({
-    Key key,
-    @required this.camera,
-  }) : super(key: key);
-
+class HomeScreen extends StatelessWidget {
   @override
-  TakePictureScreenState createState() => TakePictureScreenState();
-}
-
-class TakePictureScreenState extends State<TakePictureScreen> {
-  CameraController _controller;
-  Future<void> _initializeControllerFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = CameraController(
-      widget.camera,
-      ResolutionPreset.medium,
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Climbicus v0.000001'),
+      ),
+      body: Center(
+        child: ImagePickerScreen(),
+      ),
     );
-
-    _initializeControllerFuture = _controller.initialize();
   }
 
+}
+
+class ImagePickerScreen extends StatefulWidget {
   @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  ImagePickerState createState() => ImagePickerState();
+}
+
+class ImagePickerState extends State<ImagePickerScreen> {
+  File _image;
+
+  Future getImage(ImageSource imageSource) async {
+    var image = await ImagePicker.pickImage(
+        source: imageSource,
+        maxHeight: 150,
+        maxWidth: 150,
+        imageQuality: 90,
+    );
+
+    setState(() {
+      _image = image;
+      print("Photo size: ${_image.lengthSync()} bytes");
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Take a picture')),
-      body: FutureBuilder<void>(
-        future: _initializeControllerFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return CameraPreview(_controller);
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        },
+      body: Center(
+        child: _image == null
+            ? Text('No image selected')
+            : Image.file(_image)
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.camera_alt),
-        onPressed: () async {
-          try {
-            await _initializeControllerFuture;
-
-            final path = join(
-              (await getTemporaryDirectory()).path,
-              '${DateTime.now()}.png',
-            );
-
-            await _controller.takePicture(path);
-
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DisplayPictureScreen(imagePath: path),
-              ),
-            );
-          } catch (e) {
-            print(e);
-          }
-        },
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          FloatingActionButton(
+            onPressed: () => getImage(ImageSource.gallery),
+            tooltip: 'Pick image (gallery)',
+            child: Icon(Icons.add_photo_alternate),
+          ),
+          SizedBox(
+            height: 16.0,
+          ),
+          FloatingActionButton(
+            onPressed: () => getImage(ImageSource.camera),
+            tooltip: 'Pick image (camera)',
+            child: Icon(Icons.add_a_photo),
+          ),
+        ],
       ),
-    );
-  }
-}
-
-class DisplayPictureScreen extends StatelessWidget {
-  final String imagePath;
-
-  const DisplayPictureScreen({Key key, this.imagePath}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Display the Picture')),
-      body: Image.file(File(imagePath)),
     );
   }
 }
