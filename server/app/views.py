@@ -27,7 +27,7 @@ def predict():
     return response
 
 
-@main_blueprint.route("/add-status", methods=["POST"])
+@main_blueprint.route("/add_status", methods=["POST"])
 def add_route_status():
     status = request.form.get("status")
     predicted_class_id = request.form.get("predicted_class_id")
@@ -46,7 +46,7 @@ def add_route_status():
     return 'Route status added to log'
 
 
-@main_blueprint.route("/fetch-logbook", methods=["GET"])
+@main_blueprint.route("/fetch_logbook", methods=["GET"])
 def fetch_logbook():
     user_id = request.form.get("user_id")
     if user_id is None:
