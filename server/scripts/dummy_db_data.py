@@ -1,10 +1,12 @@
 from app import database
-from app.models import RouteImages, Users, Gyms, Routes, UserRouteLog
+from app.models import Gyms, RouteImages, Routes, UserRouteLog, Users
 from run import app
 
 # Instructions:
+# docker-compose -f docker-compose.yml down
+# docker-compose -f docker-compose.yml up
 # docker exec -it climbicus_server_1 /bin/bash
-# python3 app/dummy_db_data.py
+# python3 scripts/dummy_db_data.py
 
 with app.app_context():
     database.add_instance(Users, email='bla@bla.com')
