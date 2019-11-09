@@ -22,7 +22,7 @@ def predict():
     response = predicted_class_id
 
     saved_image_path = store_image(imagefile, predicted_class_id)
-    route_id = Routes.query.filter_by(class_id=predicted_class_id).all()[0].id
+    route_id = Routes.query.filter_by(class_id=predicted_class_id).one().id
     database.add_instance(RouteImages, route_id=route_id, path=saved_image_path)
     return response
 
@@ -36,7 +36,7 @@ def add_route_status():
     if None in [status, predicted_class_id, user_id, gym_id]:
         abort(400, description="Request missing required data")
 
-    route_id = Routes.query.filter_by(class_id=predicted_class_id).all()[0].id
+    route_id = Routes.query.filter_by(class_id=predicted_class_id).one().id
     database.add_instance(UserRouteLog,
                           route_id=route_id,
                           user_id=user_id,
@@ -54,7 +54,7 @@ def fetch_logbook():
     results = UserRouteLog.query.filter_by(user_id=user_id).all()
     logbook = {}
     for r in results:
-        grade = Routes.query.filter_by(id=r.route_id).all()[0].grade
+        grade = Routes.query.filter_by(id=r.route_id).one().grade
         logbook[r.id] = {'grade': grade,
                          'log_date': r.log_date,
                          'status': r.status}
