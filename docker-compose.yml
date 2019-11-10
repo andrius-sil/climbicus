@@ -4,10 +4,8 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./db
-    environment:
-      - POSTGRES_DB=climbicus
-      - POSTGRES_USER=climbicus
-      - POSTGRES_PASSWORD=climber
+    env_file:
+      - postgres_env_vars.env
     ports:
       - "5432:5432"
     command:
@@ -16,8 +14,9 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./server
+    env_file:
+      - postgres_env_vars.env
     ports:
       - "5000:5000"
     depends_on:
       - db
-
