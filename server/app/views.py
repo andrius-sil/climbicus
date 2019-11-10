@@ -1,7 +1,7 @@
 from flask import abort, Blueprint, request
 from predictor.predictor import load_and_predict
 import os
-from app import database
+from app import db
 from app.models import RouteImages, UserRouteLog, Routes
 import datetime
 
@@ -23,7 +23,8 @@ def predict():
 
     saved_image_path = store_image(imagefile, predicted_class_id)
     route_id = Routes.query.filter_by(class_id=predicted_class_id).one().id
-    database.add_instance(RouteImages, route_id=route_id, path=saved_image_path)
+    db.session.add(RouteImages(route_id=route_id, path=saved_image_path))
+    db.session.commit()
     return response
 
 
@@ -37,13 +38,11 @@ def add_route_status():
         abort(400, description="Request missing required data")
 
     route_id = Routes.query.filter_by(class_id=predicted_class_id).one().id
-    database.add_instance(UserRouteLog,
-                          route_id=route_id,
-                          user_id=user_id,
-                          gym_id=gym_id,
-                          status=status,
-                          log_date=datetime.datetime.now())
-    return 'Route status added to log'
+    db.session.add(
+        UserRouteLog(route_id=route_id, user_id=user_id, gym_id=gym_id, status=status, log_date=datetime.datetime.now())
+    )
+    db.session.commit()
+    return "Route status added to log"
 
 
 @main_blueprint.route("/fetch_logbook", methods=["GET"])
@@ -55,19 +54,17 @@ def fetch_logbook():
     logbook = {}
     for r in results:
         grade = Routes.query.filter_by(id=r.route_id).one().grade
-        logbook[r.id] = {'grade': grade,
-                         'log_date': r.log_date,
-                         'status': r.status}
+        logbook[r.id] = {"grade": grade, "log_date": r.log_date, "status": r.status}
     return logbook
 
 
 def store_image(imagefile, predicted_class):
     # TODO: generate proper id for image
     timestamp = datetime.datetime.now()
-    file_name = f'test_image_class_{predicted_class}_{timestamp}.jpg'
-    directory = '/.temp'
+    file_name = f"test_image_class_{predicted_class}_{timestamp}.jpg"
+    directory = "/.temp"
     if not os.path.exists(directory):
         os.makedirs(directory)
-    file_path = f'{directory}/{file_name}'
+    file_path = f"{directory}/{file_name}"
     imagefile.save(file_path)
     return file_path
