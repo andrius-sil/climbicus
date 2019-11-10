@@ -14,3 +14,6 @@ docker-run:
 docker-run-prod:
 		docker-compose -f docker-compose.yml up
 
+ec2-deploy:
+	rsync -aHv --delete-during --exclude-from rsync_exclude.txt . ec2-climbicus-dev:/home/ec2-user/climbicus/
+

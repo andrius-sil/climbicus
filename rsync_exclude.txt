@@ -1,0 +1,4 @@
+.git/*
+/app/*
+model_training/*
+__pycache__/*
