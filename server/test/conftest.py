@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from app.models import Gyms, RouteImages, Routes, UserRouteLog, Users
 from datetime import datetime
 
-DATABASE_CONNECTION_URI = "sqlite:////tmp/test.db"
+DATABASE_CONNECTION_URI = "sqlite:///:memory:"
 _db = SQLAlchemy()
 
 
