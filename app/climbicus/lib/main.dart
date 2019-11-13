@@ -68,9 +68,8 @@ class ImagePickerState extends State<ImagePickerScreen> {
   Future getImage(ImageSource imageSource) async {
     var image = await ImagePicker.pickImage(
         source: imageSource,
-        maxHeight: 150,
-        maxWidth: 150,
-        imageQuality: 90,
+        maxWidth: 1028,
+        imageQuality: 76,
     );
 
     setState(() {
