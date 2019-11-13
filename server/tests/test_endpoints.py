@@ -16,4 +16,4 @@ def test_fetch_logbook(client):
 def test_add_route_status(client, app):
     client.post("/add_status", data=dict(status="dogged", predicted_class_id=1, user_id=1, gym_id=1))
     with app.app_context():
-        assert UserRouteLog.query.order_by(UserRouteLog.log_date.desc()).first().status == "dogged"
+        assert UserRouteLog.query.filter_by(status="dogged", user_id=1, gym_id=1).one().status == "dogged"
