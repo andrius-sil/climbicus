@@ -25,4 +25,4 @@ sh-server:
 
 populate-test-database:
 	  docker exec -it climbicus_server_1 /bin/bash \
-		-c "python3 -m scripts.dummy_db_data.py"
+		-c "python3 -m scripts.dummy_db_data"
