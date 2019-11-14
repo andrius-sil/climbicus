@@ -4,6 +4,7 @@ import os
 from app import db
 from app.models import RouteImages, UserRouteLog, Routes
 import datetime
+from app import model, class_indices
 
 main_blueprint = Blueprint("main_blueprint", __name__)
 
@@ -18,7 +19,7 @@ def predict():
     imagefile = request.files.get("image")
     if imagefile is None:
         abort(400, description="Image file is missing")
-    predicted_class_id = load_and_predict(imagefile)
+    predicted_class_id = load_and_predict(imagefile, model, class_indices)
     response = predicted_class_id
 
     saved_image_path = store_image(imagefile, predicted_class_id)
