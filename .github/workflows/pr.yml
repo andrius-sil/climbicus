@@ -12,7 +12,7 @@ jobs:
     - name: Build
       run: make docker-build
     - name: Run
-      run: make docker-run -d
+      run: make args=-d docker-run
     - name: Tests
       run: make tests
     - name: Clean up
