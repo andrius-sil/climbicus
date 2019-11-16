@@ -2,6 +2,7 @@ version: '2'
 services:
   server:
     environment:
+      - PYTHONUNBUFFERED=1
       - FLASK_ENV=development
     volumes:
       - ./server/:/app
