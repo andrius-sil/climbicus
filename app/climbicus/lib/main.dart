@@ -43,7 +43,7 @@ class ImagePickerState extends State<ImagePickerScreen> {
   Future<String> _predictedClassId;
 
   Future<String> uploadRouteImage(File image) async {
-    var uri = Uri.parse("$BASE_URL/predict");
+    var uri = Uri.parse("$BASE_URL/users/1/predict");
     var request = new http.MultipartRequest("POST", uri);
 
     var stream = new http.ByteStream(DelegatingStream.typed(image.openRead()));
