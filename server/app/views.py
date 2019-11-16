@@ -20,7 +20,7 @@ def predict(user_id):
     if imagefile is None:
         abort(400, description="Image file is missing")
     predicted_class_id, predicted_probability = load_and_predict(imagefile)
-    prob = round(predicted_probability.astype(float), 4)
+    prob = predicted_probability.astype(float)
     response = predicted_class_id
 
     saved_image_path = store_image(imagefile, predicted_class_id)
