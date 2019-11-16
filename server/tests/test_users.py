@@ -37,8 +37,22 @@ def test_predict_with_invalid_image(client):
 
 
 def test_predict_with_corrupt_image(client):
+    """
+    Testing with a file which is not a real image.
+    """
     data = {"image": open("resources/corrupt_route.jpg", "rb")}
 
     resp = client.post("/users/1/predict", data=data)
     assert resp.status_code == 400
     assert resp.data == b"Not a valid image"
+
+
+def test_predict_with_unknown_image(client):
+    """
+    Testing with an image of a route unknown to the model.
+    """
+    data = {"image": open("resources/unknown_route.jpg", "rb")}
+
+    resp = client.post("/users/1/predict", data=data)
+    assert resp.status_code == 200
+    assert resp.data == b"No route found"
