@@ -20,8 +20,8 @@ def test_predict_no_image(client):
     assert b"Image file is missing" in resp.data
 
 
-def test_predict_with_image(client):
-    data = {"image": open("resources/green_route.jpg", "rb")}
+def test_predict_with_image(client, resource_dir):
+    data = {"image": open(f"{resource_dir}/green_route.jpg", "rb")}
 
     resp = client.post("/users/1/predict", data=data)
     assert resp.status_code == 200
@@ -36,22 +36,22 @@ def test_predict_with_invalid_image(client):
     assert b"Image file is missing" in resp.data
 
 
-def test_predict_with_corrupt_image(client):
+def test_predict_with_corrupt_image(client, resource_dir):
     """
     Testing with a file which is not a real image.
     """
-    data = {"image": open("resources/corrupt_route.jpg", "rb")}
+    data = {"image": open(f"{resource_dir}/corrupt_route.jpg", "rb")}
 
     resp = client.post("/users/1/predict", data=data)
     assert resp.status_code == 400
     assert resp.data == b"Not a valid image"
 
 
-def test_predict_with_unknown_image(client):
+def test_predict_with_unknown_image(client, resource_dir):
     """
     Testing with an image of a route unknown to the model.
     """
-    data = {"image": open("resources/unknown_route.jpg", "rb")}
+    data = {"image": open(f"{resource_dir}/unknown_route.jpg", "rb")}
 
     resp = client.post("/users/1/predict", data=data)
     assert resp.status_code == 200
