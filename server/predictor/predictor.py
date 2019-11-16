@@ -2,6 +2,8 @@ import numpy as np
 
 from PIL import Image
 from tensorflow.python.keras.backend import set_session
+from app import model
+from predictor.model_parameters import class_indices
 
 from app import tf_graph, tf_session
 
@@ -22,7 +24,7 @@ def process_image(image_path):
     return img
 
 
-def load_and_predict(image_path, model, class_indices):
+def predict_route(image_path):
     """Makes a class prediction for a single image"""
     img = process_image(image_path)
 
