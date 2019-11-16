@@ -30,7 +30,7 @@ def load_and_predict(image_path, model, class_indices):
     global tf_graph
     with tf_graph.as_default():
         set_session(tf_session)
-         predicted_probabilities = model.predict(img)
+        predicted_probabilities = model.predict(img)
 
     predicted_class_index = np.argmax(predicted_probabilities)
     predicted_class = class_indices[predicted_class_index]
