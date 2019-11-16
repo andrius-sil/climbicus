@@ -1,26 +1,15 @@
-import os
-import pickle
-
 import numpy as np
 
-from keras.models import load_model
 from PIL import Image
+from tensorflow.python.keras.backend import set_session
+from app import model
+from predictor.model_parameters import class_indices
 
-base_path = "/app/predictor/"  # TODO: set this outside
-model_name = "castle_30_vgg_fine_tuned.h5"
-MODEL_PATH = os.path.join(base_path, model_name)
-CLASS_INDICES_PATH = os.path.join(base_path, "class_indices.pkl")
-MODEL_VERSION = 'castle_30_vgg_fine_tuned'
+from app import tf_graph, tf_session
+
 
 # TODO: Keras predicting could be slow, look into faster methods
-# TODO: When run on a server, the model should always be loaded probably?
 # TODO: Check what aspect ratio Keras is using when resizing
-
-
-def load_obj(path):
-    """Loads the class indices dictionary"""
-    with open(path, "rb") as f:
-        return pickle.load(f)
 
 
 def process_image(image_path):
@@ -35,13 +24,16 @@ def process_image(image_path):
     return img
 
 
-def load_and_predict(image_path):
-    """Loads the model and class indices, makes a class prediction for a single image"""
-    model = load_model(MODEL_PATH)
-    class_indices = load_obj(CLASS_INDICES_PATH)
-
+def predict_route(image_path):
+    """Makes a class prediction for a single image"""
     img = process_image(image_path)
-    predicted_probabilities = model.predict(img)
+
+    global tf_session
+    global tf_graph
+    with tf_graph.as_default():
+        set_session(tf_session)
+        predicted_probabilities = model.predict(img)
+
     predicted_class_index = np.argmax(predicted_probabilities)
     predicted_class = class_indices[predicted_class_index]
     predicted_probability = predicted_probabilities[0, predicted_class_index]

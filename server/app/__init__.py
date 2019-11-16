@@ -1,8 +1,16 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-
+import tensorflow as tf
+from tensorflow.python.keras.models import load_model
+from tensorflow.python.keras.backend import set_session
+from predictor.model_parameters import MODEL_PATH
 
 db = SQLAlchemy()
+
+tf_session = tf.compat.v1.Session()
+tf_graph = tf.compat.v1.get_default_graph()
+set_session(tf_session)
+model = load_model(MODEL_PATH)
 
 
 def create_app(db_connection_uri):
