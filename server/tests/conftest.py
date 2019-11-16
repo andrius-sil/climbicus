@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from app import create_app
 from flask_sqlalchemy import SQLAlchemy
@@ -34,3 +36,11 @@ def app():
 def client(app):
     """A test client for the app."""
     return app.test_client()
+
+
+@pytest.fixture(scope="session")
+def resource_dir():
+    return os.path.join(
+        os.path.dirname(os.path.realpath(__file__)),
+        "resources"
+    )
