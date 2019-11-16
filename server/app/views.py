@@ -21,8 +21,10 @@ def predict(user_id):
     imagefile = request.files.get("image")
     if imagefile is None:
         abort(400, description="Image file is missing")
-
-    predicted_class_id, predicted_probability = predict_route(imagefile)
+    try:
+        predicted_class_id, predicted_probability = predict_route(imagefile)
+    except OSError:
+        abort(400, description="Not a valid image")
     probability = predicted_probability.astype(float)
     response = predicted_class_id
 
