@@ -24,15 +24,15 @@ def process_image(image_path):
 
 def load_and_predict(image_path, model, class_indices):
     """Makes a class prediction for a single image"""
-    # predicted_probabilities = model.predict(img)
     img = process_image(image_path)
 
     global tf_session
     global tf_graph
     with tf_graph.as_default():
         set_session(tf_session)
-        predicted_class_index_array = model.predict_classes(img)
+         predicted_probabilities = model.predict(img)
 
-    predicted_class_index = predicted_class_index_array[0]
+    predicted_class_index = np.argmax(predicted_probabilities)
     predicted_class = class_indices[predicted_class_index]
-    return predicted_class
+    predicted_probability = predicted_probabilities[0, predicted_class_index]
+    return predicted_class, predicted_probability

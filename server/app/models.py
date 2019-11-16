@@ -23,6 +23,9 @@ class Routes(db.Model):
 class RouteImages(db.Model):
     id = db.Column(db.Integer, db.Sequence('route_image_id_seq'), primary_key=True)
     route_id = db.Column(db.Integer, db.ForeignKey('routes.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    probability = db.Column(db.Float, nullable=False)
+    model_version = db.Column(db.String(120), nullable=False)
     path = db.Column(db.String(120), unique=True, nullable=False)
 
 
