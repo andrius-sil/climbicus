@@ -20,7 +20,7 @@ def predict(user_id):
     if imagefile is None:
         abort(400, description="Image file is missing")
     predicted_class_id, predicted_probability = load_and_predict(imagefile)
-    prob = predicted_probability.astype(float)
+    probability = predicted_probability.astype(float)
     response = predicted_class_id
 
     saved_image_path = store_image(imagefile, predicted_class_id)
@@ -29,7 +29,7 @@ def predict(user_id):
         RouteImages(
             route_id=route_id,
             user_id=user_id,
-            probability=prob,
+            probability=probability,
             model_version=MODEL_VERSION,
             path=saved_image_path,
         )
