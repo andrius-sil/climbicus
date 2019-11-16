@@ -1,30 +1,16 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-import os
 import tensorflow as tf
 from tensorflow.python.keras.models import load_model
 from tensorflow.python.keras.backend import set_session
-import pickle
+from predictor.model_parameters import MODEL_PATH
 
 db = SQLAlchemy()
 
-
-def load_obj(path):
-    """Loads the class indices dictionary"""
-    with open(path, "rb") as f:
-        return pickle.load(f)
-
 tf_session = tf.compat.v1.Session()
 tf_graph = tf.compat.v1.get_default_graph()
-
-base_path = "/app/predictor/"
-model_name = "castle_30_vgg_fine_tuned.h5"
-MODEL_PATH = os.path.join(base_path, model_name)
-CLASS_INDICES_PATH = os.path.join(base_path, "class_indices.pkl")
 set_session(tf_session)
 model = load_model(MODEL_PATH)
-class_indices = load_obj(CLASS_INDICES_PATH)
-MODEL_VERSION = 'castle_30_vgg_fine_tuned'
 
 
 def create_app(db_connection_uri):
@@ -43,4 +29,3 @@ def create_app(db_connection_uri):
         db.create_all()
 
     return app
-
