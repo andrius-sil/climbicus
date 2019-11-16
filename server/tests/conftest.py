@@ -17,7 +17,8 @@ def app():
         _db.session.add(Users(email="bla@bla.com"))
         _db.session.add(Gyms(name="The Castle Climbing Centre"))
         _db.session.flush()
-        _db.session.add(Routes(gym_id=1, class_id="1", grade="7a"))
+        for i in range(1, 31):
+            _db.session.add(Routes(gym_id=1, class_id=str(i), grade="7a"))
         _db.session.flush()
         _db.session.add(
             RouteImages(route_id=1, user_id=1, probability=0.5, model_version="first_version", path="placeholder")
