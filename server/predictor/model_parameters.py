@@ -8,7 +8,7 @@ def load_obj(path):
         return pickle.load(f)
 
 
-BASE_PATH = "/app/predictor/"
+BASE_PATH = "/app/predictor/model_files"
 MODEL_FILE_NAME = "castle_30_vgg_fine_tuned.h5"
 MODEL_VERSION = "castle_30_vgg_fine_tuned"
 MODEL_PATH = os.path.join(BASE_PATH, MODEL_FILE_NAME)
