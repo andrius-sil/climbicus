@@ -5,16 +5,16 @@ from app import db
 from app.models import RouteImages, UserRouteLog, Routes
 import datetime
 
-user_blueprint = Blueprint("user_blueprint", __name__, url_prefix="/users")
-general_blueprint = Blueprint("general_blueprint", __name__)
+users_blueprint = Blueprint("users_blueprint", __name__, url_prefix="/users")
+root_blueprint = Blueprint("root_blueprint", __name__)
 
 
-@general_blueprint.route("/")
+@root_blueprint.route("/")
 def hello_world():
     return "Flask Dockerized"
 
 
-@user_blueprint.route("/<int:user_id>/predict", methods=["POST"])
+@users_blueprint.route("/<int:user_id>/predict", methods=["POST"])
 def predict(user_id):
     imagefile = request.files.get("image")
     if imagefile is None:
@@ -38,7 +38,7 @@ def predict(user_id):
     return response
 
 
-@user_blueprint.route("/<int:user_id>/logbooks/add", methods=["POST"])
+@users_blueprint.route("/<int:user_id>/logbooks/add", methods=["POST"])
 def add(user_id):
     status = request.form.get("status")
     predicted_class_id = request.form.get("predicted_class_id")
@@ -54,7 +54,7 @@ def add(user_id):
     return "Route status added to log"
 
 
-@user_blueprint.route("/<int:user_id>/logbooks/view", methods=["GET"])
+@users_blueprint.route("/<int:user_id>/logbooks/view", methods=["GET"])
 def view(user_id):
     results = UserRouteLog.query.filter_by(user_id=user_id).all()
     logbook = {}
