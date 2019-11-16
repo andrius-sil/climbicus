@@ -1,6 +1,9 @@
 import numpy as np
 
 from PIL import Image
+from tensorflow.python.keras.backend import set_session
+
+from app import tf_graph, tf_session
 
 
 # TODO: Keras predicting could be slow, look into faster methods
@@ -21,10 +24,15 @@ def process_image(image_path):
 
 def load_and_predict(image_path, model, class_indices):
     """Makes a class prediction for a single image"""
-
     # predicted_probabilities = model.predict(img)
     img = process_image(image_path)
-    predicted_class_index_array = model.predict_classes(img)
+
+    global tf_session
+    global tf_graph
+    with tf_graph.as_default():
+        set_session(tf_session)
+        predicted_class_index_array = model.predict_classes(img)
+
     predicted_class_index = predicted_class_index_array[0]
     predicted_class = class_indices[predicted_class_index]
     return predicted_class
