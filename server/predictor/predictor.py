@@ -42,8 +42,7 @@ def load_and_predict(image_path):
 
     img = process_image(image_path)
     predicted_probabilities = model.predict(img)
-    predicted_class_index_array = model.predict_classes(img)
-    predicted_class_index = predicted_class_index_array[0]
+    predicted_class_index = np.argmax(predicted_probabilities)
     predicted_class = class_indices[predicted_class_index]
     predicted_probability = predicted_probabilities[0, predicted_class_index]
     return predicted_class, predicted_probability
