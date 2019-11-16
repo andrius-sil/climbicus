@@ -21,7 +21,7 @@ ec2-deploy:
 	rsync -aHv --delete-during --exclude-from rsync_exclude.txt . ec2-climbicus-dev:/home/ec2-user/climbicus/
 
 model-deploy:
-	aws s3 sync s3://climbicus/models/current/ server/predictor/
+	aws s3 sync s3://climbicus/models/current/ server/predictor/model_files/
 
 sh-server:
 	  docker exec -it climbicus_server_1 /bin/bash
