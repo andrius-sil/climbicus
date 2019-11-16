@@ -1,11 +1,6 @@
 from app.models import UserRouteLog
 
 
-def test_index(client):
-    r = client.get("/")
-    assert b"Flask Dockerized" in r.data
-
-
 def test_view_logbook(client):
     logbook = client.get("/users/1/logbooks/view")
     assert logbook.json["1"]["grade"] == "7a"
