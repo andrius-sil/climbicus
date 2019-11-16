@@ -1,40 +1,49 @@
 from flask import abort, Blueprint, request
-from predictor.predictor import load_and_predict
+from predictor.predictor import load_and_predict, MODEL_VERSION
 import os
 from app import db
 from app.models import RouteImages, UserRouteLog, Routes
 import datetime
 
-main_blueprint = Blueprint("main_blueprint", __name__)
+users_blueprint = Blueprint("users_blueprint", __name__, url_prefix="/users")
+root_blueprint = Blueprint("root_blueprint", __name__)
 
 
-@main_blueprint.route("/")
+@root_blueprint.route("/")
 def hello_world():
     return "Flask Dockerized"
 
 
-@main_blueprint.route("/predict", methods=["POST"])
-def predict():
+@users_blueprint.route("/<int:user_id>/predict", methods=["POST"])
+def predict(user_id):
     imagefile = request.files.get("image")
     if imagefile is None:
         abort(400, description="Image file is missing")
-    predicted_class_id = load_and_predict(imagefile)
+    predicted_class_id, predicted_probability = load_and_predict(imagefile)
+    probability = predicted_probability.astype(float)
     response = predicted_class_id
 
     saved_image_path = store_image(imagefile, predicted_class_id)
     route_id = Routes.query.filter_by(class_id=predicted_class_id).one().id
-    db.session.add(RouteImages(route_id=route_id, path=saved_image_path))
+    db.session.add(
+        RouteImages(
+            route_id=route_id,
+            user_id=user_id,
+            probability=probability,
+            model_version=MODEL_VERSION,
+            path=saved_image_path,
+        )
+    )
     db.session.commit()
     return response
 
 
-@main_blueprint.route("/add_status", methods=["POST"])
-def add_route_status():
+@users_blueprint.route("/<int:user_id>/logbooks/add", methods=["POST"])
+def add(user_id):
     status = request.form.get("status")
     predicted_class_id = request.form.get("predicted_class_id")
-    user_id = request.form.get("user_id")
     gym_id = request.form.get("gym_id")
-    if None in [status, predicted_class_id, user_id, gym_id]:
+    if None in [status, predicted_class_id, gym_id]:
         abort(400, description="Request missing required data")
 
     route_id = Routes.query.filter_by(class_id=predicted_class_id).one().id
@@ -45,11 +54,8 @@ def add_route_status():
     return "Route status added to log"
 
 
-@main_blueprint.route("/fetch_logbook", methods=["GET"])
-def fetch_logbook():
-    user_id = request.form.get("user_id")
-    if user_id is None:
-        abort(400, description="user_id is missing")
+@users_blueprint.route("/<int:user_id>/logbooks/view", methods=["GET"])
+def view(user_id):
     results = UserRouteLog.query.filter_by(user_id=user_id).all()
     logbook = {}
     for r in results:

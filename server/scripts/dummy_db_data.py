@@ -9,15 +9,12 @@ from datetime import datetime
 # make populate-test-database
 
 with app.app_context():
-    db.session.add_all(
-        (
-            Users(email="bla@bla.com"),
-            Gyms(name="The Castle Climbing Centre"),
-            Routes(gym_id=1, class_id="1", grade="7a"),
-            RouteImages(route_id=1, path="placeholder"),
-            UserRouteLog(
-                route_id=1, user_id=1, gym_id=1, status="red-point", log_date=datetime(2012, 3, 3, 10, 10, 10)
-            ),
-        )
-    )
+    db.session.add(Users(email="bla@bla.com"))
+    db.session.add(Gyms(name="The Castle Climbing Centre"))
+    db.session.flush()
+    db.session.add(Routes(gym_id=1, class_id="1", grade="7a"))
+    db.session.flush()
+    db.session.add(RouteImages(route_id=1, user_id=1, probability=0.5, model_version="first_version",
+                               path="placeholder"))
+    db.session.add(UserRouteLog(route_id=1, user_id=1, gym_id=1, status="red-point", log_date="2019-10-10"))
     db.session.commit()
