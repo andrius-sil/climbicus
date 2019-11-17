@@ -1,8 +1,7 @@
 *data/
-*.h5
 *.pdf
 *.idea/
 *.ipynb_checkpoints/
 *.jupyter
-*.pkl
 __pycache__
+server/predictor/model_files/
