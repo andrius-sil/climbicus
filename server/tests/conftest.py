@@ -5,15 +5,20 @@ from app import create_app
 from flask_sqlalchemy import SQLAlchemy
 from app.models import Gyms, RouteImages, Routes, UserRouteLog, Users
 from datetime import datetime
+from predictor.predictor import Predictor
 
 DATABASE_CONNECTION_URI = "sqlite:///:memory:"
 _db = SQLAlchemy()
+_model = Predictor()
 
 
 @pytest.fixture(scope="session")
-def app():
+def app(resource_dir):
     """Create and configure a new app instance for each test."""
-    app = create_app(DATABASE_CONNECTION_URI)
+    model_path = f"{resource_dir}/castle_30_test_model.h5"
+    class_indices_path = f"{resource_dir}/class_indices.pkl"
+    model_version = "castle_test"
+    app = create_app(DATABASE_CONNECTION_URI, model_path, class_indices_path, model_version)
 
     with app.app_context():
         _db.session.add(Users(email="bla@bla.com"))
