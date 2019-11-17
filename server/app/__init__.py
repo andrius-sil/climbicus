@@ -1,19 +1,14 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-import tensorflow as tf
-from tensorflow.python.keras.models import load_model
-from tensorflow.python.keras.backend import set_session
-from predictor.model_parameters import MODEL_PATH
+from predictor.predictor import Predictor
+
 
 db = SQLAlchemy()
 
-tf_session = tf.compat.v1.Session()
-tf_graph = tf.compat.v1.get_default_graph()
-set_session(tf_session)
-model = load_model(MODEL_PATH)
+predictor = Predictor()
 
 
-def create_app(db_connection_uri):
+def create_app(db_connection_uri, model_path, class_indices_path, model_version):
     app = Flask(__name__)
 
     # Register Blueprints
@@ -27,5 +22,6 @@ def create_app(db_connection_uri):
     db.init_app(app)
     with app.app_context():
         db.create_all()
+        predictor.load_model(model_path, class_indices_path, model_version)
 
     return app

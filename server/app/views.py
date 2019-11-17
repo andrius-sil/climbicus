@@ -1,11 +1,9 @@
 import datetime
 import os
 
-from app import db
+from app import db, predictor
 from app.models import RouteImages, Routes, UserRouteLog
 from flask import Blueprint, abort, request
-from predictor.model_parameters import MODEL_VERSION
-from predictor.predictor import predict_route
 
 users_blueprint = Blueprint("users_blueprint", __name__, url_prefix="/users")
 root_blueprint = Blueprint("root_blueprint", __name__)
@@ -22,7 +20,7 @@ def predict(user_id):
     if imagefile is None:
         abort(400, description="Image file is missing")
     try:
-        predicted_class_id, predicted_probability = predict_route(imagefile)
+        predicted_class_id, predicted_probability, model_version = predictor.predict_route(imagefile)
     except OSError:
         abort(400, description="Not a valid image")
     except Exception:
@@ -37,7 +35,7 @@ def predict(user_id):
             route_id=route_id,
             user_id=user_id,
             probability=probability,
-            model_version=MODEL_VERSION,
+            model_version=model_version,
             path=saved_image_path,
         )
     )
