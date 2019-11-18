@@ -1,17 +1,12 @@
 import datetime
 import os
 
+
 from app import db, predictor
 from app.models import RouteImages, Routes, UserRouteLog
-from flask import Blueprint, abort, request
+from flask import abort, request, Blueprint
 
 users_blueprint = Blueprint("users_blueprint", __name__, url_prefix="/users")
-root_blueprint = Blueprint("root_blueprint", __name__)
-
-
-@root_blueprint.route("/")
-def hello_world():
-    return "Flask Dockerized"
 
 
 @users_blueprint.route("/<int:user_id>/predict", methods=["POST"])
