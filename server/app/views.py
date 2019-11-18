@@ -1,9 +1,10 @@
 import datetime
+import operator
 import os
 
 from app import db, predictor
 from app.models import RouteImages, Routes, UserRouteLog
-from flask import Blueprint, abort, request
+from flask import Blueprint, abort, request, make_response
 
 users_blueprint = Blueprint("users_blueprint", __name__, url_prefix="/users")
 root_blueprint = Blueprint("root_blueprint", __name__)
@@ -20,17 +21,26 @@ def predict(user_id):
     if imagefile is None:
         abort(400, description="Image file is missing")
     try:
-        predicted_class_id, predicted_probability = predictor.predict_route(imagefile)
+        predicted_classes_and_probabilities = predictor.predict_route(imagefile)
     except OSError:
         abort(400, description="Not a valid image")
     except Exception:
         abort(400, description="Unknown Error")
-    probability = predicted_probability.astype(float)
-    response = predicted_class_id
+    # for now we store the class_id with max probability to db
+    predicted_class_id = max(predicted_classes_and_probabilities.items(), key=operator.itemgetter(1))[0]
+    probability = predicted_classes_and_probabilities[predicted_class_id]
     model_version = predictor.get_model_version()
 
+    def get_route_info(class_id, field=None):
+        """Queries db for route info, optionally for a specific field"""
+        route_query = Routes.query.filter_by(class_id=class_id).one()
+        result = route_query
+        if field is not None:
+            result = getattr(route_query, field)
+        return result
+
     saved_image_path = store_image(imagefile, predicted_class_id)
-    route_id = Routes.query.filter_by(class_id=predicted_class_id).one().id
+    route_id = get_route_info(predicted_class_id, "id")
     db.session.add(
         RouteImages(
             route_id=route_id,
@@ -41,7 +51,20 @@ def predict(user_id):
         )
     )
     db.session.commit()
-    return response
+
+    def create_route_entry(k, v):
+        route_query = get_route_info(k)
+        result = {
+            "route_id": getattr(route_query, "id"),
+            "predicted_class_id": k,
+            "probability": v,
+            "grade": getattr(route_query, "grade"),
+        }
+        return result
+
+    response = {"route_predictions": [create_route_entry(k, v) for k, v in predicted_classes_and_probabilities.items()]}
+
+    return make_response(response)
 
 
 @users_blueprint.route("/<int:user_id>/logbooks/add", methods=["POST"])
@@ -67,7 +90,7 @@ def view(user_id):
     for r in results:
         grade = Routes.query.filter_by(id=r.route_id).one().grade
         logbook[r.id] = {"grade": grade, "log_date": r.log_date, "status": r.status}
-    return logbook
+    return make_response(logbook)
 
 
 def store_image(imagefile, predicted_class):
