@@ -20,13 +20,14 @@ def predict(user_id):
     if imagefile is None:
         abort(400, description="Image file is missing")
     try:
-        predicted_class_id, predicted_probability, model_version = predictor.predict_route(imagefile)
+        predicted_class_id, predicted_probability = predictor.predict_route(imagefile)
     except OSError:
         abort(400, description="Not a valid image")
     except Exception:
         abort(400, description="Unknown Error")
     probability = predicted_probability.astype(float)
     response = predicted_class_id
+    model_version = predictor.get_model_version()
 
     saved_image_path = store_image(imagefile, predicted_class_id)
     route_id = Routes.query.filter_by(class_id=predicted_class_id).one().id
