@@ -18,13 +18,10 @@ class Predictor:
         set_session(self.tf_session)
         self.model = load_model(model_path)
         self.model_version = model_version
-        self.class_indices = self.load_obj(class_indices_path)
-
-    def get_model(self):
-        return self.model
+        self.class_indices = self.load_class_indices(class_indices_path)
 
     @staticmethod
-    def load_obj(path):
+    def load_class_indices(path):
         """Loads a pickle object"""
         with open(path, "rb") as f:
             return pickle.load(f)
@@ -49,9 +46,12 @@ class Predictor:
         # https://github.com/tensorflow/tensorflow/issues/28287
         with self.tf_graph.as_default():
             set_session(self.tf_session)
-            predicted_probabilities = self.get_model().predict(img)
+            predicted_probabilities = self.model.predict(img)
 
         predicted_class_index = np.argmax(predicted_probabilities)
         predicted_class = self.class_indices[predicted_class_index]
         predicted_probability = predicted_probabilities[0, predicted_class_index]
-        return predicted_class, predicted_probability, self.model_version
+        return predicted_class, predicted_probability
+
+    def get_model_version(self):
+        return self.model_version
