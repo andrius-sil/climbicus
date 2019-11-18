@@ -48,10 +48,10 @@ class Predictor:
             set_session(self.tf_session)
             predicted_probabilities = self.model.predict(img)
 
-        predicted_class_index = np.argmax(predicted_probabilities)
-        predicted_class = self.class_indices[predicted_class_index]
-        predicted_probability = predicted_probabilities[0, predicted_class_index]
-        return predicted_class, predicted_probability
+        predicted_classes_and_probabilities = {
+            v: predicted_probabilities[0, k].astype(float) for k, v in self.class_indices.items()
+        }
+        return predicted_classes_and_probabilities
 
     def get_model_version(self):
         return self.model_version
