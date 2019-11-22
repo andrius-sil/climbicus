@@ -4,7 +4,7 @@ import os
 
 from app import db, predictor
 from app.models import RouteImages, Routes, UserRouteLog
-from flask import Blueprint, abort, request, make_response
+from flask import Blueprint, abort, request, jsonify
 
 users_blueprint = Blueprint("users_blueprint", __name__, url_prefix="/users")
 root_blueprint = Blueprint("root_blueprint", __name__)
@@ -64,7 +64,7 @@ def predict(user_id):
 
     response = {"route_predictions": [create_route_entry(k, v) for k, v in predicted_classes_and_probabilities.items()]}
 
-    return make_response(response)
+    return jsonify(response)
 
 
 @users_blueprint.route("/<int:user_id>/logbooks/add", methods=["POST"])
@@ -90,7 +90,7 @@ def view(user_id):
     for r in results:
         grade = Routes.query.filter_by(id=r.route_id).one().grade
         logbook[r.id] = {"grade": grade, "log_date": r.log_date, "status": r.status}
-    return make_response(logbook)
+    return jsonify(logbook)
 
 
 def store_image(imagefile, predicted_class):
