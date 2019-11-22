@@ -31,16 +31,12 @@ def predict(user_id):
     probability = predicted_classes_and_probabilities[predicted_class_id]
     model_version = predictor.get_model_version()
 
-    def get_route_info(class_id, field=None):
-        """Queries db for route info, optionally for a specific field"""
-        route_query = Routes.query.filter_by(class_id=class_id).one()
-        result = route_query
-        if field is not None:
-            result = getattr(route_query, field)
-        return result
+    # will need to filter this by appropriate gym_id
+    routes = db.session.query(Routes.class_id, Routes.id, Routes.grade).filter(Routes.gym_id == 1).all()
+    routes_dict = {class_id: {"id": id, "grade": grade} for class_id, id, grade in routes}
 
+    route_id = routes_dict.get(predicted_class_id).get("id")
     saved_image_path = store_image(imagefile, predicted_class_id)
-    route_id = get_route_info(predicted_class_id, "id")
     db.session.add(
         RouteImages(
             route_id=route_id,
@@ -53,12 +49,11 @@ def predict(user_id):
     db.session.commit()
 
     def create_route_entry(k, v):
-        route_query = get_route_info(k)
         result = {
-            "route_id": getattr(route_query, "id"),
+            "route_id": routes_dict.get(k).get("id"),
             "predicted_class_id": k,
             "probability": v,
-            "grade": getattr(route_query, "grade"),
+            "grade": routes_dict.get(k).get("grade"),
         }
         return result
 
