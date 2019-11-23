@@ -1,6 +1,8 @@
 import os
 
 import pytest
+from flask_jwt_extended import create_access_token
+
 from app import create_app
 from flask_sqlalchemy import SQLAlchemy
 from app.models import Gyms, RouteImages, Routes, UserRouteLog, Users
@@ -8,6 +10,7 @@ from datetime import datetime
 from predictor.predictor import Predictor
 
 DATABASE_CONNECTION_URI = "sqlite:///:memory:"
+JWT_SECRET_KEY = "super-secret-key"
 _db = SQLAlchemy()
 _model = Predictor()
 
@@ -18,10 +21,12 @@ def app(resource_dir):
     model_path = f"{resource_dir}/castle_30_test_model.h5"
     class_indices_path = f"{resource_dir}/class_indices.pkl"
     model_version = "castle_test"
-    app = create_app(DATABASE_CONNECTION_URI, model_path, class_indices_path, model_version)
+    app = create_app(DATABASE_CONNECTION_URI, model_path, class_indices_path, model_version, JWT_SECRET_KEY)
+
+    app.testing = True
 
     with app.app_context():
-        _db.session.add(Users(email="bla@bla.com"))
+        _db.session.add(Users(email="test@testing.com", password="testing"))
         _db.session.add(Gyms(name="The Castle Climbing Centre"))
         _db.session.flush()
         for i in range(1, 31):
@@ -50,3 +55,13 @@ def resource_dir():
         os.path.dirname(os.path.realpath(__file__)),
         "resources"
     )
+
+@pytest.fixture(scope="session")
+def auth_headers(app):
+    with app.app_context():
+        access_token = create_access_token(identity="test")
+        headers = {
+            "Authorization": f"Bearer {access_token}"
+        }
+
+        return headers

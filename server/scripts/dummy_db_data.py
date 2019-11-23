@@ -9,7 +9,7 @@ from datetime import datetime
 # make populate-test-database
 
 with app.app_context():
-    db.session.add(Users(email="bla@bla.com"))
+    db.session.add(Users(email="test@testing.com", password="testing"))
     db.session.add(Gyms(name="The Castle Climbing Centre"))
     db.session.flush()
     for i in range(1, 31):
