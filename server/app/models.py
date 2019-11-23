@@ -19,6 +19,19 @@ class Routes(db.Model):
     # TODO: preset list of possible grades
     grade = db.Column(db.String(120), nullable=False)
 
+    def get_class_id_dict(self, routes):
+        routes_dict = {r.class_id: {"id": r.id, "grade": r.grade} for r in routes}
+        return routes_dict
+
+    def create_route_entry(self, class_id, probability, routes_dict):
+        result = {
+            "route_id": routes_dict.get(class_id).get("id"),
+            "predicted_class_id": class_id,
+            "probability": probability,
+            "grade": routes_dict.get(class_id).get("grade"),
+        }
+        return result
+
 
 class RouteImages(db.Model):
     id = db.Column(db.Integer, db.Sequence('route_image_id_seq'), primary_key=True)

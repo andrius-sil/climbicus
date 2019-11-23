@@ -9,6 +9,8 @@ from flask import Blueprint, abort, request, jsonify
 users_blueprint = Blueprint("users_blueprint", __name__, url_prefix="/users")
 root_blueprint = Blueprint("root_blueprint", __name__)
 
+MAX_NUMBER_OF_RESULTS = 20
+
 
 @root_blueprint.route("/")
 def hello_world():
@@ -21,23 +23,25 @@ def predict(user_id):
     if imagefile is None:
         abort(400, description="Image file is missing")
     try:
-        predicted_classes_and_probabilities = predictor.predict_route(imagefile)
+        predictor_results = predictor.predict_route(imagefile)
     except OSError:
         abort(400, description="Not a valid image")
     except Exception:
         abort(400, description="Unknown Error")
 
-    sorted_probabilities = sorted(predicted_classes_and_probabilities.items(), key=operator.itemgetter(1), reverse=True)
+    sorted_probabilities = sorted(predictor_results.items(), key=operator.itemgetter(1), reverse=True)
+    if len(sorted_probabilities) > MAX_NUMBER_OF_RESULTS:
+        sorted_probabilities = sorted_probabilities[:MAX_NUMBER_OF_RESULTS]
+
+    class_ids = [i[0] for i in sorted_probabilities]
+    # will need to filter this by appropriate gym_id
+    routes = db.session.query(Routes).filter(Routes.gym_id == 1, Routes.class_id.in_(class_ids)).all()
+    routes_dict = Routes.get_class_id_dict(routes)
 
     # for now we store the class_id with max probability to db
     predicted_class_id = sorted_probabilities[0][0]
     probability = sorted_probabilities[0][1]
     model_version = predictor.get_model_version()
-
-    # will need to filter this by appropriate gym_id
-    routes = db.session.query(Routes.class_id, Routes.id, Routes.grade).filter(Routes.gym_id == 1).all()
-    routes_dict = {class_id: {"id": id, "grade": grade} for class_id, id, grade in routes}
-
     route_id = routes_dict.get(predicted_class_id).get("id")
     saved_image_path = store_image(imagefile, predicted_class_id)
     db.session.add(
@@ -51,18 +55,11 @@ def predict(user_id):
     )
     db.session.commit()
 
-    def create_route_entry(class_id, probability):
-        result = {
-            "route_id": routes_dict.get(class_id).get("id"),
-            "predicted_class_id": class_id,
-            "probability": probability,
-            "grade": routes_dict.get(class_id).get("grade"),
-        }
-        return result
-
-    top_20_routes = sorted_probabilities[:20]
     response = {
-        "route_predictions": [create_route_entry(class_id, probability) for class_id, probability in top_20_routes]
+        "route_predictions": [
+            Routes.create_route_entry(class_id, probability, routes_dict)
+            for class_id, probability in sorted_probabilities
+        ]
     }
 
     return jsonify(response)
