@@ -27,6 +27,7 @@ def login():
     access_token = create_access_token(identity=email)
     return jsonify(access_token=access_token)
 
+
 @blueprint.route("/")
 def hello_world():
     return "Flask Dockerized"
