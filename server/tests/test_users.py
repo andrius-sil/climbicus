@@ -1,3 +1,5 @@
+from flask import json
+
 from app.models import UserRouteLog
 
 
@@ -24,8 +26,10 @@ def test_predict_with_image(client, resource_dir):
     data = {"image": open(f"{resource_dir}/green_route.jpg", "rb")}
 
     resp = client.post("/users/1/predict", data=data)
+    with open(f"{resource_dir}/green_route_response.json", 'rb') as f:
+        green_route_response = json.load(f)
     assert resp.status_code == 200
-    assert resp.data == b"1"
+    assert resp.get_json() == green_route_response
 
 
 def test_predict_with_invalid_image(client):
@@ -56,5 +60,8 @@ def test_predict_with_unknown_image(client, resource_dir):
     resp = client.post("/users/1/predict", data=data)
     # For now, the current model still predicts a route with high probability, hence we cannot say "this is unknown
     # route"
+    with open(f"{resource_dir}/unknown_route_response.json", 'rb') as f:
+        unknown_route_response = json.load(f)
+    unknown_route_response
     assert resp.status_code == 200
-    assert resp.data == b"15"
+    assert resp.get_json() == unknown_route_response

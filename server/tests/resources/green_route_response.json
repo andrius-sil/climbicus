@@ -1,0 +1,124 @@
+{
+  "route_predictions": [
+    {
+      "grade": "7a", 
+      "predicted_class_id": "1", 
+      "probability": 0.9989833235740662, 
+      "route_id": 1
+    }, 
+    {
+      "grade": "7a", 
+      "predicted_class_id": "21", 
+      "probability": 0.0002201907627750188, 
+      "route_id": 21
+    }, 
+    {
+      "grade": "7a", 
+      "predicted_class_id": "11", 
+      "probability": 0.00018543211626820266, 
+      "route_id": 11
+    }, 
+    {
+      "grade": "7a", 
+      "predicted_class_id": "25", 
+      "probability": 0.0001588834129506722, 
+      "route_id": 25
+    }, 
+    {
+      "grade": "7a", 
+      "predicted_class_id": "20", 
+      "probability": 0.0001408789394190535, 
+      "route_id": 20
+    }, 
+    {
+      "grade": "7a", 
+      "predicted_class_id": "27", 
+      "probability": 0.00011905493738595396, 
+      "route_id": 27
+    }, 
+    {
+      "grade": "7a", 
+      "predicted_class_id": "13", 
+      "probability": 9.619541378924623e-05, 
+      "route_id": 13
+    }, 
+    {
+      "grade": "7a", 
+      "predicted_class_id": "28", 
+      "probability": 3.4147109545301646e-05, 
+      "route_id": 28
+    }, 
+    {
+      "grade": "7a", 
+      "predicted_class_id": "4", 
+      "probability": 1.5223328773572575e-05, 
+      "route_id": 4
+    }, 
+    {
+      "grade": "7a", 
+      "predicted_class_id": "24", 
+      "probability": 8.79351318872068e-06, 
+      "route_id": 24
+    }, 
+    {
+      "grade": "7a", 
+      "predicted_class_id": "2", 
+      "probability": 8.685240572958719e-06, 
+      "route_id": 2
+    }, 
+    {
+      "grade": "7a", 
+      "predicted_class_id": "3", 
+      "probability": 8.681920007802546e-06, 
+      "route_id": 3
+    }, 
+    {
+      "grade": "7a", 
+      "predicted_class_id": "8", 
+      "probability": 7.712990736763459e-06, 
+      "route_id": 8
+    }, 
+    {
+      "grade": "7a", 
+      "predicted_class_id": "19", 
+      "probability": 3.3513017569930525e-06, 
+      "route_id": 19
+    }, 
+    {
+      "grade": "7a", 
+      "predicted_class_id": "10", 
+      "probability": 2.2809344955021515e-06, 
+      "route_id": 10
+    }, 
+    {
+      "grade": "7a", 
+      "predicted_class_id": "14", 
+      "probability": 1.8277272602063022e-06, 
+      "route_id": 14
+    }, 
+    {
+      "grade": "7a", 
+      "predicted_class_id": "26", 
+      "probability": 1.6534737596884952e-06, 
+      "route_id": 26
+    }, 
+    {
+      "grade": "7a", 
+      "predicted_class_id": "9", 
+      "probability": 1.3443493571685394e-06, 
+      "route_id": 9
+    }, 
+    {
+      "grade": "7a", 
+      "predicted_class_id": "30", 
+      "probability": 9.548494972477783e-07, 
+      "route_id": 30
+    }, 
+    {
+      "grade": "7a", 
+      "predicted_class_id": "16", 
+      "probability": 3.215698995973071e-07, 
+      "route_id": 16
+    }
+  ]
+}
