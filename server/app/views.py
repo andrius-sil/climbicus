@@ -26,9 +26,12 @@ def predict(user_id):
         abort(400, description="Not a valid image")
     except Exception:
         abort(400, description="Unknown Error")
+
+    sorted_probabilities = sorted(predicted_classes_and_probabilities.items(), key=operator.itemgetter(1), reverse=True)
+
     # for now we store the class_id with max probability to db
-    predicted_class_id = max(predicted_classes_and_probabilities.items(), key=operator.itemgetter(1))[0]
-    probability = predicted_classes_and_probabilities[predicted_class_id]
+    predicted_class_id = sorted_probabilities[0][0]
+    probability = sorted_probabilities[0][1]
     model_version = predictor.get_model_version()
 
     # will need to filter this by appropriate gym_id
@@ -48,16 +51,19 @@ def predict(user_id):
     )
     db.session.commit()
 
-    def create_route_entry(k, v):
+    def create_route_entry(class_id, probability):
         result = {
-            "route_id": routes_dict.get(k).get("id"),
-            "predicted_class_id": k,
-            "probability": v,
-            "grade": routes_dict.get(k).get("grade"),
+            "route_id": routes_dict.get(class_id).get("id"),
+            "predicted_class_id": class_id,
+            "probability": probability,
+            "grade": routes_dict.get(class_id).get("grade"),
         }
         return result
 
-    response = {"route_predictions": [create_route_entry(k, v) for k, v in predicted_classes_and_probabilities.items()]}
+    top_20_routes = sorted_probabilities[:20]
+    response = {
+        "route_predictions": [create_route_entry(class_id, probability) for class_id, probability in top_20_routes]
+    }
 
     return jsonify(response)
 
