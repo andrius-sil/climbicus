@@ -37,3 +37,8 @@ def test_index(app, client, auth_headers):
 
     assert resp.status_code == 200
     assert b"Flask Dockerized" in resp.data
+
+def test_index_no_auth(app, client):
+    resp = client.get("/")
+
+    assert resp.status_code == 401
