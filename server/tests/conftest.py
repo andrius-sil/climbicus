@@ -20,6 +20,8 @@ def app(resource_dir):
     model_version = "castle_test"
     app = create_app(DATABASE_CONNECTION_URI, model_path, class_indices_path, model_version)
 
+    app.testing = True
+
     with app.app_context():
         _db.session.add(Users(email="bla@bla.com"))
         _db.session.add(Gyms(name="The Castle Climbing Centre"))
@@ -28,7 +30,14 @@ def app(resource_dir):
             _db.session.add(Routes(gym_id=1, class_id=str(i), grade="7a"))
         _db.session.flush()
         _db.session.add(
-            RouteImages(route_id=1, user_id=1, probability=0.5, model_version="first_version", path="placeholder")
+            RouteImages(
+                user_route_id=1,
+                model_route_id=1,
+                user_id=1,
+                model_probability=0.5,
+                model_version="first_version",
+                path="placeholder",
+            )
         )
         _db.session.add(
             UserRouteLog(route_id=1, user_id=1, gym_id=1, status="red-point", log_date=datetime(2012, 3, 3, 10, 10, 10))
@@ -46,7 +55,4 @@ def client(app):
 
 @pytest.fixture(scope="session")
 def resource_dir():
-    return os.path.join(
-        os.path.dirname(os.path.realpath(__file__)),
-        "resources"
-    )
+    return os.path.join(os.path.dirname(os.path.realpath(__file__)), "resources")

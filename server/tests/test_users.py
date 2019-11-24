@@ -1,6 +1,8 @@
-from flask import json
+import math
 
-from app.models import UserRouteLog
+from app.models import RouteImages, UserRouteLog
+from app import db
+from flask import json
 
 
 def test_view_logbook(client):
@@ -62,6 +64,18 @@ def test_predict_with_unknown_image(client, resource_dir):
     # route"
     with open(f"{resource_dir}/unknown_route_response.json", 'rb') as f:
         unknown_route_response = json.load(f)
-    unknown_route_response
     assert resp.status_code == 200
     assert resp.get_json() == unknown_route_response
+
+
+def test_storing_image_path_to_db(app, client, resource_dir):
+    """
+    Testing with an image of a route unknown to the model.
+    """
+    data = {"image": open(f"{resource_dir}/unknown_route.jpg", "rb")}
+
+    resp = client.post("/users/1/predict", data=data)
+    with app.app_context():
+        db_probability = db.session.query(RouteImages).filter_by(model_route_id=15).first().model_probability
+    assert resp.status_code == 200
+    assert math.isclose(db_probability, 0.95810854434967)
