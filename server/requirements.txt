@@ -7,3 +7,4 @@ tensorflow==1.14.0
 numpy==1.16.4
 Flask-JWT-Extended==3.24.1
 Werkzeug==0.16.0
+click==7.0
