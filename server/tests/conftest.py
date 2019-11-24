@@ -12,7 +12,7 @@ _db = SQLAlchemy()
 _model = Predictor()
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def app(resource_dir):
     """Create and configure a new app instance for each test."""
     model_path = f"{resource_dir}/castle_30_test_model.h5"
@@ -45,6 +45,9 @@ def app(resource_dir):
         _db.session.commit()
 
     yield app
+    with app.app_context():
+        _db.session.remove()
+        _db.drop_all()
 
 
 @pytest.fixture

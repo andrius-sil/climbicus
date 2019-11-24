@@ -76,6 +76,6 @@ def test_storing_image_path_to_db(app, client, resource_dir):
 
     resp = client.post("/users/1/predict", data=data)
     with app.app_context():
-        db_probability = db.session.query(RouteImages).filter_by(model_route_id=15).first().model_probability
+        db_probability = db.session.query(RouteImages).filter_by(model_route_id=15).one_or_none().model_probability
     assert resp.status_code == 200
     assert math.isclose(db_probability, 0.95810854434967)
