@@ -1,19 +1,16 @@
 import datetime
 import os
 
+
 from app import db, predictor
 from app.models import RouteImages, Routes, UserRouteLog
-from flask import Blueprint, abort, request, jsonify
+
+from flask import abort, request, Blueprint, jsonify
 
 users_blueprint = Blueprint("users_blueprint", __name__, url_prefix="/users")
-root_blueprint = Blueprint("root_blueprint", __name__)
 
 MAX_NUMBER_OF_RESULTS = 20
 
-
-@root_blueprint.route("/")
-def hello_world():
-    return "Flask Dockerized"
 
 
 @users_blueprint.route("/<int:user_id>/predict", methods=["POST"])
@@ -103,4 +100,3 @@ def reorder_database_results(routes, sorted_class_ids):
     route_map = {r.class_id: r for r in routes}
     sorted_routes = [route_map[c] for c in sorted_class_ids]
     return sorted_routes
-

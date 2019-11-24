@@ -1,11 +1,18 @@
 version: '2'
 services:
+  db:
+    env_file:
+      - dev_secrets.env
   server:
+    env_file:
+      - dev_secrets.env
     environment:
       - PYTHONUNBUFFERED=1
       - FLASK_ENV=development
+      - TF_CPP_MIN_LOG_LEVEL=2 # silence 'Your CPU supports instructions that this TensorFlow binary was not compiled to use ...' warnings
     volumes:
       - ./server/:/app
+    entrypoint:
+      - /app/entrypoint.sh
     command:
-      flask run --host=0.0.0.0
-
+      "dev"
