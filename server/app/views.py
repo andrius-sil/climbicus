@@ -1,5 +1,4 @@
 import datetime
-import operator
 import os
 
 from app import db, predictor
@@ -26,41 +25,19 @@ def predict(user_id):
         predictor_results = predictor.predict_route(imagefile)
     except OSError:
         abort(400, description="Not a valid image")
-    except Exception:
-        abort(400, description="Unknown Error")
 
-    sorted_probabilities = sorted(predictor_results.items(), key=operator.itemgetter(1), reverse=True)
-    if len(sorted_probabilities) > MAX_NUMBER_OF_RESULTS:
-        sorted_probabilities = sorted_probabilities[:MAX_NUMBER_OF_RESULTS]
+    sorted_class_ids = predictor_results.sort_classes_by_probability(MAX_NUMBER_OF_RESULTS)
 
-    class_ids = [i[0] for i in sorted_probabilities]
     # will need to filter this by appropriate gym_id
-    routes = db.session.query(Routes).filter(Routes.gym_id == 1, Routes.class_id.in_(class_ids)).all()
-    routes_dict = Routes.get_class_id_dict(routes)
+    routes = db.session.query(Routes).filter(Routes.gym_id == 1, Routes.class_id.in_(sorted_class_ids)).all()
+    routes = reorder_database_results(routes, sorted_class_ids)
 
-    # for now we store the class_id with max probability to db
-    predicted_class_id = sorted_probabilities[0][0]
-    probability = sorted_probabilities[0][1]
-    model_version = predictor.get_model_version()
-    route_id = routes_dict.get(predicted_class_id).get("id")
-    saved_image_path = store_image(imagefile, predicted_class_id)
-    db.session.add(
-        RouteImages(
-            route_id=route_id,
-            user_id=user_id,
-            probability=probability,
-            model_version=model_version,
-            path=saved_image_path,
-        )
-    )
-    db.session.commit()
+    sorted_route_predictions = []
+    for r in routes:
+        sorted_route_predictions.append(r.create_route_predict_response())
+    response = {'sorted_route_predictions': sorted_route_predictions}
 
-    response = {
-        "route_predictions": [
-            Routes.create_route_entry(class_id, probability, routes_dict)
-            for class_id, probability in sorted_probabilities
-        ]
-    }
+    store_image(imagefile, user_id, predictor_results, routes)
 
     return jsonify(response)
 
@@ -91,7 +68,7 @@ def view(user_id):
     return jsonify(logbook)
 
 
-def store_image(imagefile, predicted_class):
+def store_image_to_s3(imagefile, predicted_class):
     # TODO: generate proper id for image
     timestamp = datetime.datetime.now()
     file_name = f"test_image_class_{predicted_class}_{timestamp}.jpg"
@@ -101,3 +78,29 @@ def store_image(imagefile, predicted_class):
     file_path = f"{directory}/{file_name}"
     imagefile.save(file_path)
     return file_path
+
+
+def store_image(imagefile, user_id, predictor_results, routes):
+    predicted_class_id_list = predictor_results.sort_classes_by_probability(max_results=1)
+    predicted_class_id = predicted_class_id_list[0]  # since we requested one result
+    saved_image_path = store_image_to_s3(imagefile, predicted_class_id)
+
+    model_probability = predictor_results.get_class_probability(predicted_class_id)
+    model_route_id = routes[0].id  # since passed routes are ordered
+    db.session.add(
+        RouteImages(
+            user_id=user_id,
+            model_route_id=model_route_id,
+            model_probability=model_probability,
+            model_version=predictor_results.model_version,
+            path=saved_image_path,
+        )
+    )
+    db.session.commit()
+
+
+def reorder_database_results(routes, sorted_class_ids):
+    route_map = {r.class_id: r for r in routes}
+    sorted_routes = [route_map[c] for c in sorted_class_ids]
+    return sorted_routes
+
