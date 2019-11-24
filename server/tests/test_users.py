@@ -68,14 +68,16 @@ def test_predict_with_unknown_image(client, resource_dir, auth_headers):
     assert resp.get_json() == unknown_route_response
 
 
-def test_storing_image_path_to_db(app, client, resource_dir):
+def test_storing_image_path_to_db(app, client, resource_dir, auth_headers):
     """
     Testing with an image of a route unknown to the model.
     """
     data = {"image": open(f"{resource_dir}/unknown_route.jpg", "rb")}
 
-    resp = client.post("/users/1/predict", data=data)
+    resp = client.post("/users/1/predict", data=data, headers=auth_headers)
+    assert resp.status_code == 200
+
     with app.app_context():
         db_probability = db.session.query(RouteImages).filter_by(model_route_id=15).one_or_none().model_probability
-    assert resp.status_code == 200
+
     assert math.isclose(db_probability, 0.95810854434967)

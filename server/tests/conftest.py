@@ -49,8 +49,8 @@ def app(resource_dir):
 
     yield app
     with app.app_context():
-        _db.session.remove()
-        _db.drop_all()
+        db.session.remove()
+        db.drop_all()
 
 
 @pytest.fixture
@@ -66,7 +66,7 @@ def resource_dir():
         "resources"
     )
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def auth_headers(app):
     with app.app_context():
         access_token = create_access_token(identity="test")
