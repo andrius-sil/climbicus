@@ -22,6 +22,8 @@ def app(resource_dir):
     app.testing = True
 
     with app.app_context():
+        db.create_all()
+
         db.session.add(Users(email="test@testing.com", password="testing"))
         db.session.add(Gyms(name="The Castle Climbing Centre"))
         db.session.flush()

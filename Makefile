@@ -9,12 +9,15 @@ docker-build-db:
 docker-build: docker-build-server docker-build-db
 
 docker-run:
+		docker-compose -f docker-compose.yml -f docker-compose.dev.yml run server $(args)
+
+docker-up:
 		docker-compose -f docker-compose.yml -f docker-compose.dev.yml up $(args)
 
 docker-down:
 	  docker-compose -f docker-compose.yml -f docker-compose.dev.yml down
 
-docker-run-prod:
+docker-up-prod:
 		docker-compose -f docker-compose.yml up
 
 ec2-deploy:
@@ -22,9 +25,6 @@ ec2-deploy:
 
 model-deploy:
 	aws s3 sync s3://climbicus/models/current/ server/predictor/model_files/
-
-sh-server:
-	  docker exec -it climbicus_server_1 /bin/bash
 
 populate-test-database:
 	  docker exec -it climbicus_server_1 /bin/bash \

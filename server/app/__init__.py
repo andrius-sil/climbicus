@@ -1,4 +1,6 @@
+import click
 from flask import Flask
+from flask.cli import with_appcontext
 from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
 
@@ -28,8 +30,17 @@ def create_app(db_connection_uri, model_path, class_indices_path, model_version,
     app.config["SQLALCHEMY_DATABASE_URI"] = db_connection_uri
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.init_app(app)
-    with app.app_context():
-        db.create_all()
-        predictor.load_model(model_path, class_indices_path, model_version)
+
+    predictor.load_model(model_path, class_indices_path, model_version)
+
+    app.cli.add_command(recreate_db_cmd)
 
     return app
+
+
+@click.command("recreate-db")
+@with_appcontext
+def recreate_db_cmd():
+    db.drop_all()
+    db.create_all()
+    print("Initialised the database")

@@ -12,6 +12,7 @@ services:
       - TF_CPP_MIN_LOG_LEVEL=2 # silence 'Your CPU supports instructions that this TensorFlow binary was not compiled to use ...' warnings
     volumes:
       - ./server/:/app
+    entrypoint:
+      - /app/entrypoint.sh
     command:
-      flask run --host=0.0.0.0
-
+      "dev"
