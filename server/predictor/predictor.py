@@ -1,3 +1,4 @@
+import operator
 import pickle
 
 import numpy as np
@@ -48,10 +49,29 @@ class Predictor:
             set_session(self.tf_session)
             predicted_probabilities = self.model.predict(img)
 
-        predicted_classes_and_probabilities = {
-            v: predicted_probabilities[0, k].astype(float) for k, v in self.class_indices.items()
-        }
-        return predicted_classes_and_probabilities
+        predictor_results = PredictorResults(predicted_probabilities, self.class_indices,  self.model_version)
+
+        return predictor_results
 
     def get_model_version(self):
         return self.model_version
+
+
+class PredictorResults:
+    def __init__(self, predicted_probabilities, class_indices, model_version):
+        predicted_probabilities = predicted_probabilities.squeeze()  # squeeze out the redundant dimension
+        predicted_classes_and_probabilities = {
+            v: predicted_probabilities[k].astype(float) for k, v in class_indices.items()
+        }
+        self.model_version = model_version
+        self.predicted_classes_and_probabilities = predicted_classes_and_probabilities
+
+    def sort_classes_by_probability(self, max_results):
+        sorted_class_ids = sorted(
+            self.predicted_classes_and_probabilities, key=self.predicted_classes_and_probabilities.get, reverse=True
+        )
+        sorted_class_ids = sorted_class_ids[:max_results]
+        return sorted_class_ids
+
+    def get_class_probability(self, class_id):
+        return self.predicted_classes_and_probabilities.get(class_id)
