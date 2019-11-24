@@ -5,6 +5,9 @@ from flask_jwt_extended import verify_jwt_in_request
 def register_handlers(app):
     @app.before_request
     def check_auth_required():
+        if app.config["DISABLE_AUTH"]:
+            return
+
         if not request.endpoint:
             return
 
