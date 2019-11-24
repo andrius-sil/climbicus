@@ -26,9 +26,5 @@ ec2-deploy:
 model-deploy:
 	aws s3 sync s3://climbicus/models/current/ server/predictor/model_files/
 
-populate-test-database:
-	  docker exec -it climbicus_server_1 /bin/bash \
-		-c "python3 -m scripts.dummy_db_data"
-
 tests:
 	 docker exec climbicus_server_1 python -m pytest -v $(args) ./tests

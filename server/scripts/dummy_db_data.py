@@ -1,14 +1,7 @@
-from app import db
 from app.models import Gyms, RouteImages, Routes, UserRouteLog, Users
-from run import app
-from datetime import datetime
 
-# Instructions:
-# make docker-down
-# make docker-run
-# make populate-test-database
 
-with app.app_context():
+def preload_dummy_data(db):
     db.session.add(Users(email="test@testing.com", password="testing"))
     db.session.add(Gyms(name="The Castle Climbing Centre"))
     db.session.flush()
