@@ -12,7 +12,6 @@ users_blueprint = Blueprint("users_blueprint", __name__, url_prefix="/users")
 MAX_NUMBER_OF_RESULTS = 20
 
 
-
 @users_blueprint.route("/<int:user_id>/predict", methods=["POST"])
 def predict(user_id):
     imagefile = request.files.get("image")
