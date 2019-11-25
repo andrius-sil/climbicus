@@ -26,7 +26,7 @@ def predict(user_id):
 
     # will need to filter this by appropriate gym_id
     routes = db.session.query(Routes).filter(Routes.gym_id == 1, Routes.class_id.in_(sorted_class_ids)).all()
-    routes = reorder_database_results(routes, sorted_class_ids)
+    routes = reorder_routes_by_classes(routes, sorted_class_ids)
 
     sorted_route_predictions = [{"route_id": r.id, "grade": r.grade} for r in routes]
     response = {"sorted_route_predictions": sorted_route_predictions}
@@ -95,7 +95,7 @@ def store_image(imagefile, user_id, model_route_id, model_probability, model_ver
     db.session.commit()
 
 
-def reorder_database_results(routes, sorted_class_ids):
+def reorder_routes_by_classes(routes, sorted_class_ids):
     route_map = {r.class_id: r for r in routes}
     sorted_routes = [route_map[c] for c in sorted_class_ids]
     return sorted_routes
