@@ -22,16 +22,22 @@ def predict(user_id):
     except OSError:
         abort(400, description="Not a valid image")
 
-    sorted_class_ids = predictor_results.sort_classes_by_probability(MAX_NUMBER_OF_ROUTES)
+    sorted_class_ids = predictor_results.get_sorted_class_ids(max_results=MAX_NUMBER_OF_ROUTES)
 
     # will need to filter this by appropriate gym_id
     routes = db.session.query(Routes).filter(Routes.gym_id == 1, Routes.class_id.in_(sorted_class_ids)).all()
     routes = reorder_database_results(routes, sorted_class_ids)
 
-    sorted_route_predictions = [{'route_id': r.id, 'grade': r.grade} for r in routes]
-    response = {'sorted_route_predictions': sorted_route_predictions}
+    sorted_route_predictions = [{"route_id": r.id, "grade": r.grade} for r in routes]
+    response = {"sorted_route_predictions": sorted_route_predictions}
 
-    store_image(imagefile, user_id, predictor_results, routes)
+    store_image(
+        imagefile=imagefile,
+        user_id=user_id,
+        model_route_id=routes[0].id,  # choosing the highest probability route id
+        model_probability=predictor_results.get_class_probability(sorted_class_ids[0]),
+        model_version=predictor_results.model_version
+    )
 
     return jsonify(response)
 
@@ -62,10 +68,10 @@ def view(user_id):
     return jsonify(logbook)
 
 
-def store_image_to_s3(imagefile, predicted_class):
+def store_image_to_s3(imagefile, model_route_id):
     # TODO: generate proper id for image
     timestamp = datetime.datetime.now()
-    file_name = f"test_image_class_{predicted_class}_{timestamp}.jpg"
+    file_name = f"test_image_class_{model_route_id}_{timestamp}.jpg"
     directory = "/.temp"
     if not os.path.exists(directory):
         os.makedirs(directory)
@@ -74,19 +80,15 @@ def store_image_to_s3(imagefile, predicted_class):
     return file_path
 
 
-def store_image(imagefile, user_id, predictor_results, routes):
-    predicted_class_id_list = predictor_results.sort_classes_by_probability(max_results=1)
-    predicted_class_id = predicted_class_id_list[0]  # since we requested one result
-    saved_image_path = store_image_to_s3(imagefile, predicted_class_id)
+def store_image(imagefile, user_id, model_route_id, model_probability, model_version):
+    saved_image_path = store_image_to_s3(imagefile, model_route_id)
 
-    model_probability = predictor_results.get_class_probability(predicted_class_id)
-    model_route_id = routes[0].id  # since passed routes are ordered
     db.session.add(
         RouteImages(
             user_id=user_id,
             model_route_id=model_route_id,
             model_probability=model_probability,
-            model_version=predictor_results.model_version,
+            model_version=model_version,
             path=saved_image_path,
         )
     )

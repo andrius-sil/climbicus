@@ -65,13 +65,16 @@ class PredictorResults:
         }
         self.model_version = model_version
         self.predicted_classes_and_probabilities = predicted_classes_and_probabilities
+        self.sorted_class_ids = self._sort_classes_by_probability()
 
-    def sort_classes_by_probability(self, max_results):
+    def _sort_classes_by_probability(self):
         sorted_class_ids = sorted(
             self.predicted_classes_and_probabilities, key=self.predicted_classes_and_probabilities.get, reverse=True
         )
-        sorted_class_ids = sorted_class_ids[:max_results]
         return sorted_class_ids
+
+    def get_sorted_class_ids(self, max_results):
+        return self.sorted_class_ids[:max_results]
 
     def get_class_probability(self, class_id):
         return self.predicted_classes_and_probabilities.get(class_id)
