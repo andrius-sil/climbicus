@@ -58,18 +58,18 @@ class Predictor:
 
 
 class PredictorResults:
-    def __init__(self, predicted_probabilities, class_indices, model_version):
-        predicted_probabilities = predicted_probabilities.squeeze()  # squeeze out the redundant dimension
-        predicted_classes_and_probabilities = {
-            v: predicted_probabilities[k].astype(float) for k, v in class_indices.items()
+    def __init__(self, probabilities, class_indices, model_version):
+        probabilities = probabilities.squeeze()  # squeeze out the redundant dimension
+        classes_and_probabilities = {
+            v: probabilities[k].astype(float) for k, v in class_indices.items()
         }
         self.model_version = model_version
-        self.predicted_classes_and_probabilities = predicted_classes_and_probabilities
+        self.classes_and_probabilities = classes_and_probabilities
         self.sorted_class_ids = self._sort_classes_by_probability()
 
     def _sort_classes_by_probability(self):
         sorted_class_ids = sorted(
-            self.predicted_classes_and_probabilities, key=self.predicted_classes_and_probabilities.get, reverse=True
+            self.classes_and_probabilities, key=self.classes_and_probabilities.get, reverse=True
         )
         return sorted_class_ids
 
@@ -77,4 +77,4 @@ class PredictorResults:
         return self.sorted_class_ids[:max_results]
 
     def get_class_probability(self, class_id):
-        return self.predicted_classes_and_probabilities.get(class_id)
+        return self.classes_and_probabilities.get(class_id)
