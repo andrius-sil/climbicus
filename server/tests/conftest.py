@@ -21,8 +21,6 @@ def app(resource_dir):
 
     app.testing = True
 
-    app.testing = True
-
     with app.app_context():
         db.create_all()
 
@@ -65,6 +63,7 @@ def resource_dir():
         os.path.dirname(os.path.realpath(__file__)),
         "resources"
     )
+
 
 @pytest.fixture(scope="function")
 def auth_headers(app):
