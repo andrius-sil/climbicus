@@ -28,9 +28,7 @@ def predict(user_id):
     routes = db.session.query(Routes).filter(Routes.gym_id == 1, Routes.class_id.in_(sorted_class_ids)).all()
     routes = reorder_database_results(routes, sorted_class_ids)
 
-    sorted_route_predictions = []
-    for r in routes:
-        sorted_route_predictions.append(r.create_route_predict_response())
+    sorted_route_predictions = [{'route_id': r.id, 'grade': r.grade} for r in routes]
     response = {'sorted_route_predictions': sorted_route_predictions}
 
     store_image(imagefile, user_id, predictor_results, routes)

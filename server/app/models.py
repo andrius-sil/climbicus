@@ -34,9 +34,6 @@ class Routes(db.Model):
     # TODO: preset list of possible grades
     grade = db.Column(db.String, nullable=False)
 
-    def create_route_predict_response(self):
-        return {'route_id': self.id, 'grade': self.grade}
-
 
 class RouteImages(db.Model):
     id = db.Column(db.Integer, db.Sequence('route_image_id_seq'), primary_key=True)
