@@ -11,7 +11,7 @@ DATABASE_CONNECTION_URI = "sqlite:///:memory:"
 JWT_SECRET_KEY = "super-secret-key"
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def app(resource_dir):
     """Create and configure a new app instance for each test."""
     model_path = f"{resource_dir}/castle_30_test_model.h5"
@@ -31,7 +31,14 @@ def app(resource_dir):
             db.session.add(Routes(gym_id=1, class_id=str(i), grade="7a"))
         db.session.flush()
         db.session.add(
-            RouteImages(route_id=1, user_id=1, probability=0.5, model_version="first_version", path="placeholder")
+            RouteImages(
+                user_route_id=1,
+                model_route_id=1,
+                user_id=1,
+                model_probability=0.5,
+                model_version="first_version",
+                path="placeholder",
+            )
         )
         db.session.add(
             UserRouteLog(route_id=1, user_id=1, gym_id=1, status="red-point", log_date=datetime(2012, 3, 3, 10, 10, 10))
@@ -39,6 +46,10 @@ def app(resource_dir):
         db.session.commit()
 
     yield app
+    
+    with app.app_context():
+        db.session.remove()
+        db.drop_all()
 
 
 @pytest.fixture
@@ -54,7 +65,8 @@ def resource_dir():
         "resources"
     )
 
-@pytest.fixture(scope="session")
+
+@pytest.fixture(scope="function")
 def auth_headers(app):
     with app.app_context():
         access_token = create_access_token(identity="test")
