@@ -7,12 +7,12 @@ from app.models import RouteImages, Routes, UserRouteLog
 
 from flask import abort, request, Blueprint, jsonify
 
-users_blueprint = Blueprint("users_blueprint", __name__, url_prefix="/users")
+blueprint = Blueprint("users_blueprint", __name__, url_prefix="/users")
 
 MAX_NUMBER_OF_PREDICTED_ROUTES = 20
 
 
-@users_blueprint.route("/<int:user_id>/predict", methods=["POST"])
+@blueprint.route("/<int:user_id>/predict", methods=["POST"])
 def predict(user_id):
     imagefile = request.files.get("image")
     if imagefile is None:
@@ -42,7 +42,7 @@ def predict(user_id):
     return jsonify(response)
 
 
-@users_blueprint.route("/<int:user_id>/logbooks/add", methods=["POST"])
+@blueprint.route("/<int:user_id>/logbooks/add", methods=["POST"])
 def add(user_id):
     status = request.form.get("status")
     predicted_class_id = request.form.get("predicted_class_id")
@@ -58,7 +58,7 @@ def add(user_id):
     return "Route status added to log"
 
 
-@users_blueprint.route("/<int:user_id>/logbooks/view", methods=["GET"])
+@blueprint.route("/<int:user_id>/logbooks/view", methods=["GET"])
 def view(user_id):
     results = UserRouteLog.query.filter_by(user_id=user_id).all()
     logbook = {}
