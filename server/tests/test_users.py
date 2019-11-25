@@ -28,9 +28,11 @@ def test_predict_with_image(client, resource_dir, auth_headers):
     data = {"image": open(f"{resource_dir}/green_route.jpg", "rb")}
 
     resp = client.post("/users/1/predict", data=data, headers=auth_headers)
+
+    assert resp.status_code == 200
+
     with open(f"{resource_dir}/green_route_response.json", 'rb') as f:
         green_route_response = json.load(f)
-    assert resp.status_code == 200
     assert resp.get_json() == green_route_response
 
 
@@ -62,9 +64,10 @@ def test_predict_with_unknown_image(client, resource_dir, auth_headers):
     resp = client.post("/users/1/predict", data=data, headers=auth_headers)
     # For now, the current model still predicts a route with high probability, hence we cannot say "this is unknown
     # route"
+    assert resp.status_code == 200
+
     with open(f"{resource_dir}/unknown_route_response.json", 'rb') as f:
         unknown_route_response = json.load(f)
-    assert resp.status_code == 200
     assert resp.get_json() == unknown_route_response
 
 
