@@ -9,7 +9,7 @@ from flask import abort, request, Blueprint, jsonify
 
 users_blueprint = Blueprint("users_blueprint", __name__, url_prefix="/users")
 
-MAX_NUMBER_OF_RESULTS = 20
+MAX_NUMBER_OF_ROUTES = 20
 
 
 @users_blueprint.route("/<int:user_id>/predict", methods=["POST"])
@@ -22,7 +22,7 @@ def predict(user_id):
     except OSError:
         abort(400, description="Not a valid image")
 
-    sorted_class_ids = predictor_results.sort_classes_by_probability(MAX_NUMBER_OF_RESULTS)
+    sorted_class_ids = predictor_results.sort_classes_by_probability(MAX_NUMBER_OF_ROUTES)
 
     # will need to filter this by appropriate gym_id
     routes = db.session.query(Routes).filter(Routes.gym_id == 1, Routes.class_id.in_(sorted_class_ids)).all()
