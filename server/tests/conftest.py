@@ -46,6 +46,7 @@ def app(resource_dir):
         db.session.commit()
 
     yield app
+    
     with app.app_context():
         db.session.remove()
         db.drop_all()
