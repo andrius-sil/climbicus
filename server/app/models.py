@@ -59,7 +59,8 @@ class RouteImages(db.Model):
     path = db.Column(db.String, unique=True, nullable=False)
 
     def __repr__(self):
-        return model_repr("RouteImage", id=self.id, path=self.path)
+        return model_repr("RouteImage", id=self.id, user_id=self.user_id, user_route_id=self.user_route_id,
+                          model_route_id=self.model_route_id, path=self.path)
 
 
 class UserRouteLog(db.Model):

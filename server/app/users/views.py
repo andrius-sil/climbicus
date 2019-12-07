@@ -1,8 +1,10 @@
+import base64
 import datetime
 import os
 
+from sqlalchemy import func
 
-from app import db, predictor
+from app import db, predictor, io
 from app.models import RouteImages, Routes, UserRouteLog
 
 from flask import abort, request, Blueprint, jsonify
@@ -66,6 +68,40 @@ def view(user_id):
         grade = Routes.query.filter_by(id=r.route_id).one().grade
         logbook[r.id] = {"grade": grade, "log_date": r.log_date, "status": r.status}
     return jsonify(logbook)
+
+
+@blueprint.route("/<int:user_id>/route_images", methods=["GET"])
+def route_images(user_id):
+    if not request.is_json:
+        abort(400, "Request data should be in JSON format")
+    route_ids = request.json["route_ids"]
+
+    route_id_colname = "model_route_id"
+    route_id_col = getattr(RouteImages, route_id_colname)
+
+    subquery = db.session.query(
+        RouteImages,
+        func.rank().over(
+            order_by=(RouteImages.user_id == user_id).desc(),
+            partition_by=route_id_col,
+        ).label("rank"),
+     ) \
+        .filter(route_id_col.in_(route_ids)) \
+        .subquery()
+
+    q = db.session.query(RouteImages) \
+        .select_entity_from(subquery) \
+        .filter(subquery.c.rank == 1)
+
+    images = {}
+    for route_image in q:
+        filepath = io.provider.download_file(route_image.path)
+        with open(filepath, "rb") as f:
+            base64_bytes = base64.b64encode(f.read())
+            base64_str = base64_bytes.decode("utf-8")
+            images[getattr(route_image, route_id_colname)] = base64_str
+
+    return jsonify({"route_images": images})
 
 
 def store_image_to_s3(imagefile, model_route_id):

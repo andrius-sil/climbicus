@@ -7,8 +7,24 @@ from app import create_app, db
 from app.models import Gyms, RouteImages, Routes, UserRouteLog, Users
 from datetime import datetime
 
+from app.utils.io import InputOutputProvider
+
 DATABASE_CONNECTION_URI = "sqlite:///:memory:"
 JWT_SECRET_KEY = "super-secret-key"
+
+
+class TestInputOutputProvider(InputOutputProvider):
+
+    def __init__(self, resource_dir):
+        self.resource_dir = resource_dir
+
+    def download_file(self, local_path):
+        filepath = f"{self.resource_dir}/route_images/{local_path}"
+        return filepath
+
+    def upload_file(self, remote_path):
+        raise NotImplementedError()
+
 
 
 @pytest.fixture(scope="function")
@@ -17,29 +33,42 @@ def app(resource_dir):
     model_path = f"{resource_dir}/castle_30_test_model.h5"
     class_indices_path = f"{resource_dir}/class_indices.pkl"
     model_version = "castle_test"
-    app = create_app(DATABASE_CONNECTION_URI, model_path, class_indices_path, model_version, JWT_SECRET_KEY)
+    app = create_app(DATABASE_CONNECTION_URI, model_path, class_indices_path, model_version, JWT_SECRET_KEY, TestInputOutputProvider(resource_dir))
 
     app.testing = True
 
     with app.app_context():
         db.create_all()
 
-        db.session.add(Users(email="test@testing.com", password="testing"))
+        db.session.add(Users(email="test1@testing.com", password="testing1"))
+        db.session.add(Users(email="test2@testing.com", password="testing2"))
         db.session.add(Gyms(name="The Castle Climbing Centre"))
         db.session.flush()
         for i in range(1, 31):
             db.session.add(Routes(gym_id=1, class_id=str(i), grade="7a"))
         db.session.flush()
-        db.session.add(
-            RouteImages(
-                user_route_id=1,
-                model_route_id=1,
-                user_id=1,
-                model_probability=0.5,
-                model_version="first_version",
-                path="placeholder",
+        for i in range(1, 5):
+            db.session.add(
+                RouteImages(
+                    user_route_id=i,
+                    model_route_id=i,
+                    user_id=1,
+                    model_probability=0.5,
+                    model_version="first_version",
+                    path=f"user1_route{i}.jpg",
+                )
             )
-        )
+            if i % 2 == 0:
+                db.session.add(
+                    RouteImages(
+                        user_route_id=i,
+                        model_route_id=i,
+                        user_id=2,
+                        model_probability=0.5,
+                        model_version="first_version",
+                        path=f"user2_route{i}.jpg",
+                    )
+                )
         db.session.add(
             UserRouteLog(route_id=1, user_id=1, gym_id=1, status="red-point", log_date=datetime(2012, 3, 3, 10, 10, 10))
         )

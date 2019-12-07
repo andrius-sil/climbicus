@@ -3,8 +3,8 @@ from flask import json
 
 def test_login(app, client):
     data = {
-        "email": "test@testing.com",
-        "password": "testing",
+        "email": "test1@testing.com",
+        "password": "testing1",
     }
     resp = client.post("/login", data=json.dumps(data), content_type="application/json")
 
@@ -26,7 +26,7 @@ def test_login_with_invalid_email(app, client):
 
 def test_login_with_invalid_password(app, client):
     data = {
-        "email": "test@testing.com",
+        "email": "test1@testing.com",
         "password": "INVALID",
     }
     resp = client.post("/login", data=json.dumps(data), content_type="application/json")
