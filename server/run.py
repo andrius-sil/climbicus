@@ -1,6 +1,7 @@
 import os
 
 from app import create_app
+from app.utils.io import S3InputOutputProvider
 from predictor.model_parameters import MODEL_PATH, MODEL_VERSION, CLASS_INDICES_PATH
 
 user = os.environ["POSTGRES_USER"]
@@ -14,4 +15,4 @@ JWT_SECRET_KEY = os.environ["JWT_SECRET_KEY"]
 
 DISABLE_AUTH = os.getenv("FLASK_DISABLE_AUTH", False)
 
-app = create_app(DATABASE_CONNECTION_URI, MODEL_PATH, CLASS_INDICES_PATH, MODEL_VERSION, JWT_SECRET_KEY, DISABLE_AUTH)
+app = create_app(DATABASE_CONNECTION_URI, MODEL_PATH, CLASS_INDICES_PATH, MODEL_VERSION, JWT_SECRET_KEY, S3InputOutputProvider(), DISABLE_AUTH)

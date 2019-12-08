@@ -3,14 +3,16 @@ from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
 
 from app.app_handlers import register_handlers
+from app.utils.io import InputOutput
 from predictor.predictor import Predictor
 
 
 db = SQLAlchemy()
 predictor = Predictor()
+io = InputOutput()
 
 
-def create_app(db_connection_uri, model_path, class_indices_path, model_version, jwt_secret_key, disable_auth=False):
+def create_app(db_connection_uri, model_path, class_indices_path, model_version, jwt_secret_key, io_provider, disable_auth=False):
     app = Flask(__name__)
 
     app.config["JWT_SECRET_KEY"] = jwt_secret_key
@@ -30,6 +32,8 @@ def create_app(db_connection_uri, model_path, class_indices_path, model_version,
     db.init_app(app)
 
     predictor.load_model(model_path, class_indices_path, model_version)
+
+    io.load(io_provider)
 
     from app.commands import recreate_db_cmd
     app.cli.add_command(recreate_db_cmd)

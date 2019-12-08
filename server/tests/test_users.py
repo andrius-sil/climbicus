@@ -1,3 +1,4 @@
+import base64
 import math
 
 from app.models import RouteImages, UserRouteLog
@@ -84,3 +85,34 @@ def test_storing_image_path_to_db(app, client, resource_dir, auth_headers):
         db_probability = db.session.query(RouteImages).filter_by(model_route_id=15).one_or_none().model_probability
 
     assert math.isclose(db_probability, 0.95810854434967)
+
+
+def test_route_images(client, resource_dir, auth_headers):
+    routes = {
+        "1": "user1_route1.jpg",
+        "2": "user2_route2_1.jpg",
+        "3": "user1_route3.jpg",
+    }
+
+    # Request data with invalid '99' route id.
+    data = {
+        "route_ids": list(routes.keys()) + ["99"],
+    }
+    resp = client.get("/users/2/route_images", data=json.dumps(data), content_type="application/json", headers=auth_headers)
+
+    assert resp.status_code == 200
+    assert resp.is_json
+
+    route_images = resp.json["route_images"]
+    for id, path in routes.items():
+        base64_str = route_images[id]
+        image_bytes = base64.b64decode(base64_str)
+
+        filepath = f"{resource_dir}/route_images/{path}"
+        with open(filepath, "rb") as f:
+            assert f.read() == image_bytes
+
+        del route_images[id]
+
+    # Check that only route images of interest were fetched from the server.
+    assert len(route_images) == 0
