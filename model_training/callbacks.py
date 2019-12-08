@@ -62,7 +62,7 @@ def plot_confusion_matrix(cm, class_names):
     return figure
 
 
-def log_confusion_matrix(epoch, logs, model, validation_generator,  log_dir):
+def log_confusion_matrix(epoch, logs, model, validation_generator, log_dir):
     # Use the model to predict the values from the validation dataset.
     y_pred_raw = model.predict_generator(
         validation_generator, validation_generator.samples // validation_generator.batch_size
@@ -75,9 +75,10 @@ def log_confusion_matrix(epoch, logs, model, validation_generator,  log_dir):
     cm_image = plot_to_image(figure)
 
     # Log the confusion matrix as an image summary.
-    file_writer_cm = tf.summary.create_file_writer(os.path.join(log_dir, "cm"))
+    cm_dir = os.path.join(log_dir, "cm")
+    file_writer_cm = tf.summary.create_file_writer(cm_dir)
     with file_writer_cm.as_default():
-    tf.summary.image("Confusion Matrix", cm_image, step=epoch)
+        tf.summary.image("Confusion Matrix", cm_image, step=epoch)
 
 
 class LRTensorBoard(TensorBoard):
@@ -101,7 +102,8 @@ class TensorBoardImage(Callback):
         # Do something to the image
         img = (255 * skimage.util.random_noise(img)).astype("uint8")
 
-        writer = tf.summary.create_file_writer(os.path.join( self.log_dir, "td"))
+        td_dir = os.path.join(self.log_dir, "td")
+        writer = tf.summary.create_file_writer(td_dir)
         with writer.as_default():
             img = np.reshape(img, (-1, 512, 512, 3))
             tf.summary.image("Training data", img, step=epoch)
@@ -109,7 +111,6 @@ class TensorBoardImage(Callback):
 
 def get_callbacks(model_name, model, train_generator, validation_generator):
     model_id = time.strftime("%Y-%m-%d_%H-%M-%S")
-    log_dir = os.path.join(logs_base_dir, f"{model_name}_{model_id}")
     callback_csv = CSVLogger(
         filename=os.path.join(logs_base_dir, f"{model_name}_{model_id}.csv"), separator=",", append=False
     )
@@ -123,8 +124,9 @@ def get_callbacks(model_name, model, train_generator, validation_generator):
         mode="auto",
         period=3,
     )
+    tensorboard_log_dir = os.path.join(logs_base_dir, "logs", f"{model_name}_{model_id}")
     callback_tensorboard = TensorBoard(
-        log_dir=os.path.join(logs_base_dir, "logs", f"{model_name}_{model_id}"),
+        log_dir=tensorboard_log_dir,
         histogram_freq=0,
         write_graph=True,
         write_grads=True,
@@ -134,9 +136,11 @@ def get_callbacks(model_name, model, train_generator, validation_generator):
     # callback_learning_rate = LRTensorBoard(log_dir=os.path.join(logs_base_dir, 'logs', f'{model_name}_{model_id}'))
 
     callback_early_stopping = EarlyStopping(monitor="val_loss", mode="auto", verbose=1, patience=5)
-    tbi_callback = TensorBoardImage("Example image", log_dir)
+    tbi_callback = TensorBoardImage("Example image", tensorboard_log_dir)
     cm_callback = LambdaCallback(
-        on_epoch_end=lambda epoch, logs: log_confusion_matrix(epoch, logs, model, validation_generator, log_dir)
+        on_epoch_end=lambda epoch, logs: log_confusion_matrix(
+            epoch, logs, model, validation_generator, tensorboard_log_dir
+        )
     )
     return [
         callback_csv,
