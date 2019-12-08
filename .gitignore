@@ -5,3 +5,4 @@
 *.jupyter
 __pycache__
 server/predictor/model_files/
+model_training/callbacks/
