@@ -105,6 +105,21 @@ def route_images(user_id):
     return jsonify({"route_images": images})
 
 
+@blueprint.route("/<int:user_id>/route_match/<int:route_image_id>", methods=["PATCH"])
+def route_match(user_id, route_image_id):
+    user_match = int(request.form["match"])
+    user_route_id = request.form.get("route_id")
+
+    route_image = db.session.query(RouteImages).filter_by(id=route_image_id, user_id=user_id).one()
+    if user_match == 1:
+        route_image.user_route_id = user_route_id
+    else:
+        route_image.user_route_unmatched = True
+    db.session.commit()
+
+    return "Route image updated with user's route id choice"
+
+
 def store_image_to_s3(imagefile, model_route_id):
     # TODO: generate proper id for image
     timestamp = datetime.datetime.now()
