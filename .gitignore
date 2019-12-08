@@ -6,3 +6,4 @@
 prod_secrets.env
 __pycache__
 server/predictor/model_files/
+model_training/callbacks/

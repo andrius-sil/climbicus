@@ -148,6 +148,6 @@ def get_callbacks(model_name, model, train_generator, validation_generator):
         callback_tensorboard,
         # callback_learning_rate,
         callback_early_stopping,
-        tbi_callback,
+        # tbi_callback,
         cm_callback,
     ]
