@@ -33,13 +33,14 @@ def predict(user_id):
     sorted_route_predictions = [{"route_id": r.id, "grade": r.grade} for r in routes]
     response = {"sorted_route_predictions": sorted_route_predictions}
 
-    store_image(
+    route_image_id = store_image(
         imagefile=imagefile,
         user_id=user_id,
         model_route_id=routes[0].id,  # choosing the highest probability route id
         model_probability=predictor_results.get_class_probability(sorted_class_ids[0]),
         model_version=predictor_results.model_version
     )
+    response["route_image_id"] = route_image_id
 
     return jsonify(response)
 
@@ -119,16 +120,17 @@ def store_image_to_s3(imagefile, model_route_id):
 def store_image(imagefile, user_id, model_route_id, model_probability, model_version):
     saved_image_path = store_image_to_s3(imagefile, model_route_id)
 
-    db.session.add(
-        RouteImages(
-            user_id=user_id,
-            model_route_id=model_route_id,
-            model_probability=model_probability,
-            model_version=model_version,
-            path=saved_image_path,
-        )
+    route_image = RouteImages(
+        user_id=user_id,
+        model_route_id=model_route_id,
+        model_probability=model_probability,
+        model_version=model_version,
+        path=saved_image_path,
     )
+    db.session.add(route_image)
     db.session.commit()
+
+    return route_image.id
 
 
 def reorder_routes_by_classes(routes, sorted_class_ids):
