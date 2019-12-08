@@ -66,7 +66,17 @@ def app(resource_dir):
                         user_id=2,
                         model_probability=0.5,
                         model_version="first_version",
-                        path=f"user2_route{i}.jpg",
+                        path=f"user2_route{i}_1.jpg",
+                    )
+                )
+                db.session.add(
+                    RouteImages(
+                        user_route_id=i,
+                        model_route_id=i,
+                        user_id=2,
+                        model_probability=0.5,
+                        model_version="first_version",
+                        path=f"user2_route{i}_2.jpg",
                     )
                 )
         db.session.add(

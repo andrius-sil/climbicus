@@ -90,7 +90,7 @@ def test_storing_image_path_to_db(app, client, resource_dir, auth_headers):
 def test_route_images(client, resource_dir, auth_headers):
     routes = {
         "1": "user1_route1.jpg",
-        "2": "user2_route2.jpg",
+        "2": "user2_route2_1.jpg",
         "3": "user1_route3.jpg",
     }
 

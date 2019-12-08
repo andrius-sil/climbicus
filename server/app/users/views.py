@@ -81,7 +81,7 @@ def route_images(user_id):
 
     subquery = db.session.query(
         RouteImages,
-        func.rank().over(
+        func.row_number().over(
             order_by=(RouteImages.user_id == user_id).desc(),
             partition_by=route_id_col,
         ).label("rank"),
