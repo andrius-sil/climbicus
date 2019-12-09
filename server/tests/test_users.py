@@ -120,7 +120,7 @@ def test_route_images(client, resource_dir, auth_headers):
 
 def test_route_match(client, app, auth_headers):
     data = {
-        "match": 1,
+        "is_match": 1,
         "route_id": 2,
     }
     resp = client.patch("/users/2/route_match/4", data=data, headers=auth_headers)
@@ -135,7 +135,7 @@ def test_route_match(client, app, auth_headers):
 
 def test_route_match_no_match(client, app, auth_headers):
     data = {
-        "match": 0,
+        "is_match": 0,
         "route_id": None,
     }
     resp = client.patch("/users/2/route_match/4", data=data, headers=auth_headers)

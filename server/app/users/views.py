@@ -107,7 +107,7 @@ def route_images(user_id):
 
 @blueprint.route("/<int:user_id>/route_match/<int:route_image_id>", methods=["PATCH"])
 def route_match(user_id, route_image_id):
-    user_match = int(request.form["match"])
+    user_match = int(request.form["is_match"])
     user_route_id = request.form.get("route_id")
 
     route_image = db.session.query(RouteImages).filter_by(id=route_image_id, user_id=user_id).one()
