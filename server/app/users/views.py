@@ -33,13 +33,14 @@ def predict(user_id):
     sorted_route_predictions = [{"route_id": r.id, "grade": r.grade} for r in routes]
     response = {"sorted_route_predictions": sorted_route_predictions}
 
-    store_image(
+    route_image_id = store_image(
         imagefile=imagefile,
         user_id=user_id,
         model_route_id=routes[0].id,  # choosing the highest probability route id
         model_probability=predictor_results.get_class_probability(sorted_class_ids[0]),
         model_version=predictor_results.model_version
     )
+    response["route_image_id"] = route_image_id
 
     return jsonify(response)
 
@@ -104,6 +105,21 @@ def route_images(user_id):
     return jsonify({"route_images": images})
 
 
+@blueprint.route("/<int:user_id>/route_match/<int:route_image_id>", methods=["PATCH"])
+def route_match(user_id, route_image_id):
+    user_match = int(request.form["is_match"])
+    user_route_id = request.form.get("route_id")
+
+    route_image = db.session.query(RouteImages).filter_by(id=route_image_id, user_id=user_id).one()
+    if user_match == 1:
+        route_image.user_route_id = user_route_id
+    else:
+        route_image.user_route_unmatched = True
+    db.session.commit()
+
+    return "Route image updated with user's route id choice"
+
+
 def store_image_to_s3(imagefile, model_route_id):
     # TODO: generate proper id for image
     timestamp = datetime.datetime.now()
@@ -119,16 +135,17 @@ def store_image_to_s3(imagefile, model_route_id):
 def store_image(imagefile, user_id, model_route_id, model_probability, model_version):
     saved_image_path = store_image_to_s3(imagefile, model_route_id)
 
-    db.session.add(
-        RouteImages(
-            user_id=user_id,
-            model_route_id=model_route_id,
-            model_probability=model_probability,
-            model_version=model_version,
-            path=saved_image_path,
-        )
+    route_image = RouteImages(
+        user_id=user_id,
+        model_route_id=model_route_id,
+        model_probability=model_probability,
+        model_version=model_version,
+        path=saved_image_path,
     )
+    db.session.add(route_image)
     db.session.commit()
+
+    return route_image.id
 
 
 def reorder_routes_by_classes(routes, sorted_class_ids):

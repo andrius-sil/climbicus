@@ -116,3 +116,34 @@ def test_route_images(client, resource_dir, auth_headers):
 
     # Check that only route images of interest were fetched from the server.
     assert len(route_images) == 0
+
+
+def test_route_match(client, app, auth_headers):
+    data = {
+        "is_match": 1,
+        "route_id": 2,
+    }
+    resp = client.patch("/users/2/route_match/4", data=data, headers=auth_headers)
+
+    assert resp.status_code == 200
+
+    with app.app_context():
+        route_image = db.session.query(RouteImages).filter_by(id=4).one()
+        assert route_image.user_route_id == 2
+        assert not route_image.user_route_unmatched
+
+
+def test_route_match_no_match(client, app, auth_headers):
+    data = {
+        "is_match": 0,
+        "route_id": None,
+    }
+    resp = client.patch("/users/2/route_match/4", data=data, headers=auth_headers)
+
+    assert resp.status_code == 200
+
+    with app.app_context():
+        route_image = db.session.query(RouteImages).filter_by(id=4).one()
+        assert route_image.user_route_id is None
+        assert route_image.user_route_unmatched
+

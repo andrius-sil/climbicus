@@ -52,7 +52,15 @@ class Routes(db.Model):
 class RouteImages(db.Model):
     id = db.Column(db.Integer, db.Sequence('route_image_id_seq'), primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    """
+    Columns indicating user's route choice.
+    'user_route_id' can be NULL indicating that no response was received from a user.
+    'user_route_unmatched' is True when user explicitly indicated that their image doesn't match our "list of routes".
+    """
     user_route_id = db.Column(db.Integer, db.ForeignKey('routes.id'))
+    user_route_unmatched = db.Column(db.Boolean, nullable=False, default=False)
+
     model_route_id = db.Column(db.Integer, db.ForeignKey('routes.id'), nullable=False)
     model_probability = db.Column(db.Float, nullable=False)
     model_version = db.Column(db.String, nullable=False)

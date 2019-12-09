@@ -71,7 +71,6 @@ def app(resource_dir):
                 )
                 db.session.add(
                     RouteImages(
-                        user_route_id=i,
                         model_route_id=i,
                         user_id=2,
                         model_probability=0.5,
