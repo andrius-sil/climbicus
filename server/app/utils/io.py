@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+import boto3
 import werkzeug
 
 
@@ -25,8 +26,22 @@ class InputOutputProvider(ABC):
 
 class S3InputOutputProvider(InputOutputProvider):
 
+    def __init__(self):
+        self.s3 = boto3.client("s3")
+        self.bucket = "climbicus"
+
     def download_file(self, local_path):
         raise NotImplementedError()
 
     def upload_file(self, file, remote_path):
-        raise NotImplementedError()
+        file.seek(0)
+        resp = self.s3.put_object(
+            Body=file,
+            Bucket=self.bucket,
+            Key=remote_path,
+            ContentType=file.content_type,
+        )
+
+        assert resp["ResponseMetadata"]["HTTPStatusCode"] == 200
+
+        return f"s3://{self.bucket}/{remote_path}"
