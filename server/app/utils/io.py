@@ -1,5 +1,8 @@
 from abc import ABC, abstractmethod
 
+import werkzeug
+
+
 class InputOutput:
 
     def __init__(self):
@@ -16,7 +19,7 @@ class InputOutputProvider(ABC):
         pass
 
     @abstractmethod
-    def upload_file(self, remote_path):
+    def upload_file(self, file: werkzeug.FileStorage, remote_path):
         pass
 
 
@@ -25,6 +28,5 @@ class S3InputOutputProvider(InputOutputProvider):
     def download_file(self, local_path):
         raise NotImplementedError()
 
-    def upload_file(self, remote_path):
+    def upload_file(self, file, remote_path):
         raise NotImplementedError()
-

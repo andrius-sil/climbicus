@@ -120,20 +120,11 @@ def route_match(user_id, route_image_id):
     return "Route image updated with user's route id choice"
 
 
-def store_image_to_s3(imagefile, model_route_id):
+def store_image(imagefile, user_id, model_route_id, model_probability, model_version):
     # TODO: generate proper id for image
     timestamp = datetime.datetime.now()
     file_name = f"test_image_class_{model_route_id}_{timestamp}.jpg"
-    directory = "/.temp"
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    file_path = f"{directory}/{file_name}"
-    imagefile.save(file_path)
-    return file_path
-
-
-def store_image(imagefile, user_id, model_route_id, model_probability, model_version):
-    saved_image_path = store_image_to_s3(imagefile, model_route_id)
+    saved_image_path = io.provider.upload_file(imagefile, file_name)
 
     route_image = RouteImages(
         user_id=user_id,

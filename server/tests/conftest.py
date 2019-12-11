@@ -17,13 +17,16 @@ class TestInputOutputProvider(InputOutputProvider):
 
     def __init__(self, resource_dir):
         self.resource_dir = resource_dir
+        self.upload_dir = "/tmp"
 
     def download_file(self, local_path):
         filepath = f"{self.resource_dir}/route_images/{local_path}"
         return filepath
 
-    def upload_file(self, remote_path):
-        raise NotImplementedError()
+    def upload_file(self, file, remote_path):
+        filepath = f"{self.upload_dir}/{remote_path}"
+        file.save(filepath)
+        return filepath
 
 
 
