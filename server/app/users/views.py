@@ -95,11 +95,10 @@ def route_images(user_id):
 
     images = {}
     for route_image in q:
-        filepath = io.provider.download_file(route_image.path)
-        with open(filepath, "rb") as f:
-            base64_bytes = base64.b64encode(f.read())
-            base64_str = base64_bytes.decode("utf-8")
-            images[getattr(route_image, route_id_colname)] = base64_str
+        fbytes = io.provider.download_file(route_image.path)
+        base64_bytes = base64.b64encode(fbytes)
+        base64_str = base64_bytes.decode("utf-8")
+        images[getattr(route_image, route_id_colname)] = base64_str
 
     return jsonify({"route_images": images})
 

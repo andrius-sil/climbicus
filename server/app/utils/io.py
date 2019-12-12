@@ -1,3 +1,4 @@
+import re
 from abc import ABC, abstractmethod
 
 import boto3
@@ -16,7 +17,7 @@ class InputOutput:
 class InputOutputProvider(ABC):
 
     @abstractmethod
-    def download_file(self, local_path):
+    def download_file(self, remote_path):
         pass
 
     @abstractmethod
@@ -30,8 +31,21 @@ class S3InputOutputProvider(InputOutputProvider):
         self.s3 = boto3.client("s3")
         self.bucket = "climbicus"
 
-    def download_file(self, local_path):
-        raise NotImplementedError()
+    def download_file(self, remote_path):
+        m = re.match("s3:\/\/([a-zA-Z\d]+)\/(.+)", remote_path)
+        assert m
+
+        bucket = m.group(1)
+        path = m.group(2)
+
+        resp = self.s3.get_object(
+            Bucket=bucket,
+            Key=path,
+        )
+
+        assert resp["ResponseMetadata"]["HTTPStatusCode"] == 200
+
+        return resp["Body"].read()
 
     def upload_file(self, file, remote_path):
         file.seek(0)
