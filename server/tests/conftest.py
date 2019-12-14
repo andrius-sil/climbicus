@@ -17,13 +17,20 @@ class TestInputOutputProvider(InputOutputProvider):
 
     def __init__(self, resource_dir):
         self.resource_dir = resource_dir
+        self.upload_dir = "/tmp/climbicus_tests"
 
-    def download_file(self, local_path):
-        filepath = f"{self.resource_dir}/route_images/{local_path}"
+    def download_file(self, remote_path):
+        filepath = f"{self.resource_dir}/route_images/{remote_path}"
+        with open(filepath, "rb") as f:
+            return f.read()
+
+    def upload_file(self, file, remote_path):
+        filepath = f"{self.upload_dir}/{remote_path}"
+        filedir = os.path.dirname(filepath)
+        if not os.path.exists(filedir):
+            os.makedirs(filedir)
+        file.save(filepath)
         return filepath
-
-    def upload_file(self, remote_path):
-        raise NotImplementedError()
 
 
 
