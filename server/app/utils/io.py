@@ -27,12 +27,12 @@ class InputOutputProvider(ABC):
 
 class S3InputOutputProvider(InputOutputProvider):
 
-    def __init__(self):
+    def __init__(self, env):
         self.s3 = boto3.client("s3")
-        self.bucket = "climbicus"
+        self.bucket = f"climbicus-{env}"
 
     def download_file(self, remote_path):
-        m = re.match("s3:\/\/([a-zA-Z\d]+)\/(.+)", remote_path)
+        m = re.match("s3:\/\/([a-zA-Z\d-]+)\/(.+)", remote_path)
         assert m
 
         bucket = m.group(1)
