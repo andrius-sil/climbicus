@@ -7,6 +7,7 @@ services:
     env_file:
       - dev_secrets.env
     environment:
+      - ENV=dev
       - PYTHONUNBUFFERED=1
       - FLASK_ENV=development
       - TF_CPP_MIN_LOG_LEVEL=2 # silence 'Your CPU supports instructions that this TensorFlow binary was not compiled to use ...' warnings
