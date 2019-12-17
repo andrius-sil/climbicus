@@ -1,5 +1,10 @@
 SHELL := /bin/bash
 
+check-env:
+ifndef ENV
+	$(error ENV is undefined)
+endif
+
 docker-build-server:
 		docker build -t climbicus_server server/
 
@@ -8,30 +13,20 @@ docker-build-db:
 
 docker-build: docker-build-server docker-build-db
 
-docker-run:
-		docker-compose -f docker-compose.yml -f docker-compose.dev.yml run server $(args)
-docker-run-prod:
-		docker-compose -f docker-compose.yml -f docker-compose.prod.yml run server $(args)
+docker-run: check-env
+		docker-compose -f docker-compose.yml -f docker-compose.${ENV}.yml run server $(args)
 
-docker-up:
-		docker-compose -f docker-compose.yml -f docker-compose.dev.yml up $(args)
-docker-up-prod:
-		docker-compose -f docker-compose.yml -f docker-compose.prod.yml up $(args)
+docker-up: check-env
+		docker-compose -f docker-compose.yml -f docker-compose.${ENV}.yml up $(args)
 
-docker-down:
-	  docker-compose -f docker-compose.yml -f docker-compose.dev.yml down
-docker-down-prod:
-	  docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
+docker-down: check-env
+	  docker-compose -f docker-compose.yml -f docker-compose.${ENV}.yml down
 
-ec2-deploy:
-	rsync -aHv --delete-during --exclude-from rsync_exclude.txt . ec2-climbicus-dev:/home/ec2-user/climbicus/
-ec2-deploy-prod:
-	rsync -aHv --delete-during --exclude-from rsync_exclude.txt . ec2-climbicus-prod:/home/ec2-user/climbicus/
+ec2-deploy: check-env
+	rsync -aHv --delete-during --exclude-from rsync_exclude.txt . ec2-climbicus-${ENV}:/home/ec2-user/climbicus/
 
-model-deploy:
-	aws s3 sync s3://climbicus-dev/models/current/ server/predictor/model_files/
-model-deploy-prod:
-	aws s3 sync s3://climbicus-prod/models/current/ server/predictor/model_files/
+model-deploy: check-env
+	aws s3 sync s3://climbicus-${ENV}/models/current/ server/predictor/model_files/
 
 tests:
 	 docker exec climbicus_server_1 python -m pytest -v $(args) ./tests
