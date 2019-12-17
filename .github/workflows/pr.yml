@@ -13,7 +13,13 @@ jobs:
       run: make docker-build
     - name: Run
       run: make args=-d docker-up
+      env:
+        ENV: dev
     - name: Tests
       run: make tests
+      env:
+        ENV: dev
     - name: Clean up
       run: make docker-down
+      env:
+        ENV: dev
