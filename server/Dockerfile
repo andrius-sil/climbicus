@@ -15,4 +15,6 @@ COPY uwsgi.ini /etc/uwsgi/
 COPY supervisord.conf /etc/supervisor/
 COPY . .
 
+ENV FLASK_APP run.py
+
 EXPOSE 5000
