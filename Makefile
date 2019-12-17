@@ -10,21 +10,28 @@ docker-build: docker-build-server docker-build-db
 
 docker-run:
 		docker-compose -f docker-compose.yml -f docker-compose.dev.yml run server $(args)
+docker-run-prod:
+		docker-compose -f docker-compose.yml -f docker-compose.prod.yml run server $(args)
 
 docker-up:
 		docker-compose -f docker-compose.yml -f docker-compose.dev.yml up $(args)
+docker-up-prod:
+		docker-compose -f docker-compose.yml -f docker-compose.prod.yml up $(args)
 
 docker-down:
 	  docker-compose -f docker-compose.yml -f docker-compose.dev.yml down
-
-docker-up-prod:
-		docker-compose -f docker-compose.yml up
+docker-down-prod:
+	  docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
 
 ec2-deploy:
 	rsync -aHv --delete-during --exclude-from rsync_exclude.txt . ec2-climbicus-dev:/home/ec2-user/climbicus/
+ec2-deploy-prod:
+	rsync -aHv --delete-during --exclude-from rsync_exclude.txt . ec2-climbicus-prod:/home/ec2-user/climbicus/
 
 model-deploy:
 	aws s3 sync s3://climbicus-dev/models/current/ server/predictor/model_files/
+model-deploy-prod:
+	aws s3 sync s3://climbicus-prod/models/current/ server/predictor/model_files/
 
 tests:
 	 docker exec climbicus_server_1 python -m pytest -v $(args) ./tests

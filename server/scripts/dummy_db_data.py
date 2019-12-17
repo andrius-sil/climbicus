@@ -1,4 +1,8 @@
+import os
+
 from app.models import Gyms, RouteImages, Routes, UserRouteLog, Users
+
+ENV = os.getenv("ENV", "dev")
 
 
 def preload_dummy_data(db):
@@ -12,6 +16,6 @@ def preload_dummy_data(db):
     db.session.flush()
     db.session.add(RouteImages(user_route_id=1, model_route_id=1, user_id=1, model_probability=0.5,
                                model_version="first_version",
-                               path="s3://climbicus-dev/route_images/from_users/1/2019/12/2c2f3e3f2a1c4cb0b892468fb012e4b9.jpg"))
+                               path=f"s3://climbicus-{ENV}/route_images/from_users/1/2019/12/2c2f3e3f2a1c4cb0b892468fb012e4b9.jpg"))
     db.session.add(UserRouteLog(route_id=1, user_id=1, gym_id=1, status="red-point", log_date="2019-10-10"))
     db.session.commit()
