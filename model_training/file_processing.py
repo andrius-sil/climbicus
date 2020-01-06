@@ -51,8 +51,7 @@ def split_train_test(base_dir, set_sizes, compress=True):
     set_base_path = os.path.join("data/sets", base_dir.replace("/", "_"))
 
     for set_type, size in set_sizes.items():
-        if size > 0:
-            overwrite_dir(os.path.join(set_base_path, f"{set_type}/"))
+        overwrite_dir(os.path.join(set_base_path, f"{set_type}/"))
 
     list_of_cats = listdir_no_hidden(data_path)
 
@@ -63,13 +62,18 @@ def split_train_test(base_dir, set_sizes, compress=True):
 
         filenames_and_paths = {}
         for set_type, size in set_sizes.items():
+            filenames_and_paths[set_type] = {}
+            os.makedirs(os.path.join(set_base_path, f"{set_type}/{c}/"))
             if size > 0:
-                os.makedirs(os.path.join(set_base_path, f"{set_type}/{c}/"))
-                filenames_and_paths[set_type] = {}
                 for _ in range(size):
                     choice = random.choice(list_of_filenames)
                     filenames_and_paths[set_type][choice] = os.path.join(category_path, choice)
                     list_of_filenames.remove(choice)
             # Implement the usage the remaining photos in one of the sets
+        while len(list_of_filenames) > 0:
+            choice = random.choice(list_of_filenames)
+            random_set = random.choice(list(set_sizes.keys()))
+            filenames_and_paths[random_set][choice] = os.path.join(category_path, choice)
+            list_of_filenames.remove(choice)
 
         copy_images_to_set_folders(filenames_and_paths, set_base_path, c, compress)
