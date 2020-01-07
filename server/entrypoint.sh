@@ -7,7 +7,7 @@ echo """
 Commands
 
 dev          : Start Flask development server
-prod         : Start uswgi & nginx server
+prod         : Start uwsgi & nginx server
 recreate-db  : Recreate the database
 shell        : Start Bash shell
 help         : Show this message
