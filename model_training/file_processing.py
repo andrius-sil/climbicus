@@ -25,7 +25,7 @@ def listdir_no_hidden(path):
 
 def compress_and_save(image_path, dest_image_path):
     image = Image.open(image_path)
-    newImage = image.resize((150, 150), Image.LANCZOS)
+    newImage = image.resize((299, 299), Image.LANCZOS)
     newImage.save(dest_image_path, "JPEG", quality=90)
 
 
