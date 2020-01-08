@@ -16,5 +16,6 @@ JWT_SECRET_KEY = os.environ["JWT_SECRET_KEY"]
 DISABLE_AUTH = os.getenv("FLASK_DISABLE_AUTH", False)
 
 ENV = os.getenv("ENV", "dev")
+print(f"Running on '{ENV}'")
 
 app = create_app(DATABASE_CONNECTION_URI, MODEL_PATH, CLASS_INDICES_PATH, MODEL_VERSION, JWT_SECRET_KEY, S3InputOutputProvider(ENV), DISABLE_AUTH)

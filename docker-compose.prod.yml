@@ -1,0 +1,13 @@
+version: '2'
+services:
+  db:
+    env_file:
+      - prod_secrets.env
+  server:
+    env_file:
+      - prod_secrets.env
+    environment:
+      - ENV=prod
+      - PYTHONUNBUFFERED=1
+    command:
+      "prod"

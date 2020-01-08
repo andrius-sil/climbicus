@@ -9,3 +9,4 @@ Flask-JWT-Extended==3.24.1
 Werkzeug==0.16.0
 click==7.0
 boto3==1.10.35
+uWSGI==2.0.18
