@@ -1,3 +1,4 @@
+import csv
 import os
 
 from app.models import Gyms, RouteImages, Routes, UserRouteLog, Users
@@ -6,16 +7,28 @@ ENV = os.getenv("ENV", "dev")
 
 
 def preload_dummy_data(db):
-    db.session.add(Users(email="test@testing.com", password="testing"))
-    db.session.add(Users(email="silas04@gmail.com", password="chorrera"))
-    db.session.add(Users(email="keksainis@gmail.com", password="masterbates"))
-    db.session.add(Gyms(name="The Castle Climbing Centre"))
-    db.session.flush()
-    for i in range(1, 31):
-        db.session.add(Routes(gym_id=1, class_id=str(i), grade="7a"))
-    db.session.flush()
-    db.session.add(RouteImages(user_route_id=1, model_route_id=1, user_id=1, model_probability=0.5,
-                               model_version="first_version",
-                               path=f"s3://climbicus-{ENV}/route_images/from_users/1/2019/12/2c2f3e3f2a1c4cb0b892468fb012e4b9.jpg"))
-    db.session.add(UserRouteLog(route_id=1, user_id=1, gym_id=1, status="red-point", log_date="2019-10-10"))
+    load_table(db, Users)
+    load_table(db, Gyms)
+    load_table(db, Routes)
+    load_table(db, RouteImages)
+    load_table(db, UserRouteLog)
+
     db.session.commit()
+
+
+def load_table(db, ModelClass):
+    def preformat_row(row):
+        if "path" in row:
+            row["path"] = row["path"].replace("{ENV}", ENV)
+        return row
+
+    table_name = ModelClass.__tablename__
+
+    with open(f"resources/{table_name}.csv", "r") as f:
+        reader = csv.DictReader(f)
+        db.session.add_all([
+            ModelClass(**preformat_row(row))
+            for row in reader
+        ])
+
+    db.session.flush()
