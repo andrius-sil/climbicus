@@ -1,0 +1,2 @@
+user_route_id,model_route_id,user_id,model_probability,model_version,path
+1,1,1,0.5,first_version,s3://climbicus-{ENV}/route_images/from_users/1/2019/12/2c2f3e3f2a1c4cb0b892468fb012e4b9.jpg
