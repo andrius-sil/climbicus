@@ -27,8 +27,8 @@ class _SettingsPageState extends State<SettingsPage> {
           key: formKey,
           child: new ListView(
             children: <Widget>[
+              Text(widget.auth.email),
               RaisedButton(
-                // TODO: display email
                 child: Text('Log Out'),
                 onPressed: logout,
               ),

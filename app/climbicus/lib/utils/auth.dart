@@ -6,8 +6,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 class Auth {
   static const BASE_URL = "http://3.11.49.99:5000";
 
-  String email;
-  String accessToken;
+  String _email;
+  String _accessToken;
+
+  String get email => _email;
+  String get accessToken => _accessToken;
 
   Future<void> login(String email, String password) async {
     Map data = {
@@ -26,8 +29,8 @@ class Auth {
     }
 
     final Map result = jsonDecode(response.body);
-    this.accessToken = result["access_token"];
-    this.email = email;
+    this._accessToken = result["access_token"];
+    this._email = email;
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("email", email);
@@ -39,8 +42,8 @@ class Auth {
     prefs.remove("email");
     prefs.remove("access_token");
 
-    this.accessToken = null;
-    this.email = null;
+    this._accessToken = null;
+    this._email = null;
   }
 
   Future<bool> loggedIn() async {
