@@ -14,8 +14,6 @@ class ImagePickerPage extends StatefulWidget {
 }
 
 class ImagePickerState extends State<ImagePickerPage> {
-  static const BASE_URL = "http://3.11.49.99:5000";
-
   File _image;
   Future<String> _predictedClassId;
 

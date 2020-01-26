@@ -12,12 +12,17 @@ class Api {
   final client = http.Client();
 
   String _accessToken;
+  int _user_id;
 
   set accessToken(String value) {
     _accessToken = value;
   }
 
-  Future<String> login(String email, String password) async {
+  set userId(int value) {
+    _user_id = value;
+  }
+
+  Future<Map> login(String email, String password) async {
     Map data = {
       "email": email,
       "password": password,
@@ -34,11 +39,11 @@ class Api {
     }
 
     final Map result = jsonDecode(response.body);
-    return result["access_token"];
+    return result;
   }
 
   Future<String> uploadRouteImage(File image) async {
-    var uri = Uri.parse("$BASE_URL/users/1/predict");
+    var uri = Uri.parse("$BASE_URL/users/$_user_id/predict");
     var request = new http.MultipartRequest("POST", uri);
 
     request.headers["Authorization"] = "Bearer $_accessToken";
