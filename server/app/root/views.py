@@ -25,7 +25,10 @@ def login():
         abort(401, error)
 
     access_token = create_access_token(identity=email)
-    return jsonify(access_token=access_token)
+    return jsonify(
+        access_token=access_token,
+        user_id=user.id,
+    )
 
 
 @blueprint.route("/")
