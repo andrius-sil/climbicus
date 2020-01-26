@@ -9,6 +9,8 @@ class Api {
 //  static const BASE_URL = "http://3.11.49.99:5000"; // PROD
   static const BASE_URL = "http://3.11.0.15:5000"; // DEV
 
+  final client = http.Client();
+
   String _accessToken;
 
   set accessToken(String value) {
@@ -21,7 +23,7 @@ class Api {
       "password": password,
     };
 
-    final response = await http.post(
+    final response = await client.post(
       "$BASE_URL/login",
       headers: {"Content-Type": "application/json"},
       body: json.encode(data),
@@ -51,7 +53,7 @@ class Api {
     );
     request.files.add(multipartFile);
 
-    var response = await request.send();
+    var response = await client.send(request);
     if (response.statusCode == 200) {
       var value = response.stream.bytesToString();
       return value;
