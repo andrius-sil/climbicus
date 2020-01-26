@@ -1,12 +1,14 @@
 import 'dart:io';
 
-import 'package:path/path.dart';
-import 'package:async/async.dart';
+import 'package:climbicus/utils/api.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
 class ImagePickerPage extends StatefulWidget {
+  final Api api;
+
+  ImagePickerPage({this.api});
+
   @override
   ImagePickerState createState() => ImagePickerState();
 }
@@ -16,29 +18,6 @@ class ImagePickerState extends State<ImagePickerPage> {
 
   File _image;
   Future<String> _predictedClassId;
-
-  Future<String> uploadRouteImage(File image) async {
-    var uri = Uri.parse("$BASE_URL/users/1/predict");
-    var request = new http.MultipartRequest("POST", uri);
-
-    var stream = new http.ByteStream(DelegatingStream.typed(image.openRead()));
-    var length = await image.length();
-    var multipartFile = new http.MultipartFile(
-        'image',
-        stream,
-        length,
-        filename: basename(image.path)
-    );
-    request.files.add(multipartFile);
-
-    var response = await request.send();
-    if (response.statusCode == 200) {
-      var value = response.stream.bytesToString();
-      return value;
-    } else {
-      throw Exception("request failed with ${response.statusCode}");
-    }
-  }
 
   Future getImage(ImageSource imageSource) async {
     var image = await ImagePicker.pickImage(
@@ -51,7 +30,7 @@ class ImagePickerState extends State<ImagePickerPage> {
       _image = image;
       print("Photo size: ${_image.lengthSync()} bytes");
 
-      _predictedClassId = uploadRouteImage(image);
+      _predictedClassId = widget.api.uploadRouteImage(image);
     });
   }
 

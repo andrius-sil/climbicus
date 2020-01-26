@@ -1,6 +1,7 @@
 import 'package:climbicus/ui/image_picker.dart';
 import 'package:climbicus/ui/login.dart';
 import 'package:climbicus/ui/settings.dart';
+import 'package:climbicus/utils/api.dart';
 import 'package:climbicus/utils/auth.dart';
 import 'package:flutter/material.dart';
 
@@ -26,9 +27,14 @@ enum AuthStatus {
 }
 
 class _HomePageState extends State<HomePage> {
-  final Auth auth = new Auth();
+  final Api api = new Api();
 
+  Auth auth;
   AuthStatus authStatus = AuthStatus.notDetermined;
+
+  _HomePageState() {
+    auth = new Auth(api: api);
+  }
 
   @override
   void didChangeDependencies() {
@@ -64,7 +70,7 @@ class _HomePageState extends State<HomePage> {
         screen = LoginPage(auth: auth, loginCallback: _loggedIn);
         break;
       case AuthStatus.loggedIn:
-        screen = ImagePickerPage();
+        screen = ImagePickerPage(api: api);
         break;
     }
 
