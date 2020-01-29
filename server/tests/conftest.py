@@ -85,9 +85,10 @@ def app(resource_dir):
                         path=f"user2_route{i}_2.jpg",
                     )
                 )
-        db.session.add(
-            UserRouteLog(route_id=1, user_id=1, gym_id=1, status="red-point", log_date=datetime(2012, 3, 3, 10, 10, 10))
-        )
+        db.session.add_all([
+            UserRouteLog(route_id=1, user_id=1, gym_id=1, status="red-point", log_date=datetime(2012, 3, 3, 10, 10, 10)),
+            UserRouteLog(route_id=3, user_id=1, gym_id=1, status="flash", log_date=datetime(2012, 3, 4, 10, 10, 10)),
+        ])
         db.session.commit()
 
     yield app
