@@ -4,3 +4,13 @@ route_id,user_id,gym_id,status,log_date
 1,1,1,red-point,2019-10-12
 3,1,1,red-point,2019-10-13
 2,1,1,red-point,2019-10-13
+8,1,1,red-point,2020-02-01
+30,1,1,flash,2020-01-31
+11,1,2,flash,2020-01-31
+30,2,1,flash,2020-01-31
+1,2,1,did not finish,2019-10-10
+1,2,1,red-point,2019-10-10
+8,3,1,flash,2019-01-10
+8,3,1,did not finish,2019-01-01
+10,3,1,red-point,2019-10-10
+30,3,1,flash,2019-10-10
