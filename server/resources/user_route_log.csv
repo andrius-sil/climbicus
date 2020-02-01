@@ -1,2 +1,6 @@
 route_id,user_id,gym_id,status,log_date
 1,1,1,red-point,2019-10-10
+2,1,1,red-point,2019-10-10
+1,1,1,red-point,2019-10-12
+3,1,1,red-point,2019-10-13
+2,1,1,red-point,2019-10-13

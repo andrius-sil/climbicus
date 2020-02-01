@@ -62,11 +62,18 @@ def add(user_id):
 
 @blueprint.route("/<int:user_id>/logbooks/view", methods=["GET"])
 def view(user_id):
-    results = UserRouteLog.query.filter_by(user_id=user_id).all()
+    results = db.session.query(UserRouteLog, Routes) \
+        .filter_by(user_id=user_id) \
+        .join(Routes) \
+        .all()
     logbook = {}
-    for r in results:
-        grade = Routes.query.filter_by(id=r.route_id).one().grade
-        logbook[r.id] = {"grade": grade, "log_date": r.log_date, "status": r.status}
+    for user_route_log, route in results:
+        logbook[user_route_log.id] = {
+            "route_id": route.id,
+            "grade": route.grade,
+            "log_date": user_route_log.log_date,
+            "status": user_route_log.status,
+        }
     return jsonify(logbook)
 
 

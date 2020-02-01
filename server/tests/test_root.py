@@ -11,6 +11,7 @@ def test_login(app, client):
     assert resp.status_code == 200
     assert resp.is_json
     assert "access_token" in resp.json
+    assert resp.json["user_id"] == 1
 
 
 def test_login_with_invalid_email(app, client):

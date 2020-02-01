@@ -1,125 +1,113 @@
-import 'dart:io';
-
-import 'package:path/path.dart';
-import 'package:async/async.dart';
+import 'package:climbicus/ui/image_picker.dart';
+import 'package:climbicus/ui/login.dart';
+import 'package:climbicus/ui/settings.dart';
+import 'package:climbicus/utils/api.dart';
+import 'package:climbicus/utils/auth.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
 
 
 void main() {
   runApp(
     MaterialApp(
       theme: ThemeData.dark(),
-      home: HomeScreen(),
+      home: HomePage(),
     ),
   );
 }
 
-class HomeScreen extends StatelessWidget {
+class HomePage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Climbicus v0.000001'),
-      ),
-      body: Center(
-        child: ImagePickerScreen(),
-      ),
-    );
-  }
-
+  State<StatefulWidget> createState() => _HomePageState();
 }
 
-class ImagePickerScreen extends StatefulWidget {
-  @override
-  ImagePickerState createState() => ImagePickerState();
+enum AuthStatus {
+  notDetermined,
+  notLoggedIn,
+  loggedIn,
 }
 
-class ImagePickerState extends State<ImagePickerScreen> {
-  static const BASE_URL = "http://3.11.0.15:5000";
+class _HomePageState extends State<HomePage> {
+  final Api api = new Api();
 
-  File _image;
-  Future<String> _predictedClassId;
+  Auth auth;
+  AuthStatus authStatus = AuthStatus.notDetermined;
 
-  Future<String> uploadRouteImage(File image) async {
-    var uri = Uri.parse("$BASE_URL/users/1/predict");
-    var request = new http.MultipartRequest("POST", uri);
-
-    var stream = new http.ByteStream(DelegatingStream.typed(image.openRead()));
-    var length = await image.length();
-    var multipartFile = new http.MultipartFile(
-      'image',
-      stream,
-      length,
-      filename: basename(image.path)
-    );
-    request.files.add(multipartFile);
-
-    var response = await request.send();
-    if (response.statusCode == 200) {
-      var value = response.stream.bytesToString();
-      return value;
-    } else {
-      throw Exception("request failed with ${response.statusCode}");
-    }
+  _HomePageState() {
+    auth = new Auth(api: api);
   }
 
-  Future getImage(ImageSource imageSource) async {
-    var image = await ImagePicker.pickImage(
-        source: imageSource,
-        maxWidth: 1028,
-        imageQuality: 76,
-    );
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
+    auth.loggedIn().then((bool userLoggedIn) {
+      setState(() {
+        authStatus = userLoggedIn ? AuthStatus.loggedIn : AuthStatus.notLoggedIn;
+      });
+    });
+  }
+
+  void _loggedIn() {
     setState(() {
-      _image = image;
-      print("Photo size: ${_image.lengthSync()} bytes");
+      authStatus = AuthStatus.loggedIn;
+    });
+  }
 
-      _predictedClassId = uploadRouteImage(image);
+  void _loggedOut() {
+    setState(() {
+      authStatus = AuthStatus.notLoggedIn;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    var imageWidget = _image == null ? Text('No image selected') : Image.file(_image);
-    return Scaffold(
-      body: Center(
-        child: Column(
-          children: <Widget>[
-            FutureBuilder<String>(
-              future: _predictedClassId,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Text(snapshot.data);
-                } else if (snapshot.hasError) {
-                  return Text("${snapshot.error}");
-                }
+    var screen = null;
+    switch (authStatus) {
+      case AuthStatus.notDetermined:
+        screen = _buildWaitingPage();
+        break;
+      case AuthStatus.notLoggedIn:
+        screen = LoginPage(auth: auth, loginCallback: _loggedIn);
+        break;
+      case AuthStatus.loggedIn:
+        screen = ImagePickerPage(api: api);
+        break;
+    }
 
-                return CircularProgressIndicator();
-              },
-            ),
-            imageWidget,
-        ]),
-      ),
-      floatingActionButton: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          FloatingActionButton(
-            onPressed: () => getImage(ImageSource.gallery),
-            tooltip: 'Pick image (gallery)',
-            child: Icon(Icons.add_photo_alternate),
-          ),
-          SizedBox(
-            height: 16.0,
-          ),
-          FloatingActionButton(
-            onPressed: () => getImage(ImageSource.camera),
-            tooltip: 'Pick image (camera)',
-            child: Icon(Icons.add_a_photo),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Climbicus v0.000001'),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: 'Settings menu',
+            onPressed: () {
+              openSettingsPage(context);
+            },
           ),
         ],
       ),
+      body: Center(
+        child: screen,
+      ),
     );
   }
+
+  Widget _buildWaitingPage() {
+    return Scaffold(
+      body: Container(
+        alignment: Alignment.center,
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  void openSettingsPage(BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(
+      builder: (BuildContext context) {
+        return SettingsPage(auth: auth, logoutCallback: _loggedOut);
+      },
+    ));
+  }
 }
+
