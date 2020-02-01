@@ -17,4 +17,4 @@ ipynb_projects/
 notebooks/
 .cache
 data/
-archive_models/
+callbacks/

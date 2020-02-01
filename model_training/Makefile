@@ -8,7 +8,8 @@ VOLUMES = -v $(PWD):/srv/app \
 
 # configure port for Jupyter notebook server
 NOTEBOOK_PORT = 8899
-PORTS = -p $(NOTEBOOK_PORT):$(NOTEBOOK_PORT)
+TENSORBOARD_PORT = 6006
+PORTS = -p $(NOTEBOOK_PORT):$(NOTEBOOK_PORT) -p $(TENSORBOARD_PORT):$(TENSORBOARD_PORT)
 ENV_FILE = .env
 
 define task
