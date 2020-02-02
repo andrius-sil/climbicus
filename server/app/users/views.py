@@ -54,7 +54,8 @@ def add(user_id):
 
     route_id = Routes.query.filter_by(class_id=predicted_class_id).one().id
     db.session.add(
-        UserRouteLog(route_id=route_id, user_id=user_id, gym_id=gym_id, status=status, created_at=datetime.datetime.now())
+        UserRouteLog(route_id=route_id, user_id=user_id, gym_id=gym_id, status=status,
+                     created_at=datetime.datetime.now())
     )
     db.session.commit()
     return "Route status added to log"
@@ -138,6 +139,7 @@ def store_image(imagefile, user_id, model_route_id, model_probability, model_ver
         model_probability=model_probability,
         model_version=model_version,
         path=saved_image_path,
+        created_at=now,
     )
     db.session.add(route_image)
     db.session.commit()
