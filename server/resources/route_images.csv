@@ -9,7 +9,6 @@ user_route_id,model_route_id,user_id,model_probability,model_version,path
 9,9,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3892.JPG
 9,9,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3895.JPG
 10,10,1,0,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3894.JPG
-11,11,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3879.JPG
 12,12,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3896.JPG
 13,13,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191018_181843.jpg
 14,14,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191018_181935.jpg
