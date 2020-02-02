@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:climbicus/ui/route_match.dart';
 import 'package:climbicus/utils/api.dart';
 import 'package:climbicus/utils/route_image_picker.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,8 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
   static const double columnHeight = 100;
   static const int displayPredictionsNum = 3;
 
+  Image takenImage;
+
   Future<Map> images;
 
   List<int> routeIds;
@@ -28,6 +31,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
   void initState() {
     super.initState();
 
+    takenImage = Image.file(widget.results.image);
     images = fetchRouteImages(widget.results.predictions);
   }
 
@@ -37,45 +41,48 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
       appBar: AppBar(
         title: const Text('Select your route'),
       ),
-      body: Center(
-        child: Column(
-          children: <Widget>[
-            Text("Your photo:"),
-            Image.file(widget.results.image),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: FutureBuilder<Map>(
-                    future: images,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return _buildLogbookImagesView(snapshot.data);
-                      } else if (snapshot.hasError) {
-                        return Text("${snapshot.error}");
-                      }
+      body: Builder(
+        builder: (BuildContext context) =>
+          Center(
+          child: Column(
+            children: <Widget>[
+              Text("Your photo:"),
+              takenImage,
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: FutureBuilder<Map>(
+                      future: images,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return _buildLogbookImagesView(context, snapshot.data);
+                        } else if (snapshot.hasError) {
+                          return Text("${snapshot.error}");
+                        }
 
-                      return CircularProgressIndicator();
-                    },
-                  )
-                ),
-                Expanded(
-                  child: FutureBuilder<Map>(
-                    future: widget.results.predictions,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return _buildLogbookView(snapshot.data);
-                      } else if (snapshot.hasError) {
-                        return Text("${snapshot.error}");
-                      }
-
-                      return CircularProgressIndicator();
-                    },
+                        return CircularProgressIndicator();
+                      },
+                    )
                   ),
-                ),
-              ],
-            ),
-          ]),
-      ),
+                  Expanded(
+                    child: FutureBuilder<Map>(
+                      future: widget.results.predictions,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return _buildLogbookView(snapshot.data);
+                        } else if (snapshot.hasError) {
+                          return Text("${snapshot.error}");
+                        }
+
+                        return CircularProgressIndicator();
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ]),
+        ),
+      )
     );
   }
 
@@ -104,7 +111,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
     );
   }
 
-  Widget _buildLogbookImagesView(Map data) {
+  Widget _buildLogbookImagesView(BuildContext context, Map data) {
     List<Widget> widgets = [];
 
     routeIds.forEach((id) {
@@ -118,13 +125,26 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
         w = Text("No image '$id'");
       }
       widgets.add(
-          Container(
+        GestureDetector(
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(
+              builder: (BuildContext context) {
+                return RouteMatchPage(
+                    api: widget.api,
+                    selectedRouteId: id,
+                    selectedImage: w,
+                    takenImage: takenImage,
+                );
+              },
+            ));
+          },
+          child: Container(
             height: columnHeight,
             alignment: Alignment.center,
             child: w,
           )
+        )
       );
-
     });
 
     return ListView(
