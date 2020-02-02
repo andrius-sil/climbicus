@@ -87,9 +87,9 @@ def app(resource_dir):
                     )
                 )
         db.session.add_all([
-            UserRouteLog(route_id=1, user_id=1, gym_id=1, status="red-point", log_date=datetime(2012, 3, 3, 10, 10,
+            UserRouteLog(route_id=1, user_id=1, gym_id=1, status="red-point", created_at=datetime(2012, 3, 3, 10, 10,
                                                                                                 10, tzinfo=pytz.UTC)),
-            UserRouteLog(route_id=3, user_id=1, gym_id=1, status="flash", log_date=datetime(2012, 3, 4, 10, 10, 10,
+            UserRouteLog(route_id=3, user_id=1, gym_id=1, status="flash", created_at=datetime(2012, 3, 4, 10, 10, 10,
                                                                                             tzinfo=pytz.UTC)),
         ])
         db.session.commit()

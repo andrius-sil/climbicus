@@ -54,7 +54,7 @@ def add(user_id):
 
     route_id = Routes.query.filter_by(class_id=predicted_class_id).one().id
     db.session.add(
-        UserRouteLog(route_id=route_id, user_id=user_id, gym_id=gym_id, status=status, log_date=datetime.datetime.now())
+        UserRouteLog(route_id=route_id, user_id=user_id, gym_id=gym_id, status=status, created_at=datetime.datetime.now())
     )
     db.session.commit()
     return "Route status added to log"
@@ -71,7 +71,7 @@ def view(user_id):
         logbook[user_route_log.id] = {
             "route_id": route.id,
             "grade": route.grade,
-            "log_date": user_route_log.log_date.isoformat(),
+            "created_at": user_route_log.created_at.isoformat(),
             "status": user_route_log.status,
         }
     return jsonify(logbook)

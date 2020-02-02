@@ -1,4 +1,4 @@
-route_id,user_id,gym_id,status,log_date
+route_id,user_id,gym_id,status,created_at
 1,1,1,red-point,2019-10-10 00:00:00+0
 2,1,1,red-point,2019-10-10 00:00:00+0
 1,1,1,red-point,2019-10-12 00:00:00+0

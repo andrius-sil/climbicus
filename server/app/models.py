@@ -47,6 +47,7 @@ class Routes(db.Model):
     class_id = db.Column(db.String, unique=True, nullable=False)
     # TODO: preset list of possible grades
     grade = db.Column(db.String, nullable=False)
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
         return model_repr("Route", id=self.id, gym_id=self.gym_id, class_id=self.class_id, grade=self.grade)
@@ -80,7 +81,7 @@ class UserRouteLog(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     gym_id = db.Column(db.Integer, db.ForeignKey('gyms.id'), nullable=False)
     status = db.Column(db.String, nullable=False)
-    log_date = db.Column(db.DateTime(timezone=True), nullable=False)
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
-        return model_repr("UserRouteLog", id=self.id, route_id=self.route_id, user_id=self.user_id, gym_id=self.gym_id, status=self.status, log_date=self.log_date)
+        return model_repr("UserRouteLog", id=self.id, route_id=self.route_id, user_id=self.user_id, gym_id=self.gym_id, status=self.status, created_at=self.created_at)
