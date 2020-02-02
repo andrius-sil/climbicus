@@ -94,14 +94,14 @@ def test_storing_image_path_to_db(app, client, resource_dir, auth_headers):
 
 def test_route_images(client, resource_dir, auth_headers):
     routes = {
-        "1": "user1_route1.jpg",
-        "2": "user2_route2_1.jpg",
-        "3": "user1_route3.jpg",
+        1: "user1_route1.jpg",
+        2: "user2_route2_1.jpg",
+        3: "user1_route3.jpg",
     }
 
     # Request data with invalid '99' route id.
     data = {
-        "route_ids": list(routes.keys()) + ["99"],
+        "route_ids": list(routes.keys()) + [99],
     }
     resp = client.get("/users/2/route_images", data=json.dumps(data), content_type="application/json", headers=auth_headers)
 
