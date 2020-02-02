@@ -42,7 +42,22 @@ class Api {
     return result;
   }
 
-  Future<String> uploadRouteImage(File image) async {
+  Future<Map> fetchLogbook() async {
+    //HttpHeaders.authorizationHeader
+    final response = await client.get(
+      "$BASE_URL/users/$_user_id/logbooks/view",
+      headers: {"Authorization": "Bearer $_accessToken"},
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("request failed with ${response.statusCode}");
+    }
+
+    final Map result = jsonDecode(response.body);
+    return result;
+  }
+
+  Future<Map> uploadRouteImage(File image) async {
     var uri = Uri.parse("$BASE_URL/users/$_user_id/predict");
     var request = new http.MultipartRequest("POST", uri);
 
@@ -60,12 +75,34 @@ class Api {
 
     var response = await client.send(request);
     if (response.statusCode == 200) {
-      var value = response.stream.bytesToString();
-      return value;
+      final Map result = jsonDecode(await response.stream.bytesToString());
+      return result;
     } else {
       var value = await response.stream.bytesToString();
       print(value);
       throw Exception("request failed with ${response.statusCode}");
     }
+  }
+
+  Future<Map> fetchRouteImages(List routeIds) async {
+    Map data = {
+      "route_ids": routeIds,
+    };
+
+    var uri = Uri.parse("$BASE_URL/users/$_user_id/route_images");
+    var request = new http.Request("GET", uri);
+
+    request.body = json.encode(data);
+    request.headers["Authorization"] = "Bearer $_accessToken";
+    request.headers["Content-Type"] = "application/json";
+
+    var response = await client.send(request);
+
+    if (response.statusCode != 200) {
+      throw Exception("request failed with ${response.statusCode}");
+    }
+
+    final Map result = jsonDecode(await response.stream.bytesToString());
+    return result;
   }
 }

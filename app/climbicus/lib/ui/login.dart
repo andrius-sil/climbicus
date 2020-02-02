@@ -69,11 +69,7 @@ class _LoginPageState extends State<LoginPage> {
 
     form.save();
 
-    try {
-      widget.auth.login(_email, _password);
-    } catch (e) {
-      print('Error: $e');
-    }
+    widget.auth.login(_email, _password);
 
     widget.loginCallback();
   }

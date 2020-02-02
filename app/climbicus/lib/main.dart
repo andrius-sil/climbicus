@@ -1,4 +1,4 @@
-import 'package:climbicus/ui/image_picker.dart';
+import 'package:climbicus/ui/logbook.dart';
 import 'package:climbicus/ui/login.dart';
 import 'package:climbicus/ui/settings.dart';
 import 'package:climbicus/utils/api.dart';
@@ -61,36 +61,14 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    var screen = null;
     switch (authStatus) {
       case AuthStatus.notDetermined:
-        screen = _buildWaitingPage();
-        break;
+        return _buildWaitingPage();
       case AuthStatus.notLoggedIn:
-        screen = LoginPage(auth: auth, loginCallback: _loggedIn);
-        break;
+        return LoginPage(auth: auth, loginCallback: _loggedIn);
       case AuthStatus.loggedIn:
-        screen = ImagePickerPage(api: api);
-        break;
+        return LogbookPage(appBar: appBar("Logbook"), api: api);
     }
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Climbicus v0.000001'),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.settings),
-            tooltip: 'Settings menu',
-            onPressed: () {
-              openSettingsPage(context);
-            },
-          ),
-        ],
-      ),
-      body: Center(
-        child: screen,
-      ),
-    );
   }
 
   Widget _buildWaitingPage() {
@@ -99,6 +77,21 @@ class _HomePageState extends State<HomePage> {
         alignment: Alignment.center,
         child: CircularProgressIndicator(),
       ),
+    );
+  }
+
+  AppBar appBar(String title) {
+    return AppBar(
+      title: Text(title),
+      actions: <Widget>[
+        IconButton(
+          icon: const Icon(Icons.settings),
+          tooltip: 'Settings menu',
+          onPressed: () {
+            openSettingsPage(context);
+          },
+        ),
+      ],
     );
   }
 
