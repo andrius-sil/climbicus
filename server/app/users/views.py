@@ -71,7 +71,7 @@ def view(user_id):
         logbook[user_route_log.id] = {
             "route_id": route.id,
             "grade": route.grade,
-            "log_date": user_route_log.log_date,
+            "log_date": user_route_log.log_date.isoformat(),
             "status": user_route_log.status,
         }
     return jsonify(logbook)

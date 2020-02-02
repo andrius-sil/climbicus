@@ -80,7 +80,7 @@ class UserRouteLog(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     gym_id = db.Column(db.Integer, db.ForeignKey('gyms.id'), nullable=False)
     status = db.Column(db.String, nullable=False)
-    log_date = db.Column(db.DateTime, nullable=False)
+    log_date = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
         return model_repr("UserRouteLog", id=self.id, route_id=self.route_id, user_id=self.user_id, gym_id=self.gym_id, status=self.status, log_date=self.log_date)
