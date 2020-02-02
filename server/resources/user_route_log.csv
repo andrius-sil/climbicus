@@ -6,7 +6,7 @@ route_id,user_id,gym_id,status,log_date
 2,1,1,red-point,2019-10-13
 8,1,1,red-point,2020-02-01
 30,1,1,flash,2020-01-31
-11,1,2,flash,2020-01-31
+11,1,1,flash,2020-01-31
 30,2,1,flash,2020-01-31
 1,2,1,did not finish,2019-10-10
 1,2,1,red-point,2019-10-10
