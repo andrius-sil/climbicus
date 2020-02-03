@@ -110,14 +110,14 @@ def test_route_images(client, resource_dir, auth_headers):
 
     route_images = resp.json["route_images"]
     for id, path in routes.items():
-        base64_str = route_images[id]
+        base64_str = route_images[str(id)]
         image_bytes = base64.b64decode(base64_str)
 
         filepath = f"{resource_dir}/route_images/{path}"
         with open(filepath, "rb") as f:
             assert f.read() == image_bytes
 
-        del route_images[id]
+        del route_images[str(id)]
 
     # Check that only route images of interest were fetched from the server.
     assert len(route_images) == 0
