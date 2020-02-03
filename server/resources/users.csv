@@ -1,4 +1,4 @@
-email,password
-t,t
-silas04@gmail.com,chorrera
-keksainis@gmail.com,masterbates
+email,password,created_at
+t,t,2019-10-10 00:00:00+0
+silas04@gmail.com,chorrera,2019-10-10 00:00:00+0
+keksainis@gmail.com,masterbates,2019-10-10 00:00:00+0

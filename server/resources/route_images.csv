@@ -1,64 +1,64 @@
-user_route_id,model_route_id,user_id,model_probability,model_version,path
-1,1,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3878.JPG
-2,2,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3879.JPG
-3,3,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3880.JPG
-4,4,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3882.JPG
-5,5,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3885.JPG
-6,6,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3887.JPG
-7,7,1,1,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3891.JPG
-9,9,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3892.JPG
-9,9,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3895.JPG
-10,10,1,0,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3894.JPG
-12,12,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3896.JPG
-13,13,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191018_181843.jpg
-14,14,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191018_181935.jpg
-15,15,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191018_182037.jpg
-16,16,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191018_182115.jpg
-17,17,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191018_182250.jpg
-18,18,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_213156.jpg
-19,19,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_202054.jpg
-20,20,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_202105.jpg
-21,21,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_202114.jpg
-22,22,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_213236.jpg
-23,23,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_213335.jpg
-24,24,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_202148.jpg
-25,25,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_213355.jpg
-26,26,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_213543.jpg
-27,27,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_202228.jpg
-28,28,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_213657.jpg
-28,28,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_213719.jpg
-30,30,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_213131.jpg
-30,29,1,0.8,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_213556.jpg
-1,1,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191018_181753.jpg
-2,2,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191018_181759.jpg
-3,3,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191018_181811.jpg
-4,4,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/DSC_3881.JPG
-5,5,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191018_181857.jpg
-6,6,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191018_181900.jpg
-7,7,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/DSC_3884.JPG
-8,8,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/DSC_3886.JPG
-9,9,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/DSC_3888.JPG
-10,10,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/DSC_3889.JPG
-11,11,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191018_182120.jpg
-12,12,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191018_182200.jpg
-13,13,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191018_182216.jpg
-14,14,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191018_182210.jpg
-15,15,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191018_182223.jpg
-16,16,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/DSC_3898.JPG
-17,17,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_202043.jpg
-18,18,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_213211.jpg
-19,19,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_213203.jpg
-20,20,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_213219.jpg
-21,21,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_202124.jpg
-22,22,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_202133.jpg
-23,23,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_213506.jpg
-24,24,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_202157.jpg
-25,25,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_202215.jpg
-26,26,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_213701.jpg
-27,27,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_202232.jpg
-28,28,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_202247.jpg
-29,29,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_213528.jpg
-30,30,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_213517.jpg
-28,28,3,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/02/IMG_20191022_213517.jpg
-29,29,3,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/02/IMG_20191022_213528.jpg
-30,30,3,0.9,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/02/IMG_20191022_213701.jpg
+user_route_id,model_route_id,user_id,model_probability,model_version,path,created_at
+1,1,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3878.JPG,2019-10-10 00:00:00+0
+2,2,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3879.JPG,2019-10-11 00:00:00+0
+3,3,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3880.JPG,2019-10-12 00:00:00+0
+4,4,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3882.JPG,2019-10-13 00:00:00+0
+5,5,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3885.JPG,2019-10-14 00:00:00+0
+6,6,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3887.JPG,2019-10-15 00:00:00+0
+7,7,1,1,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3891.JPG,2019-10-16 00:00:00+0
+9,9,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3892.JPG,2019-10-17 00:00:00+0
+9,9,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3895.JPG,2019-10-18 00:00:00+0
+10,10,1,0,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3894.JPG,2019-10-19 00:00:00+0
+12,12,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/12/DSC_3896.JPG,2019-10-01 00:00:00+0
+13,13,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191018_181843.jpg,2019-10-02 00:00:00+0
+14,14,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191018_181935.jpg,2019-10-03 00:00:00+0
+15,15,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191018_182037.jpg,2019-10-04 00:00:00+0
+16,16,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191018_182115.jpg,2019-10-10 00:00:00+0
+17,17,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191018_182250.jpg,2019-10-10 00:00:00+0
+18,18,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_213156.jpg,2019-10-10 00:00:00+0
+19,19,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_202054.jpg,2019-10-10 00:00:00+0
+20,20,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_202105.jpg,2019-10-10 00:00:00+0
+21,21,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_202114.jpg,2019-10-10 00:00:00+0
+22,22,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_213236.jpg,2019-10-10 00:00:00+0
+23,23,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_213335.jpg,2019-10-10 00:00:00+0
+24,24,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_202148.jpg,2019-10-10 00:00:00+0
+25,25,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_213355.jpg,2019-10-10 00:00:00+0
+26,26,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_213543.jpg,2019-10-10 00:00:00+0
+27,27,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_202228.jpg,2019-10-10 00:00:00+0
+28,28,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_213657.jpg,2019-10-10 00:00:00+0
+28,28,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_213719.jpg,2019-10-10 00:00:00+0
+30,30,1,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_213131.jpg,2019-10-10 00:00:00+0
+30,29,1,0.8,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/01/IMG_20191022_213556.jpg,2019-10-10 00:00:00+0
+1,1,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191018_181753.jpg,2019-10-10 00:00:00+0
+2,2,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191018_181759.jpg,2019-10-10 00:00:00+0
+3,3,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191018_181811.jpg,2019-10-10 00:00:00+0
+4,4,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/DSC_3881.JPG,2019-10-10 00:00:00+0
+5,5,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191018_181857.jpg,2019-10-10 00:00:00+0
+6,6,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191018_181900.jpg,2019-10-10 00:00:00+0
+7,7,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/DSC_3884.JPG,2019-10-10 00:00:00+0
+8,8,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/DSC_3886.JPG,2019-10-10 00:00:00+0
+9,9,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/DSC_3888.JPG,2019-10-10 00:00:00+0
+10,10,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/DSC_3889.JPG,2019-10-10 00:00:00+0
+11,11,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191018_182120.jpg,2019-10-10 00:00:00+0
+12,12,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191018_182200.jpg,2019-10-10 00:00:00+0
+13,13,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191018_182216.jpg,2019-10-10 00:00:00+0
+14,14,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191018_182210.jpg,2019-10-10 00:00:00+0
+15,15,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191018_182223.jpg,2019-10-10 00:00:00+0
+16,16,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/DSC_3898.JPG,2019-10-10 00:00:00+0
+17,17,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_202043.jpg,2019-10-10 00:00:00+0
+18,18,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_213211.jpg,2019-10-10 00:00:00+0
+19,19,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_213203.jpg,2019-10-10 00:00:00+0
+20,20,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_213219.jpg,2019-10-10 00:00:00+0
+21,21,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_202124.jpg,2019-10-10 00:00:00+0
+22,22,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_202133.jpg,2019-10-10 00:00:00+0
+23,23,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_213506.jpg,2019-10-10 00:00:00+0
+24,24,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_202157.jpg,2019-10-10 00:00:00+0
+25,25,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_202215.jpg,2019-10-10 00:00:00+0
+26,26,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_213701.jpg,2019-10-10 00:00:00+0
+27,27,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_202232.jpg,2019-10-10 00:00:00+0
+28,28,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_202247.jpg,2019-10-10 00:00:00+0
+29,29,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_213528.jpg,2019-10-10 00:00:00+0
+30,30,2,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2020/02/IMG_20191022_213517.jpg,2019-10-10 00:00:00+0
+28,28,3,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/02/IMG_20191022_213517.jpg,2019-10-10 00:00:00+0
+29,29,3,0.5,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/02/IMG_20191022_213528.jpg,2019-10-10 00:00:00+0
+30,30,3,0.9,first_version,s3://climbicus-{ENV}/route_images/dummy_data/1/2019/02/IMG_20191022_213701.jpg,2019-10-10 00:00:00+0

@@ -6,6 +6,7 @@ from flask_jwt_extended import create_access_token
 from app import create_app, db
 from app.models import Gyms, RouteImages, Routes, UserRouteLog, Users
 from datetime import datetime
+import pytz
 
 from app.utils.io import InputOutputProvider
 
@@ -47,12 +48,16 @@ def app(resource_dir):
     with app.app_context():
         db.create_all()
 
-        db.session.add(Users(email="test1@testing.com", password="testing1"))
-        db.session.add(Users(email="test2@testing.com", password="testing2"))
-        db.session.add(Gyms(name="The Castle Climbing Centre"))
+        db.session.add(Users(email="test1@testing.com", password="testing1", created_at=datetime(2019, 3, 4, 10, 10, 10,
+                                                                                            tzinfo=pytz.UTC)))
+        db.session.add(Users(email="test2@testing.com", password="testing2", created_at=datetime(2019, 3, 4, 10, 10, 10,
+                                                                                            tzinfo=pytz.UTC)))
+        db.session.add(Gyms(name="The Castle Climbing Centre", created_at=datetime(2019, 3, 4, 10, 10, 10,
+                                                                                   tzinfo=pytz.UTC)))
         db.session.flush()
         for i in range(1, 31):
-            db.session.add(Routes(gym_id=1, class_id=str(i), grade="7a"))
+            db.session.add(Routes(gym_id=1, class_id=str(i), grade="7a", created_at=datetime(2019, 3, 4, 10, 10, 10,
+                                                                                            tzinfo=pytz.UTC)))
         db.session.flush()
         for i in range(1, 5):
             db.session.add(
@@ -63,6 +68,7 @@ def app(resource_dir):
                     model_probability=0.5,
                     model_version="first_version",
                     path=f"user1_route{i}.jpg",
+                    created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
                 )
             )
             if i % 2 == 0:
@@ -74,6 +80,7 @@ def app(resource_dir):
                         model_probability=0.5,
                         model_version="first_version",
                         path=f"user2_route{i}_1.jpg",
+                        created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
                     )
                 )
                 db.session.add(
@@ -83,11 +90,14 @@ def app(resource_dir):
                         model_probability=0.5,
                         model_version="first_version",
                         path=f"user2_route{i}_2.jpg",
+                        created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
                     )
                 )
         db.session.add_all([
-            UserRouteLog(route_id=1, user_id=1, gym_id=1, status="red-point", log_date=datetime(2012, 3, 3, 10, 10, 10)),
-            UserRouteLog(route_id=3, user_id=1, gym_id=1, status="flash", log_date=datetime(2012, 3, 4, 10, 10, 10)),
+            UserRouteLog(route_id=1, user_id=1, gym_id=1, status="red-point", created_at=datetime(2012, 3, 3, 10, 10,
+                                                                                                10, tzinfo=pytz.UTC)),
+            UserRouteLog(route_id=3, user_id=1, gym_id=1, status="flash", created_at=datetime(2012, 3, 4, 10, 10, 10,
+                                                                                            tzinfo=pytz.UTC)),
         ])
         db.session.commit()
 

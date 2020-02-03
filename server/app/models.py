@@ -16,6 +16,7 @@ class Users(db.Model):
     id = db.Column(db.Integer, db.Sequence('user_id_seq'), primary_key=True)
     email = db.Column(db.String, unique=True, nullable=False)
     _password = db.Column(db.String, nullable=False)
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
         return model_repr("User", id=self.id, email=self.email)
@@ -35,6 +36,7 @@ class Users(db.Model):
 class Gyms(db.Model):
     id = db.Column(db.Integer, db.Sequence('gym_id_seq'), primary_key=True)
     name = db.Column(db.String, nullable=False)
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
         return model_repr("Gym", id=self.id, name=self.name)
@@ -47,6 +49,7 @@ class Routes(db.Model):
     class_id = db.Column(db.String, unique=True, nullable=False)
     # TODO: preset list of possible grades
     grade = db.Column(db.String, nullable=False)
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
         return model_repr("Route", id=self.id, gym_id=self.gym_id, class_id=self.class_id, grade=self.grade)
@@ -68,6 +71,7 @@ class RouteImages(db.Model):
     model_probability = db.Column(db.Float, nullable=False)
     model_version = db.Column(db.String, nullable=False)
     path = db.Column(db.String, unique=True, nullable=False)
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
         return model_repr("RouteImage", id=self.id, user_id=self.user_id, user_route_id=self.user_route_id,
@@ -80,7 +84,7 @@ class UserRouteLog(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     gym_id = db.Column(db.Integer, db.ForeignKey('gyms.id'), nullable=False)
     status = db.Column(db.String, nullable=False)
-    log_date = db.Column(db.DateTime, nullable=False)
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
-        return model_repr("UserRouteLog", id=self.id, route_id=self.route_id, user_id=self.user_id, gym_id=self.gym_id, status=self.status, log_date=self.log_date)
+        return model_repr("UserRouteLog", id=self.id, route_id=self.route_id, user_id=self.user_id, gym_id=self.gym_id, status=self.status, created_at=self.created_at)
