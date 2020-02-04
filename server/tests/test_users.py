@@ -19,7 +19,7 @@ def test_view_logbook(client, auth_headers):
 
 
 def test_add_to_logbook(client, app, auth_headers):
-    data = { "status": "dogged", "predicted_class_id": 1, "gym_id": 1 }
+    data = { "status": "dogged", "route_id": 1, "gym_id": 1 }
     client.post("/users/1/logbooks/add", data=json.dumps(data), content_type="application/json", headers=auth_headers)
     with app.app_context():
         assert UserRouteLog.query.filter_by(status="dogged", user_id=1, gym_id=1).one().status == "dogged"

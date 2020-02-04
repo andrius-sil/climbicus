@@ -47,12 +47,9 @@ def predict(user_id):
 @blueprint.route("/<int:user_id>/logbooks/add", methods=["POST"])
 def add(user_id):
     status = request.json["status"]
-    predicted_class_id = request.json["predicted_class_id"]
+    route_id = request.json["route_id"]
     gym_id = request.json["gym_id"]
-    if None in [status, predicted_class_id, gym_id]:
-        abort(400, description="Request missing required data")
 
-    route_id = Routes.query.filter_by(class_id=predicted_class_id).one().id
     db.session.add(
         UserRouteLog(route_id=route_id, user_id=user_id, gym_id=gym_id, status=status,
                      created_at=datetime.datetime.now())
