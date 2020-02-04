@@ -94,9 +94,9 @@ def test_storing_image_path_to_db(app, client, resource_dir, auth_headers):
 
 def test_route_images(client, resource_dir, auth_headers):
     routes = {
-        1: "user1_route1.jpg",
-        2: "user2_route2_1.jpg",
-        3: "user1_route3.jpg",
+        1: { "route_image_id": 1, "b64_image": "user1_route1.jpg"},
+        2: { "route_image_id": 3, "b64_image": "user2_route2_1.jpg"},
+        3: { "route_image_id": 5, "b64_image": "user1_route3.jpg"},
     }
 
     # Request data with invalid '99' route id.
@@ -109,15 +109,18 @@ def test_route_images(client, resource_dir, auth_headers):
     assert resp.is_json
 
     route_images = resp.json["route_images"]
-    for id, path in routes.items():
-        base64_str = route_images[str(id)]
-        image_bytes = base64.b64decode(base64_str)
+    for route_id, values in routes.items():
+        resp_values = route_images[str(route_id)]
 
+        assert values["route_image_id"] == resp_values["route_image_id"]
+
+        image_bytes = base64.b64decode(resp_values["b64_image"])
+        path = values["b64_image"]
         filepath = f"{resource_dir}/route_images/{path}"
         with open(filepath, "rb") as f:
             assert f.read() == image_bytes
 
-        del route_images[str(id)]
+        del route_images[str(route_id)]
 
     # Check that only route images of interest were fetched from the server.
     assert len(route_images) == 0
