@@ -1,4 +1,5 @@
 
+import 'package:climbicus/ui/logbook.dart';
 import 'package:climbicus/utils/api.dart';
 import 'package:flutter/material.dart';
 
@@ -75,6 +76,10 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
                 if (value == "not selected") {
                   return;
                 }
+
+                widget.api.logbookAdd(widget.selectedRouteId, value);
+
+                Navigator.of(context).popUntil((route) => route.isFirst);
               },
             )
           ],

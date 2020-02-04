@@ -125,4 +125,25 @@ class Api {
       throw Exception("request failed with ${response.statusCode}");
     }
   }
+
+  Future<void> logbookAdd(int routeId, String status) async {
+    Map data = {
+      "route_id": routeId,
+      "status": status,
+      "gym_id": 1,
+    };
+
+    var uri = Uri.parse("$BASE_URL/users/$_user_id/logbooks/add");
+    var request = new http.Request("POST", uri);
+
+    request.body = json.encode(data);
+    request.headers["Authorization"] = "Bearer $_accessToken";
+    request.headers["Content-Type"] = "application/json";
+
+    var response = await client.send(request);
+
+    if (response.statusCode != 200) {
+      throw Exception("request failed with ${response.statusCode}");
+    }
+  }
 }
