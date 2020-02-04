@@ -105,4 +105,24 @@ class Api {
     final Map result = jsonDecode(await response.stream.bytesToString());
     return result;
   }
+
+  Future<void> routeMatch(int routeId, int routeImageId, bool routeMatched) async {
+    Map data = {
+      "is_match": routeMatched ? 1 : 0,
+      "route_id": routeId,
+    };
+
+    var uri = Uri.parse("$BASE_URL/users/$_user_id/route_match/$routeImageId");
+    var request = new http.Request("PATCH", uri);
+
+    request.body = json.encode(data);
+    request.headers["Authorization"] = "Bearer $_accessToken";
+    request.headers["Content-Type"] = "application/json";
+
+    var response = await client.send(request);
+
+    if (response.statusCode != 200) {
+      throw Exception("request failed with ${response.statusCode}");
+    }
+  }
 }

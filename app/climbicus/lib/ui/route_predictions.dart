@@ -22,6 +22,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
   static const int displayPredictionsNum = 3;
 
   Image takenImage;
+  int takenImageId;
 
   Future<Map> images;
 
@@ -133,6 +134,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
                     api: widget.api,
                     selectedRouteId: id,
                     selectedImage: w,
+                    takenRouteImageId: takenImageId,
                     takenImage: takenImage,
                 );
               },
@@ -160,6 +162,8 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
         displayPredictionsNum,
             (i) => p["sorted_route_predictions"][i]["route_id"]
     );
+
+    takenImageId = p["route_image_id"];
 
     return widget.api.fetchRouteImages(routeIds);
   }

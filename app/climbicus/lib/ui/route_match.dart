@@ -6,12 +6,14 @@ class RouteMatchPage extends StatefulWidget {
   final Api api;
   final int selectedRouteId;
   final Image selectedImage;
+  final int takenRouteImageId;
   final Image takenImage;
 
   const RouteMatchPage({
     this.api,
     this.selectedRouteId,
     this.selectedImage,
+    this.takenRouteImageId,
     this.takenImage,
   });
 
@@ -20,6 +22,17 @@ class RouteMatchPage extends StatefulWidget {
 }
 
 class _RouteMatchPageState extends State<RouteMatchPage> {
+  @override
+  void initState() {
+    super.initState();
+
+    widget.api.routeMatch(
+        widget.selectedRouteId,
+        widget.takenRouteImageId,
+        true,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

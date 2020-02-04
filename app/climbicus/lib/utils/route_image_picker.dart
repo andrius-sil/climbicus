@@ -1,12 +1,14 @@
 
+import 'dart:io';
+
 import 'package:image_picker/image_picker.dart';
 
 import 'api.dart';
 
 
 class ImagePickerResults {
-  final image;
-  final predictions;
+  final File image;
+  final Future<Map> predictions;
 
   const ImagePickerResults(this.image, this.predictions);
 }
