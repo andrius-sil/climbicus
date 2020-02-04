@@ -116,7 +116,7 @@ class _LogbookPageState extends State<LogbookPage> {
             children: <Widget>[
               Text(fields["grade"]),
               Text(fields["status"]),
-              Text(fields["log_date"]),
+              Text(fields["created_at"]),
             ],
           )
         )
@@ -134,7 +134,7 @@ class _LogbookPageState extends State<LogbookPage> {
 
       var w;
       if (fields != null) {
-        Uint8List bytes = base64.decode(fields);
+        Uint8List bytes = base64.decode(fields["b64_image"]);
         w = Image.memory(bytes);
       } else {
         w = Text("No image '$id'");
@@ -163,7 +163,7 @@ class _LogbookPageState extends State<LogbookPage> {
 
   LinkedHashMap _sortEntriesByLogDate(Map entries) {
     var sortedKeys = entries.keys.toList(growable: false)
-      ..sort((k1, k2) => entries[k1]["log_date"].compareTo(entries[k2]["log_date"]));
+      ..sort((k1, k2) => entries[k1]["created_at"].compareTo(entries[k2]["created_at"]));
 
     return new LinkedHashMap.fromIterable(sortedKeys, key: (k) => k, value: (k) => entries[k]);
   }

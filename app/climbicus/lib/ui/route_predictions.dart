@@ -119,7 +119,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
 
       var w;
       if (fields != null) {
-        Uint8List bytes = base64.decode(fields);
+        Uint8List bytes = base64.decode(fields["b64_image"]);
         w = Image.memory(bytes);
       } else {
         w = Text("No image '$id'");
