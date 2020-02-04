@@ -46,9 +46,9 @@ def predict(user_id):
 
 @blueprint.route("/<int:user_id>/logbooks/add", methods=["POST"])
 def add(user_id):
-    status = request.form.get("status")
-    predicted_class_id = request.form.get("predicted_class_id")
-    gym_id = request.form.get("gym_id")
+    status = request.json["status"]
+    predicted_class_id = request.json["predicted_class_id"]
+    gym_id = request.json["gym_id"]
     if None in [status, predicted_class_id, gym_id]:
         abort(400, description="Request missing required data")
 
@@ -80,8 +80,6 @@ def view(user_id):
 
 @blueprint.route("/<int:user_id>/route_images", methods=["GET"])
 def route_images(user_id):
-    if not request.is_json:
-        abort(400, "Request data should be in JSON format")
     route_ids = request.json["route_ids"]
 
     route_id_colname = "model_route_id"
@@ -117,8 +115,8 @@ def route_images(user_id):
 
 @blueprint.route("/<int:user_id>/route_match/<int:route_image_id>", methods=["PATCH"])
 def route_match(user_id, route_image_id):
-    user_match = int(request.form["is_match"])
-    user_route_id = request.form.get("route_id")
+    user_match = int(request.json["is_match"])
+    user_route_id = request.json["route_id"]
 
     route_image = db.session.query(RouteImages).filter_by(id=route_image_id, user_id=user_id).one()
     if user_match == 1:

@@ -19,7 +19,8 @@ def test_view_logbook(client, auth_headers):
 
 
 def test_add_to_logbook(client, app, auth_headers):
-    client.post("/users/1/logbooks/add", data=dict(status="dogged", predicted_class_id=1, gym_id=1), headers=auth_headers)
+    data = { "status": "dogged", "predicted_class_id": 1, "gym_id": 1 }
+    client.post("/users/1/logbooks/add", data=json.dumps(data), content_type="application/json", headers=auth_headers)
     with app.app_context():
         assert UserRouteLog.query.filter_by(status="dogged", user_id=1, gym_id=1).one().status == "dogged"
 
@@ -131,7 +132,7 @@ def test_route_match(client, app, auth_headers):
         "is_match": 1,
         "route_id": 2,
     }
-    resp = client.patch("/users/2/route_match/4", data=data, headers=auth_headers)
+    resp = client.patch("/users/2/route_match/4", data=json.dumps(data), content_type="application/json", headers=auth_headers)
 
     assert resp.status_code == 200
 
@@ -146,7 +147,7 @@ def test_route_match_no_match(client, app, auth_headers):
         "is_match": 0,
         "route_id": None,
     }
-    resp = client.patch("/users/2/route_match/4", data=data, headers=auth_headers)
+    resp = client.patch("/users/2/route_match/4", data=json.dumps(data), content_type="application/json", headers=auth_headers)
 
     assert resp.status_code == 200
 
