@@ -48,7 +48,10 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
           child: Column(
             children: <Widget>[
               Text("Your photo:"),
-              takenImage,
+              Container(
+                height: 200,
+                child: takenImage,
+              ),
               Row(
                 children: <Widget>[
                   Expanded(

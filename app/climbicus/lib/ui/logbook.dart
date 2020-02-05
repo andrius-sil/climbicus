@@ -94,7 +94,14 @@ class _LogbookPageState extends State<LogbookPage> {
             height: 16.0,
           ),
           FloatingActionButton(
-            onPressed: () => widget.imagePicker.getCameraImage(),
+            onPressed: () async {
+              var results = await widget.imagePicker.getCameraImage();
+              Navigator.push(context, MaterialPageRoute(
+                builder: (BuildContext context) {
+                  return RoutePredictionsPage(api: widget.api, results: results);
+                },
+              ));
+            },
             tooltip: 'Pick image (camera)',
             child: Icon(Icons.add_a_photo),
             heroTag: "btnCamera",
