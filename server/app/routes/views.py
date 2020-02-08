@@ -12,7 +12,7 @@ blueprint = Blueprint("routes_blueprint", __name__, url_prefix="/routes")
 MAX_NUMBER_OF_PREDICTED_ROUTES = 20
 
 
-@blueprint.route("/predict", methods=["POST"])
+@blueprint.route("/predictions", methods=["POST"])
 def predict():
     json_data = json.loads(request.form["json"])
     user_id = json_data["user_id"]

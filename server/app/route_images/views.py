@@ -10,7 +10,7 @@ from flask import request, Blueprint, jsonify
 blueprint = Blueprint("route_images_blueprint", __name__, url_prefix="/route_images")
 
 
-@blueprint.route("/route_images", methods=["GET"])
+@blueprint.route("/", methods=["GET"])
 def route_images():
     user_id = request.json["user_id"]
     route_ids = request.json["route_ids"]
@@ -46,7 +46,7 @@ def route_images():
     return jsonify({"route_images": images})
 
 
-@blueprint.route("/route_match/<int:route_image_id>", methods=["PATCH"])
+@blueprint.route("/<int:route_image_id>", methods=["PATCH"])
 def route_match(route_image_id):
     user_id = request.json["user_id"]
     user_match = int(request.json["is_match"])

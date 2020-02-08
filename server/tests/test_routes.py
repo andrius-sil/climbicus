@@ -12,7 +12,7 @@ def test_predict_no_image(client, auth_headers_user1):
     data = {
         "json": json.dumps(json_data),
     }
-    resp = client.post("/routes/predict", data=data, headers=auth_headers_user1)
+    resp = client.post("/routes/predictions", data=data, headers=auth_headers_user1)
 
     assert resp.status_code == 400
     assert b"image file is missing" in resp.data
@@ -27,7 +27,7 @@ def test_predict_with_image(client, resource_dir, auth_headers_user1):
         "image": open(f"{resource_dir}/green_route.jpg", "rb"),
     }
 
-    resp = client.post("/routes/predict", data=data, headers=auth_headers_user1)
+    resp = client.post("/routes/predictions", data=data, headers=auth_headers_user1)
 
     assert resp.status_code == 200
 
@@ -45,7 +45,7 @@ def test_predict_with_invalid_image(client, auth_headers_user1):
         "image": b"thisIsNotAnImage",
     }
 
-    resp = client.post("/routes/predict", data=data, headers=auth_headers_user1)
+    resp = client.post("/routes/predictions", data=data, headers=auth_headers_user1)
     assert resp.status_code == 400
     assert b"image file is missing" in resp.data
 
@@ -62,7 +62,7 @@ def test_predict_with_corrupt_image(client, resource_dir, auth_headers_user1):
         "image": open(f"{resource_dir}/corrupt_route.jpg", "rb"),
     }
 
-    resp = client.post("/routes/predict", data=data, headers=auth_headers_user1)
+    resp = client.post("/routes/predictions", data=data, headers=auth_headers_user1)
     assert resp.status_code == 400
     assert b"not a valid image" in resp.data
 
@@ -79,7 +79,7 @@ def test_predict_with_unknown_image(client, resource_dir, auth_headers_user1):
         "image": open(f"{resource_dir}/unknown_route.jpg", "rb"),
     }
 
-    resp = client.post("/routes/predict", data=data, headers=auth_headers_user1)
+    resp = client.post("/routes/predictions", data=data, headers=auth_headers_user1)
     # For now, the current model still predicts a route with high probability, hence we cannot say "this is unknown
     # route"
     assert resp.status_code == 200
@@ -101,7 +101,7 @@ def test_storing_image_path_to_db(app, client, resource_dir, auth_headers_user1)
         "image": open(f"{resource_dir}/unknown_route.jpg", "rb"),
     }
 
-    resp = client.post("/routes/predict", data=data, headers=auth_headers_user1)
+    resp = client.post("/routes/predictions", data=data, headers=auth_headers_user1)
     assert resp.status_code == 200
 
     with app.app_context():

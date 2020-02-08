@@ -17,7 +17,7 @@ def test_route_images(client, resource_dir, auth_headers_user2):
         "user_id": 2,
         "route_ids": list(routes.keys()) + [99],
     }
-    resp = client.get("/route_images/route_images", data=json.dumps(data), content_type="application/json", headers=auth_headers_user2)
+    resp = client.get("/route_images/", data=json.dumps(data), content_type="application/json", headers=auth_headers_user2)
 
     assert resp.status_code == 200
     assert resp.is_json
@@ -46,7 +46,7 @@ def test_route_match(client, app, auth_headers_user2):
         "is_match": 1,
         "route_id": 2,
     }
-    resp = client.patch("/route_images/route_match/4", data=json.dumps(data), content_type="application/json", headers=auth_headers_user2)
+    resp = client.patch("/route_images/4", data=json.dumps(data), content_type="application/json", headers=auth_headers_user2)
 
     assert resp.status_code == 200
 
@@ -62,7 +62,7 @@ def test_route_match_no_match(client, app, auth_headers_user2):
         "is_match": 0,
         "route_id": None,
     }
-    resp = client.patch("/route_images/route_match/4", data=json.dumps(data), content_type="application/json", headers=auth_headers_user2)
+    resp = client.patch("/route_images/4", data=json.dumps(data), content_type="application/json", headers=auth_headers_user2)
 
     assert resp.status_code == 200
 
