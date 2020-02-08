@@ -9,92 +9,25 @@ class Api {
 //  static const BASE_URL = "http://3.11.49.99:5000"; // PROD
   static const BASE_URL = "http://3.11.0.15:5000"; // DEV
 
+  static const CASTLE_GYM_ID = 1;
+
   final client = http.Client();
 
   String _accessToken;
-  int _user_id;
+  int _userId;
 
   set accessToken(String value) {
     _accessToken = value;
   }
 
   set userId(int value) {
-    _user_id = value;
+    _userId = value;
   }
 
-  Future<Map> login(String email, String password) async {
-    Map data = {
-      "email": email,
-      "password": password,
-    };
-
-    final response = await client.post(
-      "$BASE_URL/login",
-      headers: {"Content-Type": "application/json"},
-      body: json.encode(data),
-    );
-
-    if (response.statusCode != 200) {
-      throw Exception("request failed with ${response.statusCode}");
+  Future<Map> _request(http.BaseRequest request, bool auth) async {
+    if (auth) {
+      request.headers["Authorization"] = "Bearer $_accessToken";
     }
-
-    final Map result = jsonDecode(response.body);
-    return result;
-  }
-
-  Future<Map> fetchLogbook() async {
-    //HttpHeaders.authorizationHeader
-    final response = await client.get(
-      "$BASE_URL/users/$_user_id/logbooks/view",
-      headers: {"Authorization": "Bearer $_accessToken"},
-    );
-
-    if (response.statusCode != 200) {
-      throw Exception("request failed with ${response.statusCode}");
-    }
-
-    final Map result = jsonDecode(response.body);
-    return result;
-  }
-
-  Future<Map> uploadRouteImage(File image) async {
-    var uri = Uri.parse("$BASE_URL/users/$_user_id/predict");
-    var request = new http.MultipartRequest("POST", uri);
-
-    request.headers["Authorization"] = "Bearer $_accessToken";
-
-    var stream = new http.ByteStream(DelegatingStream.typed(image.openRead()));
-    var length = await image.length();
-    var multipartFile = new http.MultipartFile(
-        'image',
-        stream,
-        length,
-        filename: basename(image.path)
-    );
-    request.files.add(multipartFile);
-
-    var response = await client.send(request);
-    if (response.statusCode == 200) {
-      final Map result = jsonDecode(await response.stream.bytesToString());
-      return result;
-    } else {
-      var value = await response.stream.bytesToString();
-      print(value);
-      throw Exception("request failed with ${response.statusCode}");
-    }
-  }
-
-  Future<Map> fetchRouteImages(List routeIds) async {
-    Map data = {
-      "route_ids": routeIds,
-    };
-
-    var uri = Uri.parse("$BASE_URL/users/$_user_id/route_images");
-    var request = new http.Request("GET", uri);
-
-    request.body = json.encode(data);
-    request.headers["Authorization"] = "Bearer $_accessToken";
-    request.headers["Content-Type"] = "application/json";
 
     var response = await client.send(request);
 
@@ -106,44 +39,93 @@ class Api {
     return result;
   }
 
+  Future<Map> _requestJson(String method, String urlPath, Map requestData, {bool auth = true}) async {
+    var uri = Uri.parse("$BASE_URL/$urlPath");
+    var request = new http.Request(method, uri);
+
+    request.headers["Content-Type"] = "application/json";
+
+    Map data = {};
+    if (auth) {
+      data["user_id"] = _userId;
+    }
+    data.addAll(requestData);
+    request.body = json.encode(data);
+
+    return _request(request, auth);
+  }
+
+  Future<Map> _requestMultipart(File image, String method, String urlPath, Map requestData) async {
+    var uri = Uri.parse("$BASE_URL/$urlPath");
+    var request = new http.MultipartRequest("POST", uri);
+
+    var stream = new http.ByteStream(DelegatingStream.typed(image.openRead()));
+    var length = await image.length();
+    var multipartFile = new http.MultipartFile(
+        'image',
+        stream,
+        length,
+        filename: basename(image.path)
+    );
+    request.files.add(multipartFile);
+
+    Map data = {"user_id": _userId};
+    data.addAll(requestData);
+    request.fields["json"] = json.encode(data);
+
+    return _request(request, true);
+  }
+
+  Future<Map> login(String email, String password) async {
+    Map data = {
+      "email": email,
+      "password": password,
+    };
+
+    return _requestJson("POST", "login", data, auth: false);
+  }
+
   Future<void> routeMatch(int routeId, int routeImageId, bool routeMatched) async {
     Map data = {
       "is_match": routeMatched ? 1 : 0,
       "route_id": routeId,
     };
 
-    var uri = Uri.parse("$BASE_URL/users/$_user_id/route_match/$routeImageId");
-    var request = new http.Request("PATCH", uri);
-
-    request.body = json.encode(data);
-    request.headers["Authorization"] = "Bearer $_accessToken";
-    request.headers["Content-Type"] = "application/json";
-
-    var response = await client.send(request);
-
-    if (response.statusCode != 200) {
-      throw Exception("request failed with ${response.statusCode}");
-    }
+    _requestJson("PATCH", "route_images/$routeImageId", data);
   }
 
   Future<void> logbookAdd(int routeId, String status) async {
     Map data = {
       "route_id": routeId,
       "status": status,
-      "gym_id": 1,
+      "gym_id": CASTLE_GYM_ID,
     };
 
-    var uri = Uri.parse("$BASE_URL/users/$_user_id/logbooks/add");
-    var request = new http.Request("POST", uri);
+    _requestJson("POST", "user_route_log/", data);
+  }
 
-    request.body = json.encode(data);
-    request.headers["Authorization"] = "Bearer $_accessToken";
-    request.headers["Content-Type"] = "application/json";
+  Future<Map> fetchRouteImages(List routeIds) async {
+    Map data = {
+      "route_ids": routeIds,
+    };
 
-    var response = await client.send(request);
+    return _requestJson("GET", "route_images/", data);
+  }
 
-    if (response.statusCode != 200) {
-      throw Exception("request failed with ${response.statusCode}");
-    }
+
+  Future<Map> fetchLogbook() async {
+    Map data = {
+      "gym_id": CASTLE_GYM_ID,
+    };
+
+    return _requestJson("GET", "user_route_log/", data);
+  }
+
+  Future<Map> uploadRouteImage(File image) async {
+    Map data = {
+      "gym_id": CASTLE_GYM_ID,
+    };
+    return _requestMultipart(image, "POST", "routes/predictions", data);
+
   }
 }
