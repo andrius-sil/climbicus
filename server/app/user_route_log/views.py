@@ -20,7 +20,8 @@ def add():
                      created_at=datetime.datetime.now())
     )
     db.session.commit()
-    return "Route status added to log"
+
+    return jsonify({"msg": "Route status added to log"})
 
 
 @blueprint.route("/", methods=["GET"])

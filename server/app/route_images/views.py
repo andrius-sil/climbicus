@@ -59,4 +59,4 @@ def route_match(route_image_id):
         route_image.user_route_unmatched = True
     db.session.commit()
 
-    return "Route image updated with user's route id choice"
+    return jsonify({"msg": "Route image updated with user's route id choice"})

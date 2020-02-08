@@ -49,6 +49,8 @@ def test_route_match(client, app, auth_headers_user2):
     resp = client.patch("/route_images/4", data=json.dumps(data), content_type="application/json", headers=auth_headers_user2)
 
     assert resp.status_code == 200
+    assert resp.is_json
+    assert resp.json["msg"] == "Route image updated with user's route id choice"
 
     with app.app_context():
         route_image = db.session.query(RouteImages).filter_by(id=4).one()
@@ -65,6 +67,8 @@ def test_route_match_no_match(client, app, auth_headers_user2):
     resp = client.patch("/route_images/4", data=json.dumps(data), content_type="application/json", headers=auth_headers_user2)
 
     assert resp.status_code == 200
+    assert resp.is_json
+    assert resp.json["msg"] == "Route image updated with user's route id choice"
 
     with app.app_context():
         route_image = db.session.query(RouteImages).filter_by(id=4).one()
