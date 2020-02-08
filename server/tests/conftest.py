@@ -123,9 +123,18 @@ def resource_dir():
 
 
 @pytest.fixture(scope="function")
-def auth_headers(app):
+def auth_headers_user1(app):
+    return _auth_headers(app, identity=1)
+
+
+@pytest.fixture(scope="function")
+def auth_headers_user2(app):
+    return _auth_headers(app, identity=2)
+
+
+def _auth_headers(app, identity):
     with app.app_context():
-        access_token = create_access_token(identity="test")
+        access_token = create_access_token(identity=identity)
         headers = {
             "Authorization": f"Bearer {access_token}"
         }

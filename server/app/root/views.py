@@ -12,6 +12,7 @@ blueprint = Blueprint("root_blueprint", __name__)
 def login():
     if not request.is_json:
         abort(400, "Request data should be in JSON format")
+
     email = request.json.get("email", None)
     password = request.json.get("password", None)
 
@@ -24,7 +25,7 @@ def login():
     if error:
         abort(401, error)
 
-    access_token = create_access_token(identity=email)
+    access_token = create_access_token(identity=user.id)
     return jsonify(
         access_token=access_token,
         user_id=user.id,

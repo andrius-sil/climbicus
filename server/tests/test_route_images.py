@@ -5,7 +5,7 @@ from app import db
 from flask import json
 
 
-def test_route_images(client, resource_dir, auth_headers):
+def test_route_images(client, resource_dir, auth_headers_user2):
     routes = {
         1: { "route_image_id": 1, "b64_image": "user1_route1.jpg"},
         2: { "route_image_id": 3, "b64_image": "user2_route2_1.jpg"},
@@ -14,9 +14,10 @@ def test_route_images(client, resource_dir, auth_headers):
 
     # Request data with invalid '99' route id.
     data = {
+        "user_id": 2,
         "route_ids": list(routes.keys()) + [99],
     }
-    resp = client.get("/route_images/2/route_images", data=json.dumps(data), content_type="application/json", headers=auth_headers)
+    resp = client.get("/route_images/route_images", data=json.dumps(data), content_type="application/json", headers=auth_headers_user2)
 
     assert resp.status_code == 200
     assert resp.is_json
@@ -39,12 +40,13 @@ def test_route_images(client, resource_dir, auth_headers):
     assert len(route_images) == 0
 
 
-def test_route_match(client, app, auth_headers):
+def test_route_match(client, app, auth_headers_user2):
     data = {
+        "user_id": 2,
         "is_match": 1,
         "route_id": 2,
     }
-    resp = client.patch("/route_images/2/route_match/4", data=json.dumps(data), content_type="application/json", headers=auth_headers)
+    resp = client.patch("/route_images/route_match/4", data=json.dumps(data), content_type="application/json", headers=auth_headers_user2)
 
     assert resp.status_code == 200
 
@@ -54,12 +56,13 @@ def test_route_match(client, app, auth_headers):
         assert not route_image.user_route_unmatched
 
 
-def test_route_match_no_match(client, app, auth_headers):
+def test_route_match_no_match(client, app, auth_headers_user2):
     data = {
+        "user_id": 2,
         "is_match": 0,
         "route_id": None,
     }
-    resp = client.patch("/route_images/2/route_match/4", data=json.dumps(data), content_type="application/json", headers=auth_headers)
+    resp = client.patch("/route_images/route_match/4", data=json.dumps(data), content_type="application/json", headers=auth_headers_user2)
 
     assert resp.status_code == 200
 
@@ -67,4 +70,3 @@ def test_route_match_no_match(client, app, auth_headers):
         route_image = db.session.query(RouteImages).filter_by(id=4).one()
         assert route_image.user_route_id is None
         assert route_image.user_route_unmatched
-

@@ -36,14 +36,55 @@ def test_login_with_invalid_password(app, client):
     assert b"Incorrect email and password" in resp.data
 
 
-def test_index(app, client, auth_headers):
-    resp = client.get("/", headers=auth_headers)
+def test_index(app, client, auth_headers_user1):
+    data = {
+        "user_id": 1,
+    }
+    resp = client.get("/", data=json.dumps(data), content_type="application/json", headers=auth_headers_user1)
 
     assert resp.status_code == 200
     assert b"Flask Dockerized" in resp.data
 
 
-def test_index_no_auth(app, client):
+def test_index_no_auth_header(app, client):
     resp = client.get("/")
+
+    assert resp.status_code == 401
+
+
+def test_index_no_user_id(app, client, auth_headers_user1):
+    resp = client.get("/", data=json.dumps({}), content_type="application/json", headers=auth_headers_user1)
+
+    assert resp.status_code == 400
+
+
+def test_index_no_user_id_form_data(app, client, auth_headers_user1):
+    json_data = {
+    }
+    data = {
+        "json": json.dumps(json_data),
+    }
+    resp = client.get("/", data=data, headers=auth_headers_user1)
+
+    assert resp.status_code == 400
+
+
+def test_index_auth_header_and_user_id_mismatch(app, client, auth_headers_user1):
+    data = {
+        "user_id": 2,
+    }
+    resp = client.get("/", data=json.dumps(data), content_type="application/json", headers=auth_headers_user1)
+
+    assert resp.status_code == 401
+
+
+def test_index_auth_header_and_user_id_mismatch_form_data(app, client, auth_headers_user1):
+    json_data = {
+        "user_id": 2,
+    }
+    data = {
+        "json": json.dumps(json_data),
+    }
+    resp = client.get("/", data=data, headers=auth_headers_user1)
 
     assert resp.status_code == 401

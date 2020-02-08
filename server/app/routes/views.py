@@ -1,4 +1,5 @@
 import datetime
+import json
 import uuid
 
 from app import db, predictor, io
@@ -11,8 +12,11 @@ blueprint = Blueprint("routes_blueprint", __name__, url_prefix="/routes")
 MAX_NUMBER_OF_PREDICTED_ROUTES = 20
 
 
-@blueprint.route("/<int:user_id>/predict", methods=["POST"])
-def predict(user_id):
+@blueprint.route("/predict", methods=["POST"])
+def predict():
+    json_data = json.loads(request.form["json"])
+    user_id = json_data["user_id"]
+
     imagefile = request.files.get("image")
     if imagefile is None:
         abort(400, description="Image file is missing")

@@ -8,8 +8,9 @@ from flask import request, Blueprint, jsonify
 blueprint = Blueprint("user_route_log_blueprint", __name__, url_prefix="/user_route_log")
 
 
-@blueprint.route("/<int:user_id>/logbooks/add", methods=["POST"])
-def add(user_id):
+@blueprint.route("/logbooks/add", methods=["POST"])
+def add():
+    user_id = request.json["user_id"]
     status = request.json["status"]
     route_id = request.json["route_id"]
     gym_id = request.json["gym_id"]
@@ -22,8 +23,9 @@ def add(user_id):
     return "Route status added to log"
 
 
-@blueprint.route("/<int:user_id>/logbooks/view", methods=["GET"])
-def view(user_id):
+@blueprint.route("/logbooks/view", methods=["GET"])
+def view():
+    user_id = request.json["user_id"]
     results = db.session.query(UserRouteLog, Routes) \
         .filter_by(user_id=user_id) \
         .join(Routes) \
