@@ -6,7 +6,7 @@ from app.models import RouteImages, Routes, THE_CASTLE_ID
 
 from flask import abort, request, Blueprint, jsonify
 
-blueprint = Blueprint("users_blueprint", __name__, url_prefix="/users")
+blueprint = Blueprint("routes_blueprint", __name__, url_prefix="/routes")
 
 MAX_NUMBER_OF_PREDICTED_ROUTES = 20
 
