@@ -1,4 +1,4 @@
-from flask import Blueprint, request, abort, jsonify
+from flask import Blueprint, request, abort, jsonify, current_app
 from flask_jwt_extended import create_access_token
 
 from app.app_handlers import no_jwt_required
@@ -24,6 +24,8 @@ def login():
 
     if error:
         abort(401, error)
+
+    current_app.logger.info(f"logging in as '{email}'")
 
     access_token = create_access_token(identity=user.id)
     return jsonify(
