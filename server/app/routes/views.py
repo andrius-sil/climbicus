@@ -19,11 +19,11 @@ def predict():
 
     imagefile = request.files.get("image")
     if imagefile is None:
-        abort(400, description="Image file is missing")
+        abort(400, "image file is missing")
     try:
         predictor_results = predictor.predict_route(imagefile)
     except OSError:
-        abort(400, description="Not a valid image")
+        abort(400, "not a valid image")
 
     sorted_class_ids = predictor_results.get_sorted_class_ids(max_results=MAX_NUMBER_OF_PREDICTED_ROUTES)
 

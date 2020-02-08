@@ -15,7 +15,7 @@ def test_predict_no_image(client, auth_headers_user1):
     resp = client.post("/routes/predict", data=data, headers=auth_headers_user1)
 
     assert resp.status_code == 400
-    assert b"Image file is missing" in resp.data
+    assert b"image file is missing" in resp.data
 
 
 def test_predict_with_image(client, resource_dir, auth_headers_user1):
@@ -47,7 +47,7 @@ def test_predict_with_invalid_image(client, auth_headers_user1):
 
     resp = client.post("/routes/predict", data=data, headers=auth_headers_user1)
     assert resp.status_code == 400
-    assert b"Image file is missing" in resp.data
+    assert b"image file is missing" in resp.data
 
 
 def test_predict_with_corrupt_image(client, resource_dir, auth_headers_user1):
@@ -64,7 +64,7 @@ def test_predict_with_corrupt_image(client, resource_dir, auth_headers_user1):
 
     resp = client.post("/routes/predict", data=data, headers=auth_headers_user1)
     assert resp.status_code == 400
-    assert b"Not a valid image" in resp.data
+    assert b"not a valid image" in resp.data
 
 
 def test_predict_with_unknown_image(client, resource_dir, auth_headers_user1):

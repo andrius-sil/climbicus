@@ -20,7 +20,7 @@ def login():
 
     user = Users.query.filter_by(email=email).one_or_none()
     if not user or not user.check_password(password):
-        error = "Incorrect email and password"
+        error = "incorrect email and password"
 
     if error:
         abort(401, error)
