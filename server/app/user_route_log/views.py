@@ -26,8 +26,10 @@ def add():
 @blueprint.route("/", methods=["GET"])
 def view():
     user_id = request.json["user_id"]
+    gym_id = request.json["gym_id"]
+
     results = db.session.query(UserRouteLog, Routes) \
-        .filter_by(user_id=user_id) \
+        .filter_by(user_id=user_id, gym_id=gym_id) \
         .join(Routes) \
         .all()
     logbook = {}

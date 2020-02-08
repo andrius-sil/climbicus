@@ -8,6 +8,7 @@ from flask import json
 def test_predict_no_image(client, auth_headers_user1):
     json_data = {
         "user_id": 1,
+        "gym_id": 1,
     }
     data = {
         "json": json.dumps(json_data),
@@ -21,6 +22,7 @@ def test_predict_no_image(client, auth_headers_user1):
 def test_predict_with_image(client, resource_dir, auth_headers_user1):
     json_data = {
         "user_id": 1,
+        "gym_id": 1,
     }
     data = {
         "json": json.dumps(json_data),
@@ -39,6 +41,7 @@ def test_predict_with_image(client, resource_dir, auth_headers_user1):
 def test_predict_with_invalid_image(client, auth_headers_user1):
     json_data = {
         "user_id": 1,
+        "gym_id": 1,
     }
     data = {
         "json": json.dumps(json_data),
@@ -56,6 +59,7 @@ def test_predict_with_corrupt_image(client, resource_dir, auth_headers_user1):
     """
     json_data = {
         "user_id": 1,
+        "gym_id": 1,
     }
     data = {
         "json": json.dumps(json_data),
@@ -73,6 +77,7 @@ def test_predict_with_unknown_image(client, resource_dir, auth_headers_user1):
     """
     json_data = {
         "user_id": 1,
+        "gym_id": 1,
     }
     data = {
         "json": json.dumps(json_data),
@@ -95,6 +100,7 @@ def test_storing_image_path_to_db(app, client, resource_dir, auth_headers_user1)
     """
     json_data = {
         "user_id": 1,
+        "gym_id": 1,
     }
     data = {
         "json": json.dumps(json_data),

@@ -5,6 +5,7 @@ from flask import json
 def test_view_logbook(client, auth_headers_user1):
     data = {
         "user_id": 1,
+        "gym_id": 1,
     }
     resp = client.get("/user_route_log/", data=json.dumps(data), content_type="application/json", headers=auth_headers_user1)
     assert resp.status_code == 200
