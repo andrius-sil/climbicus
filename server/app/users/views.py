@@ -5,7 +5,7 @@ import uuid
 from sqlalchemy import func
 
 from app import db, predictor, io
-from app.models import RouteImages, Routes, UserRouteLog, THE_CASTLE_ID
+from app.models import RouteImages, Routes, THE_CASTLE_ID
 
 from flask import abort, request, Blueprint, jsonify
 
@@ -42,37 +42,6 @@ def predict(user_id):
     response["route_image_id"] = route_image_id
 
     return jsonify(response)
-
-
-@blueprint.route("/<int:user_id>/logbooks/add", methods=["POST"])
-def add(user_id):
-    status = request.json["status"]
-    route_id = request.json["route_id"]
-    gym_id = request.json["gym_id"]
-
-    db.session.add(
-        UserRouteLog(route_id=route_id, user_id=user_id, gym_id=gym_id, status=status,
-                     created_at=datetime.datetime.now())
-    )
-    db.session.commit()
-    return "Route status added to log"
-
-
-@blueprint.route("/<int:user_id>/logbooks/view", methods=["GET"])
-def view(user_id):
-    results = db.session.query(UserRouteLog, Routes) \
-        .filter_by(user_id=user_id) \
-        .join(Routes) \
-        .all()
-    logbook = {}
-    for user_route_log, route in results:
-        logbook[user_route_log.id] = {
-            "route_id": route.id,
-            "grade": route.grade,
-            "created_at": user_route_log.created_at.isoformat(),
-            "status": user_route_log.status,
-        }
-    return jsonify(logbook)
 
 
 @blueprint.route("/<int:user_id>/route_images", methods=["GET"])
