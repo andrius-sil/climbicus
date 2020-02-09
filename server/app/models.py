@@ -4,9 +4,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 
 
-THE_CASTLE_ID = 1
-
-
 def model_repr(name, **kwargs):
     fields = ", ".join([f"{field}={value}" for field, value in kwargs.items()])
     return f"<{name}({fields})>"
