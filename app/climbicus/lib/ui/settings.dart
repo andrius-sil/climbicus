@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class SettingsPage extends StatefulWidget {
-  final Auth auth;
+  final Auth auth = Auth();
   final VoidCallback logoutCallback;
 
-  const SettingsPage({this.auth, this.logoutCallback});
+  SettingsPage({this.logoutCallback});
 
   @override
   State<StatefulWidget> createState() => _SettingsPageState();
@@ -25,7 +25,7 @@ class _SettingsPageState extends State<SettingsPage> {
       body: Container(
         child: Form(
           key: formKey,
-          child: new ListView(
+          child: ListView(
             children: <Widget>[
               Text(widget.auth.email),
               RaisedButton(
@@ -40,6 +40,8 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> logout() async {
+    debugPrint("user logging out");
+
     await widget.auth.logout();
     widget.logoutCallback();
 

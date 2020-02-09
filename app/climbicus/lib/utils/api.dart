@@ -28,18 +28,18 @@ class ApiProvider {
 
   static const CASTLE_GYM_ID = 1;
 
+  // Singleton factory.
+  ApiProvider._internal();
+  static final ApiProvider _apiProvider = ApiProvider._internal();
+  factory ApiProvider() => _apiProvider;
+
   final client = http.Client();
 
   String _accessToken;
   int _userId;
 
-  set accessToken(String value) {
-    _accessToken = value;
-  }
-
-  set userId(int value) {
-    _userId = value;
-  }
+  set accessToken(String value) => _accessToken = value;
+  set userId(int value) => _userId = value;
 
   Future<Map> _request(http.BaseRequest request, bool auth) async {
     if (auth) {
@@ -60,7 +60,7 @@ class ApiProvider {
 
   Future<Map> _requestJson(String method, String urlPath, Map requestData, {bool auth = true}) async {
     var uri = Uri.parse("$BASE_URL/$urlPath");
-    var request = new http.Request(method, uri);
+    var request = http.Request(method, uri);
 
     request.headers["Content-Type"] = "application/json";
 
@@ -78,11 +78,11 @@ class ApiProvider {
 
   Future<Map> _requestMultipart(File image, String method, String urlPath, Map requestData) async {
     var uri = Uri.parse("$BASE_URL/$urlPath");
-    var request = new http.MultipartRequest("POST", uri);
+    var request = http.MultipartRequest("POST", uri);
 
-    var stream = new http.ByteStream(DelegatingStream.typed(image.openRead()));
+    var stream = http.ByteStream(DelegatingStream.typed(image.openRead()));
     var length = await image.length();
-    var multipartFile = new http.MultipartFile(
+    var multipartFile = http.MultipartFile(
         'image',
         stream,
         length,

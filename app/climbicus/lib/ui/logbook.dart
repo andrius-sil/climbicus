@@ -9,14 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class LogbookPage extends StatefulWidget {
+  final ApiProvider api = ApiProvider();
+  final RouteImagePicker imagePicker = RouteImagePicker();
   final AppBar appBar;
-  final ApiProvider api;
 
-  RouteImagePicker imagePicker;
-
-  LogbookPage({this.appBar, this.api}) {
-     imagePicker = new RouteImagePicker(api: api);
-  }
+  LogbookPage({this.appBar});
 
   @override
   State<StatefulWidget> createState() => _LogbookPageState();
@@ -82,7 +79,7 @@ class _LogbookPageState extends State<LogbookPage> {
               var results = await widget.imagePicker.getGalleryImage();
               Navigator.push(context, MaterialPageRoute(
                 builder: (BuildContext context) {
-                  return RoutePredictionsPage(api: widget.api, results: results);
+                  return RoutePredictionsPage(results: results);
                 },
               ));
             },
@@ -98,7 +95,7 @@ class _LogbookPageState extends State<LogbookPage> {
               var results = await widget.imagePicker.getCameraImage();
               Navigator.push(context, MaterialPageRoute(
                 builder: (BuildContext context) {
-                  return RoutePredictionsPage(api: widget.api, results: results);
+                  return RoutePredictionsPage(results: results);
                 },
               ));
             },
@@ -172,6 +169,6 @@ class _LogbookPageState extends State<LogbookPage> {
     var sortedKeys = entries.keys.toList(growable: false)
       ..sort((k1, k2) => entries[k1]["created_at"].compareTo(entries[k2]["created_at"]));
 
-    return new LinkedHashMap.fromIterable(sortedKeys, key: (k) => k, value: (k) => entries[k]);
+    return LinkedHashMap.fromIterable(sortedKeys, key: (k) => k, value: (k) => entries[k]);
   }
 }

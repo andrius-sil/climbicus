@@ -1,7 +1,6 @@
 import 'package:climbicus/ui/logbook.dart';
 import 'package:climbicus/ui/login.dart';
 import 'package:climbicus/ui/settings.dart';
-import 'package:climbicus/utils/api.dart';
 import 'package:climbicus/utils/auth.dart';
 import 'package:flutter/material.dart';
 
@@ -27,14 +26,8 @@ enum AuthStatus {
 }
 
 class _HomePageState extends State<HomePage> {
-  final ApiProvider api = new ApiProvider();
-
-  Auth auth;
+  final Auth auth = Auth();
   AuthStatus authStatus = AuthStatus.notDetermined;
-
-  _HomePageState() {
-    auth = new Auth(api: api);
-  }
 
   @override
   void didChangeDependencies() {
@@ -65,9 +58,9 @@ class _HomePageState extends State<HomePage> {
       case AuthStatus.notDetermined:
         return _buildWaitingPage();
       case AuthStatus.notLoggedIn:
-        return LoginPage(auth: auth, loginCallback: _loggedIn);
+        return LoginPage(loginCallback: _loggedIn);
       case AuthStatus.loggedIn:
-        return LogbookPage(appBar: appBar("Logbook"), api: api);
+        return LogbookPage(appBar: appBar("Logbook"));
     }
   }
 
@@ -98,7 +91,7 @@ class _HomePageState extends State<HomePage> {
   void openSettingsPage(BuildContext context) {
     Navigator.push(context, MaterialPageRoute(
       builder: (BuildContext context) {
-        return SettingsPage(auth: auth, logoutCallback: _loggedOut);
+        return SettingsPage(logoutCallback: _loggedOut);
       },
     ));
   }

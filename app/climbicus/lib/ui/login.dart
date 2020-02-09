@@ -3,10 +3,10 @@ import 'package:climbicus/utils/auth.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
-  final Auth auth;
+  final Auth auth = Auth();
   final VoidCallback loginCallback;
 
-  const LoginPage({this.auth, this.loginCallback});
+  LoginPage({this.loginCallback});
 
   @override
   State<StatefulWidget> createState() => _LoginPageState();
@@ -24,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
       body: Container(
         child: Form(
           key: formKey,
-          child: new ListView(
+          child: ListView(
             children: buildInputs() + buildSubmitButtons(),
           ),
         ),
@@ -69,8 +69,7 @@ class _LoginPageState extends State<LoginPage> {
 
     form.save();
 
-    widget.auth.login(_email, _password);
-
+    await widget.auth.login(_email, _password);
     widget.loginCallback();
   }
 }

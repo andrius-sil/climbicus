@@ -8,10 +8,10 @@ import 'package:climbicus/utils/route_image_picker.dart';
 import 'package:flutter/material.dart';
 
 class RoutePredictionsPage extends StatefulWidget {
-  final ApiProvider api;
+  final ApiProvider api = ApiProvider();
   final ImagePickerResults results;
 
-  const RoutePredictionsPage({this.api, this.results});
+  RoutePredictionsPage({this.results});
 
   @override
   State<StatefulWidget> createState() => _RoutePredictionsPageState();
@@ -134,7 +134,6 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
             Navigator.push(context, MaterialPageRoute(
               builder: (BuildContext context) {
                 return RouteMatchPage(
-                    api: widget.api,
                     selectedRouteId: id,
                     selectedImage: w,
                     takenRouteImageId: takenImageId,

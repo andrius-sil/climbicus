@@ -15,9 +15,7 @@ class ImagePickerResults {
 
 
 class RouteImagePicker {
-  final ApiProvider api;
-
-  RouteImagePicker({this.api});
+  final ApiProvider api = ApiProvider();
 
   Future<ImagePickerResults> getGalleryImage() async {
     return _getImage(ImageSource.gallery);
@@ -41,7 +39,7 @@ class RouteImagePicker {
     print("Photo size: ${image.lengthSync()} bytes");
 
     var predictions = api.uploadRouteImage(image);
-    return new ImagePickerResults(image, predictions);
+    return ImagePickerResults(image, predictions);
   }
 
 }

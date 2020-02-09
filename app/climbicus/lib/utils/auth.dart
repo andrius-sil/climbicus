@@ -3,13 +3,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'api.dart';
 
 class Auth {
-  static const BASE_URL = "http://3.11.49.99:5000";
+  // Singleton factory.
+  Auth._internal();
+  static final Auth _auth = Auth._internal();
+  factory Auth() => _auth;
 
-  final ApiProvider api;
+  final ApiProvider api = ApiProvider();
 
   String _email;
-
-  Auth({this.api});
 
   String get email => _email;
 
@@ -17,13 +18,13 @@ class Auth {
     var result = await api.login(email, password);
     var accessToken = result["access_token"];
     var userId = result["user_id"];
-    this._email = email;
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("email", email);
     prefs.setString("access_token", accessToken);
     prefs.setInt("user_id", userId);
 
+    this._email = email;
     api.accessToken = accessToken;
     api.userId = userId;
   }

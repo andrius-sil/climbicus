@@ -1,17 +1,16 @@
 
-import 'package:climbicus/ui/logbook.dart';
 import 'package:climbicus/utils/api.dart';
 import 'package:flutter/material.dart';
 
 class RouteMatchPage extends StatefulWidget {
-  final ApiProvider api;
+  final ApiProvider api = ApiProvider();
+
   final int selectedRouteId;
   final Image selectedImage;
   final int takenRouteImageId;
   final Image takenImage;
 
-  const RouteMatchPage({
-    this.api,
+  RouteMatchPage({
     this.selectedRouteId,
     this.selectedImage,
     this.takenRouteImageId,
