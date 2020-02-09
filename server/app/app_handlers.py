@@ -1,6 +1,6 @@
 import json
 
-from flask import request, current_app, abort
+from flask import request, current_app, abort, jsonify
 from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
 
 
@@ -20,6 +20,11 @@ def register_handlers(app):
         verify_jwt_in_request()
         verify_request_data()
         verify_user_identity()
+
+
+    @app.errorhandler(Exception)
+    def http_error_handler(error):
+        return jsonify(msg=error.description), error.code
 
 
 def no_jwt_required(fn):
