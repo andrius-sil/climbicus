@@ -8,7 +8,7 @@ import 'package:climbicus/utils/route_image_picker.dart';
 import 'package:flutter/material.dart';
 
 class RoutePredictionsPage extends StatefulWidget {
-  final Api api;
+  final ApiProvider api;
   final ImagePickerResults results;
 
   const RoutePredictionsPage({this.api, this.results});

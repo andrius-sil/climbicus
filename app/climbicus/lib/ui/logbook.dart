@@ -10,7 +10,7 @@ import 'package:flutter/widgets.dart';
 
 class LogbookPage extends StatefulWidget {
   final AppBar appBar;
-  final Api api;
+  final ApiProvider api;
 
   RouteImagePicker imagePicker;
 

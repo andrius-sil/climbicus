@@ -1,11 +1,28 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:async/async.dart';
 import 'package:http/http.dart' as http;
 
-class Api {
+
+class ApiException implements Exception {
+  final http.StreamedResponse response;
+  final String responseJson;
+
+  String message;
+
+  ApiException(this.response, this.responseJson) {
+    message = jsonDecode(responseJson)["msg"];
+  }
+
+  String toString() => "ApiException: ${response.statusCode} - ${message}";
+}
+
+
+
+class ApiProvider {
 //  static const BASE_URL = "http://3.11.49.99:5000"; // PROD
   static const BASE_URL = "http://3.11.0.15:5000"; // DEV
 
@@ -29,10 +46,12 @@ class Api {
       request.headers["Authorization"] = "Bearer $_accessToken";
     }
 
-    var response = await client.send(request);
+    final response = await client.send(request);
 
     if (response.statusCode != 200) {
-      throw Exception("request failed with ${response.statusCode}");
+      final exception = ApiException(response, await response.stream.bytesToString());
+      debugPrint(exception.toString());
+      throw exception;
     }
 
     final Map result = jsonDecode(await response.stream.bytesToString());
@@ -51,6 +70,8 @@ class Api {
     }
     data.addAll(requestData);
     request.body = json.encode(data);
+
+    debugPrint("http json request: '${request.url}' - '${request.method}' - '${request.body}'");
 
     return _request(request, auth);
   }
@@ -72,6 +93,8 @@ class Api {
     Map data = {"user_id": _userId};
     data.addAll(requestData);
     request.fields["json"] = json.encode(data);
+
+    debugPrint("http multipart request: '${request.url}' - '${request.method}' - '${request.fields}'");
 
     return _request(request, true);
   }

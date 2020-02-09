@@ -27,7 +27,7 @@ enum AuthStatus {
 }
 
 class _HomePageState extends State<HomePage> {
-  final Api api = new Api();
+  final ApiProvider api = new ApiProvider();
 
   Auth auth;
   AuthStatus authStatus = AuthStatus.notDetermined;

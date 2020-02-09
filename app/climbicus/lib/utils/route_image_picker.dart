@@ -15,7 +15,7 @@ class ImagePickerResults {
 
 
 class RouteImagePicker {
-  final Api api;
+  final ApiProvider api;
 
   RouteImagePicker({this.api});
 

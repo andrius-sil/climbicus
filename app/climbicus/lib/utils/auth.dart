@@ -5,7 +5,7 @@ import 'api.dart';
 class Auth {
   static const BASE_URL = "http://3.11.49.99:5000";
 
-  final Api api;
+  final ApiProvider api;
 
   String _email;
 
