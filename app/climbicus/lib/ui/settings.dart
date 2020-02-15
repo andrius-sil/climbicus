@@ -35,7 +35,7 @@ class _SettingsPageState extends State<SettingsPage> {
       body: Container(
         child: ListView(
           children: <Widget>[
-            Text(widget.auth.email),
+            Text("${widget.auth.email}"),
             RaisedButton(
               child: Text('Log Out'),
               onPressed: logout,

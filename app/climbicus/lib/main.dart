@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
       case AuthStatus.notDetermined:
         return _buildWaitingPage();
       case AuthStatus.notLoggedIn:
-        return LoginPage(loginCallback: _loggedIn);
+        return LoginPage(appBar: appBar("Login"), loginCallback: _loggedIn);
       case AuthStatus.loggedIn:
         return LogbookPage(appBar: appBar("Logbook"));
     }
