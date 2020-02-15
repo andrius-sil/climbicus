@@ -22,57 +22,36 @@ class LogbookPage extends StatefulWidget {
 }
 
 class _LogbookPageState extends State<LogbookPage> {
-  static const double columnHeight = 100;
+  static const double columnHeight = 100.0;
+  static const double columnWidth = 100.0;
 
   Future<Map> entries;
   Future<Map> images;
-
-  List<int> routeIds;
 
   @override
   void initState() {
     super.initState();
 
     entries = widget.api.fetchLogbook();
-    images = fetchRouteImages(entries);
+    images = _fetchRouteImages(entries);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget.appBar,
-      body: Row (
-        children: <Widget>[
-          Expanded(
-            child: FutureBuilder<Map>(
-              future: entries,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return _buildLogbookView(snapshot.data);
-                } else if (snapshot.hasError) {
-                  return Text("${snapshot.error}");
-                }
+      body: FutureBuilder(
+        future: Future.wait([entries, images]),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return _buildLogbookGrid(snapshot.data[0], snapshot.data[1]);
+          } else if (snapshot.hasError) {
+            return Text("${snapshot.error}");
+          }
 
-                return CircularProgressIndicator();
-              },
-            )
-          ),
-          Expanded(
-            child: FutureBuilder<Map>(
-              future: images,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return _buildLogbookImagesView(snapshot.data);
-                } else if (snapshot.hasError) {
-                  return Text("${snapshot.error}");
-                }
-
-                return CircularProgressIndicator();
-              },
-            )
-          ),
-        ],
+          return CircularProgressIndicator();
+        },
       ),
+      appBar: widget.appBar,
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         children: _buildImagePicker(),
@@ -110,57 +89,57 @@ class _LogbookPageState extends State<LogbookPage> {
     return widgets;
   }
 
-  Widget _buildLogbookView(Map data) {
+  Widget _buildLogbookGrid(Map entries, Map images) {
     List<Widget> widgets = [];
-    var sortedData = _sortEntriesByLogDate(data);
-    sortedData.forEach((id, fields) {
+
+    (_sortEntriesByLogDate(entries)).forEach((id, fields) {
+      // Left side - entry description.
       widgets.add(
-        Container(
-          height: columnHeight,
-          alignment: Alignment.center,
-          child: Column(
-            children: <Widget>[
-              Text(fields["grade"]),
-              Text(fields["status"]),
-              Text(fields["created_at"]),
-            ],
+          Container(
+              height: columnHeight,
+              width: columnWidth,
+              alignment: Alignment.center,
+              padding: const EdgeInsets.all(8),
+              color: Colors.grey[800],
+              child: Column(
+                children: <Widget>[
+                  Text(fields["grade"]),
+                  Text(fields["status"]),
+                  Text(fields["created_at"]),
+                ],
+              )
           )
-        )
       );
-    });
 
-    return ListView(children: widgets);
-  }
-
-  Widget _buildLogbookImagesView(Map data) {
-    List<Widget> widgets = [];
-
-    routeIds.forEach((id) {
-      var fields = data["route_images"][id.toString()];
-
-      var w;
-      if (fields != null) {
-        Uint8List bytes = base64.decode(fields["b64_image"]);
-        w = Image.memory(bytes);
-      } else {
-        w = Text("No image '$id'");
-      }
+      // Right side - image.
+      var imageFields = images["route_images"][fields["route_id"].toString()];
+      var imageWidget = (imageFields != null) ?
+        Image.memory(base64.decode(imageFields["b64_image"])) :
+        Text("No image '$id'");
       widgets.add(
-        Container(
-          height: columnHeight,
-          alignment: Alignment.center,
-          child: w,
-        )
+          Container(
+            height: columnHeight,
+            width: columnWidth,
+            color: Colors.white,
+            alignment: Alignment.center,
+            child: imageWidget,
+          )
       );
-
     });
 
-    return ListView(children: widgets);
+    return GridView.count(
+      primary: false,
+      padding: const EdgeInsets.all(20),
+      crossAxisSpacing: 10,
+      mainAxisSpacing: 10,
+      crossAxisCount: 2,
+      children: widgets,
+    );
   }
 
-  Future<Map> fetchRouteImages(Future<Map> entries) async {
-    routeIds = [];
-    _sortEntriesByLogDate(await entries).forEach((id, fields) {
+  Future<Map> _fetchRouteImages(Future<Map> entries) async {
+    var routeIds = [];
+    (await entries).forEach((id, fields) {
       routeIds.add(fields["route_id"]);
     });
 
