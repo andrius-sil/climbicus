@@ -113,7 +113,7 @@ class _LogbookPageState extends State<LogbookPage> {
       var imageFields = images["route_images"][fields["route_id"].toString()];
       var imageWidget = (imageFields != null) ?
         Image.memory(base64.decode(imageFields["b64_image"])) :
-        Text("No image '$id'");
+        Image.asset("images/no_image.png");
       widgets.add(
           Container(
             color: Colors.grey[700],

@@ -83,7 +83,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
       var imageFields = images["route_images"][routeId.toString()];
       var imageWidget = (imageFields != null) ?
         Image.memory(base64.decode(imageFields["b64_image"])) :
-        Text("No image '$routeId'");
+        Image.asset("images/no_image.png");
       widgets.add(
           _buildRouteSelectWrapper(
             Container(
