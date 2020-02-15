@@ -43,7 +43,7 @@ class Predictor:
     @staticmethod
     def process_image(image_path):
         """
-        The input image needs to be a numpy array of shape (150, 150, 3) rescaled by 1.0/255
+        The input image needs to be a numpy array of shape (224, 224, 3) and processed for VGG16
         """
         img = image.load_img(image_path, target_size=(224, 224))
         img = image.img_to_array(img)
