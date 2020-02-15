@@ -1,6 +1,5 @@
 
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:climbicus/ui/route_match.dart';
 import 'package:climbicus/utils/api.dart';
@@ -18,7 +17,6 @@ class RoutePredictionsPage extends StatefulWidget {
 }
 
 class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
-  static const double columnHeight = 100;
   static const int displayPredictionsNum = 3;
 
   Image takenImage;
@@ -49,112 +47,100 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
             children: <Widget>[
               Text("Your photo:"),
               Container(
-                height: 200,
+                height: 200.0,
+                width: 200.0,
                 child: takenImage,
               ),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: FutureBuilder<Map>(
-                      future: images,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return _buildLogbookImagesView(context, snapshot.data);
-                        } else if (snapshot.hasError) {
-                          return Text("${snapshot.error}");
-                        }
+              Text("Our predictions:"),
+              Expanded(
+                child: FutureBuilder(
+                  future: Future.wait([widget.results.predictions, images]),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return _buildPredictionsGrid(context, snapshot.data[0], snapshot.data[1]);
+                    } else if (snapshot.hasError) {
+                      return Text("${snapshot.error}");
+                    }
 
-                        return CircularProgressIndicator();
-                      },
-                    )
-                  ),
-                  Expanded(
-                    child: FutureBuilder<Map>(
-                      future: widget.results.predictions,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return _buildLogbookView(snapshot.data);
-                        } else if (snapshot.hasError) {
-                          return Text("${snapshot.error}");
-                        }
-
-                        return CircularProgressIndicator();
-                      },
-                    ),
-                  ),
-                ],
-              ),
+                    return CircularProgressIndicator();
+                  },
+                ),
+              )
             ]),
         ),
       )
     );
   }
 
-  Widget _buildLogbookView(Map data) {
+  Widget _buildPredictionsGrid(BuildContext context, Map predictions, Map images) {
     List<Widget> widgets = [];
+
     for (var i = 0; i < displayPredictionsNum; i++) {
-      var prediction = data["sorted_route_predictions"][i];
+      var fields = predictions["sorted_route_predictions"][i];
+      var routeId = fields["route_id"];
+
+      // Left side - image.
+      var imageFields = images["route_images"][routeId.toString()];
+      var imageWidget = (imageFields != null) ?
+        Image.memory(base64.decode(imageFields["b64_image"])) :
+        Text("No image '$routeId'");
       widgets.add(
-        Container(
-          height: columnHeight,
-          alignment: Alignment.center,
-          child: Column(
-            children: <Widget>[
-              Expanded(child: Text(prediction["route_id"].toString())),
-              Expanded(child: Text(prediction["grade"])),
-            ],
+          _buildRouteSelectWrapper(
+            Container(
+              color: Colors.grey[800],
+              alignment: Alignment.center,
+              child: imageWidget,
+            ),
+            routeId,
+            imageWidget,
           )
+      );
+
+      // Right side - entry description.
+      widgets.add(
+        _buildRouteSelectWrapper(
+          Container(
+              alignment: Alignment.center,
+              padding: const EdgeInsets.all(8),
+              color: Colors.grey[800],
+              child: Column(
+                children: <Widget>[
+                  Text("route_id: ${fields["route_id"]}"),
+                  Text("grade: ${fields["grade"]}"),
+                ],
+              )
+          ),
+          routeId,
+          imageWidget,
         )
       );
     }
 
-    return ListView(
-        children: widgets,
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
+    return GridView.count(
+      primary: false,
+      padding: const EdgeInsets.all(20),
+      mainAxisSpacing: 10,
+      crossAxisCount: 2,
+      childAspectRatio: 1.5,
+      children: widgets,
     );
   }
 
-  Widget _buildLogbookImagesView(BuildContext context, Map data) {
-    List<Widget> widgets = [];
-
-    routeIds.forEach((id) {
-      var fields = data["route_images"][id.toString()];
-
-      var w;
-      if (fields != null) {
-        Uint8List bytes = base64.decode(fields["b64_image"]);
-        w = Image.memory(bytes);
-      } else {
-        w = Text("No image '$id'");
-      }
-      widgets.add(
-        GestureDetector(
-          onTap: () {
-            Navigator.push(context, MaterialPageRoute(
-              builder: (BuildContext context) {
-                return RouteMatchPage(
-                    selectedRouteId: id,
-                    selectedImage: w,
-                    takenRouteImageId: takenImageId,
-                    takenImage: takenImage,
-                );
-              },
-            ));
-          },
-          child: Container(
-            height: columnHeight,
-            alignment: Alignment.center,
-            child: w,
-          )
-        )
-      );
-    });
-
-    return ListView(
-      children: widgets,
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
+  Widget _buildRouteSelectWrapper(Widget childWidget, int routeId, Image imageWidget) {
+    return GestureDetector(
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(
+            builder: (BuildContext context) {
+              return RouteMatchPage(
+                selectedRouteId: routeId,
+                selectedImage: imageWidget,
+                takenRouteImageId: takenImageId,
+                takenImage: takenImage,
+              );
+            },
+          ));
+        },
+        child: childWidget,
     );
   }
 

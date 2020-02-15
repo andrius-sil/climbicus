@@ -19,7 +19,7 @@ class Settings {
   static const Map<String, List<ImageSource>> imagePickers = {
     "gallery": [ImageSource.gallery],
     "camera": [ImageSource.camera],
-    "both": [ImageSource.camera, ImageSource.gallery]
+    "both": [ImageSource.gallery, ImageSource.camera]
   };
 
 

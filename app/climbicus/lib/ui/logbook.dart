@@ -1,6 +1,5 @@
 import 'dart:collection';
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:climbicus/ui/route_predictions.dart';
 import 'package:climbicus/utils/api.dart';
@@ -22,9 +21,6 @@ class LogbookPage extends StatefulWidget {
 }
 
 class _LogbookPageState extends State<LogbookPage> {
-  static const double columnHeight = 100.0;
-  static const double columnWidth = 100.0;
-
   Future<Map> entries;
   Future<Map> images;
 
@@ -39,6 +35,7 @@ class _LogbookPageState extends State<LogbookPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: widget.appBar,
       body: FutureBuilder(
         future: Future.wait([entries, images]),
         builder: (context, snapshot) {
@@ -51,7 +48,6 @@ class _LogbookPageState extends State<LogbookPage> {
           return CircularProgressIndicator();
         },
       ),
-      appBar: widget.appBar,
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         children: _buildImagePicker(),
@@ -67,6 +63,10 @@ class _LogbookPageState extends State<LogbookPage> {
         FloatingActionButton(
           onPressed: () async {
             var results = await widget.imagePicker.pickImage(imageSource);
+            if (results == null) {
+              return;
+            }
+
             Navigator.push(context, MaterialPageRoute(
               builder: (BuildContext context) {
                 return RoutePredictionsPage(results: results);
@@ -96,8 +96,6 @@ class _LogbookPageState extends State<LogbookPage> {
       // Left side - entry description.
       widgets.add(
           Container(
-              height: columnHeight,
-              width: columnWidth,
               alignment: Alignment.center,
               padding: const EdgeInsets.all(8),
               color: Colors.grey[800],
@@ -118,8 +116,6 @@ class _LogbookPageState extends State<LogbookPage> {
         Text("No image '$id'");
       widgets.add(
           Container(
-            height: columnHeight,
-            width: columnWidth,
             color: Colors.white,
             alignment: Alignment.center,
             child: imageWidget,
@@ -130,7 +126,6 @@ class _LogbookPageState extends State<LogbookPage> {
     return GridView.count(
       primary: false,
       padding: const EdgeInsets.all(20),
-      crossAxisSpacing: 10,
       mainAxisSpacing: 10,
       crossAxisCount: 2,
       children: widgets,
