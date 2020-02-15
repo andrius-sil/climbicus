@@ -38,7 +38,7 @@ class TestInputOutputProvider(InputOutputProvider):
 @pytest.fixture(scope="function")
 def app(resource_dir):
     """Create and configure a new app instance for each test."""
-    model_path = f"{resource_dir}/castle_30_test_model.h5"
+    model_path = f"{resource_dir}/model.h5"
     class_indices_path = f"{resource_dir}/class_indices.pkl"
     model_version = "castle_test"
     app = create_app(DATABASE_CONNECTION_URI, model_path, class_indices_path, model_version, JWT_SECRET_KEY, TestInputOutputProvider(resource_dir))
@@ -55,7 +55,7 @@ def app(resource_dir):
         db.session.add(Gyms(name="The Castle Climbing Centre", created_at=datetime(2019, 3, 4, 10, 10, 10,
                                                                                    tzinfo=pytz.UTC)))
         db.session.flush()
-        for i in range(1, 31):
+        for i in range(1, 47):
             db.session.add(Routes(gym_id=1, class_id=str(i), grade="7a", created_at=datetime(2019, 3, 4, 10, 10, 10,
                                                                                             tzinfo=pytz.UTC)))
         db.session.flush()
