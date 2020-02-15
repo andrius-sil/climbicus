@@ -101,3 +101,10 @@ def test_index_auth_header_and_user_id_mismatch_form_data(client, auth_headers_u
     assert resp.is_json
     assert resp.json["msg"] == "user is not authorized to access the resource"
 
+
+def test_internal_server_error(client):
+    resp = client.get("/internal_server_error")
+
+    assert resp.status_code == 500
+    assert resp.is_json
+    assert resp.json["msg"] == "wut"

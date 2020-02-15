@@ -34,6 +34,12 @@ def login():
     )
 
 
-@blueprint.route("/")
+@blueprint.route("/", methods=["GET"])
 def hello_world():
     return "Flask Dockerized"
+
+
+@blueprint.route("/internal_server_error", methods=["GET"])
+@no_jwt_required
+def internal_server_error():
+    raise Exception("wut")

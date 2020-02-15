@@ -24,7 +24,17 @@ def register_handlers(app):
 
     @app.errorhandler(Exception)
     def http_error_handler(error):
-        return jsonify(msg=error.description), error.code
+        if hasattr(error, "code"):
+            code = error.code
+            msg = error.description
+        else:
+            code = 500
+            msg = str(error)
+
+            current_app.logger.exception(error)
+
+        return jsonify(msg=msg), code
+
 
 
 def no_jwt_required(fn):
