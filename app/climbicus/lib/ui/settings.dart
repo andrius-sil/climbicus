@@ -106,7 +106,6 @@ class _SettingsPageState extends State<SettingsPage> {
           displayPredictionsNum = val;
         }),
         onChangeEnd: (double val) {
-          print("setting - ${val.toInt()}");
           widget.settings.displayPredictionsNum = val.toInt();
         },
       ),
