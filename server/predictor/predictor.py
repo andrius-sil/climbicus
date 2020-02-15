@@ -7,6 +7,7 @@ import tensorflow as tf
 from PIL import Image
 from tensorflow.python.keras.backend import set_session
 from tensorflow.python.keras.models import load_model
+from tensorflow.python.keras.metrics import top_k_categorical_accuracy
 
 # TODO: Keras predicting could be slow, look into faster methods
 # TODO: Check what aspect ratio Keras is using when resizing
@@ -17,9 +18,21 @@ class Predictor:
         self.tf_session = tf.compat.v1.Session()
         self.tf_graph = tf.compat.v1.get_default_graph()
         set_session(self.tf_session)
-        self.model = load_model(model_path)
+        dependencies = {
+            'top_2_categorical_accuracy': self.top_2_categorical_accuracy,
+            'top_3_categorical_accuracy': self.top_3_categorical_accuracy,
+        }
+        self.model = load_model(model_path, custom_objects=dependencies)
         self.model_version = model_version
         self.class_indices = self.load_class_indices(class_indices_path)
+
+    @staticmethod
+    def top_3_categorical_accuracy(y_true, y_pred):
+        return top_k_categorical_accuracy(y_true, y_pred, k=3)
+
+    @staticmethod
+    def top_2_categorical_accuracy(y_true, y_pred):
+        return top_k_categorical_accuracy(y_true, y_pred, k=2)
 
     @staticmethod
     def load_class_indices(path):
