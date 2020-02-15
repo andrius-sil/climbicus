@@ -1,13 +1,13 @@
-import operator
 import pickle
 
 import numpy as np
 
 import tensorflow as tf
-from PIL import Image
 from tensorflow.python.keras.backend import set_session
 from tensorflow.python.keras.models import load_model
 from tensorflow.python.keras.metrics import top_k_categorical_accuracy
+from tensorflow.python.keras.applications.vgg16 import preprocess_input
+from tensorflow.python.keras.preprocessing import image
 
 # TODO: Keras predicting could be slow, look into faster methods
 # TODO: Check what aspect ratio Keras is using when resizing
@@ -45,11 +45,10 @@ class Predictor:
         """
         The input image needs to be a numpy array of shape (150, 150, 3) rescaled by 1.0/255
         """
-        img = Image.open(image_path)
-        img = img.resize((224, 224), Image.LANCZOS)  # high quality, slow method
-        img = np.array(img)
-        img = img / 255.0
+        img = image.load_img(image_path, target_size=(224, 224))
+        img = image.img_to_array(img)
         img = np.expand_dims(img, axis=0)
+        img = preprocess_input(img)
         return img
 
     def predict_route(self, image_path):
