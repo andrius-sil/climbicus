@@ -46,7 +46,7 @@ class Predictor:
         The input image needs to be a numpy array of shape (150, 150, 3) rescaled by 1.0/255
         """
         img = Image.open(image_path)
-        img = img.resize((150, 150), Image.LANCZOS)  # high quality, slow method
+        img = img.resize((224, 224), Image.LANCZOS)  # high quality, slow method
         img = np.array(img)
         img = img / 255.0
         img = np.expand_dims(img, axis=0)
