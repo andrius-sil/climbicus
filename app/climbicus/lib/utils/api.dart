@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:climbicus/utils/settings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:async/async.dart';
@@ -23,15 +24,14 @@ class ApiException implements Exception {
 
 
 class ApiProvider {
-//  static const BASE_URL = "http://3.11.49.99:5000"; // PROD
-  static const BASE_URL = "http://3.11.0.15:5000"; // DEV
-
   static const CASTLE_GYM_ID = 1;
 
   // Singleton factory.
   ApiProvider._internal();
   static final ApiProvider _apiProvider = ApiProvider._internal();
   factory ApiProvider() => _apiProvider;
+
+  final Settings settings = Settings();
 
   final client = http.Client();
 
@@ -59,7 +59,7 @@ class ApiProvider {
   }
 
   Future<Map> _requestJson(String method, String urlPath, Map requestData, {bool auth = true}) async {
-    var uri = Uri.parse("$BASE_URL/$urlPath");
+    var uri = Uri.parse("${settings.serverUrl}/$urlPath");
     var request = http.Request(method, uri);
 
     request.headers["Content-Type"] = "application/json";
@@ -77,7 +77,7 @@ class ApiProvider {
   }
 
   Future<Map> _requestMultipart(File image, String method, String urlPath, Map requestData) async {
-    var uri = Uri.parse("$BASE_URL/$urlPath");
+    var uri = Uri.parse("${settings.serverUrl}/$urlPath");
     var request = http.MultipartRequest("POST", uri);
 
     var stream = http.ByteStream(DelegatingStream.typed(image.openRead()));

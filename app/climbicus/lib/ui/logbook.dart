@@ -5,12 +5,14 @@ import 'dart:typed_data';
 import 'package:climbicus/ui/route_predictions.dart';
 import 'package:climbicus/utils/api.dart';
 import 'package:climbicus/utils/route_image_picker.dart';
+import 'package:climbicus/utils/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class LogbookPage extends StatefulWidget {
   final ApiProvider api = ApiProvider();
   final RouteImagePicker imagePicker = RouteImagePicker();
+  final Settings settings = Settings();
   final AppBar appBar;
 
   LogbookPage({this.appBar});
@@ -73,39 +75,39 @@ class _LogbookPageState extends State<LogbookPage> {
       ),
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          FloatingActionButton(
-            onPressed: () async {
-              var results = await widget.imagePicker.getGalleryImage();
-              Navigator.push(context, MaterialPageRoute(
-                builder: (BuildContext context) {
-                  return RoutePredictionsPage(results: results);
-                },
-              ));
-            },
-            tooltip: 'Pick image (gallery)',
-            child: Icon(Icons.add_photo_alternate),
-            heroTag: "btnGallery",
-          ),
-          SizedBox(
-            height: 16.0,
-          ),
-          FloatingActionButton(
-            onPressed: () async {
-              var results = await widget.imagePicker.getCameraImage();
-              Navigator.push(context, MaterialPageRoute(
-                builder: (BuildContext context) {
-                  return RoutePredictionsPage(results: results);
-                },
-              ));
-            },
-            tooltip: 'Pick image (camera)',
-            child: Icon(Icons.add_a_photo),
-            heroTag: "btnCamera",
-          ),
-        ],
+        children: _buildImagePicker(),
       ),
     );
+  }
+
+  List<Widget> _buildImagePicker() {
+    List<Widget> widgets = [];
+
+    widget.settings.imagePickerSource.forEach((imageSource) {
+      widgets.add(
+        FloatingActionButton(
+          onPressed: () async {
+            var results = await widget.imagePicker.pickImage(imageSource);
+            Navigator.push(context, MaterialPageRoute(
+              builder: (BuildContext context) {
+                return RoutePredictionsPage(results: results);
+              },
+            ));
+          },
+          tooltip: IMAGE_SOURCES[imageSource]["tooltip"],
+          child: Icon(IMAGE_SOURCES[imageSource]["icon"]),
+          heroTag: IMAGE_SOURCES[imageSource]["heroTag"],
+        )
+      );
+
+      if (imageSource != widget.settings.imagePickerSource.last) {
+        widgets.add(
+          SizedBox(height: 16.0)
+        );
+      }
+    });
+
+    return widgets;
   }
 
   Widget _buildLogbookView(Map data) {
