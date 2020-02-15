@@ -1,38 +1,57 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:climbicus/utils/settings.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:async/async.dart';
 import 'package:http/http.dart' as http;
 
-class Api {
-//  static const BASE_URL = "http://3.11.49.99:5000"; // PROD
-  static const BASE_URL = "http://3.11.0.15:5000"; // DEV
 
+class ApiException implements Exception {
+  final http.StreamedResponse response;
+  final String responseJson;
+
+  String message;
+
+  ApiException(this.response, this.responseJson) {
+    message = jsonDecode(responseJson)["msg"];
+  }
+
+  String toString() => "ApiException: ${response.statusCode} - ${message}";
+}
+
+
+
+class ApiProvider {
   static const CASTLE_GYM_ID = 1;
+
+  // Singleton factory.
+  ApiProvider._internal();
+  static final ApiProvider _apiProvider = ApiProvider._internal();
+  factory ApiProvider() => _apiProvider;
+
+  final Settings settings = Settings();
 
   final client = http.Client();
 
   String _accessToken;
   int _userId;
 
-  set accessToken(String value) {
-    _accessToken = value;
-  }
-
-  set userId(int value) {
-    _userId = value;
-  }
+  set accessToken(String value) => _accessToken = value;
+  set userId(int value) => _userId = value;
 
   Future<Map> _request(http.BaseRequest request, bool auth) async {
     if (auth) {
       request.headers["Authorization"] = "Bearer $_accessToken";
     }
 
-    var response = await client.send(request);
+    final response = await client.send(request);
 
     if (response.statusCode != 200) {
-      throw Exception("request failed with ${response.statusCode}");
+      final exception = ApiException(response, await response.stream.bytesToString());
+      debugPrint(exception.toString());
+      throw exception;
     }
 
     final Map result = jsonDecode(await response.stream.bytesToString());
@@ -40,8 +59,8 @@ class Api {
   }
 
   Future<Map> _requestJson(String method, String urlPath, Map requestData, {bool auth = true}) async {
-    var uri = Uri.parse("$BASE_URL/$urlPath");
-    var request = new http.Request(method, uri);
+    var uri = Uri.parse("${settings.serverUrl}/$urlPath");
+    var request = http.Request(method, uri);
 
     request.headers["Content-Type"] = "application/json";
 
@@ -52,16 +71,18 @@ class Api {
     data.addAll(requestData);
     request.body = json.encode(data);
 
+    debugPrint("http json request: '${request.url}' - '${request.method}' - '${request.body}'");
+
     return _request(request, auth);
   }
 
   Future<Map> _requestMultipart(File image, String method, String urlPath, Map requestData) async {
-    var uri = Uri.parse("$BASE_URL/$urlPath");
-    var request = new http.MultipartRequest("POST", uri);
+    var uri = Uri.parse("${settings.serverUrl}/$urlPath");
+    var request = http.MultipartRequest("POST", uri);
 
-    var stream = new http.ByteStream(DelegatingStream.typed(image.openRead()));
+    var stream = http.ByteStream(DelegatingStream.typed(image.openRead()));
     var length = await image.length();
-    var multipartFile = new http.MultipartFile(
+    var multipartFile = http.MultipartFile(
         'image',
         stream,
         length,
@@ -72,6 +93,8 @@ class Api {
     Map data = {"user_id": _userId};
     data.addAll(requestData);
     request.fields["json"] = json.encode(data);
+
+    debugPrint("http multipart request: '${request.url}' - '${request.method}' - '${request.fields}'");
 
     return _request(request, true);
   }

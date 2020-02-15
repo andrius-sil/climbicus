@@ -1,9 +1,11 @@
 version: '2'
 services:
   db:
+    restart: always
     env_file:
       - prod_secrets.env
   server:
+    restart: always
     env_file:
       - prod_secrets.env
     environment:
