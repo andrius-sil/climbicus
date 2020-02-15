@@ -4,10 +4,12 @@ import 'dart:convert';
 import 'package:climbicus/ui/route_match.dart';
 import 'package:climbicus/utils/api.dart';
 import 'package:climbicus/utils/route_image_picker.dart';
+import 'package:climbicus/utils/settings.dart';
 import 'package:flutter/material.dart';
 
 class RoutePredictionsPage extends StatefulWidget {
   final ApiProvider api = ApiProvider();
+  final Settings settings = Settings();
   final ImagePickerResults results;
 
   RoutePredictionsPage({this.results});
@@ -17,8 +19,6 @@ class RoutePredictionsPage extends StatefulWidget {
 }
 
 class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
-  static const int displayPredictionsNum = 3;
-
   Image takenImage;
   int takenImageId;
 
@@ -75,7 +75,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
   Widget _buildPredictionsGrid(BuildContext context, Map predictions, Map images) {
     List<Widget> widgets = [];
 
-    for (var i = 0; i < displayPredictionsNum; i++) {
+    for (var i = 0; i < widget.settings.displayPredictionsNum; i++) {
       var fields = predictions["sorted_route_predictions"][i];
       var routeId = fields["route_id"];
 
@@ -147,7 +147,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
   Future<Map> fetchRouteImages(Future<Map> predictions) async {
     var p = await predictions;
     routeIds = List.generate(
-        displayPredictionsNum,
+        widget.settings.displayPredictionsNum,
             (i) => p["sorted_route_predictions"][i]["route_id"]
     );
 

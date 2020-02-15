@@ -7,6 +7,7 @@ class Settings {
   static final Settings _settings = Settings._internal();
   factory Settings() => _settings;
   Settings._internal() {
+    retrieveSetting("display_predictions_num", _displayPredictionsNum.toString()).then((String val) => _displayPredictionsNum = int.parse(val));
     retrieveSetting("server", _server).then((String val) => _server = val);
     retrieveSetting("image_picker", _imagePicker).then((String val) => _imagePicker = val);
   }
@@ -22,6 +23,12 @@ class Settings {
     "both": [ImageSource.gallery, ImageSource.camera]
   };
 
+  int _displayPredictionsNum = 3;
+  int get displayPredictionsNum => _displayPredictionsNum;
+  set displayPredictionsNum(int i) {
+    _displayPredictionsNum = i;
+    storeSetting("display_predictions_num", i.toString());
+  }
 
   String _server = "dev";
   String get server => _server;

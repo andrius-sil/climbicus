@@ -17,6 +17,15 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  double displayPredictionsNum;
+
+  @override
+  void initState() {
+    super.initState();
+
+    displayPredictionsNum = widget.settings.displayPredictionsNum.toDouble();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +42,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             Text("Dev settings:"),
           ] +
-          _buildServerSelection() + _buildImagePickerSelection(),
+          _buildServerSelection() + _buildImagePickerSelection() + _buildDisplayPredictionsNumSelection(),
         ),
       ),
     );
@@ -82,5 +91,25 @@ class _SettingsPageState extends State<SettingsPage> {
       );
     });
     return widgets;
+  }
+
+  List<Widget> _buildDisplayPredictionsNumSelection() {
+    return [
+      Text("Display number of predictions (${displayPredictionsNum.toInt()})"),
+      Slider(
+        value: displayPredictionsNum,
+        min: 1.0,
+        max: 100.0,
+        divisions: 99,
+        label: "${displayPredictionsNum.toInt()}",
+        onChanged: (double val) => setState(() {
+          displayPredictionsNum = val;
+        }),
+        onChangeEnd: (double val) {
+          print("setting - ${val.toInt()}");
+          widget.settings.displayPredictionsNum = val.toInt();
+        },
+      ),
+    ];
   }
 }

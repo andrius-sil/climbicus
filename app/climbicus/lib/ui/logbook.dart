@@ -116,7 +116,7 @@ class _LogbookPageState extends State<LogbookPage> {
         Text("No image '$id'");
       widgets.add(
           Container(
-            color: Colors.white,
+            color: Colors.grey[700],
             alignment: Alignment.center,
             child: imageWidget,
           )

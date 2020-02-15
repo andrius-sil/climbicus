@@ -22,6 +22,8 @@ class RouteMatchPage extends StatefulWidget {
 }
 
 class _RouteMatchPageState extends State<RouteMatchPage> {
+  static const double columnSize = 200.0;
+
   @override
   void initState() {
     super.initState();
@@ -47,7 +49,12 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
                   child: Column(
                     children: <Widget>[
                       Text("Your photo:"),
-                      widget.takenImage,
+                      Container(
+                        color: Colors.white,
+                        height: columnSize,
+                        width: columnSize,
+                        child: widget.takenImage,
+                      ),
                     ],
                   )
                 ),
@@ -55,7 +62,12 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
                   child: Column(
                     children: <Widget>[
                       Text("Selected photo:"),
-                      widget.selectedImage,
+                      Container(
+                        color: Colors.white,
+                        height: columnSize,
+                        width: columnSize,
+                        child: widget.selectedImage,
+                      ),
                     ],
                   )
                 ),
@@ -79,6 +91,8 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
                 widget.api.logbookAdd(widget.selectedRouteId, value);
 
                 Navigator.of(context).popUntil((route) => route.isFirst);
+
+                // TODO: try calling setState on logbook
               },
             )
           ],
