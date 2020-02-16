@@ -1,6 +1,8 @@
 
+import 'package:climbicus/models/user_route_log.dart';
 import 'package:climbicus/utils/api.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class RouteMatchPage extends StatefulWidget {
   final ApiProvider api = ApiProvider();
@@ -9,12 +11,14 @@ class RouteMatchPage extends StatefulWidget {
   final Image selectedImage;
   final int takenRouteImageId;
   final Image takenImage;
+  final String grade;
 
   RouteMatchPage({
     this.selectedRouteId,
     this.selectedImage,
     this.takenRouteImageId,
     this.takenImage,
+    this.grade,
   });
 
   @override
@@ -88,11 +92,11 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
                   return;
                 }
 
-                widget.api.logbookAdd(widget.selectedRouteId, value);
+                Provider.of<UserRouteLogModel>(context, listen: false).add(
+                  widget.selectedRouteId, widget.grade, value
+                );
 
                 Navigator.of(context).popUntil((route) => route.isFirst);
-
-                // TODO: try calling setState on logbook
               },
             )
           ],

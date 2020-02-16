@@ -1,12 +1,17 @@
 import 'dart:collection';
 import 'dart:convert';
 
+import 'package:climbicus/models/route_images.dart';
+import 'package:climbicus/models/user_route_log.dart';
 import 'package:climbicus/ui/route_predictions.dart';
 import 'package:climbicus/utils/api.dart';
 import 'package:climbicus/utils/route_image_picker.dart';
 import 'package:climbicus/utils/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
+
+
 
 class LogbookPage extends StatefulWidget {
   final ApiProvider api = ApiProvider();
@@ -21,19 +26,21 @@ class LogbookPage extends StatefulWidget {
 }
 
 class _LogbookPageState extends State<LogbookPage> {
-  Future<Map> entries;
-  Future<Map> images;
-
   @override
   void initState() {
     super.initState();
 
-    entries = widget.api.fetchLogbook();
-    images = _fetchRouteImages(entries);
+    Provider.of<UserRouteLogModel>(context, listen: false).fetchData();
+    Provider.of<RouteImagesModel>(context, listen: false).fetchData(
+        _routeIds(Provider.of<UserRouteLogModel>(context, listen: false).entries),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    var entries = Provider.of<UserRouteLogModel>(context).entries;
+    var images = Provider.of<RouteImagesModel>(context).images;
+
     return Scaffold(
       appBar: widget.appBar,
       body: FutureBuilder(
@@ -42,6 +49,7 @@ class _LogbookPageState extends State<LogbookPage> {
           if (snapshot.hasData) {
             return _buildLogbookGrid(snapshot.data[0], snapshot.data[1]);
           } else if (snapshot.hasError) {
+            debugPrint("${snapshot.error}");
             return Text("${snapshot.error}");
           }
 
@@ -110,7 +118,7 @@ class _LogbookPageState extends State<LogbookPage> {
       );
 
       // Right side - image.
-      var imageFields = images["route_images"][fields["route_id"].toString()];
+      var imageFields = images[fields["route_id"].toString()];
       var imageWidget = (imageFields != null) ?
         Image.memory(base64.decode(imageFields["b64_image"])) :
         Image.asset("images/no_image.png");
@@ -132,18 +140,19 @@ class _LogbookPageState extends State<LogbookPage> {
     );
   }
 
-  Future<Map> _fetchRouteImages(Future<Map> entries) async {
+  // TODO: move to UserRouteLogModel
+  Future<List> _routeIds(Future<Map> entries) async {
     var routeIds = [];
     (await entries).forEach((id, fields) {
       routeIds.add(fields["route_id"]);
     });
 
-    return widget.api.fetchRouteImages(routeIds);
+    return routeIds;
   }
 
   LinkedHashMap _sortEntriesByLogDate(Map entries) {
     var sortedKeys = entries.keys.toList(growable: false)
-      ..sort((k1, k2) => entries[k1]["created_at"].compareTo(entries[k2]["created_at"]));
+      ..sort((k1, k2) => entries[k2]["created_at"].compareTo(entries[k1]["created_at"]));
 
     return LinkedHashMap.fromIterable(sortedKeys, key: (k) => k, value: (k) => entries[k]);
   }

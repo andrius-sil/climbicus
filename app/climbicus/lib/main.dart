@@ -1,15 +1,24 @@
+import 'package:climbicus/models/route_images.dart';
+import 'package:climbicus/models/user_route_log.dart';
 import 'package:climbicus/ui/logbook.dart';
 import 'package:climbicus/ui/login.dart';
 import 'package:climbicus/ui/settings.dart';
 import 'package:climbicus/utils/auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 
 void main() {
   runApp(
-    MaterialApp(
-      theme: ThemeData.dark(),
-      home: HomePage(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => UserRouteLogModel()),
+        ChangeNotifierProvider(create: (context) => RouteImagesModel()),
+      ],
+      child: MaterialApp(
+        theme: ThemeData.dark(),
+        home: HomePage(),
+      ),
     ),
   );
 }
