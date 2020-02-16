@@ -1,12 +1,15 @@
 import pickle
 
+import json
 import numpy as np
+import os
 
 import tensorflow as tf
 from tensorflow.python.keras.backend import set_session
 from tensorflow.python.keras.models import load_model
 from tensorflow.python.keras.metrics import top_k_categorical_accuracy
-from tensorflow.python.keras.applications.vgg16 import preprocess_input
+from tensorflow.python.keras.applications.vgg16 import preprocess_input as preprocess_input_vgg16
+
 from tensorflow.python.keras.preprocessing import image
 
 # TODO: Keras predicting could be slow, look into faster methods
@@ -14,7 +17,7 @@ from tensorflow.python.keras.preprocessing import image
 
 
 class Predictor:
-    def load_model(self, model_path, class_indices_path, model_version):
+    def load_model(self, model_files_path):
         self.tf_session = tf.compat.v1.Session()
         self.tf_graph = tf.compat.v1.get_default_graph()
         set_session(self.tf_session)
@@ -22,9 +25,10 @@ class Predictor:
             'top_2_categorical_accuracy': self.top_2_categorical_accuracy,
             'top_3_categorical_accuracy': self.top_3_categorical_accuracy,
         }
-        self.model = load_model(model_path, custom_objects=dependencies)
-        self.model_version = model_version
-        self.class_indices = self.load_class_indices(class_indices_path)
+        self.model = load_model(os.path.join(model_files_path, 'model.h5'), custom_objects=dependencies)
+        self.class_indices = self.load_class_indices(os.path.join(model_files_path, 'class_indices.pkl'))
+        self.model_version, self.image_size, self.preprocess = self.load_metadata(model_files_path)
+
 
     @staticmethod
     def top_3_categorical_accuracy(y_true, y_pred):
@@ -35,20 +39,34 @@ class Predictor:
         return top_k_categorical_accuracy(y_true, y_pred, k=2)
 
     @staticmethod
+    def load_metadata(model_files_path):
+        with open(os.path.join(model_files_path, 'metadata.json')) as f:
+            m = json.load(f)
+        return m['model_version'], m['image_size'], m['preprocess']
+
+    @staticmethod
     def load_class_indices(path):
         """Loads a pickle object"""
         with open(path, "rb") as f:
             return pickle.load(f)
 
-    @staticmethod
-    def process_image(image_path):
+    def model_specific_preprocess(self, img):
+        if self.preprocess == "vgg16":
+            img = preprocess_input_vgg16(img)
+        elif self.preprocess == "normalise":
+            img = img / 255.0
+        else:
+            print("specified pre-processing is invalid")
+        return img
+
+    def process_image(self, image_path):
         """
-        The input image needs to be a numpy array of shape (224, 224, 3) and processed for VGG16
+        The input image needs to be a numpy array of size required for the model and processed for VGG16
         """
-        img = image.load_img(image_path, target_size=(224, 224))
+        img = image.load_img(image_path, target_size=tuple(self.image_size))
         img = image.img_to_array(img)
         img = np.expand_dims(img, axis=0)
-        img = preprocess_input(img)
+        img = self.model_specific_preprocess(img)
         return img
 
     def predict_route(self, image_path):
