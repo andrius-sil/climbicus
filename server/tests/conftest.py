@@ -80,7 +80,7 @@ def app(resource_dir):
                         model_probability=0.5,
                         model_version="first_version",
                         path=f"user2_route{i}_1.jpg",
-                        created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
+                        created_at=datetime(2019, 2, 4, 10, 10, 10, tzinfo=pytz.UTC),
                     )
                 )
                 db.session.add(
@@ -90,7 +90,7 @@ def app(resource_dir):
                         model_probability=0.5,
                         model_version="first_version",
                         path=f"user2_route{i}_2.jpg",
-                        created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
+                        created_at=datetime(2019, 2, 4, 10, 10, 10, tzinfo=pytz.UTC),
                     )
                 )
         db.session.add_all([
