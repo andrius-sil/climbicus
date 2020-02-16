@@ -117,6 +117,6 @@ def test_storing_image_path_to_db(app, client, resource_dir, auth_headers_user1)
     assert resp.is_json
 
     with app.app_context():
-        db_probability = db.session.query(RouteImages).filter_by(model_route_id=31).one_or_none().model_probability
+        db_probability = db.session.query(RouteImages).filter_by(model_route_id=15).one_or_none().model_probability
 
     assert math.isclose(db_probability, 0.9979556798934937)
