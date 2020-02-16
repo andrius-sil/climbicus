@@ -3,43 +3,11 @@
    "sorted_route_predictions":[
       {
          "grade":"7a",
-         "route_id":31
+         "route_id":15
       },
       {
          "grade":"7a",
-         "route_id":41
-      },
-      {
-         "grade":"7a",
-         "route_id":27
-      },
-      {
-         "grade":"7a",
-         "route_id":17
-      },
-      {
-         "grade":"7a",
-         "route_id":12
-      },
-      {
-         "grade":"7a",
-         "route_id":1
-      },
-      {
-         "grade":"7a",
-         "route_id":19
-      },
-      {
-         "grade":"7a",
-         "route_id":35
-      },
-      {
-         "grade":"7a",
-         "route_id":3
-      },
-      {
-         "grade":"7a",
-         "route_id":45
+         "route_id":9
       },
       {
          "grade":"7a",
@@ -47,27 +15,7 @@
       },
       {
          "grade":"7a",
-         "route_id":16
-      },
-      {
-         "grade":"7a",
-         "route_id":2
-      },
-      {
-         "grade":"7a",
-         "route_id":23
-      },
-      {
-         "grade":"7a",
-         "route_id":4
-      },
-      {
-         "grade":"7a",
-         "route_id":28
-      },
-      {
-         "grade":"7a",
-         "route_id":7
+         "route_id":25
       },
       {
          "grade":"7a",
@@ -75,11 +23,63 @@
       },
       {
          "grade":"7a",
-         "route_id":37
+         "route_id":11
       },
       {
          "grade":"7a",
-         "route_id":33
+         "route_id":10
+      },
+      {
+         "grade":"7a",
+         "route_id":3
+      },
+      {
+         "grade":"7a",
+         "route_id":7
+      },
+      {
+         "grade":"7a",
+         "route_id":26
+      },
+      {
+         "grade":"7a",
+         "route_id":5
+      },
+      {
+         "grade":"7a",
+         "route_id":12
+      },
+      {
+         "grade":"7a",
+         "route_id":18
+      },
+      {
+         "grade":"7a",
+         "route_id":4
+      },
+      {
+         "grade":"7a",
+         "route_id":16
+      },
+      {
+         "grade":"7a",
+         "route_id":22
+      },
+      {
+         "grade":"7a",
+         "route_id":29
+      },
+      {
+         "grade":"7a",
+         "route_id":23
+      },
+      {
+         "grade":"7a",
+         "route_id":17
+      },
+      {
+         "grade":"7a",
+         "route_id":30
       }
    ]
 }
