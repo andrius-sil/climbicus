@@ -15,7 +15,6 @@ JWT_SECRET_KEY = "super-secret-key"
 
 
 class TestInputOutputProvider(InputOutputProvider):
-
     def __init__(self, resource_dir):
         self.resource_dir = resource_dir
         self.upload_dir = "/tmp/climbicus_tests"
@@ -34,30 +33,41 @@ class TestInputOutputProvider(InputOutputProvider):
         return filepath
 
 
-
 @pytest.fixture(scope="function")
 def app(resource_dir):
     """Create and configure a new app instance for each test."""
-    model_path = f"{resource_dir}/model.h5"
-    class_indices_path = f"{resource_dir}/class_indices.pkl"
-    model_version = "castle_test"
-    app = create_app(DATABASE_CONNECTION_URI, model_path, class_indices_path, model_version, JWT_SECRET_KEY, TestInputOutputProvider(resource_dir))
+    model_files_path = f"{resource_dir}/"
+    app = create_app(DATABASE_CONNECTION_URI, model_files_path, JWT_SECRET_KEY, TestInputOutputProvider(resource_dir))
 
     app.testing = True
 
     with app.app_context():
         db.create_all()
 
-        db.session.add(Users(email="test1@testing.com", password="testing1", created_at=datetime(2019, 3, 4, 10, 10, 10,
-                                                                                            tzinfo=pytz.UTC)))
-        db.session.add(Users(email="test2@testing.com", password="testing2", created_at=datetime(2019, 3, 4, 10, 10, 10,
-                                                                                            tzinfo=pytz.UTC)))
-        db.session.add(Gyms(name="The Castle Climbing Centre", created_at=datetime(2019, 3, 4, 10, 10, 10,
-                                                                                   tzinfo=pytz.UTC)))
+        db.session.add(
+            Users(
+                email="test1@testing.com",
+                password="testing1",
+                created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
+            )
+        )
+        db.session.add(
+            Users(
+                email="test2@testing.com",
+                password="testing2",
+                created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
+            )
+        )
+        db.session.add(
+            Gyms(name="The Castle Climbing Centre", created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC))
+        )
         db.session.flush()
-        for i in range(1, 47):
-            db.session.add(Routes(gym_id=1, class_id=str(i), grade="7a", created_at=datetime(2019, 3, 4, 10, 10, 10,
-                                                                                            tzinfo=pytz.UTC)))
+        for i in range(1, 100):  # has to be at least the number of classes
+            db.session.add(
+                Routes(
+                    gym_id=1, class_id=str(i), grade="7a", created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
+                )
+            )
         db.session.flush()
         for i in range(1, 5):
             db.session.add(
@@ -93,16 +103,28 @@ def app(resource_dir):
                         created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
                     )
                 )
-        db.session.add_all([
-            UserRouteLog(route_id=1, user_id=1, gym_id=1, status="red-point", created_at=datetime(2012, 3, 3, 10, 10,
-                                                                                                10, tzinfo=pytz.UTC)),
-            UserRouteLog(route_id=3, user_id=1, gym_id=1, status="flash", created_at=datetime(2012, 3, 4, 10, 10, 10,
-                                                                                            tzinfo=pytz.UTC)),
-        ])
+        db.session.add_all(
+            [
+                UserRouteLog(
+                    route_id=1,
+                    user_id=1,
+                    gym_id=1,
+                    status="red-point",
+                    created_at=datetime(2012, 3, 3, 10, 10, 10, tzinfo=pytz.UTC),
+                ),
+                UserRouteLog(
+                    route_id=3,
+                    user_id=1,
+                    gym_id=1,
+                    status="flash",
+                    created_at=datetime(2012, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
+                ),
+            ]
+        )
         db.session.commit()
 
     yield app
-    
+
     with app.app_context():
         db.session.remove()
         db.drop_all()
@@ -116,10 +138,7 @@ def client(app):
 
 @pytest.fixture(scope="session")
 def resource_dir():
-    return os.path.join(
-        os.path.dirname(os.path.realpath(__file__)),
-        "resources"
-    )
+    return os.path.join(os.path.dirname(os.path.realpath(__file__)), "resources")
 
 
 @pytest.fixture(scope="function")
@@ -135,8 +154,6 @@ def auth_headers_user2(app):
 def _auth_headers(app, identity):
     with app.app_context():
         access_token = create_access_token(identity=identity)
-        headers = {
-            "Authorization": f"Bearer {access_token}"
-        }
+        headers = {"Authorization": f"Bearer {access_token}"}
 
         return headers

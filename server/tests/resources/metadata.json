@@ -1,0 +1,9 @@
+{
+   "model_version":"castle_test",
+   "model_name_training":"training_name",
+   "description":"This is the very first model, used here for testing purposes",
+   "number_of_classes":30,
+   "image_size":[150, 150],
+   "preprocess": "normalise",
+   "deployed_at":"2019-11-10"
+}

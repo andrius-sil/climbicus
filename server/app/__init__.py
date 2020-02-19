@@ -12,7 +12,7 @@ predictor = Predictor()
 io = InputOutput()
 
 
-def create_app(db_connection_uri, model_path, class_indices_path, model_version, jwt_secret_key, io_provider, disable_auth=False):
+def create_app(db_connection_uri, model_files_path, jwt_secret_key, io_provider, disable_auth=False):
     app = Flask(__name__)
 
     app.config["JWT_SECRET_KEY"] = jwt_secret_key
@@ -33,7 +33,7 @@ def create_app(db_connection_uri, model_path, class_indices_path, model_version,
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.init_app(app)
 
-    predictor.load_model(model_path, class_indices_path, model_version)
+    predictor.load_model(model_files_path)
 
     io.load(io_provider)
 
