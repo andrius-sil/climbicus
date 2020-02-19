@@ -117,14 +117,14 @@ class ApiProvider {
     _requestJson("PATCH", "route_images/$routeImageId", data);
   }
 
-  Future<void> logbookAdd(int routeId, String status) async {
+  Future<Map> logbookAdd(int routeId, String status) async {
     Map data = {
       "route_id": routeId,
       "status": status,
       "gym_id": CASTLE_GYM_ID,
     };
 
-    _requestJson("POST", "user_route_log/", data);
+    return _requestJson("POST", "user_route_log/", data);
   }
 
   Future<Map> fetchRouteImages(List routeIds) async {

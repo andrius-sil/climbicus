@@ -31,6 +31,7 @@ def test_add_to_logbook(client, app, auth_headers_user1):
 
     assert resp.status_code == 200
     assert resp.is_json
+    assert resp.json["id"] == 3
     assert resp.json["msg"] == "Route status added to log"
 
     with app.app_context():

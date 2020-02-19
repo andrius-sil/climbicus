@@ -1,14 +1,14 @@
 
 import 'dart:convert';
 
+import 'package:climbicus/models/route_images.dart';
 import 'package:climbicus/ui/route_match.dart';
-import 'package:climbicus/utils/api.dart';
 import 'package:climbicus/utils/route_image_picker.dart';
 import 'package:climbicus/utils/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class RoutePredictionsPage extends StatefulWidget {
-  final ApiProvider api = ApiProvider();
   final Settings settings = Settings();
   final ImagePickerResults results;
 
@@ -22,20 +22,26 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
   Image takenImage;
   int takenImageId;
 
-  Future<Map> images;
-
-  List<int> routeIds;
-
   @override
   void initState() {
     super.initState();
 
     takenImage = Image.file(widget.results.image);
-    images = fetchRouteImages(widget.results.predictions);
+    _setTakenImageId();
+
+    Provider.of<RouteImagesModel>(context, listen: false).fetchData(
+      _routeIds(),
+    );
+  }
+
+  Future<void> _setTakenImageId() async {
+    takenImageId = (await widget.results.predictions)["route_image_id"];
   }
 
   @override
   Widget build(BuildContext context) {
+    var images = Provider.of<RouteImagesModel>(context).images;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Select your route'),
@@ -78,9 +84,10 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
     for (var i = 0; i < widget.settings.displayPredictionsNum; i++) {
       var fields = predictions["sorted_route_predictions"][i];
       var routeId = fields["route_id"];
+      var grade = fields["grade"];
 
       // Left side - image.
-      var imageFields = images["route_images"][routeId.toString()];
+      var imageFields = images[routeId.toString()];
       var imageWidget = (imageFields != null) ?
         Image.memory(base64.decode(imageFields["b64_image"])) :
         Image.asset("images/no_image.png");
@@ -93,6 +100,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
             ),
             routeId,
             imageWidget,
+            grade,
           )
       );
 
@@ -106,12 +114,13 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
               child: Column(
                 children: <Widget>[
                   Text("route_id: ${fields["route_id"]}"),
-                  Text("grade: ${fields["grade"]}"),
+                  Text("grade: $grade"),
                 ],
               )
           ),
           routeId,
           imageWidget,
+          grade,
         )
       );
     }
@@ -126,7 +135,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
     );
   }
 
-  Widget _buildRouteSelectWrapper(Widget childWidget, int routeId, Image imageWidget) {
+  Widget _buildRouteSelectWrapper(Widget childWidget, int routeId, Image imageWidget, String grade) {
     return GestureDetector(
         onTap: () {
           Navigator.push(context, MaterialPageRoute(
@@ -136,6 +145,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
                 selectedImage: imageWidget,
                 takenRouteImageId: takenImageId,
                 takenImage: takenImage,
+                grade: grade,
               );
             },
           ));
@@ -144,16 +154,13 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
     );
   }
 
-  Future<Map> fetchRouteImages(Future<Map> predictions) async {
-    var p = await predictions;
-    routeIds = List.generate(
+  Future<List> _routeIds() async {
+    var p = await widget.results.predictions;
+    var routeIds = List.generate(
         widget.settings.displayPredictionsNum,
             (i) => p["sorted_route_predictions"][i]["route_id"]
     );
-
-    takenImageId = p["route_image_id"];
-
-    return widget.api.fetchRouteImages(routeIds);
+    return routeIds;
   }
 
 }

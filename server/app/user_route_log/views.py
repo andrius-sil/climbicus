@@ -15,13 +15,17 @@ def add():
     route_id = request.json["route_id"]
     gym_id = request.json["gym_id"]
 
-    db.session.add(
-        UserRouteLog(route_id=route_id, user_id=user_id, gym_id=gym_id, status=status,
-                     created_at=datetime.datetime.now())
-    )
+    log_entry = UserRouteLog(route_id=route_id, user_id=user_id, gym_id=gym_id, status=status,
+                             created_at=datetime.datetime.now())
+
+    db.session.add(log_entry)
     db.session.commit()
 
-    return jsonify({"msg": "Route status added to log"})
+    return jsonify({
+        "id": log_entry.id,
+        "created_at": log_entry.created_at,
+        "msg": "Route status added to log",
+    })
 
 
 @blueprint.route("/", methods=["GET"])
