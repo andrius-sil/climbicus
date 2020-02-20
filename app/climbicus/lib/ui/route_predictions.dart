@@ -65,6 +65,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
                     if (snapshot.hasData) {
                       return _buildPredictionsGrid(context, snapshot.data[0], snapshot.data[1]);
                     } else if (snapshot.hasError) {
+                      debugPrint("${snapshot.error}");
                       return Text("${snapshot.error}");
                     }
 

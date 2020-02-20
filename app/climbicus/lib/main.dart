@@ -4,11 +4,15 @@ import 'package:climbicus/ui/logbook.dart';
 import 'package:climbicus/ui/login.dart';
 import 'package:climbicus/ui/settings.dart';
 import 'package:climbicus/utils/auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 
 void main() {
+  ErrorWidget.builder = _buildErrorWidget;
+  debugPrint = _debugPrintWrapper;
+
   runApp(
     MultiProvider(
       providers: [
@@ -20,6 +24,18 @@ void main() {
         home: HomePage(),
       ),
     ),
+  );
+}
+
+void _debugPrintWrapper(String message, { int wrapWidth }) {
+  var now = DateTime.now();
+  message = "$now: $message";
+  debugPrintThrottled(message, wrapWidth: wrapWidth);
+}
+
+Widget _buildErrorWidget(FlutterErrorDetails details) {
+  return Center(
+    child: Text("Ooops.. an error has occured"),
   );
 }
 
