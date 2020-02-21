@@ -39,4 +39,4 @@ def get_callbacks(model_name, train_generator):
     exponential_decay_fn = exponential_decay(lr0=0.0001, s=200)
     lr_scheduler = LearningRateScheduler(exponential_decay_fn)
 
-    return [callback_model, callback_tensorboard, callback_early_stopping, lr_scheduler]
+    return [callback_model, callback_early_stopping, lr_scheduler]  #callback_tensorboard

@@ -1,7 +1,6 @@
-.git/*
-/app/*
-model_training/*
 __pycache__/*
 .pytest_cache__/*
 .idea/*
 requirements.txt
+venv/
+*.pkl

@@ -54,22 +54,30 @@ def train_model():
     base_dir = MODEL_CONFIG["base_dir"]
     no_cats = MODEL_CONFIG["no_cats"]
 
+    print('Getting directories')
     train_dir, validation_dir, test_dir = get_training_directories(base_dir)
 
+    print('Getting data generators')
     train_datagen, test_datagen = get_cnn_data_generators(cnn=pre_trained_cnn)
 
+    print('Getting image batches')
     train_generator, validation_generator, test_generator = get_image_batches(
         train_datagen, train_dir, test_datagen, validation_dir, test_dir, batch_size, cnn=pre_trained_cnn
     )
 
+    print('Saving class indicies')
     save_class_indices(validation_generator, "class_indices_cafe")
 
+    print('Compiling model')
     model = build_compile_cnn(pre_trained_cnn, no_cats)
 
+    print('Getting callbacks')
     callbacks = get_callbacks(f"{pre_trained_cnn}_{model_name}", train_generator)
 
+    print('Getting class weights')
     class_weights = compute_class_weight("balanced", np.unique(train_generator.classes), train_generator.classes)
 
+    print('Training model')
     history = model.fit_generator(
         train_generator,
         steps_per_epoch=math.ceil(train_generator.samples / train_generator.batch_size),
