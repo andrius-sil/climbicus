@@ -30,10 +30,15 @@ class _LogbookPageState extends State<LogbookPage> {
   void initState() {
     super.initState();
 
-    Provider.of<UserRouteLogModel>(context, listen: false).fetchData();
-    Provider.of<RouteImagesModel>(context, listen: false).fetchData(
-        _routeIds(Provider.of<UserRouteLogModel>(context, listen: false).entries),
-    );
+
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    await Provider.of<UserRouteLogModel>(context, listen: false).fetchData();
+
+    var routeIds = Provider.of<UserRouteLogModel>(context, listen: false).routeIds();
+    Provider.of<RouteImagesModel>(context, listen: false).fetchData(routeIds);
   }
 
   @override
@@ -44,13 +49,12 @@ class _LogbookPageState extends State<LogbookPage> {
     return Scaffold(
       appBar: widget.appBar,
       body: FutureBuilder(
-        future: Future.wait([entries, images]),
+        future: Future.wait([entries, images], eagerError: true),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return _buildLogbookGrid(snapshot.data[0], snapshot.data[1]);
           } else if (snapshot.hasError) {
-            debugPrint("${snapshot.error}");
-            return Text("${snapshot.error}");
+            return ErrorWidget.builder(FlutterErrorDetails(exception: snapshot.error));
           }
 
           return CircularProgressIndicator();
@@ -138,16 +142,6 @@ class _LogbookPageState extends State<LogbookPage> {
       crossAxisCount: 2,
       children: widgets,
     );
-  }
-
-  // TODO: move to UserRouteLogModel
-  Future<List> _routeIds(Future<Map> entries) async {
-    var routeIds = [];
-    (await entries).forEach((id, fields) {
-      routeIds.add(fields["route_id"]);
-    });
-
-    return routeIds;
   }
 
   LinkedHashMap _sortEntriesByLogDate(Map entries) {

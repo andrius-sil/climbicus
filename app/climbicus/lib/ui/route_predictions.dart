@@ -29,9 +29,12 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
     takenImage = Image.file(widget.results.image);
     _setTakenImageId();
 
-    Provider.of<RouteImagesModel>(context, listen: false).fetchData(
-      _routeIds(),
-    );
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    var routeIds = await _routeIds();
+    Provider.of<RouteImagesModel>(context, listen: false).fetchData(routeIds);
   }
 
   Future<void> _setTakenImageId() async {
@@ -60,13 +63,12 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
               Text("Our predictions:"),
               Expanded(
                 child: FutureBuilder(
-                  future: Future.wait([widget.results.predictions, images]),
+                  future: Future.wait([widget.results.predictions, images], eagerError: true),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       return _buildPredictionsGrid(context, snapshot.data[0], snapshot.data[1]);
                     } else if (snapshot.hasError) {
-                      debugPrint("${snapshot.error}");
-                      return Text("${snapshot.error}");
+                      return ErrorWidget.builder(FlutterErrorDetails(exception: snapshot.error));
                     }
 
                     return CircularProgressIndicator();
