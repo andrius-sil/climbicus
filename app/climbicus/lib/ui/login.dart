@@ -1,5 +1,6 @@
 
 import 'package:climbicus/utils/auth.dart';
+import 'package:climbicus/utils/api.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -55,15 +56,18 @@ class _LoginPageState extends State<LoginPage> {
 
   List<Widget> buildSubmitButtons() {
     return <Widget>[
-      RaisedButton(
-        key: Key('logIn'),
-        child: Text('Log in'),
-        onPressed: validateAndLogin,
+      Builder(
+        builder: (BuildContext context) =>
+        RaisedButton(
+          key: Key('logIn'),
+          child: Text('Log in'),
+          onPressed: () => validateAndLogin(context),
+        )
       )
     ];
   }
 
-  Future<void> validateAndLogin() async {
+  Future<void> validateAndLogin(BuildContext context) async {
     final FormState form = formKey.currentState;
     if (!form.validate()) {
       return;
@@ -71,7 +75,23 @@ class _LoginPageState extends State<LoginPage> {
 
     form.save();
 
-    await widget.auth.login(_email, _password);
-    widget.loginCallback();
+    var errorMsg;
+
+    try {
+      await widget.auth.login(_email, _password);
+      widget.loginCallback();
+    } on UnauthorizedApiException {
+      errorMsg = "Incorrect email and password. Please try again.";
+    } on Exception {
+      errorMsg = "Ooops.. an error has occured";
+    }
+
+    if (errorMsg != null) {
+      final snackBar = SnackBar(
+        backgroundColor: Colors.deepOrange,
+        content: Text(errorMsg),
+      );
+      Scaffold.of(context).showSnackBar(snackBar);
+    }
   }
 }

@@ -22,6 +22,11 @@ class ApiException implements Exception {
 }
 
 
+class UnauthorizedApiException extends ApiException {
+  UnauthorizedApiException(http.StreamedResponse response, String responseJson) :
+        super(response, responseJson);
+}
+
 
 class ApiProvider {
   static const CASTLE_GYM_ID = 1;
@@ -41,6 +46,15 @@ class ApiProvider {
   set accessToken(String value) => _accessToken = value;
   set userId(int value) => _userId = value;
 
+  ApiException _apiException(response, responseJson) {
+    switch (response.statusCode) {
+      case 401:
+        return UnauthorizedApiException(response, responseJson);
+      default:
+        return ApiException(response, responseJson);
+    }
+  }
+
   Future<Map> _request(http.BaseRequest request, bool auth) async {
     if (auth) {
       request.headers["Authorization"] = "Bearer $_accessToken";
@@ -49,7 +63,7 @@ class ApiProvider {
     final response = await client.send(request);
 
     if (response.statusCode != 200) {
-      final exception = ApiException(response, await response.stream.bytesToString());
+      final exception = _apiException(response, await response.stream.bytesToString());
       debugPrint(exception.toString());
       throw exception;
     }
