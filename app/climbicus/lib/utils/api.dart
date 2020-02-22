@@ -141,7 +141,7 @@ class ApiProvider {
     return _requestJson("POST", "user_route_log/", data);
   }
 
-  Future<Map> fetchRouteImages(List routeIds) async {
+  Future<Map> fetchRouteImages(List<int> routeIds) async {
     Map data = {
       "route_ids": routeIds,
     };

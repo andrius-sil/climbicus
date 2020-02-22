@@ -6,14 +6,14 @@ import 'package:flutter/widgets.dart';
 class UserRouteLogModel extends ChangeNotifier {
   final ApiProvider api = ApiProvider();
 
-  Map<String, UserRouteLogEntry> _entries = {};
+  Map<int, UserRouteLogEntry> _entries = {};
   Future<Map> entries = Future.delayed(const Duration(seconds: 60));
 
   Future<void> fetchData() async {
     entries = Future.delayed(const Duration(seconds: 60));
 
     try {
-      _entries = (await api.fetchLogbook()).map((id, model) => MapEntry(id, UserRouteLogEntry.fromJson(model)));
+      _entries = (await api.fetchLogbook()).map((id, model) => MapEntry(int.parse(id), UserRouteLogEntry.fromJson(model)));
       entries = Future.value(_entries);
 
     } catch(e, st) {
@@ -32,12 +32,12 @@ class UserRouteLogModel extends ChangeNotifier {
       status,
       results["created_at"],
     );
-    _entries[results["id"].toString()] = newEntry;
+    _entries[results["id"]] = newEntry;
 
     notifyListeners();
   }
 
-  List routeIds() {
+  List<int> routeIds() {
     return _entries.values.map((entry) => entry.routeId).toList();
   }
 }

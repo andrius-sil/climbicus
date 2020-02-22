@@ -102,10 +102,10 @@ class _LogbookPageState extends State<LogbookPage> {
     return widgets;
   }
 
-  Widget _buildLogbookGrid(Map<String, UserRouteLogEntry> entries, Map images) {
+  Widget _buildLogbookGrid(Map<int, UserRouteLogEntry> entries, Map images) {
     List<Widget> widgets = [];
 
-    (_sortEntriesByLogDate(entries)).forEach((id, fields) {
+    (_sortEntriesByLogDate(entries)).forEach((_, fields) {
       // Left side - entry description.
       widgets.add(
           Container(
@@ -145,7 +145,7 @@ class _LogbookPageState extends State<LogbookPage> {
     );
   }
 
-  LinkedHashMap<String, UserRouteLogEntry> _sortEntriesByLogDate(Map<String, UserRouteLogEntry> entries) {
+  LinkedHashMap<int, UserRouteLogEntry> _sortEntriesByLogDate(Map<int, UserRouteLogEntry> entries) {
     var sortedKeys = entries.keys.toList(growable: false)
       ..sort((k1, k2) => entries[k2].createdAt.compareTo(entries[k1].createdAt));
 

@@ -157,9 +157,9 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
     );
   }
 
-  Future<List> _routeIds() async {
+  Future<List<int>> _routeIds() async {
     var p = await widget.results.predictions;
-    var routeIds = List.generate(
+    List<int> routeIds = List.generate(
         widget.settings.displayPredictionsNum,
             (i) => p["sorted_route_predictions"][i]["route_id"]
     );
