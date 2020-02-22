@@ -1,9 +1,11 @@
 version: '2'
 services:
   db:
+    restart: unless-stopped
     env_file:
       - dev_secrets.env
   server:
+    restart: unless-stopped
     env_file:
       - dev_secrets.env
     environment:
