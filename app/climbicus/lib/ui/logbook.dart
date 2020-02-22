@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:convert';
 
+import 'package:climbicus/json/user_route_log_entry.dart';
 import 'package:climbicus/models/route_images.dart';
 import 'package:climbicus/models/user_route_log.dart';
 import 'package:climbicus/ui/route_predictions.dart';
@@ -101,7 +102,7 @@ class _LogbookPageState extends State<LogbookPage> {
     return widgets;
   }
 
-  Widget _buildLogbookGrid(Map entries, Map images) {
+  Widget _buildLogbookGrid(Map<String, UserRouteLogEntry> entries, Map images) {
     List<Widget> widgets = [];
 
     (_sortEntriesByLogDate(entries)).forEach((id, fields) {
@@ -113,16 +114,16 @@ class _LogbookPageState extends State<LogbookPage> {
               color: Colors.grey[800],
               child: Column(
                 children: <Widget>[
-                  Text(fields["grade"]),
-                  Text(fields["status"]),
-                  Text(fields["created_at"]),
+                  Text(fields.grade),
+                  Text(fields.status),
+                  Text(fields.createdAt),
                 ],
               )
           )
       );
 
       // Right side - image.
-      var imageFields = images[fields["route_id"].toString()];
+      var imageFields = images[fields.routeId.toString()];
       var imageWidget = (imageFields != null) ?
         Image.memory(base64.decode(imageFields["b64_image"])) :
         Image.asset("images/no_image.png");
@@ -144,9 +145,9 @@ class _LogbookPageState extends State<LogbookPage> {
     );
   }
 
-  LinkedHashMap _sortEntriesByLogDate(Map entries) {
+  LinkedHashMap<String, UserRouteLogEntry> _sortEntriesByLogDate(Map<String, UserRouteLogEntry> entries) {
     var sortedKeys = entries.keys.toList(growable: false)
-      ..sort((k1, k2) => entries[k2]["created_at"].compareTo(entries[k1]["created_at"]));
+      ..sort((k1, k2) => entries[k2].createdAt.compareTo(entries[k1].createdAt));
 
     return LinkedHashMap.fromIterable(sortedKeys, key: (k) => k, value: (k) => entries[k]);
   }
