@@ -13,6 +13,9 @@ class RouteImagesModel extends ChangeNotifier {
   Future<void> fetchData(List routeIds) async {
     images = Future.delayed(const Duration(seconds: 60));
 
+    // Do not fetch already present route images.
+    routeIds.removeWhere((id) => _images.containsKey(id.toString()));
+
     try {
       var result = await api.fetchRouteImages(routeIds);
       _images.addAll(result["route_images"]);
