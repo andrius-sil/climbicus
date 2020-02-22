@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:convert';
 
+import 'package:climbicus/json/route_image.dart';
 import 'package:climbicus/json/user_route_log_entry.dart';
 import 'package:climbicus/models/route_images.dart';
 import 'package:climbicus/models/user_route_log.dart';
@@ -102,7 +103,7 @@ class _LogbookPageState extends State<LogbookPage> {
     return widgets;
   }
 
-  Widget _buildLogbookGrid(Map<int, UserRouteLogEntry> entries, Map images) {
+  Widget _buildLogbookGrid(Map<int, UserRouteLogEntry> entries, Map<int, RouteImage> images) {
     List<Widget> widgets = [];
 
     (_sortEntriesByLogDate(entries)).forEach((_, fields) {
@@ -123,9 +124,9 @@ class _LogbookPageState extends State<LogbookPage> {
       );
 
       // Right side - image.
-      var imageFields = images[fields.routeId.toString()];
+      var imageFields = images[fields.routeId];
       var imageWidget = (imageFields != null) ?
-        Image.memory(base64.decode(imageFields["b64_image"])) :
+        Image.memory(base64.decode(imageFields.b64Image)) :
         Image.asset("images/no_image.png");
       widgets.add(
           Container(

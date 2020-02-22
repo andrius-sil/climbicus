@@ -1,6 +1,7 @@
 
 import 'dart:convert';
 
+import 'package:climbicus/json/route_image.dart';
 import 'package:climbicus/models/route_images.dart';
 import 'package:climbicus/ui/route_match.dart';
 import 'package:climbicus/utils/route_image_picker.dart';
@@ -81,7 +82,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
     );
   }
 
-  Widget _buildPredictionsGrid(BuildContext context, Map predictions, Map images) {
+  Widget _buildPredictionsGrid(BuildContext context, Map predictions, Map<int, RouteImage> images) {
     List<Widget> widgets = [];
 
     for (var i = 0; i < widget.settings.displayPredictionsNum; i++) {
@@ -90,9 +91,9 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
       var grade = fields["grade"];
 
       // Left side - image.
-      var imageFields = images[routeId.toString()];
+      var imageFields = images[routeId];
       var imageWidget = (imageFields != null) ?
-        Image.memory(base64.decode(imageFields["b64_image"])) :
+        Image.memory(base64.decode(imageFields.b64Image)) :
         Image.asset("images/no_image.png");
       widgets.add(
           _buildRouteSelectWrapper(
