@@ -23,7 +23,7 @@ def add():
 
     return jsonify({
         "id": log_entry.id,
-        "created_at": log_entry.created_at,
+        "created_at": log_entry.created_at.isoformat(),
         "msg": "Route status added to log",
     })
 

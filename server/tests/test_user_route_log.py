@@ -33,6 +33,7 @@ def test_add_to_logbook(client, app, auth_headers_user1):
     assert resp.is_json
     assert resp.json["id"] == 3
     assert resp.json["msg"] == "Route status added to log"
+    # assert resp.json["created_at"] == "2019"
 
     with app.app_context():
         assert UserRouteLog.query.filter_by(status="dogged", user_id=1, gym_id=1).one().status == "dogged"
