@@ -21,14 +21,12 @@ class RoutePredictionsPage extends StatefulWidget {
 
 class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
   Image takenImage;
-  int takenImageId;
 
   @override
   void initState() {
     super.initState();
 
     takenImage = Image.file(widget.results.image);
-    _setTakenImageId();
 
     _fetchData();
   }
@@ -36,10 +34,6 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
   Future<void> _fetchData() async {
     var routeIds = await _routeIds();
     Provider.of<RouteImagesModel>(context, listen: false).fetchData(routeIds);
-  }
-
-  Future<void> _setTakenImageId() async {
-    takenImageId = (await widget.results.predictions)["route_image_id"];
   }
 
   @override
@@ -64,10 +58,10 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
               Text("Our predictions:"),
               Expanded(
                 child: FutureBuilder(
-                  future: Future.wait([widget.results.predictions, images], eagerError: true),
+                  future: Future.wait([images], eagerError: true),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      return _buildPredictionsGrid(context, snapshot.data[0], snapshot.data[1]);
+                      return _buildPredictionsGrid(context, snapshot.data[0]);
                     } else if (snapshot.hasError) {
                       return ErrorWidget.builder(FlutterErrorDetails(exception: snapshot.error));
                     }
@@ -82,13 +76,13 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
     );
   }
 
-  Widget _buildPredictionsGrid(BuildContext context, Map predictions, Map<int, RouteImage> images) {
+  Widget _buildPredictionsGrid(BuildContext context, Map<int, RouteImage> images) {
     List<Widget> widgets = [];
 
     for (var i = 0; i < widget.settings.displayPredictionsNum; i++) {
-      var fields = predictions["sorted_route_predictions"][i];
-      var routeId = fields["route_id"];
-      var grade = fields["grade"];
+      var fields = widget.results.predictions[i];
+      var routeId = fields.routeId;
+      var grade = fields.grade;
 
       // Left side - image.
       var imageFields = images[routeId];
@@ -117,7 +111,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
               color: Colors.grey[800],
               child: Column(
                 children: <Widget>[
-                  Text("route_id: ${fields["route_id"]}"),
+                  Text("route_id: ${fields.routeId}"),
                   Text("grade: $grade"),
                 ],
               )
@@ -147,7 +141,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
               return RouteMatchPage(
                 selectedRouteId: routeId,
                 selectedImage: imageWidget,
-                takenRouteImageId: takenImageId,
+                takenRouteImageId: widget.results.routeImageId,
                 takenImage: takenImage,
                 grade: grade,
               );
@@ -159,10 +153,9 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
   }
 
   Future<List<int>> _routeIds() async {
-    var p = await widget.results.predictions;
     List<int> routeIds = List.generate(
         widget.settings.displayPredictionsNum,
-            (i) => p["sorted_route_predictions"][i]["route_id"]
+            (i) => widget.results.predictions[i].routeId
     );
     return routeIds;
   }
