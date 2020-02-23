@@ -19,6 +19,9 @@ docker-run: check-env
 docker-up: check-env
 	docker-compose -f docker-compose.yml -f docker-compose.${ENV}.yml up $(args)
 
+docker-up-build: check-env
+	docker-compose -f docker-compose.yml -f docker-compose.${ENV}.yml up --build $(args)
+
 docker-down: check-env
 	docker-compose -f docker-compose.yml -f docker-compose.${ENV}.yml down
 

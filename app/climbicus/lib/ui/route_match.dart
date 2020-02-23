@@ -1,4 +1,3 @@
-
 import 'package:climbicus/models/user_route_log.dart';
 import 'package:climbicus/utils/api.dart';
 import 'package:flutter/material.dart';
@@ -33,9 +32,9 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
     super.initState();
 
     widget.api.routeMatch(
-        widget.selectedRouteId,
-        widget.takenRouteImageId,
-        true,
+      widget.selectedRouteId,
+      widget.takenRouteImageId,
+      true,
     );
   }
 
@@ -50,58 +49,57 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
             Row(
               children: <Widget>[
                 Expanded(
-                  child: Column(
-                    children: <Widget>[
-                      Text("Your photo:"),
-                      Container(
-                        color: Colors.white,
-                        height: columnSize,
-                        width: columnSize,
-                        child: widget.takenImage,
-                      ),
-                    ],
-                  )
-                ),
+                    child: Column(
+                  children: <Widget>[
+                    Text("Your photo:"),
+                    Container(
+                      color: Colors.white,
+                      height: columnSize,
+                      width: columnSize,
+                      child: widget.takenImage,
+                    ),
+                  ],
+                )),
                 Expanded(
-                  child: Column(
-                    children: <Widget>[
-                      Text("Selected photo:"),
-                      Container(
-                        color: Colors.white,
-                        height: columnSize,
-                        width: columnSize,
-                        child: widget.selectedImage,
-                      ),
-                    ],
-                  )
-                ),
+                    child: Column(
+                  children: <Widget>[
+                    Text("Selected photo:"),
+                    Container(
+                      color: Colors.white,
+                      height: columnSize,
+                      width: columnSize,
+                      child: widget.selectedImage,
+                    ),
+                  ],
+                )),
               ],
             ),
             Text("Select status"),
             DropdownButton<String>(
               value: "not selected",
-              items: <String>["not selected", "flash", "red-point", "did not finish"]
-                  .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
+              items: <String>[
+                "not selected",
+                "flash",
+                "red-point",
+                "did not finish"
+              ].map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
               }).toList(),
               onChanged: (String value) {
                 if (value == "not selected") {
                   return;
                 }
 
-                Provider.of<UserRouteLogModel>(context, listen: false).add(
-                  widget.selectedRouteId, widget.grade, value
-                );
+                Provider.of<UserRouteLogModel>(context, listen: false)
+                    .add(widget.selectedRouteId, widget.grade, value);
 
                 Navigator.of(context).popUntil((route) => route.isFirst);
               },
             )
           ],
-        )
-    );
+        ));
   }
-
 }

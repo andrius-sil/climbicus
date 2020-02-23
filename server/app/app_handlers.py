@@ -2,6 +2,7 @@ import json
 
 from flask import request, current_app, abort, jsonify
 from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
+from werkzeug.exceptions import HTTPException
 
 
 def register_handlers(app):
@@ -24,7 +25,7 @@ def register_handlers(app):
 
     @app.errorhandler(Exception)
     def http_error_handler(error):
-        if hasattr(error, "code"):
+        if isinstance(error, HTTPException):
             code = error.code
             msg = error.description
         else:
