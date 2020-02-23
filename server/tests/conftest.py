@@ -58,14 +58,21 @@ def app(resource_dir):
                 created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
             )
         )
-        db.session.add(
-            Gyms(name="The Castle Climbing Centre", created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC))
-        )
+        db.session.add_all([
+            Gyms(name="The Castle Climbing Centre", created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)),
+            Gyms(name="VauxWest", created_at=datetime(2020, 1, 11, 10, 10, 10, tzinfo=pytz.UTC)),
+        ])
         db.session.flush()
         for i in range(1, 100):  # has to be at least the number of classes
             db.session.add(
                 Routes(
                     gym_id=1, class_id=str(i), grade="7a", created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
+                )
+            )
+        for i in range(100, 103):
+            db.session.add(
+                Routes(
+                    gym_id=2, class_id=str(i), grade="6a", created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
                 )
             )
         db.session.flush()

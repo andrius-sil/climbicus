@@ -12,6 +12,22 @@ blueprint = Blueprint("routes_blueprint", __name__, url_prefix="/routes")
 MAX_NUMBER_OF_PREDICTED_ROUTES = 20
 
 
+@blueprint.route("/", methods=["GET"])
+def route_list():
+    gym_id = request.json["gym_id"]
+
+    routes = db.session.query(Routes).filter(Routes.gym_id == gym_id).all()
+
+    gym_routes = {}
+    for route in routes:
+        gym_routes[route.id] = {
+            "grade": route.grade,
+            "created_at": route.created_at.isoformat(),
+        }
+
+    return jsonify({"routes": gym_routes})
+
+
 @blueprint.route("/predictions", methods=["POST"])
 def predict():
     json_data = json.loads(request.form["json"])

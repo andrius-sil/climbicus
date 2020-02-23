@@ -4,6 +4,24 @@ from app.models import RouteImages
 from app import db
 from flask import json
 
+def test_routes(client, auth_headers_user1):
+    data = {
+        "user_id": 1,
+        "gym_id": 2,
+    }
+    resp = client.get("/routes/", data=json.dumps(data), content_type="application/json", headers=auth_headers_user1)
+
+    assert resp.status_code == 200
+    assert resp.is_json
+
+    expected_routes = {
+        "100": {"grade": "6a", "created_at": "2019-03-04T10:10:10"},
+        "101": {"grade": "6a", "created_at": "2019-03-04T10:10:10"},
+        "102": {"grade": "6a", "created_at": "2019-03-04T10:10:10"},
+    }
+
+    assert expected_routes == resp.json["routes"]
+
 
 def test_predict_no_image(client, auth_headers_user1):
     json_data = {
