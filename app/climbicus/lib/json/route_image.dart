@@ -9,6 +9,8 @@ class RouteImage {
   int routeImageId;
   String b64Image;
 
-  factory RouteImage.fromJson(Map<String, dynamic> json) => _$RouteImageFromJson(json);
+  factory RouteImage.fromJson(Map<String, dynamic> json) =>
+      _$RouteImageFromJson(json);
+
   Map<String, dynamic> toJson() => _$RouteImageToJson(this);
 }

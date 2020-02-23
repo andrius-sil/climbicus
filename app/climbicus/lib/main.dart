@@ -8,7 +8,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
 void main() {
   ErrorWidget.builder = _buildErrorWidget;
   debugPrint = _debugPrintWrapper;
@@ -27,7 +26,7 @@ void main() {
   );
 }
 
-void _debugPrintWrapper(String message, { int wrapWidth }) {
+void _debugPrintWrapper(String message, {int wrapWidth}) {
   var now = DateTime.now();
   message = "$now: $message";
   debugPrintThrottled(message, wrapWidth: wrapWidth);
@@ -60,7 +59,8 @@ class _HomePageState extends State<HomePage> {
 
     auth.loggedIn().then((bool userLoggedIn) {
       setState(() {
-        authStatus = userLoggedIn ? AuthStatus.loggedIn : AuthStatus.notLoggedIn;
+        authStatus =
+            userLoggedIn ? AuthStatus.loggedIn : AuthStatus.notLoggedIn;
       });
     });
   }
@@ -121,4 +121,3 @@ class _HomePageState extends State<HomePage> {
     ));
   }
 }
-

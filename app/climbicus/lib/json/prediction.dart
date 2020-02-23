@@ -9,6 +9,8 @@ class Prediction {
   int routeId;
   String grade;
 
-  factory Prediction.fromJson(Map<String, dynamic> json) => _$PredictionFromJson(json);
+  factory Prediction.fromJson(Map<String, dynamic> json) =>
+      _$PredictionFromJson(json);
+
   Map<String, dynamic> toJson() => _$PredictionToJson(this);
 }

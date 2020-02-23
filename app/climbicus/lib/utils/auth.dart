@@ -5,7 +5,9 @@ import 'api.dart';
 class Auth {
   // Singleton factory.
   Auth._internal();
+
   static final Auth _auth = Auth._internal();
+
   factory Auth() => _auth;
 
   final ApiProvider api = ApiProvider();

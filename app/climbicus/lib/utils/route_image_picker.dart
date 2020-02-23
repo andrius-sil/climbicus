@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:climbicus/json/prediction.dart';
@@ -6,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'api.dart';
-
 
 const Map<ImageSource, Map<String, dynamic>> IMAGE_SOURCES = {
   ImageSource.gallery: {
@@ -21,7 +19,6 @@ const Map<ImageSource, Map<String, dynamic>> IMAGE_SOURCES = {
   },
 };
 
-
 class ImagePickerResults {
   final int routeImageId;
   final File image;
@@ -29,7 +26,6 @@ class ImagePickerResults {
 
   const ImagePickerResults(this.routeImageId, this.image, this.predictions);
 }
-
 
 class RouteImagePicker {
   final ApiProvider api = ApiProvider();
@@ -50,10 +46,9 @@ class RouteImagePicker {
     var result = (await api.uploadRouteImage(image));
     List<dynamic> predictions = result["sorted_route_predictions"];
     return ImagePickerResults(
-        result["route_image_id"],
-        image,
-        predictions.map((model) => Prediction.fromJson(model)).toList(),
+      result["route_image_id"],
+      image,
+      predictions.map((model) => Prediction.fromJson(model)).toList(),
     );
   }
-
 }

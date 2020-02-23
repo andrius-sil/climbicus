@@ -1,6 +1,5 @@
-
-import 'package:climbicus/utils/auth.dart';
 import 'package:climbicus/utils/api.dart';
+import 'package:climbicus/utils/auth.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -41,14 +40,14 @@ class _LoginPageState extends State<LoginPage> {
         key: Key('email'),
         keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(labelText: 'Email'),
-        validator: (value) => value.isEmpty ? "Email can't be empty": null,
+        validator: (value) => value.isEmpty ? "Email can't be empty" : null,
         onSaved: (value) => _email = value,
       ),
       TextFormField(
         key: Key('password'),
         obscureText: true,
         decoration: InputDecoration(labelText: 'Password'),
-        validator: (value) => value.isEmpty ? "Password can't be empty": null,
+        validator: (value) => value.isEmpty ? "Password can't be empty" : null,
         onSaved: (value) => _password = value,
       ),
     ];
@@ -57,13 +56,11 @@ class _LoginPageState extends State<LoginPage> {
   List<Widget> buildSubmitButtons() {
     return <Widget>[
       Builder(
-        builder: (BuildContext context) =>
-        RaisedButton(
-          key: Key('logIn'),
-          child: Text('Log in'),
-          onPressed: () => validateAndLogin(context),
-        )
-      )
+          builder: (BuildContext context) => RaisedButton(
+                key: Key('logIn'),
+                child: Text('Log in'),
+                onPressed: () => validateAndLogin(context),
+              ))
     ];
   }
 

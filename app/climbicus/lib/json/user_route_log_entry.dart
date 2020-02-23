@@ -11,6 +11,8 @@ class UserRouteLogEntry {
   String status;
   String createdAt;
 
-  factory UserRouteLogEntry.fromJson(Map<String, dynamic> json) => _$UserRouteLogEntryFromJson(json);
+  factory UserRouteLogEntry.fromJson(Map<String, dynamic> json) =>
+      _$UserRouteLogEntryFromJson(json);
+
   Map<String, dynamic> toJson() => _$UserRouteLogEntryToJson(this);
 }

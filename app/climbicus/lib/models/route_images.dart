@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:climbicus/json/route_image.dart';
@@ -18,11 +17,13 @@ class RouteImagesModel extends ChangeNotifier {
     routeIds.removeWhere((id) => _images.containsKey(id));
 
     try {
-      Map<String, dynamic> result = (await api.fetchRouteImages(routeIds))["route_images"];
-      var fetchedImages = result.map((id, model) => MapEntry(int.parse(id), RouteImage.fromJson(model)));
+      Map<String, dynamic> result =
+          (await api.fetchRouteImages(routeIds))["route_images"];
+      var fetchedImages = result.map(
+          (id, model) => MapEntry(int.parse(id), RouteImage.fromJson(model)));
       _images.addAll(fetchedImages);
       images = Future.value(_images);
-    } catch(e, st) {
+    } catch (e, st) {
       images = Future.error(e, st);
     }
 

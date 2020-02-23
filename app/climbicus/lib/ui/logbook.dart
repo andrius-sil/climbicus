@@ -13,8 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
-
-
 class LogbookPage extends StatefulWidget {
   final ApiProvider api = ApiProvider();
   final RouteImagePicker imagePicker = RouteImagePicker();
@@ -32,14 +30,14 @@ class _LogbookPageState extends State<LogbookPage> {
   void initState() {
     super.initState();
 
-
     _fetchData();
   }
 
   Future<void> _fetchData() async {
     await Provider.of<UserRouteLogModel>(context, listen: false).fetchData();
 
-    var routeIds = Provider.of<UserRouteLogModel>(context, listen: false).routeIds();
+    var routeIds =
+        Provider.of<UserRouteLogModel>(context, listen: false).routeIds();
     Provider.of<RouteImagesModel>(context, listen: false).fetchData(routeIds);
   }
 
@@ -56,7 +54,8 @@ class _LogbookPageState extends State<LogbookPage> {
           if (snapshot.hasData) {
             return _buildLogbookGrid(snapshot.data[0], snapshot.data[1]);
           } else if (snapshot.hasError) {
-            return ErrorWidget.builder(FlutterErrorDetails(exception: snapshot.error));
+            return ErrorWidget.builder(
+                FlutterErrorDetails(exception: snapshot.error));
           }
 
           return CircularProgressIndicator();
@@ -73,68 +72,60 @@ class _LogbookPageState extends State<LogbookPage> {
     List<Widget> widgets = [];
 
     widget.settings.imagePickerSource.forEach((imageSource) {
-      widgets.add(
-        FloatingActionButton(
-          onPressed: () async {
-            var results = await widget.imagePicker.pickImage(imageSource);
-            if (results == null) {
-              return;
-            }
+      widgets.add(FloatingActionButton(
+        onPressed: () async {
+          var results = await widget.imagePicker.pickImage(imageSource);
+          if (results == null) {
+            return;
+          }
 
-            Navigator.push(context, MaterialPageRoute(
-              builder: (BuildContext context) {
-                return RoutePredictionsPage(results: results);
-              },
-            ));
-          },
-          tooltip: IMAGE_SOURCES[imageSource]["tooltip"],
-          child: Icon(IMAGE_SOURCES[imageSource]["icon"]),
-          heroTag: IMAGE_SOURCES[imageSource]["heroTag"],
-        )
-      );
+          Navigator.push(context, MaterialPageRoute(
+            builder: (BuildContext context) {
+              return RoutePredictionsPage(results: results);
+            },
+          ));
+        },
+        tooltip: IMAGE_SOURCES[imageSource]["tooltip"],
+        child: Icon(IMAGE_SOURCES[imageSource]["icon"]),
+        heroTag: IMAGE_SOURCES[imageSource]["heroTag"],
+      ));
 
       if (imageSource != widget.settings.imagePickerSource.last) {
-        widgets.add(
-          SizedBox(height: 16.0)
-        );
+        widgets.add(SizedBox(height: 16.0));
       }
     });
 
     return widgets;
   }
 
-  Widget _buildLogbookGrid(Map<int, UserRouteLogEntry> entries, Map<int, RouteImage> images) {
+  Widget _buildLogbookGrid(
+      Map<int, UserRouteLogEntry> entries, Map<int, RouteImage> images) {
     List<Widget> widgets = [];
 
     (_sortEntriesByLogDate(entries)).forEach((_, fields) {
       // Left side - entry description.
-      widgets.add(
-          Container(
-              alignment: Alignment.center,
-              padding: const EdgeInsets.all(8),
-              color: Colors.grey[800],
-              child: Column(
-                children: <Widget>[
-                  Text(fields.grade),
-                  Text(fields.status),
-                  Text(fields.createdAt),
-                ],
-              )
-          )
-      );
+      widgets.add(Container(
+          alignment: Alignment.center,
+          padding: const EdgeInsets.all(8),
+          color: Colors.grey[800],
+          child: Column(
+            children: <Widget>[
+              Text(fields.grade),
+              Text(fields.status),
+              Text(fields.createdAt),
+            ],
+          )));
 
       // Right side - image.
       var imageFields = images[fields.routeId];
-      var imageWidget = (imageFields != null) ?
-        Image.memory(base64.decode(imageFields.b64Image)) :
-        Image.asset("images/no_image.png");
-      widgets.add(
-          Container(
-            color: Colors.grey[700],
-            alignment: Alignment.center,
-            child: imageWidget,
-          )
-      );
+      var imageWidget = (imageFields != null)
+          ? Image.memory(base64.decode(imageFields.b64Image))
+          : Image.asset("images/no_image.png");
+      widgets.add(Container(
+        color: Colors.grey[700],
+        alignment: Alignment.center,
+        child: imageWidget,
+      ));
     });
 
     return GridView.count(
@@ -146,10 +137,13 @@ class _LogbookPageState extends State<LogbookPage> {
     );
   }
 
-  LinkedHashMap<int, UserRouteLogEntry> _sortEntriesByLogDate(Map<int, UserRouteLogEntry> entries) {
+  LinkedHashMap<int, UserRouteLogEntry> _sortEntriesByLogDate(
+      Map<int, UserRouteLogEntry> entries) {
     var sortedKeys = entries.keys.toList(growable: false)
-      ..sort((k1, k2) => entries[k2].createdAt.compareTo(entries[k1].createdAt));
+      ..sort(
+          (k1, k2) => entries[k2].createdAt.compareTo(entries[k1].createdAt));
 
-    return LinkedHashMap.fromIterable(sortedKeys, key: (k) => k, value: (k) => entries[k]);
+    return LinkedHashMap.fromIterable(sortedKeys,
+        key: (k) => k, value: (k) => entries[k]);
   }
 }

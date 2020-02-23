@@ -1,9 +1,7 @@
-
 import 'package:climbicus/utils/auth.dart';
 import 'package:climbicus/utils/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-
 
 class SettingsPage extends StatefulWidget {
   final Auth auth = Auth();
@@ -35,14 +33,16 @@ class _SettingsPageState extends State<SettingsPage> {
       body: Container(
         child: ListView(
           children: <Widget>[
-            Text("${widget.auth.email}"),
-            RaisedButton(
-              child: Text('Log Out'),
-              onPressed: logout,
-            ),
-            Text("Dev settings:"),
-          ] +
-          _buildServerSelection() + _buildImagePickerSelection() + _buildDisplayPredictionsNumSelection(),
+                Text("${widget.auth.email}"),
+                RaisedButton(
+                  child: Text('Log Out'),
+                  onPressed: logout,
+                ),
+                Text("Dev settings:"),
+              ] +
+              _buildServerSelection() +
+              _buildImagePickerSelection() +
+              _buildDisplayPredictionsNumSelection(),
         ),
       ),
     );

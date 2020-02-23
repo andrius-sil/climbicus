@@ -1,4 +1,3 @@
-
 import 'package:climbicus/json/user_route_log_entry.dart';
 import 'package:climbicus/utils/api.dart';
 import 'package:flutter/widgets.dart';
@@ -13,10 +12,10 @@ class UserRouteLogModel extends ChangeNotifier {
     entries = Future.delayed(const Duration(seconds: 60));
 
     try {
-      _entries = (await api.fetchLogbook()).map((id, model) => MapEntry(int.parse(id), UserRouteLogEntry.fromJson(model)));
+      _entries = (await api.fetchLogbook()).map((id, model) =>
+          MapEntry(int.parse(id), UserRouteLogEntry.fromJson(model)));
       entries = Future.value(_entries);
-
-    } catch(e, st) {
+    } catch (e, st) {
       entries = Future.error(e, st);
     }
 

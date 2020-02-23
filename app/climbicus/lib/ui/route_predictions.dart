@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:climbicus/json/route_image.dart';
@@ -41,14 +40,12 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
     var images = Provider.of<RouteImagesModel>(context).images;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Select your route'),
-      ),
-      body: Builder(
-        builder: (BuildContext context) =>
-          Center(
-          child: Column(
-            children: <Widget>[
+        appBar: AppBar(
+          title: const Text('Select your route'),
+        ),
+        body: Builder(
+          builder: (BuildContext context) => Center(
+            child: Column(children: <Widget>[
               Text("Your photo:"),
               Container(
                 height: 200.0,
@@ -63,7 +60,8 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
                     if (snapshot.hasData) {
                       return _buildPredictionsGrid(context, snapshot.data[0]);
                     } else if (snapshot.hasError) {
-                      return ErrorWidget.builder(FlutterErrorDetails(exception: snapshot.error));
+                      return ErrorWidget.builder(
+                          FlutterErrorDetails(exception: snapshot.error));
                     }
 
                     return CircularProgressIndicator();
@@ -71,12 +69,12 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
                 ),
               )
             ]),
-        ),
-      )
-    );
+          ),
+        ));
   }
 
-  Widget _buildPredictionsGrid(BuildContext context, Map<int, RouteImage> images) {
+  Widget _buildPredictionsGrid(
+      BuildContext context, Map<int, RouteImage> images) {
     List<Widget> widgets = [];
 
     for (var i = 0; i < widget.settings.displayPredictionsNum; i++) {
@@ -86,41 +84,36 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
 
       // Left side - image.
       var imageFields = images[routeId];
-      var imageWidget = (imageFields != null) ?
-        Image.memory(base64.decode(imageFields.b64Image)) :
-        Image.asset("images/no_image.png");
-      widgets.add(
-          _buildRouteSelectWrapper(
-            Container(
-              color: Colors.grey[800],
-              alignment: Alignment.center,
-              child: imageWidget,
-            ),
-            routeId,
-            imageWidget,
-            grade,
-          )
-      );
+      var imageWidget = (imageFields != null)
+          ? Image.memory(base64.decode(imageFields.b64Image))
+          : Image.asset("images/no_image.png");
+      widgets.add(_buildRouteSelectWrapper(
+        Container(
+          color: Colors.grey[800],
+          alignment: Alignment.center,
+          child: imageWidget,
+        ),
+        routeId,
+        imageWidget,
+        grade,
+      ));
 
       // Right side - entry description.
-      widgets.add(
-        _buildRouteSelectWrapper(
-          Container(
-              alignment: Alignment.center,
-              padding: const EdgeInsets.all(8),
-              color: Colors.grey[800],
-              child: Column(
-                children: <Widget>[
-                  Text("route_id: ${fields.routeId}"),
-                  Text("grade: $grade"),
-                ],
-              )
-          ),
-          routeId,
-          imageWidget,
-          grade,
-        )
-      );
+      widgets.add(_buildRouteSelectWrapper(
+        Container(
+            alignment: Alignment.center,
+            padding: const EdgeInsets.all(8),
+            color: Colors.grey[800],
+            child: Column(
+              children: <Widget>[
+                Text("route_id: ${fields.routeId}"),
+                Text("grade: $grade"),
+              ],
+            )),
+        routeId,
+        imageWidget,
+        grade,
+      ));
     }
 
     return GridView.count(
@@ -133,31 +126,29 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
     );
   }
 
-  Widget _buildRouteSelectWrapper(Widget childWidget, int routeId, Image imageWidget, String grade) {
+  Widget _buildRouteSelectWrapper(
+      Widget childWidget, int routeId, Image imageWidget, String grade) {
     return GestureDetector(
-        onTap: () {
-          Navigator.push(context, MaterialPageRoute(
-            builder: (BuildContext context) {
-              return RouteMatchPage(
-                selectedRouteId: routeId,
-                selectedImage: imageWidget,
-                takenRouteImageId: widget.results.routeImageId,
-                takenImage: takenImage,
-                grade: grade,
-              );
-            },
-          ));
-        },
-        child: childWidget,
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(
+          builder: (BuildContext context) {
+            return RouteMatchPage(
+              selectedRouteId: routeId,
+              selectedImage: imageWidget,
+              takenRouteImageId: widget.results.routeImageId,
+              takenImage: takenImage,
+              grade: grade,
+            );
+          },
+        ));
+      },
+      child: childWidget,
     );
   }
 
   Future<List<int>> _routeIds() async {
-    List<int> routeIds = List.generate(
-        widget.settings.displayPredictionsNum,
-            (i) => widget.results.predictions[i].routeId
-    );
+    List<int> routeIds = List.generate(widget.settings.displayPredictionsNum,
+        (i) => widget.results.predictions[i].routeId);
     return routeIds;
   }
-
 }
