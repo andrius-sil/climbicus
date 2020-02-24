@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 class LoginPage extends StatefulWidget {
   final Auth auth = Auth();
   final VoidCallback loginCallback;
-  final AppBar appBar;
+  final List<Widget> appBarActions;
 
-  LoginPage({this.appBar, this.loginCallback});
+  LoginPage({this.appBarActions, this.loginCallback});
 
   @override
   State<StatefulWidget> createState() => _LoginPageState();
@@ -22,7 +22,10 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget.appBar,
+      appBar: AppBar(
+        title: Text("Login"),
+        actions: widget.appBarActions,
+      ),
       body: Container(
         child: Form(
           key: formKey,

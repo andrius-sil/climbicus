@@ -2,9 +2,9 @@ import 'dart:collection';
 import 'dart:convert';
 
 import 'package:climbicus/json/route_image.dart';
-import 'package:climbicus/json/user_route_log_entry.dart';
+import 'package:climbicus/json/route.dart' as jsonmdl;
 import 'package:climbicus/models/route_images.dart';
-import 'package:climbicus/models/user_route_log.dart';
+import 'package:climbicus/models/routes.dart';
 import 'package:climbicus/ui/route_predictions.dart';
 import 'package:climbicus/utils/api.dart';
 import 'package:climbicus/utils/route_image_picker.dart';
@@ -13,18 +13,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
-class LogbookPage extends StatefulWidget {
+class GymPage extends StatefulWidget {
   final ApiProvider api = ApiProvider();
   final RouteImagePicker imagePicker = RouteImagePicker();
   final Settings settings = Settings();
 
-  LogbookPage();
+  GymPage();
 
   @override
-  State<StatefulWidget> createState() => _LogbookPageState();
+  State<StatefulWidget> createState() => _GymPageState();
 }
 
-class _LogbookPageState extends State<LogbookPage> {
+class _GymPageState extends State<GymPage> {
   @override
   void initState() {
     super.initState();
@@ -33,21 +33,21 @@ class _LogbookPageState extends State<LogbookPage> {
   }
 
   Future<void> _fetchData() async {
-    await Provider.of<UserRouteLogModel>(context, listen: false).fetchData();
+    await Provider.of<RoutesModel>(context, listen: false).fetchData();
 
     var routeIds =
-        Provider.of<UserRouteLogModel>(context, listen: false).routeIds();
+        Provider.of<RoutesModel>(context, listen: false).routeIds();
     Provider.of<RouteImagesModel>(context, listen: false).fetchData(routeIds);
   }
 
   @override
   Widget build(BuildContext context) {
-    var entries = Provider.of<UserRouteLogModel>(context).entries;
+    var routes = Provider.of<RoutesModel>(context).routes;
     var images = Provider.of<RouteImagesModel>(context).images;
 
     return Scaffold(
       body: FutureBuilder(
-        future: Future.wait([entries, images], eagerError: true),
+        future: Future.wait([routes, images], eagerError: true),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return _buildLogbookGrid(snapshot.data[0], snapshot.data[1]);
@@ -97,10 +97,10 @@ class _LogbookPageState extends State<LogbookPage> {
   }
 
   Widget _buildLogbookGrid(
-      Map<int, UserRouteLogEntry> entries, Map<int, RouteImage> images) {
+      Map<int, jsonmdl.Route> entries, Map<int, RouteImage> images) {
     List<Widget> widgets = [];
 
-    (_sortEntriesByLogDate(entries)).forEach((_, fields) {
+    (_sortEntriesByLogDate(entries)).forEach((routeId, fields) {
       // Left side - entry description.
       widgets.add(Container(
           alignment: Alignment.center,
@@ -109,13 +109,12 @@ class _LogbookPageState extends State<LogbookPage> {
           child: Column(
             children: <Widget>[
               Text(fields.grade),
-              Text(fields.status),
               Text(fields.createdAt),
             ],
           )));
 
       // Right side - image.
-      var imageFields = images[fields.routeId];
+      var imageFields = images[routeId];
       var imageWidget = (imageFields != null)
           ? Image.memory(base64.decode(imageFields.b64Image))
           : Image.asset("images/no_image.png");
@@ -135,8 +134,8 @@ class _LogbookPageState extends State<LogbookPage> {
     );
   }
 
-  LinkedHashMap<int, UserRouteLogEntry> _sortEntriesByLogDate(
-      Map<int, UserRouteLogEntry> entries) {
+  LinkedHashMap<int, jsonmdl.Route> _sortEntriesByLogDate(
+      Map<int, jsonmdl.Route> entries) {
     var sortedKeys = entries.keys.toList(growable: false)
       ..sort(
           (k1, k2) => entries[k2].createdAt.compareTo(entries[k1].createdAt));

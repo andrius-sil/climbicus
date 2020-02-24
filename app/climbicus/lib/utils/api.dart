@@ -165,4 +165,11 @@ class ApiProvider {
     };
     return _requestMultipart(image, "POST", "routes/predictions", data);
   }
+
+  Future<Map> fetchRoutes() async {
+    Map data = {
+      "gym_id": CASTLE_GYM_ID,
+    };
+    return _requestJson("GET", "routes/", data);
+  }
 }
