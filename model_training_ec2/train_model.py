@@ -84,6 +84,7 @@ def train_model():
         epochs=epochs,
         verbose=1,
         validation_data=validation_generator,
+        validation_steps=math.ceil(validation_generator.samples / validation_generator.batch_size),
         callbacks=callbacks,
         class_weight=class_weights,
     )
