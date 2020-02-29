@@ -2,9 +2,8 @@ import 'dart:collection';
 import 'dart:convert';
 
 import 'package:climbicus/json/route_image.dart';
-import 'package:climbicus/json/user_route_log_entry.dart';
+import 'package:climbicus/models/fetch_model.dart';
 import 'package:climbicus/models/route_images.dart';
-import 'package:climbicus/models/user_route_log.dart';
 import 'package:climbicus/ui/route_predictions.dart';
 import 'package:climbicus/utils/api.dart';
 import 'package:climbicus/utils/route_image_picker.dart';
@@ -13,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
-class RouteViewPage extends StatefulWidget {
+class RouteViewPage<T extends FetchModel> extends StatefulWidget {
   final ApiProvider api = ApiProvider();
   final RouteImagePicker imagePicker = RouteImagePicker();
   final Settings settings = Settings();
@@ -21,10 +20,10 @@ class RouteViewPage extends StatefulWidget {
   RouteViewPage();
 
   @override
-  State<StatefulWidget> createState() => _RouteViewPageState();
+  State<StatefulWidget> createState() => _RouteViewPageState<T>();
 }
 
-class _RouteViewPageState extends State<RouteViewPage> {
+class _RouteViewPageState<T extends FetchModel> extends State<RouteViewPage<T>> {
   @override
   void initState() {
     super.initState();
@@ -33,16 +32,16 @@ class _RouteViewPageState extends State<RouteViewPage> {
   }
 
   Future<void> _fetchData() async {
-    await Provider.of<UserRouteLogModel>(context, listen: false).fetchData();
+    await Provider.of<T>(context, listen: false).fetchData();
 
     var routeIds =
-        Provider.of<UserRouteLogModel>(context, listen: false).routeIds();
+        Provider.of<T>(context, listen: false).routeIds();
     Provider.of<RouteImagesModel>(context, listen: false).fetchData(routeIds);
   }
 
   @override
   Widget build(BuildContext context) {
-    var entries = Provider.of<UserRouteLogModel>(context).entries;
+    var entries = Provider.of<T>(context).getEntries();
     var images = Provider.of<RouteImagesModel>(context).images;
 
     return Scaffold(
@@ -96,10 +95,10 @@ class _RouteViewPageState extends State<RouteViewPage> {
     return widgets;
   }
 
-  Widget _buildLogbookGrid(
-      Map<int, UserRouteLogEntry> entries, Map<int, RouteImage> images) {
+  Widget _buildLogbookGrid(Map entries, Map<int, RouteImage> images) {
     List<Widget> widgets = [];
 
+    // TODO: behaviour based on model type
     (_sortEntriesByLogDate(entries)).forEach((_, fields) {
       // Left side - entry description.
       widgets.add(Container(
@@ -135,8 +134,7 @@ class _RouteViewPageState extends State<RouteViewPage> {
     );
   }
 
-  LinkedHashMap<int, UserRouteLogEntry> _sortEntriesByLogDate(
-      Map<int, UserRouteLogEntry> entries) {
+  LinkedHashMap _sortEntriesByLogDate(Map entries) {
     var sortedKeys = entries.keys.toList(growable: false)
       ..sort(
           (k1, k2) => entries[k2].createdAt.compareTo(entries[k1].createdAt));

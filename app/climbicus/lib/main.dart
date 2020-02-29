@@ -1,8 +1,8 @@
 import 'package:climbicus/models/route_images.dart';
 import 'package:climbicus/models/user_route_log.dart';
 import 'package:climbicus/ui/gym.dart';
-import 'package:climbicus/ui/logbook.dart';
 import 'package:climbicus/ui/login.dart';
+import 'package:climbicus/ui/route_view.dart';
 import 'package:climbicus/ui/settings.dart';
 import 'package:climbicus/utils/auth.dart';
 import 'package:flutter/foundation.dart';
@@ -104,7 +104,7 @@ class _HomePageState extends State<HomePage> {
             ),
             body: TabBarView(
               children: <Widget>[
-                LogbookPage(),
+                RouteViewPage<UserRouteLogModel>(),
                 GymPage(),
               ],
             ),

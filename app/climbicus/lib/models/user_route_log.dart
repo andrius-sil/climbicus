@@ -1,8 +1,9 @@
 import 'package:climbicus/json/user_route_log_entry.dart';
 import 'package:climbicus/utils/api.dart';
-import 'package:flutter/widgets.dart';
 
-class UserRouteLogModel extends ChangeNotifier {
+import 'fetch_model.dart';
+
+class UserRouteLogModel extends FetchModel {
   final ApiProvider api = ApiProvider();
 
   Map<int, UserRouteLogEntry> _entries = {};
@@ -39,4 +40,7 @@ class UserRouteLogModel extends ChangeNotifier {
   List<int> routeIds() {
     return _entries.values.map((entry) => entry.routeId).toList();
   }
+
+  @override
+  Future<Map> getEntries() => entries;
 }
