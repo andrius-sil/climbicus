@@ -8,4 +8,8 @@ abstract class FetchModel extends ChangeNotifier {
   List<int> routeIds();
 
   Future<Map> getEntries();
+
+  List<String> displayAttrs(entry);
+
+  int routeId(entryId, entry);
 }

@@ -98,23 +98,23 @@ class _RouteViewPageState<T extends FetchModel> extends State<RouteViewPage<T>> 
   Widget _buildLogbookGrid(Map entries, Map<int, RouteImage> images) {
     List<Widget> widgets = [];
 
-    // TODO: behaviour based on model type
-    (_sortEntriesByLogDate(entries)).forEach((_, fields) {
+    (_sortEntriesByLogDate(entries)).forEach((entryId, fields) {
+      var displayAttrs = Provider.of<T>(context, listen: false).displayAttrs(fields);
+      List<Text> textWidgets = [];
+      displayAttrs.forEach((String attr) => textWidgets.add(Text(attr)));
+
       // Left side - entry description.
       widgets.add(Container(
           alignment: Alignment.center,
           padding: const EdgeInsets.all(8),
           color: Colors.grey[800],
           child: Column(
-            children: <Widget>[
-              Text(fields.grade),
-              Text(fields.status),
-              Text(fields.createdAt),
-            ],
+            children: textWidgets,
           )));
 
       // Right side - image.
-      var imageFields = images[fields.routeId];
+      var routeId = Provider.of<T>(context, listen: false).routeId(entryId, fields);
+      var imageFields = images[routeId];
       var imageWidget = (imageFields != null)
           ? Image.memory(base64.decode(imageFields.b64Image))
           : Image.asset("images/no_image.png");

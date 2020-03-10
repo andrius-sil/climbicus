@@ -43,4 +43,12 @@ class UserRouteLogModel extends FetchModel {
 
   @override
   Future<Map> getEntries() => entries;
+
+  @override
+  List<String> displayAttrs(entry) {
+    return [entry.grade, entry.status, entry.createdAt];
+  }
+
+  @override
+  int routeId(entryId, entry) => entry.routeId;
 }

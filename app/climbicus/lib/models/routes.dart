@@ -1,8 +1,8 @@
 import 'package:climbicus/json/route.dart' as jsonmdl;
+import 'package:climbicus/models/fetch_model.dart';
 import 'package:climbicus/utils/api.dart';
-import 'package:flutter/widgets.dart';
 
-class RoutesModel extends ChangeNotifier {
+class RoutesModel extends FetchModel {
   final ApiProvider api = ApiProvider();
 
   Map<int, jsonmdl.Route> _routes = {};
@@ -26,4 +26,15 @@ class RoutesModel extends ChangeNotifier {
   List<int> routeIds() {
     return _routes.keys.toList();
   }
+
+  @override
+  Future<Map> getEntries() => routes;
+
+  @override
+  List<String> displayAttrs(entry) {
+    return [entry.grade, entry.createdAt];
+  }
+
+  @override
+  int routeId(entryId, entry) => entryId;
 }
