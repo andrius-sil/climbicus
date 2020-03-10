@@ -115,13 +115,27 @@ class _RouteViewPageState<T extends FetchModel> extends State<RouteViewPage<T>> 
       // Right side - image.
       var routeId = Provider.of<T>(context, listen: false).routeId(entryId, fields);
       var imageFields = images[routeId];
-      var imageWidget = (imageFields != null)
-          ? Image.memory(base64.decode(imageFields.b64Image))
-          : Image.asset("images/no_image.png");
+      var imageWidget;
+      var imageId;
+      if (imageFields != null) {
+        imageWidget = Image.memory(base64.decode(imageFields.b64Image));
+        imageId = imageFields.routeImageId;
+      } else {
+        imageWidget = Image.asset("images/no_image.png");
+        imageId = "n/a";
+      }
       widgets.add(Container(
         color: Colors.grey[700],
         alignment: Alignment.center,
-        child: imageWidget,
+        child: Stack(
+          children: <Widget>[
+            imageWidget,
+            Align(
+                alignment: Alignment.bottomLeft,
+                child: Text("route_id: $routeId, image_id: $imageId"),
+            ),
+          ],
+        ),
       ));
     });
 
