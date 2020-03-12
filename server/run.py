@@ -18,4 +18,10 @@ DISABLE_AUTH = os.getenv("FLASK_DISABLE_AUTH", False)
 ENV = os.getenv("ENV", "dev")
 print(f"Running on '{ENV}'")
 
-app = create_app(DATABASE_CONNECTION_URI, MODEL_FILES_PATH, JWT_SECRET_KEY, S3InputOutputProvider(ENV), DISABLE_AUTH)
+app = create_app(
+    db_connection_uri=DATABASE_CONNECTION_URI,
+    model_files_path=MODEL_FILES_PATH,
+    jwt_secret_key=JWT_SECRET_KEY,
+    io_provider=S3InputOutputProvider(ENV),
+    disable_auth=DISABLE_AUTH,
+)

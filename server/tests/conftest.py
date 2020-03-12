@@ -37,7 +37,12 @@ class TestInputOutputProvider(InputOutputProvider):
 def app(resource_dir):
     """Create and configure a new app instance for each test."""
     model_files_path = f"{resource_dir}/"
-    app = create_app(DATABASE_CONNECTION_URI, model_files_path, JWT_SECRET_KEY, TestInputOutputProvider(resource_dir))
+    app = create_app(
+        db_connection_uri=DATABASE_CONNECTION_URI,
+        model_files_path=model_files_path,
+        jwt_secret_key=JWT_SECRET_KEY,
+        io_provider=TestInputOutputProvider(resource_dir),
+    )
 
     app.testing = True
 
