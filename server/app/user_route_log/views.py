@@ -16,7 +16,7 @@ def add():
     gym_id = request.json["gym_id"]
 
     log_entry = UserRouteLog(route_id=route_id, user_id=user_id, gym_id=gym_id, status=status,
-                             created_at=datetime.datetime.now())
+                             created_at=datetime.datetime.utcnow())
 
     db.session.add(log_entry)
     db.session.commit()

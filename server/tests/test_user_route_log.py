@@ -1,3 +1,9 @@
+from datetime import datetime
+from unittest import mock
+from unittest.mock import Mock
+
+import pytz
+
 from app.models import UserRouteLog
 from flask import json
 
@@ -20,6 +26,7 @@ def test_view_logbook(client, auth_headers_user1):
     assert resp.json["2"]["created_at"] == "2012-03-04T10:10:10"
 
 
+@mock.patch("datetime.datetime", Mock(utcnow=lambda: datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)))
 def test_add_to_logbook(client, app, auth_headers_user1):
     data = {
         "user_id": 1,
@@ -33,7 +40,7 @@ def test_add_to_logbook(client, app, auth_headers_user1):
     assert resp.is_json
     assert resp.json["id"] == 3
     assert resp.json["msg"] == "Route status added to log"
-    # assert resp.json["created_at"] == "2019"
+    assert resp.json["created_at"] == "2019-03-04T10:10:10"
 
     with app.app_context():
         assert UserRouteLog.query.filter_by(status="dogged", user_id=1, gym_id=1).one().status == "dogged"
