@@ -15,8 +15,12 @@ jobs:
       run: make args=-d docker-up
       env:
         ENV: dev
-    - name: Tests
+    - name: Unit tests
       run: make tests
+      env:
+        ENV: dev
+    - name: Load dummy data
+      run: make args=recreate-db docker-run
       env:
         ENV: dev
     - name: Clean up
