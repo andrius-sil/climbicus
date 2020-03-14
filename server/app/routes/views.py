@@ -6,10 +6,12 @@ from app import db, predictor, io
 from app.models import RouteImages, Routes
 
 from flask import abort, request, Blueprint, jsonify
+from predictor.cbir_predictor import CbirPredictor
 
 blueprint = Blueprint("routes_blueprint", __name__, url_prefix="/routes")
 
-MAX_NUMBER_OF_PREDICTED_ROUTES = 20
+# TODO: raise this back again once you have all the descriptors
+MAX_NUMBER_OF_PREDICTED_ROUTES = 2
 
 
 @blueprint.route("/", methods=["GET"])
@@ -56,7 +58,60 @@ def predict():
         gym_id=gym_id,
         model_route_id=routes[0].id,  # choosing the highest probability route id
         model_probability=predictor_results.get_class_probability(sorted_class_ids[0]),
-        model_version=predictor_results.model_version
+        model_version=predictor_results.model_version,
+    )
+    response["route_image_id"] = route_image_id
+
+    return jsonify(response)
+
+
+@blueprint.route("/predictions_cbir", methods=["POST"])
+def predict_cbir():
+    json_data = json.loads(request.form["json"])
+    user_id = json_data["user_id"]
+    gym_id = json_data["gym_id"]
+
+    imagefile = request.files.get("image")
+    if imagefile is None:
+        abort(400, "image file is missing")
+
+    # TODO: make a test so that doesn't return null descriptors
+    results = (
+        db.session.query(RouteImages, Routes)
+        .join(Routes, Routes.id == RouteImages.user_route_id)
+        .filter(Routes.gym_id == gym_id, RouteImages.descriptors != '""')
+        .all()
+    )
+    route_images = []
+    for route_image, route in results:
+        entry = {
+            "id": route_image.id,
+            "user_route_id": route_image.user_route_id,
+            "grade": route.grade,
+            "descriptors": route_image.descriptors
+        }
+        route_images.append(entry.copy())
+
+    cbir = CbirPredictor()
+    try:
+        prediction_route_images = cbir.predict_route(imagefile.read(), route_images, MAX_NUMBER_OF_PREDICTED_ROUTES)
+    except OSError:
+        abort(400, "not a valid image")
+
+    # the response need to be [{id, grade}, {id, grade}]
+
+    sorted_route_predictions = [{"route_id": r['user_route_id'], "grade": r['grade']} for r in prediction_route_images]
+    response = {"sorted_route_predictions": sorted_route_predictions}
+    route_image_id = store_image(
+        imagefile=imagefile,
+        user_id=user_id,
+        gym_id=gym_id,
+        model_route_id=prediction_route_images[0]['user_route_id'],
+        # TODO: fix the model to allow nulls here
+        model_probability=-1,
+        # TODO: add versioning
+        model_version="test",
+        descriptors=cbir.query_descriptor_json
     )
     response["route_image_id"] = route_image_id
 
