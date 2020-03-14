@@ -29,12 +29,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
     _takenImage = Image.file(widget.results.image);
     _routeImagesBloc = BlocProvider.of<RouteImagesBloc>(context);
 
-    _fetchData();
-  }
-
-  Future<void> _fetchData() async {
-    var routeIds = await _routeIds();
-
+    var routeIds = _routeIds();
     _routeImagesBloc.add(FetchRouteImages(routeIds: routeIds));
   }
 
@@ -146,7 +141,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
     );
   }
 
-  Future<List<int>> _routeIds() async {
+  List<int> _routeIds() {
     List<int> routeIds = List.generate(widget.settings.displayPredictionsNum,
         (i) => widget.results.predictions[i].routeId);
     return routeIds;
