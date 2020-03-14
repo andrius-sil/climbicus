@@ -17,7 +17,7 @@ abstract class RouteImagesState {
   const RouteImagesState();
 }
 
-class RouteImagesUnitialized extends RouteImagesState {}
+class RouteImagesUninitialized extends RouteImagesState {}
 
 class RouteImagesLoading extends RouteImagesState {}
 
@@ -37,7 +37,7 @@ class RouteImagesBloc extends Bloc<RouteImagesEvent, RouteImagesState> {
   Map<int, RouteImage> _images = {};
 
   @override
-  RouteImagesState get initialState => RouteImagesUnitialized();
+  RouteImagesState get initialState => RouteImagesUninitialized();
 
   @override
   Stream<RouteImagesState> mapEventToState(RouteImagesEvent event) async* {
