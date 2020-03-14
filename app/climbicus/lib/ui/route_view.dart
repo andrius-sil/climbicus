@@ -2,9 +2,8 @@ import 'dart:collection';
 import 'dart:convert';
 
 import 'package:climbicus/json/route_image.dart';
-import 'package:climbicus/json/user_route_log_entry.dart';
+import 'package:climbicus/models/fetch_model.dart';
 import 'package:climbicus/models/route_images.dart';
-import 'package:climbicus/models/user_route_log.dart';
 import 'package:climbicus/ui/route_predictions.dart';
 import 'package:climbicus/utils/api.dart';
 import 'package:climbicus/utils/route_image_picker.dart';
@@ -13,19 +12,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
-class LogbookPage extends StatefulWidget {
+class RouteViewPage<T extends FetchModel> extends StatefulWidget {
   final ApiProvider api = ApiProvider();
   final RouteImagePicker imagePicker = RouteImagePicker();
   final Settings settings = Settings();
-  final AppBar appBar;
 
-  LogbookPage({this.appBar});
+  RouteViewPage();
 
   @override
-  State<StatefulWidget> createState() => _LogbookPageState();
+  State<StatefulWidget> createState() => _RouteViewPageState<T>();
 }
 
-class _LogbookPageState extends State<LogbookPage> {
+class _RouteViewPageState<T extends FetchModel> extends State<RouteViewPage<T>> {
   @override
   void initState() {
     super.initState();
@@ -34,20 +32,19 @@ class _LogbookPageState extends State<LogbookPage> {
   }
 
   Future<void> _fetchData() async {
-    await Provider.of<UserRouteLogModel>(context, listen: false).fetchData();
+    await Provider.of<T>(context, listen: false).fetchData();
 
     var routeIds =
-        Provider.of<UserRouteLogModel>(context, listen: false).routeIds();
+        Provider.of<T>(context, listen: false).routeIds();
     Provider.of<RouteImagesModel>(context, listen: false).fetchData(routeIds);
   }
 
   @override
   Widget build(BuildContext context) {
-    var entries = Provider.of<UserRouteLogModel>(context).entries;
+    var entries = Provider.of<T>(context).getEntries();
     var images = Provider.of<RouteImagesModel>(context).images;
 
     return Scaffold(
-      appBar: widget.appBar,
       body: FutureBuilder(
         future: Future.wait([entries, images], eagerError: true),
         builder: (context, snapshot) {
@@ -98,33 +95,47 @@ class _LogbookPageState extends State<LogbookPage> {
     return widgets;
   }
 
-  Widget _buildLogbookGrid(
-      Map<int, UserRouteLogEntry> entries, Map<int, RouteImage> images) {
+  Widget _buildLogbookGrid(Map entries, Map<int, RouteImage> images) {
     List<Widget> widgets = [];
 
-    (_sortEntriesByLogDate(entries)).forEach((_, fields) {
+    (_sortEntriesByLogDate(entries)).forEach((entryId, fields) {
+      var displayAttrs = Provider.of<T>(context, listen: false).displayAttrs(fields);
+      List<Text> textWidgets = [];
+      displayAttrs.forEach((String attr) => textWidgets.add(Text(attr)));
+
       // Left side - entry description.
       widgets.add(Container(
           alignment: Alignment.center,
           padding: const EdgeInsets.all(8),
           color: Colors.grey[800],
           child: Column(
-            children: <Widget>[
-              Text(fields.grade),
-              Text(fields.status),
-              Text(fields.createdAt),
-            ],
+            children: textWidgets,
           )));
 
       // Right side - image.
-      var imageFields = images[fields.routeId];
-      var imageWidget = (imageFields != null)
-          ? Image.memory(base64.decode(imageFields.b64Image))
-          : Image.asset("images/no_image.png");
+      var routeId = Provider.of<T>(context, listen: false).routeId(entryId, fields);
+      var imageFields = images[routeId];
+      var imageWidget;
+      var imageId;
+      if (imageFields != null) {
+        imageWidget = Image.memory(base64.decode(imageFields.b64Image));
+        imageId = imageFields.routeImageId;
+      } else {
+        imageWidget = Image.asset("images/no_image.png");
+        imageId = "n/a";
+      }
       widgets.add(Container(
         color: Colors.grey[700],
         alignment: Alignment.center,
-        child: imageWidget,
+        child: Stack(
+          children: <Widget>[
+            imageWidget,
+            Align(
+                alignment: Alignment.bottomLeft,
+                child: Text("route_id: $routeId, image_id: $imageId"),
+            ),
+          ],
+        ),
       ));
     });
 
@@ -137,8 +148,7 @@ class _LogbookPageState extends State<LogbookPage> {
     );
   }
 
-  LinkedHashMap<int, UserRouteLogEntry> _sortEntriesByLogDate(
-      Map<int, UserRouteLogEntry> entries) {
+  LinkedHashMap _sortEntriesByLogDate(Map entries) {
     var sortedKeys = entries.keys.toList(growable: false)
       ..sort(
           (k1, k2) => entries[k2].createdAt.compareTo(entries[k1].createdAt));

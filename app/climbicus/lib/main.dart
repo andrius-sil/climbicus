@@ -1,12 +1,14 @@
 import 'package:climbicus/models/route_images.dart';
 import 'package:climbicus/models/user_route_log.dart';
-import 'package:climbicus/ui/logbook.dart';
 import 'package:climbicus/ui/login.dart';
+import 'package:climbicus/ui/route_view.dart';
 import 'package:climbicus/ui/settings.dart';
 import 'package:climbicus/utils/auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'models/routes.dart';
 
 void main() {
   ErrorWidget.builder = _buildErrorWidget;
@@ -17,6 +19,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (context) => UserRouteLogModel()),
         ChangeNotifierProvider(create: (context) => RouteImagesModel()),
+        ChangeNotifierProvider(create: (context) => RoutesModel()),
       ],
       child: MaterialApp(
         theme: ThemeData.dark(),
@@ -83,9 +86,29 @@ class _HomePageState extends State<HomePage> {
       case AuthStatus.notDetermined:
         return _buildWaitingPage();
       case AuthStatus.notLoggedIn:
-        return LoginPage(appBar: appBar("Login"), loginCallback: _loggedIn);
+        return LoginPage(appBarActions: appBarActions(), loginCallback: _loggedIn);
       case AuthStatus.loggedIn:
-        return LogbookPage(appBar: appBar("Logbook"));
+        return DefaultTabController(
+          length: 2,
+          child: Scaffold(
+            appBar: AppBar(
+              bottom: TabBar(
+                tabs: [
+                  Tab(text: "Logbook"),
+                  Tab(text: "Gym"),
+                ],
+              ),
+              title: Text("Routes"),
+              actions: appBarActions(),
+            ),
+            body: TabBarView(
+              children: <Widget>[
+                RouteViewPage<UserRouteLogModel>(),
+                RouteViewPage<RoutesModel>(),
+              ],
+            ),
+          ),
+        );
     }
   }
 
@@ -98,19 +121,16 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  AppBar appBar(String title) {
-    return AppBar(
-      title: Text(title),
-      actions: <Widget>[
-        IconButton(
-          icon: const Icon(Icons.settings),
-          tooltip: 'Settings menu',
-          onPressed: () {
-            openSettingsPage(context);
-          },
-        ),
-      ],
-    );
+  List<Widget> appBarActions() {
+    return [
+      IconButton(
+        icon: const Icon(Icons.settings),
+        tooltip: 'Settings menu',
+        onPressed: () {
+          openSettingsPage(context);
+        },
+      ),
+    ];
   }
 
   void openSettingsPage(BuildContext context) {
