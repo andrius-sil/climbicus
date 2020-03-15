@@ -6,10 +6,13 @@ NMATCHES = 10
 
 
 class CbirPredictor:
-
+    """
+    This class defines how the Content Based Image Retrieval predictor:
+    1. Processes the image
+    2. Finds descriptors
+    3. Calculates distances from each image based on descriptors
+    """
     def __init__(self):
-        #TODO: need to think about this more
-        self.query_descriptor_json = ""
         self.matcher = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
         self.orb = cv2.ORB_create()
 
@@ -30,9 +33,7 @@ class CbirPredictor:
         """
         Obtains keypoints and their descriptors for an image
         """
-        # TODO: for now create ORB every time, maybe once is enough?
         kp, des = self.orb.detectAndCompute(img, None)
-        self.query_descriptor_json = json.dumps(des.tolist())
         return des
 
     def calc_record_distances(self, des, route_images, nmatches):
@@ -47,6 +48,23 @@ class CbirPredictor:
             dist = sum([x.distance for x in matches[:nmatches]])
             i['distance'] = dist
         return route_images
+
+    def predict_route(self, imagefile, route_images, top_n_categories):
+        """Makes a route predictions for a single image"""
+        img = self.process_image(imagefile)
+        des = self.generate_descriptors(img)
+        route_images = self.calc_record_distances(des, route_images, NMATCHES)
+        prediction = CbirPrediction(des, top_n_categories, route_images)
+        return prediction
+
+
+class CbirPrediction:
+    """
+    This class defines individual prediction made by CbirPredictor for a provided image
+    """
+    def __init__(self, des, top_n_categories, route_images):
+        self.query_descriptor_json = json.dumps(des.tolist())
+        self.top_n_predictions = self.find_top_predictions(route_images, top_n_categories)
 
     def find_top_predictions(self, route_images, top_n_categories):
         """
@@ -66,10 +84,10 @@ class CbirPredictor:
         top_n_route_images = distinct_prediction_route_images[:top_n_categories]
         return top_n_route_images
 
-    def predict_route(self, imagefile, route_images, top_n_categories):
-        """Makes a route predictions for a single image"""
-        img = self.process_image(imagefile)
-        des = self.generate_descriptors(img)
-        route_images = self.calc_record_distances(des, route_images, NMATCHES)
-        prediction_route_images = self.find_top_predictions(route_images, top_n_categories)
-        return prediction_route_images
+    def get_predicted_routes(self):
+        return self.top_n_predictions
+
+    def get_descriptor(self):
+        return self.query_descriptor_json
+
+

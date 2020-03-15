@@ -89,24 +89,26 @@ def predict_cbir():
         route_images.append(entry.copy())
 
     try:
-        prediction_route_images = cbir_predictor.predict_route(
+        cbir_prediction = cbir_predictor.predict_route(
             imagefile.read(), route_images, MAX_NUMBER_OF_PREDICTED_ROUTES
         )
     except OSError:
         abort(400, "not a valid image")
+    predicted_routes = cbir_prediction.get_predicted_routes()
+    descriptor = cbir_prediction.get_descriptor()
 
-    sorted_route_predictions = [{"route_id": r["user_route_id"], "grade": r["grade"]} for r in prediction_route_images]
+    sorted_route_predictions = [{"route_id": r["user_route_id"], "grade": r["grade"]} for r in predicted_routes]
     response = {"sorted_route_predictions": sorted_route_predictions}
     route_image_id = store_image(
         imagefile=imagefile,
         user_id=user_id,
         gym_id=gym_id,
-        model_route_id=prediction_route_images[0]["user_route_id"],
+        model_route_id=predicted_routes[0]["user_route_id"],
         # TODO: fix the model to allow nulls here
         model_probability=-1,
         # TODO: add versioning
         model_version="test",
-        descriptors=cbir_predictor.query_descriptor_json,
+        descriptors=descriptor,
     )
     response["route_image_id"] = route_image_id
 
