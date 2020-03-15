@@ -74,11 +74,10 @@ def predict_cbir():
     if imagefile is None:
         abort(400, "image file is missing")
 
-    # TODO: make a test so that doesn't return null descriptors
     results = (
         db.session.query(RouteImages, Routes)
         .join(Routes, Routes.id == RouteImages.user_route_id)
-        .filter(Routes.gym_id == gym_id, RouteImages.descriptors != '""')
+        .filter(Routes.gym_id == gym_id)
         .all()
     )
     route_images = []

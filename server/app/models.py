@@ -70,8 +70,7 @@ class RouteImages(db.Model):
     model_version = db.Column(db.String, nullable=False)
     path = db.Column(db.String, unique=True, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
-    # TODO: should this be nullable?
-    descriptors = db.Column(JSONB)
+    descriptors = db.Column(JSONB, nullable=False)
 
     def __repr__(self):
         return model_repr("RouteImage", id=self.id, user_id=self.user_id, user_route_id=self.user_route_id,

@@ -4,6 +4,7 @@ import numpy as np
 
 NMATCHES = 10
 
+
 class CbirPredictor:
 
     def __init__(self):
