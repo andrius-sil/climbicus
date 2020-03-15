@@ -58,6 +58,7 @@ def predict():
         model_route_id=routes[0].id,  # choosing the highest probability route id
         model_probability=predictor_results.get_class_probability(sorted_class_ids[0]),
         model_version=predictor_results.model_version,
+        descriptors="placeholder",
     )
     response["route_image_id"] = route_image_id
 
