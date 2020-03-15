@@ -4,11 +4,11 @@ from flask_sqlalchemy import SQLAlchemy
 
 from app.app_handlers import register_handlers
 from app.utils.io import InputOutput
-from predictor.predictor import Predictor
+from predictor.cls_predictor import ClsPredictor
 
 
 db = SQLAlchemy()
-predictor = Predictor()
+cls_predictor = ClsPredictor()
 io = InputOutput()
 
 
@@ -33,7 +33,7 @@ def create_app(db_connection_uri, model_files_path, jwt_secret_key, io_provider,
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.init_app(app)
 
-    predictor.load_model(model_files_path)
+    cls_predictor.load_model(model_files_path)
 
     io.load(io_provider)
 

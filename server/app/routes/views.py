@@ -2,7 +2,7 @@ import datetime
 import json
 import uuid
 
-from app import db, predictor, io
+from app import db, cls_predictor, io
 from app.models import RouteImages, Routes
 
 from flask import abort, request, Blueprint, jsonify
@@ -29,8 +29,8 @@ def route_list():
     return jsonify({"routes": gym_routes})
 
 
-@blueprint.route("/predictions", methods=["POST"])
-def predict():
+@blueprint.route("/predictions_cls", methods=["POST"])
+def predict_cls():
     json_data = json.loads(request.form["json"])
     user_id = json_data["user_id"]
     gym_id = json_data["gym_id"]
@@ -39,7 +39,7 @@ def predict():
     if imagefile is None:
         abort(400, "image file is missing")
     try:
-        predictor_results = predictor.predict_route(imagefile)
+        predictor_results = cls_predictor.predict_route(imagefile)
     except OSError:
         abort(400, "not a valid image")
 
@@ -96,8 +96,6 @@ def predict_cbir():
         prediction_route_images = cbir.predict_route(imagefile.read(), route_images, MAX_NUMBER_OF_PREDICTED_ROUTES)
     except OSError:
         abort(400, "not a valid image")
-
-    # the response need to be [{id, grade}, {id, grade}]
 
     sorted_route_predictions = [{"route_id": r['user_route_id'], "grade": r['grade']} for r in prediction_route_images]
     response = {"sorted_route_predictions": sorted_route_predictions}
