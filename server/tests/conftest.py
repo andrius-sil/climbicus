@@ -91,6 +91,7 @@ def app(resource_dir):
                     model_version="first_version",
                     path=f"user1_route{i}.jpg",
                     created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
+                    descriptors="placeholder",
                 )
             )
             if i % 2 == 0:
@@ -103,6 +104,7 @@ def app(resource_dir):
                         model_version="first_version",
                         path=f"user2_route{i}_1.jpg",
                         created_at=datetime(2019, 2, 4, 10, 10, 10, tzinfo=pytz.UTC),
+                        descriptors="placeholder",
                     )
                 )
                 db.session.add(
@@ -113,6 +115,7 @@ def app(resource_dir):
                         model_version="first_version",
                         path=f"user2_route{i}_2.jpg",
                         created_at=datetime(2019, 2, 4, 10, 10, 10, tzinfo=pytz.UTC),
+                        descriptors="placeholder",
                     )
                 )
         db.session.add_all(
