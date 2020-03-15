@@ -10,6 +10,8 @@ class CbirPredictor:
     def __init__(self):
         #TODO: need to think about this more
         self.query_descriptor_json = ""
+        self.matcher = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+        self.orb = cv2.ORB_create()
 
     def process_image(self, imagefile):
         """
@@ -29,8 +31,7 @@ class CbirPredictor:
         Obtains keypoints and their descriptors for an image
         """
         # TODO: for now create ORB every time, maybe once is enough?
-        orb = cv2.ORB_create()
-        kp, des = orb.detectAndCompute(img, None)
+        kp, des = self.orb.detectAndCompute(img, None)
         self.query_descriptor_json = json.dumps(des.tolist())
         return des
 
@@ -38,11 +39,10 @@ class CbirPredictor:
         """
         Obtains match distances for the query image with all available descriptors
         """
-        matcher = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
         #TODO: make sure you don't match with yourself - maybe as a test
         for i in route_images:
             i_descriptors = np.array(json.loads(i['descriptors'])).astype('uint8')
-            matches = matcher.match(des, i_descriptors)
+            matches = self.matcher.match(des, i_descriptors)
             matches = sorted(matches, key=lambda x: x.distance)
             dist = sum([x.distance for x in matches[:nmatches]])
             i['distance'] = dist

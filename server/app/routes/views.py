@@ -2,7 +2,7 @@ import datetime
 import json
 import uuid
 
-from app import db, cls_predictor, io
+from app import db, cls_predictor, cbir_predictor, io
 from app.models import RouteImages, Routes
 
 from flask import abort, request, Blueprint, jsonify
@@ -21,10 +21,7 @@ def route_list():
 
     gym_routes = {}
     for route in routes:
-        gym_routes[route.id] = {
-            "grade": route.grade,
-            "created_at": route.created_at.isoformat(),
-        }
+        gym_routes[route.id] = {"grade": route.grade, "created_at": route.created_at.isoformat()}
 
     return jsonify({"routes": gym_routes})
 
@@ -87,28 +84,29 @@ def predict_cbir():
             "id": route_image.id,
             "user_route_id": route_image.user_route_id,
             "grade": route.grade,
-            "descriptors": route_image.descriptors
+            "descriptors": route_image.descriptors,
         }
         route_images.append(entry.copy())
 
-    cbir = CbirPredictor()
     try:
-        prediction_route_images = cbir.predict_route(imagefile.read(), route_images, MAX_NUMBER_OF_PREDICTED_ROUTES)
+        prediction_route_images = cbir_predictor.predict_route(
+            imagefile.read(), route_images, MAX_NUMBER_OF_PREDICTED_ROUTES
+        )
     except OSError:
         abort(400, "not a valid image")
 
-    sorted_route_predictions = [{"route_id": r['user_route_id'], "grade": r['grade']} for r in prediction_route_images]
+    sorted_route_predictions = [{"route_id": r["user_route_id"], "grade": r["grade"]} for r in prediction_route_images]
     response = {"sorted_route_predictions": sorted_route_predictions}
     route_image_id = store_image(
         imagefile=imagefile,
         user_id=user_id,
         gym_id=gym_id,
-        model_route_id=prediction_route_images[0]['user_route_id'],
+        model_route_id=prediction_route_images[0]["user_route_id"],
         # TODO: fix the model to allow nulls here
         model_probability=-1,
         # TODO: add versioning
         model_version="test",
-        descriptors=cbir.query_descriptor_json
+        descriptors=cbir_predictor.query_descriptor_json,
     )
     response["route_image_id"] = route_image_id
 
