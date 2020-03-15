@@ -10,8 +10,7 @@ from predictor.cbir_predictor import CbirPredictor
 
 blueprint = Blueprint("routes_blueprint", __name__, url_prefix="/routes")
 
-# TODO: raise this back again once you have all the descriptors
-MAX_NUMBER_OF_PREDICTED_ROUTES = 2
+MAX_NUMBER_OF_PREDICTED_ROUTES = 20
 
 
 @blueprint.route("/", methods=["GET"])
@@ -118,7 +117,7 @@ def predict_cbir():
     return jsonify(response)
 
 
-def store_image(imagefile, user_id, gym_id, model_route_id, model_probability, model_version):
+def store_image(imagefile, user_id, gym_id, model_route_id, model_probability, model_version, descriptors):
     now = datetime.datetime.utcnow()
     hex_id = uuid.uuid4().hex
     imagepath = f"route_images/from_users/{gym_id}/{now.year}/{now.month:02d}/{hex_id}.jpg"
@@ -132,6 +131,7 @@ def store_image(imagefile, user_id, gym_id, model_route_id, model_probability, m
         model_version=model_version,
         path=saved_image_path,
         created_at=now,
+        descriptors=descriptors,
     )
     db.session.add(route_image)
     db.session.commit()
