@@ -24,7 +24,7 @@ class CbirPredictor:
         # result, encimg = cv2.imencode('.jpg', img, encode_param)
         return img
 
-    def get_descriptors(self, img):
+    def generate_descriptors(self, img):
         """
         Obtains keypoints and their descriptors for an image
         """
@@ -34,7 +34,7 @@ class CbirPredictor:
         self.query_descriptor_json = json.dumps(des.tolist())
         return des
 
-    def get_distances(self, des, route_images, nmatches):
+    def calc_record_distances(self, des, route_images, nmatches):
         """
         Obtains match distances for the query image with all available descriptors
         """
@@ -48,7 +48,7 @@ class CbirPredictor:
             i['distance'] = dist
         return route_images
 
-    def get_predictions(self, route_images, top_n_categories):
+    def find_top_predictions(self, route_images, top_n_categories):
         """
         From distances from each descriptor array, finds toure id that matche best
         """
@@ -67,9 +67,9 @@ class CbirPredictor:
         return top_n_route_images
 
     def predict_route(self, imagefile, route_images, top_n_categories):
-        """Makes a route prediction for a single image"""
+        """Makes a route predictions for a single image"""
         img = self.process_image(imagefile)
-        des = self.get_descriptors(img)
-        route_images = self.get_distances(des, route_images, NMATCHES)
-        prediction_route_images = self.get_predictions(route_images, top_n_categories)
+        des = self.generate_descriptors(img)
+        route_images = self.calc_record_distances(des, route_images, NMATCHES)
+        prediction_route_images = self.find_top_predictions(route_images, top_n_categories)
         return prediction_route_images
