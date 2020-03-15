@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
+import 'package:climbicus/blocs/gym_route_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
+import 'package:climbicus/blocs/user_route_log_bloc.dart';
 import 'package:climbicus/models/route_images.dart';
 import 'package:climbicus/models/user_route_log.dart';
 import 'package:climbicus/ui/login.dart';
@@ -24,6 +26,12 @@ void main() {
     MultiBlocProvider(
       providers: [
         BlocProvider<RouteImagesBloc>(create: (context) => RouteImagesBloc()),
+        BlocProvider<UserRouteLogBloc>(create: (context) => UserRouteLogBloc(
+          routeImagesBloc: BlocProvider.of<RouteImagesBloc>(context),
+        )),
+        BlocProvider<GymRouteBloc>(create: (context) => GymRouteBloc(
+          routeImagesBloc: BlocProvider.of<RouteImagesBloc>(context),
+        )),
       ],
       child: MultiProvider(
         providers: [
@@ -114,8 +122,8 @@ class _HomePageState extends State<HomePage> {
             ),
             body: TabBarView(
               children: <Widget>[
-                RouteViewPage<UserRouteLogModel>(),
-                RouteViewPage<RoutesModel>(),
+                RouteViewPage<UserRouteLogBloc>(),
+                RouteViewPage<GymRouteBloc>(),
               ],
             ),
           ),

@@ -35,6 +35,7 @@ class RouteImagesBloc extends Bloc<RouteImagesEvent, RouteImagesState> {
   final ApiProvider api = ApiProvider();
 
   Map<int, RouteImage> _images = {};
+  Map<int, RouteImage> get images => _images;
 
   @override
   RouteImagesState get initialState => RouteImagesUninitialized();
