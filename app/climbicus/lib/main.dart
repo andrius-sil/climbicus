@@ -2,8 +2,6 @@ import 'package:bloc/bloc.dart';
 import 'package:climbicus/blocs/gym_route_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/blocs/user_route_log_bloc.dart';
-import 'package:climbicus/models/route_images.dart';
-import 'package:climbicus/models/user_route_log.dart';
 import 'package:climbicus/ui/login.dart';
 import 'package:climbicus/ui/route_view.dart';
 import 'package:climbicus/ui/settings.dart';
@@ -11,10 +9,8 @@ import 'package:climbicus/utils/auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 
 import 'blocs/simple_bloc_delegate.dart';
-import 'models/routes.dart';
 
 void main() {
   ErrorWidget.builder = _buildErrorWidget;
@@ -33,16 +29,9 @@ void main() {
           routeImagesBloc: BlocProvider.of<RouteImagesBloc>(context),
         )),
       ],
-      child: MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (context) => UserRouteLogModel()),
-          ChangeNotifierProvider(create: (context) => RouteImagesModel()),
-          ChangeNotifierProvider(create: (context) => RoutesModel()),
-        ],
-        child: MaterialApp(
-          theme: ThemeData.dark(),
-          home: HomePage(),
-        ),
+      child: MaterialApp(
+        theme: ThemeData.dark(),
+        home: HomePage(),
       ),
     ),
   );
