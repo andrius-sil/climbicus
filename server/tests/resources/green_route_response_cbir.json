@@ -1,0 +1,21 @@
+{
+   "route_image_id":9,
+   "sorted_route_predictions":[
+      {
+         "grade":"7a",
+         "route_id":2
+      },
+      {
+         "grade":"7a",
+         "route_id":4
+      },
+      {
+         "grade":"7a",
+         "route_id":1
+      },
+      {
+         "grade":"7a",
+         "route_id":3
+      }
+   ]
+}
