@@ -9,8 +9,9 @@ abstract class RouteImagesEvent {
 
 class FetchRouteImages extends RouteImagesEvent {
   final List<int> routeIds;
+  final String trigger;
 
-  const FetchRouteImages({@required this.routeIds});
+  const FetchRouteImages({@required this.routeIds, this.trigger});
 }
 
 abstract class RouteImagesState {
@@ -23,7 +24,8 @@ class RouteImagesLoading extends RouteImagesState {}
 
 class RouteImagesLoaded extends RouteImagesState {
   final Map<int, RouteImage> images;
-  const RouteImagesLoaded({this.images});
+  final String trigger;
+  const RouteImagesLoaded({this.images, this.trigger});
 }
 
 class RouteImagesError extends RouteImagesState {
@@ -57,7 +59,7 @@ class RouteImagesBloc extends Bloc<RouteImagesEvent, RouteImagesState> {
             (id, model) => MapEntry(int.parse(id), RouteImage.fromJson(model)));
         _images.addAll(fetchedImages);
 
-        yield RouteImagesLoaded(images: _images);
+        yield RouteImagesLoaded(images: _images, trigger: event.trigger);
         return;
       } catch (e) {
         yield RouteImagesError(exception: e);

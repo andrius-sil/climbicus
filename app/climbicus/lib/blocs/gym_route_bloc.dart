@@ -17,6 +17,8 @@ class UpdateGymRoute extends GymRouteEvent {}
 
 
 class GymRouteBloc extends RouteBloc<GymRouteEvent, RouteState> {
+  static const TRIGGER = "gym_route";
+
   final ApiProvider api = ApiProvider();
   final RouteImagesBloc routeImagesBloc;
 
@@ -25,7 +27,7 @@ class GymRouteBloc extends RouteBloc<GymRouteEvent, RouteState> {
 
   GymRouteBloc({@required this.routeImagesBloc}) {
     routeImagesSubscription = routeImagesBloc.listen((state) {
-      if (state is RouteImagesLoaded) {
+      if (state is RouteImagesLoaded && state.trigger == TRIGGER) {
         add(UpdateGymRoute());
       }
     });
@@ -45,7 +47,7 @@ class GymRouteBloc extends RouteBloc<GymRouteEvent, RouteState> {
             MapEntry(int.parse(id), jsonmdl.Route.fromJson(model)));
 
         var routeIds = _entries.keys.toList();
-        routeImagesBloc.add(FetchRouteImages(routeIds: routeIds));
+        routeImagesBloc.add(FetchRouteImages(routeIds: routeIds, trigger: TRIGGER));
 
         yield RouteLoaded(entries: _entries);
         return;
