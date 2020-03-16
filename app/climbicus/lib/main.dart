@@ -1,25 +1,33 @@
-import 'package:climbicus/models/route_images.dart';
-import 'package:climbicus/models/user_route_log.dart';
+import 'package:bloc/bloc.dart';
+import 'package:climbicus/blocs/gym_route_bloc.dart';
+import 'package:climbicus/blocs/route_images_bloc.dart';
+import 'package:climbicus/blocs/user_route_log_bloc.dart';
 import 'package:climbicus/ui/login.dart';
 import 'package:climbicus/ui/route_view.dart';
 import 'package:climbicus/ui/settings.dart';
 import 'package:climbicus/utils/auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'models/routes.dart';
+import 'blocs/simple_bloc_delegate.dart';
 
 void main() {
   ErrorWidget.builder = _buildErrorWidget;
   debugPrint = _debugPrintWrapper;
 
+  BlocSupervisor.delegate = SimpleBlocDelegate();
+
   runApp(
-    MultiProvider(
+    MultiBlocProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => UserRouteLogModel()),
-        ChangeNotifierProvider(create: (context) => RouteImagesModel()),
-        ChangeNotifierProvider(create: (context) => RoutesModel()),
+        BlocProvider<RouteImagesBloc>(create: (context) => RouteImagesBloc()),
+        BlocProvider<UserRouteLogBloc>(create: (context) => UserRouteLogBloc(
+          routeImagesBloc: BlocProvider.of<RouteImagesBloc>(context),
+        )),
+        BlocProvider<GymRouteBloc>(create: (context) => GymRouteBloc(
+          routeImagesBloc: BlocProvider.of<RouteImagesBloc>(context),
+        )),
       ],
       child: MaterialApp(
         theme: ThemeData.dark(),
@@ -103,8 +111,8 @@ class _HomePageState extends State<HomePage> {
             ),
             body: TabBarView(
               children: <Widget>[
-                RouteViewPage<UserRouteLogModel>(),
-                RouteViewPage<RoutesModel>(),
+                RouteViewPage<UserRouteLogBloc>(),
+                RouteViewPage<GymRouteBloc>(),
               ],
             ),
           ),

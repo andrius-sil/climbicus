@@ -1,18 +1,17 @@
 import 'dart:collection';
 import 'dart:convert';
 
-import 'package:climbicus/json/route_image.dart';
-import 'package:climbicus/models/fetch_model.dart';
-import 'package:climbicus/models/route_images.dart';
+import 'package:climbicus/blocs/route_bloc.dart';
+import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/ui/route_predictions.dart';
 import 'package:climbicus/utils/api.dart';
 import 'package:climbicus/utils/route_image_picker.dart';
 import 'package:climbicus/utils/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class RouteViewPage<T extends FetchModel> extends StatefulWidget {
+class RouteViewPage<T extends RouteBloc> extends StatefulWidget {
   final ApiProvider api = ApiProvider();
   final RouteImagePicker imagePicker = RouteImagePicker();
   final Settings settings = Settings();
@@ -23,36 +22,29 @@ class RouteViewPage<T extends FetchModel> extends StatefulWidget {
   State<StatefulWidget> createState() => _RouteViewPageState<T>();
 }
 
-class _RouteViewPageState<T extends FetchModel> extends State<RouteViewPage<T>> {
+class _RouteViewPageState<T extends RouteBloc> extends State<RouteViewPage<T>> {
+  RouteImagesBloc _routeImagesBloc;
+  RouteBloc _routeBloc;
+
   @override
   void initState() {
     super.initState();
 
-    _fetchData();
-  }
-
-  Future<void> _fetchData() async {
-    await Provider.of<T>(context, listen: false).fetchData();
-
-    var routeIds =
-        Provider.of<T>(context, listen: false).routeIds();
-    Provider.of<RouteImagesModel>(context, listen: false).fetchData(routeIds);
+    _routeImagesBloc = BlocProvider.of<RouteImagesBloc>(context);
+    _routeBloc = BlocProvider.of<T>(context);
+    _routeBloc.fetch();
   }
 
   @override
   Widget build(BuildContext context) {
-    var entries = Provider.of<T>(context).getEntries();
-    var images = Provider.of<RouteImagesModel>(context).images;
-
     return Scaffold(
-      body: FutureBuilder(
-        future: Future.wait([entries, images], eagerError: true),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return _buildLogbookGrid(snapshot.data[0], snapshot.data[1]);
-          } else if (snapshot.hasError) {
+      body: BlocBuilder<T, RouteState>(
+        builder: (context, state) {
+          if (state is RouteLoadedWithImages) {
+            return _buildLogbookGrid(state.entries);
+          } else if (state is RouteError) {
             return ErrorWidget.builder(
-                FlutterErrorDetails(exception: snapshot.error));
+                FlutterErrorDetails(exception: state.exception));
           }
 
           return CircularProgressIndicator();
@@ -95,11 +87,11 @@ class _RouteViewPageState<T extends FetchModel> extends State<RouteViewPage<T>> 
     return widgets;
   }
 
-  Widget _buildLogbookGrid(Map entries, Map<int, RouteImage> images) {
+  Widget _buildLogbookGrid(Map entries) {
     List<Widget> widgets = [];
 
     (_sortEntriesByLogDate(entries)).forEach((entryId, fields) {
-      var displayAttrs = Provider.of<T>(context, listen: false).displayAttrs(fields);
+      var displayAttrs = _routeBloc.displayAttrs(fields);
       List<Text> textWidgets = [];
       displayAttrs.forEach((String attr) => textWidgets.add(Text(attr)));
 
@@ -113,8 +105,8 @@ class _RouteViewPageState<T extends FetchModel> extends State<RouteViewPage<T>> 
           )));
 
       // Right side - image.
-      var routeId = Provider.of<T>(context, listen: false).routeId(entryId, fields);
-      var imageFields = images[routeId];
+      var routeId = _routeBloc.routeId(entryId, fields);
+      var imageFields = _routeImagesBloc.images[routeId];
       var imageWidget;
       var imageId;
       if (imageFields != null) {

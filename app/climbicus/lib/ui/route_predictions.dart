@@ -1,12 +1,12 @@
 import 'dart:convert';
 
+import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/json/route_image.dart';
-import 'package:climbicus/models/route_images.dart';
 import 'package:climbicus/ui/route_match.dart';
 import 'package:climbicus/utils/route_image_picker.dart';
 import 'package:climbicus/utils/settings.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RoutePredictionsPage extends StatefulWidget {
   final Settings settings = Settings();
@@ -19,26 +19,22 @@ class RoutePredictionsPage extends StatefulWidget {
 }
 
 class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
-  Image takenImage;
+  Image _takenImage;
+  RouteImagesBloc _routeImagesBloc;
 
   @override
   void initState() {
     super.initState();
 
-    takenImage = Image.file(widget.results.image);
+    _takenImage = Image.file(widget.results.image);
+    _routeImagesBloc = BlocProvider.of<RouteImagesBloc>(context);
 
-    _fetchData();
-  }
-
-  Future<void> _fetchData() async {
-    var routeIds = await _routeIds();
-    Provider.of<RouteImagesModel>(context, listen: false).fetchData(routeIds);
+    var routeIds = _routeIds();
+    _routeImagesBloc.add(FetchRouteImages(routeIds: routeIds));
   }
 
   @override
   Widget build(BuildContext context) {
-    var images = Provider.of<RouteImagesModel>(context).images;
-
     return Scaffold(
         appBar: AppBar(
           title: const Text('Select your route'),
@@ -50,18 +46,17 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
               Container(
                 height: 200.0,
                 width: 200.0,
-                child: takenImage,
+                child: _takenImage,
               ),
               Text("Our predictions:"),
               Expanded(
-                child: FutureBuilder(
-                  future: Future.wait([images], eagerError: true),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return _buildPredictionsGrid(context, snapshot.data[0]);
-                    } else if (snapshot.hasError) {
+                child: BlocBuilder<RouteImagesBloc, RouteImagesState>(
+                  builder: (context, state) {
+                    if (state is RouteImagesLoaded) {
+                      return _buildPredictionsGrid(context, state.images);
+                    } else if (state is RouteImagesError) {
                       return ErrorWidget.builder(
-                          FlutterErrorDetails(exception: snapshot.error));
+                          FlutterErrorDetails(exception: state.exception));
                     }
 
                     return CircularProgressIndicator();
@@ -136,7 +131,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
               selectedRouteId: routeId,
               selectedImage: imageWidget,
               takenRouteImageId: widget.results.routeImageId,
-              takenImage: takenImage,
+              takenImage: _takenImage,
               grade: grade,
             );
           },
@@ -146,7 +141,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
     );
   }
 
-  Future<List<int>> _routeIds() async {
+  List<int> _routeIds() {
     List<int> routeIds = List.generate(widget.settings.displayPredictionsNum,
         (i) => widget.results.predictions[i].routeId);
     return routeIds;
