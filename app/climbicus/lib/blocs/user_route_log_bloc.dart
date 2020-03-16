@@ -56,13 +56,11 @@ class UserRouteLogBloc extends RouteBloc<UserRouteLogEvent, RouteState> {
         routeImagesBloc.add(FetchRouteImages(routeIds: routeIds, trigger: TRIGGER));
 
         yield RouteLoaded(entries: _entries);
-        return;
-      } catch (e) {
-        yield RouteError(exception: e);
+      } catch (e, st) {
+        yield RouteError(exception: e, stackTrace: st);
       }
     } else if (event is UpdateUserRouteLog) {
       yield RouteLoadedWithImages(entries: _entries);
-      return;
     } else if (event is AppendUserRouteLog) {
       var results = await api.logbookAdd(event.routeId, event.status);
 
@@ -75,8 +73,9 @@ class UserRouteLogBloc extends RouteBloc<UserRouteLogEvent, RouteState> {
       _entries[results["id"]] = newEntry;
 
       yield RouteLoadedWithImages(entries: _entries);
-      return;
     }
+
+    return;
   }
 
   @override

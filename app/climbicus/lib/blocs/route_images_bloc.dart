@@ -29,8 +29,12 @@ class RouteImagesLoaded extends RouteImagesState {
 }
 
 class RouteImagesError extends RouteImagesState {
-  final Exception exception;
-  const RouteImagesError({this.exception});
+  FlutterErrorDetails errorDetails;
+
+  RouteImagesError({Exception exception, StackTrace stackTrace}):
+        errorDetails = FlutterErrorDetails(exception: exception, stack: stackTrace) {
+    FlutterError.dumpErrorToConsole(errorDetails);
+  }
 }
 
 class RouteImagesBloc extends Bloc<RouteImagesEvent, RouteImagesState> {
@@ -61,8 +65,8 @@ class RouteImagesBloc extends Bloc<RouteImagesEvent, RouteImagesState> {
 
         yield RouteImagesLoaded(images: _images, trigger: event.trigger);
         return;
-      } catch (e) {
-        yield RouteImagesError(exception: e);
+      } catch (e, st) {
+        yield RouteImagesError(exception: e, stackTrace: st);
       }
     }
   }

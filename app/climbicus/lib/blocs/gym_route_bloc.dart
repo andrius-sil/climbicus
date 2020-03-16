@@ -50,14 +50,14 @@ class GymRouteBloc extends RouteBloc<GymRouteEvent, RouteState> {
         routeImagesBloc.add(FetchRouteImages(routeIds: routeIds, trigger: TRIGGER));
 
         yield RouteLoaded(entries: _entries);
-        return;
-      } catch (e) {
-        yield RouteError(exception: e);
+      } catch (e, st) {
+        yield RouteError(exception: e, stackTrace: st);
       }
     } else if (event is UpdateGymRoute) {
       yield RouteLoadedWithImages(entries: _entries);
-      return;
     }
+
+    return;
   }
 
   @override

@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 
 
 abstract class RouteState {
@@ -19,8 +20,12 @@ class RouteLoadedWithImages extends RouteLoaded {
 }
 
 class RouteError extends RouteState {
-  final Exception exception;
-  const RouteError({this.exception});
+  FlutterErrorDetails errorDetails;
+
+  RouteError({Exception exception, StackTrace stackTrace}):
+        errorDetails = FlutterErrorDetails(exception: exception, stack: stackTrace) {
+    FlutterError.dumpErrorToConsole(errorDetails);
+  }
 }
 
 

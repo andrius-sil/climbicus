@@ -55,8 +55,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
                     if (state is RouteImagesLoaded) {
                       return _buildPredictionsGrid(context, state.images);
                     } else if (state is RouteImagesError) {
-                      return ErrorWidget.builder(
-                          FlutterErrorDetails(exception: state.exception));
+                      return ErrorWidget.builder(state.errorDetails);
                     }
 
                     return CircularProgressIndicator();

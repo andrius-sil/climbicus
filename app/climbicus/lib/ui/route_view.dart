@@ -41,10 +41,11 @@ class _RouteViewPageState<T extends RouteBloc> extends State<RouteViewPage<T>> {
       body: BlocBuilder<T, RouteState>(
         builder: (context, state) {
           if (state is RouteLoadedWithImages) {
-            return _buildLogbookGrid(state.entries);
+            return _buildLogbookGrid(state.entries, withImages: true);
+          } else if (state is RouteLoaded) {
+            return _buildLogbookGrid(state.entries, withImages: false);
           } else if (state is RouteError) {
-            return ErrorWidget.builder(
-                FlutterErrorDetails(exception: state.exception));
+            return ErrorWidget.builder(state.errorDetails);
           }
 
           return CircularProgressIndicator();
@@ -87,7 +88,7 @@ class _RouteViewPageState<T extends RouteBloc> extends State<RouteViewPage<T>> {
     return widgets;
   }
 
-  Widget _buildLogbookGrid(Map entries) {
+  Widget _buildLogbookGrid(Map entries, {bool withImages: true}) {
     List<Widget> widgets = [];
 
     (_sortEntriesByLogDate(entries)).forEach((entryId, fields) {
@@ -109,7 +110,9 @@ class _RouteViewPageState<T extends RouteBloc> extends State<RouteViewPage<T>> {
       var imageFields = _routeImagesBloc.images[routeId];
       var imageWidget;
       var imageId;
-      if (imageFields != null) {
+      if (!withImages) {
+        imageWidget = Container(width: 0, height: 0);
+      } else if (imageFields != null) {
         imageWidget = Image.memory(base64.decode(imageFields.b64Image));
         imageId = imageFields.routeImageId;
       } else {
