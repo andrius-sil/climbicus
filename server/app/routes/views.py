@@ -101,10 +101,9 @@ def predict_cbir():
         user_id=user_id,
         gym_id=gym_id,
         model_route_id=predicted_routes[0]["user_route_id"],
-        # TODO: fix the model to allow nulls here
+        # TODO: remove model_probability if we get rid of cls_predictor
         model_probability=-1,
-        # TODO: add versioning
-        model_version="test",
+        model_version=cbir_predictor.get_model_version(),
         descriptors=descriptor,
     )
     response["route_image_id"] = route_image_id

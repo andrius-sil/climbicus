@@ -3,7 +3,7 @@ import json
 import numpy as np
 
 NMATCHES = 10
-
+MODEL_VERSION = "first_version"
 
 class CbirPredictor:
     """
@@ -15,6 +15,10 @@ class CbirPredictor:
     def __init__(self):
         self.matcher = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
         self.orb = cv2.ORB_create()
+        self.model_version = MODEL_VERSION
+
+    def get_model_version(self):
+        return self.model_version
 
     def process_image(self, imagefile):
         """
@@ -40,7 +44,6 @@ class CbirPredictor:
         """
         Obtains match distances for the query image with all available descriptors
         """
-        #TODO: make sure you don't match with yourself - maybe as a test
         for i in route_images:
             i_descriptors = np.array(json.loads(i['descriptors'])).astype('uint8')
             matches = self.matcher.match(des, i_descriptors)
@@ -79,7 +82,6 @@ class CbirPrediction:
             return [x for x in seq if not (x['user_route_id'] in seen or seen_add(x['user_route_id']))]
 
         route_images_sorted = sorted(route_images, key=lambda x: x['distance'])
-        # TODO: a test would be good to test this functionality
         distinct_prediction_route_images = distinct_with_order(route_images_sorted)
         top_n_route_images = distinct_prediction_route_images[:top_n_categories]
         return top_n_route_images
