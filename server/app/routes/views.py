@@ -6,7 +6,6 @@ from app import db, cls_predictor, cbir_predictor, io
 from app.models import RouteImages, Routes
 
 from flask import abort, request, Blueprint, jsonify
-from predictor.cbir_predictor import CbirPredictor
 
 blueprint = Blueprint("routes_blueprint", __name__, url_prefix="/routes")
 
@@ -89,9 +88,7 @@ def predict_cbir():
         route_images.append(entry.copy())
 
     try:
-        cbir_prediction = cbir_predictor.predict_route(
-            imagefile.read(), route_images, MAX_NUMBER_OF_PREDICTED_ROUTES
-        )
+        cbir_prediction = cbir_predictor.predict_route(imagefile.read(), route_images, MAX_NUMBER_OF_PREDICTED_ROUTES)
     except OSError:
         abort(400, "not a valid image")
     predicted_routes = cbir_prediction.get_predicted_routes()
