@@ -87,10 +87,7 @@ def predict_cbir():
         }
         route_images.append(entry.copy())
 
-    try:
-        cbir_prediction = cbir_predictor.predict_route(imagefile.read(), route_images, MAX_NUMBER_OF_PREDICTED_ROUTES)
-    except OSError:
-        abort(400, "not a valid image")
+    cbir_prediction = cbir_predictor.predict_route(imagefile.read(), route_images, MAX_NUMBER_OF_PREDICTED_ROUTES)
     predicted_routes = cbir_prediction.get_predicted_routes()
     descriptor = cbir_prediction.get_descriptor()
 

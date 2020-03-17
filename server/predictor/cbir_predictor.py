@@ -5,6 +5,7 @@ import numpy as np
 NMATCHES = 10
 MODEL_VERSION = "first_version"
 
+
 class CbirPredictor:
     """
     This class defines how the Content Based Image Retrieval predictor:
@@ -78,7 +79,6 @@ class CbirPrediction:
             """ Distinct elements in list preserving order """
             seen = set()
             seen_add = seen.add
-            #TODO: check if it's right to use user_route_id here
             return [x for x in seq if not (x['user_route_id'] in seen or seen_add(x['user_route_id']))]
 
         route_images_sorted = sorted(route_images, key=lambda x: x['distance'])
