@@ -84,8 +84,7 @@ def app(resource_dir):
         for i in range(1, 5):
             db.session.add(
                 RouteImages(
-                    user_route_id=i,
-                    model_route_id=i,
+                    route_id=i,
                     user_id=1,
                     model_probability=0.5,
                     model_version="first_version",
@@ -97,8 +96,7 @@ def app(resource_dir):
             if i % 2 == 0:
                 db.session.add(
                     RouteImages(
-                        user_route_id=i,
-                        model_route_id=i,
+                        route_id=i,
                         user_id=2,
                         model_probability=0.5,
                         model_version="first_version",
@@ -109,7 +107,6 @@ def app(resource_dir):
                 )
                 db.session.add(
                     RouteImages(
-                        model_route_id=i,
                         user_id=2,
                         model_probability=0.5,
                         model_version="first_version",

@@ -54,7 +54,6 @@ def predict_cls():
         imagefile=imagefile,
         user_id=user_id,
         gym_id=gym_id,
-        model_route_id=routes[0].id,  # choosing the highest probability route id
         model_probability=predictor_results.get_class_probability(sorted_class_ids[0]),
         model_version=predictor_results.model_version,
         descriptors="placeholder",
@@ -76,7 +75,7 @@ def predict_cbir():
 
     results = (
         db.session.query(RouteImages, Routes)
-        .join(Routes, Routes.id == RouteImages.user_route_id)
+        .join(Routes, Routes.id == RouteImages.route_id)
         .filter(Routes.gym_id == gym_id)
         .all()
     )
@@ -84,7 +83,7 @@ def predict_cbir():
     for route_image, route in results:
         entry = {
             "id": route_image.id,
-            "user_route_id": route_image.user_route_id,
+            "route_id": route_image.route_id,
             "grade": route.grade,
             "descriptors": route_image.descriptors,
         }
@@ -94,13 +93,12 @@ def predict_cbir():
     predicted_routes = cbir_prediction.get_predicted_routes()
     descriptor = cbir_prediction.get_descriptor()
 
-    sorted_route_predictions = [{"route_id": r["user_route_id"], "grade": r["grade"]} for r in predicted_routes]
+    sorted_route_predictions = [{"route_id": r["route_id"], "grade": r["grade"]} for r in predicted_routes]
     response = {"sorted_route_predictions": sorted_route_predictions}
     route_image_id = store_image(
         imagefile=imagefile,
         user_id=user_id,
         gym_id=gym_id,
-        model_route_id=predicted_routes[0]["user_route_id"],
         model_version=cbir_predictor.get_model_version(),
         descriptors=descriptor,
     )
@@ -109,7 +107,7 @@ def predict_cbir():
     return jsonify(response)
 
 
-def store_image(imagefile, user_id, gym_id, model_route_id, model_version, descriptors, model_probability=None):
+def store_image(imagefile, user_id, gym_id, model_version, descriptors, model_probability=None):
     now = datetime.datetime.utcnow()
     hex_id = uuid.uuid4().hex
     imagepath = f"route_images/from_users/{gym_id}/{now.year}/{now.month:02d}/{hex_id}.jpg"
@@ -118,7 +116,6 @@ def store_image(imagefile, user_id, gym_id, model_route_id, model_version, descr
 
     route_image = RouteImages(
         user_id=user_id,
-        model_route_id=model_route_id,
         model_probability=model_probability,
         model_version=model_version,
         path=saved_image_path,

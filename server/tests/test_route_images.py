@@ -54,8 +54,8 @@ def test_route_match(client, app, auth_headers_user2):
 
     with app.app_context():
         route_image = db.session.query(RouteImages).filter_by(id=4).one()
-        assert route_image.user_route_id == 2
-        assert not route_image.user_route_unmatched
+        assert route_image.route_id == 2
+        assert not route_image.route_unmatched
 
 
 def test_route_match_no_match(client, app, auth_headers_user2):
@@ -72,5 +72,5 @@ def test_route_match_no_match(client, app, auth_headers_user2):
 
     with app.app_context():
         route_image = db.session.query(RouteImages).filter_by(id=4).one()
-        assert route_image.user_route_id is None
-        assert route_image.user_route_unmatched
+        assert route_image.route_id is None
+        assert route_image.route_unmatched

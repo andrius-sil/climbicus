@@ -15,7 +15,7 @@ def route_images():
     user_id = request.json["user_id"]
     route_ids = request.json["route_ids"]
 
-    route_id_colname = "model_route_id"
+    route_id_colname = "route_id"
     route_id_col = getattr(RouteImages, route_id_colname)
 
     subquery = db.session.query(
@@ -50,13 +50,13 @@ def route_images():
 def route_match(route_image_id):
     user_id = request.json["user_id"]
     user_match = int(request.json["is_match"])
-    user_route_id = request.json["route_id"]
+    route_id = request.json["route_id"]
 
     route_image = db.session.query(RouteImages).filter_by(id=route_image_id, user_id=user_id).one()
     if user_match == 1:
-        route_image.user_route_id = user_route_id
+        route_image.route_id = route_id
     else:
-        route_image.user_route_unmatched = True
+        route_image.route_unmatched = True
     db.session.commit()
 
     return jsonify({"msg": "Route image updated with user's route id choice"})

@@ -141,7 +141,7 @@ def test_storing_image_path_to_db(app, client, resource_dir, auth_headers_user1)
     assert resp.is_json
 
     with app.app_context():
-        stored_image = db.session.query(RouteImages).filter_by(model_route_id=15).one_or_none()
+        stored_image = db.session.query(RouteImages).all()[-1]
 
     assert math.isclose(stored_image.model_probability, 0.9979556798934937)
     assert stored_image.created_at.isoformat() == "2019-03-04T10:10:10"
