@@ -58,13 +58,12 @@ class RouteImages(db.Model):
 
     """
     Columns indicating user's route choice.
-    'user_route_id' can be NULL indicating that no response was received from a user.
-    'user_route_unmatched' is True when user explicitly indicated that their image doesn't match our "list of routes".
+    'route_id' can be NULL indicating that no response was received from a user.
+    'route_unmatched' is True when user explicitly indicated that their image doesn't match our "list of routes".
     """
-    user_route_id = db.Column(db.Integer, db.ForeignKey('routes.id'))
-    user_route_unmatched = db.Column(db.Boolean, nullable=False, default=False)
+    route_id = db.Column(db.Integer, db.ForeignKey('routes.id'))
+    route_unmatched = db.Column(db.Boolean, nullable=False, default=False)
 
-    model_route_id = db.Column(db.Integer, db.ForeignKey('routes.id'), nullable=False)
     model_probability = db.Column(db.Float)
     model_version = db.Column(db.String, nullable=False)
     path = db.Column(db.String, unique=True, nullable=False)
@@ -72,8 +71,8 @@ class RouteImages(db.Model):
     descriptors = db.Column(db.JSON, nullable=False)
 
     def __repr__(self):
-        return model_repr("RouteImage", id=self.id, user_id=self.user_id, user_route_id=self.user_route_id,
-                          model_route_id=self.model_route_id, path=self.path)
+        return model_repr("RouteImage", id=self.id, user_id=self.user_id, route_id=self.route_id,
+                          path=self.path)
 
 
 class UserRouteLog(db.Model):

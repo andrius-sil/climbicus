@@ -78,7 +78,7 @@ class CbirPrediction:
             """ Distinct elements in list preserving order """
             seen = set()
             seen_add = seen.add
-            return [x for x in seq if not (x['user_route_id'] in seen or seen_add(x['user_route_id']))]
+            return [x for x in seq if not (x['route_id'] in seen or seen_add(x['route_id']))]
 
         route_images_sorted = sorted(route_images, key=lambda x: x['distance'])
         distinct_prediction_route_images = distinct_with_order(route_images_sorted)
