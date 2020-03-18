@@ -101,8 +101,6 @@ def predict_cbir():
         user_id=user_id,
         gym_id=gym_id,
         model_route_id=predicted_routes[0]["user_route_id"],
-        # TODO: remove model_probability if we get rid of cls_predictor
-        model_probability=-1,
         model_version=cbir_predictor.get_model_version(),
         descriptors=descriptor,
     )
