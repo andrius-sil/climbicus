@@ -22,7 +22,7 @@ def route_list():
     for route in routes:
         gym_routes[route.id] = {
             "grade": route.grade,
-            "created_at": route.created_at.isoformat()
+            "created_at": route.created_at.isoformat(),
         }
 
     return jsonify({"routes": gym_routes})
