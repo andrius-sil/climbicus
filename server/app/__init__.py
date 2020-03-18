@@ -4,13 +4,13 @@ from flask_sqlalchemy import SQLAlchemy
 
 from app.app_handlers import register_handlers
 from app.utils.io import InputOutput
-from predictor.cls_predictor import ClsPredictor
-from predictor.cbir_predictor import CbirPredictor
+from predictor.cls_predictor import CLSPredictor
+from predictor.cbir_predictor import CBIRPredictor
 
 
 db = SQLAlchemy()
-cls_predictor = ClsPredictor()
-cbir_predictor = CbirPredictor()
+cls_predictor = CLSPredictor()
+cbir_predictor = CBIRPredictor()
 io = InputOutput()
 
 

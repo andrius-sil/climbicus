@@ -16,7 +16,7 @@ from tensorflow.python.keras.preprocessing import image
 # TODO: Check what aspect ratio Keras is using when resizing
 
 
-class ClsPredictor:
+class CLSPredictor:
     def load_model(self, model_files_path):
         self.tf_session = tf.compat.v1.Session()
         self.tf_graph = tf.compat.v1.get_default_graph()

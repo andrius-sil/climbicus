@@ -3,10 +3,10 @@ import json
 import numpy as np
 
 NMATCHES = 10
-MODEL_VERSION = "first_version"
+MODEL_VERSION = "cbir_v1"
 
 
-class CbirPredictor:
+class CBIRPredictor:
     """
     This class defines how the Content Based Image Retrieval predictor:
     1. Processes the image
@@ -16,10 +16,9 @@ class CbirPredictor:
     def __init__(self):
         self.matcher = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
         self.orb = cv2.ORB_create()
-        self.model_version = MODEL_VERSION
 
     def get_model_version(self):
-        return self.model_version
+        return MODEL_VERSION
 
     def process_image(self, imagefile):
         """
@@ -64,7 +63,7 @@ class CbirPredictor:
 
 class CbirPrediction:
     """
-    This class defines individual prediction made by CbirPredictor for a provided image
+    This class defines individual prediction made by CBIRPredictor for a provided image
     """
     def __init__(self, des, top_n_categories, route_images):
         self.query_descriptor_json = json.dumps(des.tolist())
@@ -72,7 +71,7 @@ class CbirPrediction:
 
     def find_top_predictions(self, route_images, top_n_categories):
         """
-        From distances from each descriptor array, finds toure id that matche best
+        Using distances from each descriptor array, finds n route_id's that match best
         """
 
         def distinct_with_order(seq):
