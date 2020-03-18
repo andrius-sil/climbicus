@@ -8,6 +8,8 @@ import 'package:climbicus/utils/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'add_route.dart';
+
 class RoutePredictionsPage extends StatefulWidget {
   final Settings settings = Settings();
   final ImagePickerResults results;
@@ -61,10 +63,23 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
                     return CircularProgressIndicator();
                   },
                 ),
-              )
+              ),
+              RaisedButton(
+                child: Text('None of the above'),
+                onPressed: nomatch,
+              ),
             ]),
           ),
-        ));
+        ),
+    );
+  }
+
+  Future<void> nomatch() async {
+    Navigator.push(context, MaterialPageRoute(
+      builder: (BuildContext context) {
+        return AddRoutePage(takenImage: _takenImage);
+      },
+    ));
   }
 
   Widget _buildPredictionsGrid(

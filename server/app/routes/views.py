@@ -28,6 +28,23 @@ def route_list():
     return jsonify({"routes": gym_routes})
 
 
+@blueprint.route("/", methods=["POST"])
+def add():
+    gym_id = request.json["gym_id"]
+    grade = request.json["grade"]
+
+    route = Routes(gym_id=gym_id, grade=grade, created_at=datetime.datetime.utcnow())
+
+    db.session.add(route)
+    db.session.commit()
+
+    return jsonify({
+        "id": route.id,
+        "created_at": route.created_at.isoformat(),
+        "msg": "Route added",
+    })
+
+
 @blueprint.route("/predictions_cls", methods=["POST"])
 def predict_cls():
     json_data = json.loads(request.form["json"])

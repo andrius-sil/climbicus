@@ -13,6 +13,11 @@ abstract class GymRouteEvent {
 
 class FetchGymRoute extends GymRouteEvent {}
 
+class AppendGymRoute extends GymRouteEvent {
+  final String grade;
+  const AppendGymRoute({this.grade});
+}
+
 class UpdateGymRoute extends GymRouteEvent {}
 
 
@@ -54,6 +59,16 @@ class GymRouteBloc extends RouteBloc<GymRouteEvent, RouteState> {
         yield RouteError(exception: e, stackTrace: st);
       }
     } else if (event is UpdateGymRoute) {
+      yield RouteLoadedWithImages(entries: _entries);
+    } else if (event is AppendGymRoute) {
+      var results = await api.routeAdd(event.grade);
+
+      var newEntry = jsonmdl.Route(
+        event.grade,
+        results["created_at"],
+      );
+      _entries[results["id"]] = newEntry;
+
       yield RouteLoadedWithImages(entries: _entries);
     }
 

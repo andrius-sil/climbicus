@@ -172,4 +172,13 @@ class ApiProvider {
     };
     return _requestJson("GET", "routes/", data);
   }
+
+  Future<Map> routeAdd(String grade) async {
+    Map data = {
+      "gym_id": CASTLE_GYM_ID,
+      "grade": grade,
+    };
+
+    return _requestJson("POST", "routes/", data);
+  }
 }
