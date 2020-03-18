@@ -38,7 +38,7 @@ class CbirPredictor:
         """
         Obtains keypoints and their descriptors for an image
         """
-        kp, des = self.orb.detectAndCompute(img, None)
+        _, des = self.orb.detectAndCompute(img, None)
         return des
 
     def calc_record_distances(self, des, route_images, nmatches):
@@ -91,5 +91,4 @@ class CbirPrediction:
 
     def get_descriptor(self):
         return self.query_descriptor_json
-
 
