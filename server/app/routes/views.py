@@ -109,7 +109,7 @@ def predict_cbir():
     return jsonify(response)
 
 
-def store_image(imagefile, user_id, gym_id, model_route_id, model_probability, model_version, descriptors):
+def store_image(imagefile, user_id, gym_id, model_route_id, model_version, descriptors, model_probability=None):
     now = datetime.datetime.utcnow()
     hex_id = uuid.uuid4().hex
     imagepath = f"route_images/from_users/{gym_id}/{now.year}/{now.month:02d}/{hex_id}.jpg"
