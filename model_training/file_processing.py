@@ -2,6 +2,7 @@ import os
 import shutil
 import random
 from PIL import Image
+import cv2
 
 
 SEED = 101
@@ -27,7 +28,23 @@ def compress_and_save(image_path, dest_image_path):
     image = Image.open(image_path)
     newImage = image.resize((299, 299), Image.LANCZOS)
     newImage.save(dest_image_path, "JPEG", quality=90)
-
+    
+    
+def cbir_compress_and_save(image_path, dest_image_path):
+    image = cv2.imread(image_path)
+    max_width = 512
+    w = image.shape[1]
+    h = image.shape[0]
+    ratio = w/max_width
+    if ratio > 1:
+        w = int(w/ratio)
+        h = int(h/ratio)
+    dim = (w, h)
+    resized = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
+    
+    encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 76]
+    cv2.imwrite(dest_image_path, resized, encode_param)
+    
 
 def save_image_to_folder(filenames_and_paths, data_path, split_type, c, compress):
     for filename, path in filenames_and_paths.items():
