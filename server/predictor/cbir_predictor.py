@@ -4,6 +4,7 @@ import numpy as np
 
 NMATCHES = 10
 MODEL_VERSION = "cbir_v1"
+MAX_IMG_WIDTH = 512
 
 
 class CBIRPredictor:
@@ -22,16 +23,23 @@ class CBIRPredictor:
 
     def process_image(self, imagefile):
         """
-        The input image needs to be the right format colour and size
+        The input image needs to be the right format, colour and size
+        JPEG compression is left for the app
         """
         img = np.fromstring(imagefile, np.uint8)
         img = cv2.imdecode(img, cv2.IMREAD_COLOR)
         # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        #TODO: sort out the colours
-        #TODO: compress image using cv2, but for now the app is enough
-        # encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
-        # result, encimg = cv2.imencode('.jpg', img, encode_param)
-        return img
+        # TODO: sort out the colours
+        # resizing required for the predictor
+        w = img.shape[1]
+        h = img.shape[0]
+        ratio = w / MAX_IMG_WIDTH
+        if ratio > 1:
+            w = int(w / ratio)
+            h = int(h / ratio)
+        dim = (w, h)
+        resized = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+        return resized
 
     def generate_descriptors(self, img):
         """
