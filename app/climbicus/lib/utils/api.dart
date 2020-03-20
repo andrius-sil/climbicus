@@ -163,7 +163,7 @@ class ApiProvider {
     Map data = {
       "gym_id": CASTLE_GYM_ID,
     };
-    return _requestMultipart(image, "POST", "routes/predictions", data);
+    return _requestMultipart(image, "POST", "routes/predictions_cbir", data);
   }
 
   Future<Map> fetchRoutes() async {
