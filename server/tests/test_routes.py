@@ -5,7 +5,7 @@ from unittest.mock import Mock
 
 import pytz
 
-from app.models import RouteImages
+from app.models import RouteImages, Routes
 from app import db
 from flask import json
 
@@ -26,6 +26,28 @@ def test_routes(client, auth_headers_user1):
     }
 
     assert expected_routes == resp.json["routes"]
+
+
+@mock.patch("datetime.datetime", Mock(utcnow=lambda: datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)))
+def test_add_route(client, app, auth_headers_user1):
+    data = {
+        "user_id": 1,
+        "gym_id": 1,
+        "grade": "7a",
+    }
+    resp = client.post("/routes/", data=json.dumps(data), content_type="application/json", headers=auth_headers_user1)
+
+    assert resp.status_code == 200
+    assert resp.is_json
+    assert resp.json["id"] == 103
+    assert resp.json["msg"] == "Route added"
+    assert resp.json["created_at"] == "2019-03-04T10:10:10"
+
+    with app.app_context():
+        route = Routes.query.filter_by(id=103).one()
+        assert route.gym_id == 1
+        assert route.grade == "7a"
+        assert route.created_at == datetime(2019, 3, 4, 10, 10, 10)
 
 
 def test_predict_no_image(client, auth_headers_user1):
