@@ -36,7 +36,6 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
     widget.api.routeMatch(
       widget.selectedRouteId,
       widget.takenRouteImageId,
-      true,
     );
 
     _userRouteLogBloc = BlocProvider.of<UserRouteLogBloc>(context);

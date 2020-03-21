@@ -9,9 +9,13 @@ abstract class RouteImagesEvent {
 
 class FetchRouteImages extends RouteImagesEvent {
   final List<int> routeIds;
-  final String trigger;
+  const FetchRouteImages({@required this.routeIds});
+}
 
-  const FetchRouteImages({@required this.routeIds, this.trigger});
+class AppendRouteImage extends RouteImagesEvent {
+  final int routeId;
+  final RouteImage routeImage;
+  const AppendRouteImage({this.routeId, this.routeImage});
 }
 
 abstract class RouteImagesState {
@@ -24,8 +28,7 @@ class RouteImagesLoading extends RouteImagesState {}
 
 class RouteImagesLoaded extends RouteImagesState {
   final Map<int, RouteImage> images;
-  final String trigger;
-  const RouteImagesLoaded({this.images, this.trigger});
+  const RouteImagesLoaded({this.images});
 }
 
 class RouteImagesError extends RouteImagesState {
@@ -59,15 +62,23 @@ class RouteImagesBloc extends Bloc<RouteImagesEvent, RouteImagesState> {
       try {
         Map<String, dynamic> result =
             (await api.fetchRouteImages(routeIds))["route_images"];
-        var fetchedImages = result.map(
-            (id, model) => MapEntry(int.parse(id), RouteImage.fromJson(model)));
+        var fetchedImages = result.map((id, model) =>
+            MapEntry(int.parse(id), RouteImage.fromJson(model)));
         _images.addAll(fetchedImages);
 
-        yield RouteImagesLoaded(images: _images, trigger: event.trigger);
+        yield RouteImagesLoaded(images: _images);
         return;
       } catch (e, st) {
         yield RouteImagesError(exception: e, stackTrace: st);
       }
+    } else if (event is AppendRouteImage) {
+      // Not uploading image to the database via API because all images are
+      // uploaded as part of predictions at the moment.
+      api.routeMatch(event.routeId, event.routeImage.routeImageId);
+
+      _images[event.routeId] = event.routeImage;
+
+      yield RouteImagesLoaded(images: _images);
     }
   }
 }

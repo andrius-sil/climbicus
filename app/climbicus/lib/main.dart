@@ -27,6 +27,7 @@ void main() {
         )),
         BlocProvider<GymRouteBloc>(create: (context) => GymRouteBloc(
           routeImagesBloc: BlocProvider.of<RouteImagesBloc>(context),
+          userRouteLogBloc: BlocProvider.of<UserRouteLogBloc>(context),
         )),
       ],
       child: MaterialApp(

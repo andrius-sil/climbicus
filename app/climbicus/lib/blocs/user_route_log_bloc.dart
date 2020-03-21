@@ -24,8 +24,6 @@ class UpdateUserRouteLog extends UserRouteLogEvent {}
 
 
 class UserRouteLogBloc extends RouteBloc<UserRouteLogEvent, RouteState> {
-  static const TRIGGER = "user_route_log";
-
   final ApiProvider api = ApiProvider();
   final RouteImagesBloc routeImagesBloc;
 
@@ -34,7 +32,7 @@ class UserRouteLogBloc extends RouteBloc<UserRouteLogEvent, RouteState> {
 
   UserRouteLogBloc({@required this.routeImagesBloc}) {
     routeImagesSubscription = routeImagesBloc.listen((state) {
-      if (state is RouteImagesLoaded && state.trigger == TRIGGER) {
+      if (state is RouteImagesLoaded) {
         add(UpdateUserRouteLog());
       }
     });
@@ -53,7 +51,7 @@ class UserRouteLogBloc extends RouteBloc<UserRouteLogEvent, RouteState> {
             MapEntry(int.parse(id), UserRouteLogEntry.fromJson(model)));
 
         var routeIds = _entries.values.map((entry) => entry.routeId).toList();
-        routeImagesBloc.add(FetchRouteImages(routeIds: routeIds, trigger: TRIGGER));
+        routeImagesBloc.add(FetchRouteImages(routeIds: routeIds));
 
         yield RouteLoaded(entries: _entries);
       } catch (e, st) {

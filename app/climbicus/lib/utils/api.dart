@@ -123,14 +123,14 @@ class ApiProvider {
     return _requestJson("POST", "login", data, auth: false);
   }
 
-  Future<void> routeMatch(
-      int routeId, int routeImageId, bool routeMatched) async {
+  Future<Map> routeMatch(
+      int routeId, int routeImageId, {bool routeMatched: true}) async {
     Map data = {
       "is_match": routeMatched ? 1 : 0,
       "route_id": routeId,
     };
 
-    _requestJson("PATCH", "route_images/$routeImageId", data);
+    return _requestJson("PATCH", "route_images/$routeImageId", data);
   }
 
   Future<Map> logbookAdd(int routeId, String status) async {
@@ -159,7 +159,7 @@ class ApiProvider {
     return _requestJson("GET", "user_route_log/", data);
   }
 
-  Future<Map> uploadRouteImage(File image) async {
+  Future<Map> routePredictions(File image) async {
     Map data = {
       "gym_id": CASTLE_GYM_ID,
     };
@@ -171,5 +171,14 @@ class ApiProvider {
       "gym_id": CASTLE_GYM_ID,
     };
     return _requestJson("GET", "routes/", data);
+  }
+
+  Future<Map> routeAdd(String grade) async {
+    Map data = {
+      "gym_id": CASTLE_GYM_ID,
+      "grade": grade,
+    };
+
+    return _requestJson("POST", "routes/", data);
   }
 }

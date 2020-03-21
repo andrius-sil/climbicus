@@ -64,7 +64,7 @@ class _RouteViewPageState<T extends RouteBloc> extends State<RouteViewPage<T>> {
     widget.settings.imagePickerSource.forEach((imageSource) {
       widgets.add(FloatingActionButton(
         onPressed: () async {
-          var results = await widget.imagePicker.pickImage(imageSource);
+          var results = await widget.imagePicker.pickImage(imageSource, _routeImagesBloc);
           if (results == null) {
             return;
           }
