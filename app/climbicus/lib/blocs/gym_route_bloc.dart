@@ -13,11 +13,11 @@ abstract class GymRouteEvent {
 
 class FetchGymRoute extends GymRouteEvent {}
 
-class AppendGymRouteWithUserLog extends GymRouteEvent {
+class AddNewGymRouteWithUserLog extends GymRouteEvent {
   final String grade;
   final String status;
   final RouteImage routeImage;
-  const AppendGymRouteWithUserLog({this.grade, this.status, this.routeImage});
+  const AddNewGymRouteWithUserLog({this.grade, this.status, this.routeImage});
 }
 
 class UpdateGymRoute extends GymRouteEvent {}
@@ -48,9 +48,9 @@ class GymRouteBloc extends RouteBloc<GymRouteEvent, RouteState> {
       yield RouteLoading();
 
       try {
-        Map<String, dynamic> result = (await api.fetchRoutes())["routes"];
-        _entries = result.map((id, model) =>
-            MapEntry(int.parse(id), jsonmdl.Route.fromJson(model)));
+        Map<String, dynamic> routes = (await api.fetchRoutes())["routes"];
+        _entries = routes.map((routeId, model) =>
+            MapEntry(int.parse(routeId), jsonmdl.Route.fromJson(model)));
 
         var routeIds = _entries.keys.toList();
         routeImagesBloc.add(FetchRouteImages(routeIds: routeIds));
@@ -61,7 +61,7 @@ class GymRouteBloc extends RouteBloc<GymRouteEvent, RouteState> {
       }
     } else if (event is UpdateGymRoute) {
       yield RouteLoadedWithImages(entries: _entries);
-    } else if (event is AppendGymRouteWithUserLog) {
+    } else if (event is AddNewGymRouteWithUserLog) {
       var newRoute = await api.routeAdd(event.grade);
       _entries[newRoute["id"]] = jsonmdl.Route(
         event.grade,
@@ -70,13 +70,13 @@ class GymRouteBloc extends RouteBloc<GymRouteEvent, RouteState> {
 
       yield RouteLoadedWithImages(entries: _entries);
 
-      userRouteLogBloc.add(AppendUserRouteLog(
+      userRouteLogBloc.add(AddNewUserRouteLog(
         routeId: newRoute["id"],
         grade: event.grade,
         status: event.status,
       ));
 
-      routeImagesBloc.add(AppendRouteImage(
+      routeImagesBloc.add(AddNewRouteImage(
         routeId: newRoute["id"],
         routeImage: event.routeImage,
       ));

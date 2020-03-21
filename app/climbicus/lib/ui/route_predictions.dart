@@ -12,9 +12,9 @@ import 'add_route.dart';
 
 class RoutePredictionsPage extends StatefulWidget {
   final Settings settings = Settings();
-  final ImagePickerResults results;
+  final ImagePickerData imgPickerData;
 
-  RoutePredictionsPage({this.results});
+  RoutePredictionsPage({this.imgPickerData});
 
   @override
   State<StatefulWidget> createState() => _RoutePredictionsPageState();
@@ -28,7 +28,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
   void initState() {
     super.initState();
 
-    _takenImage = Image.file(widget.results.image);
+    _takenImage = Image.file(widget.imgPickerData.image);
     _routeImagesBloc = BlocProvider.of<RouteImagesBloc>(context);
 
     var routeIds = _routeIds();
@@ -77,7 +77,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
   Future<void> noMatch() async {
     Navigator.push(context, MaterialPageRoute(
       builder: (BuildContext context) {
-        return AddRoutePage(results: widget.results);
+        return AddRoutePage(imgPickerData: widget.imgPickerData);
       },
     ));
   }
@@ -87,7 +87,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
     List<Widget> widgets = [];
 
     for (var i = 0; i < widget.settings.displayPredictionsNum; i++) {
-      var fields = widget.results.predictions[i];
+      var fields = widget.imgPickerData.predictions[i];
       var routeId = fields.routeId;
       var grade = fields.grade;
 
@@ -144,7 +144,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
             return RouteMatchPage(
               selectedRouteId: routeId,
               selectedImage: imageWidget,
-              takenRouteImageId: widget.results.routeImage.routeImageId,
+              takenRouteImageId: widget.imgPickerData.routeImage.routeImageId,
               takenImage: _takenImage,
               grade: grade,
             );
@@ -157,7 +157,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
 
   List<int> _routeIds() {
     List<int> routeIds = List.generate(widget.settings.displayPredictionsNum,
-        (i) => widget.results.predictions[i].routeId);
+        (i) => widget.imgPickerData.predictions[i].routeId);
     return routeIds;
   }
 }

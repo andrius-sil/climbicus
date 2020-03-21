@@ -12,10 +12,10 @@ class FetchRouteImages extends RouteImagesEvent {
   const FetchRouteImages({@required this.routeIds});
 }
 
-class AppendRouteImage extends RouteImagesEvent {
+class AddNewRouteImage extends RouteImagesEvent {
   final int routeId;
   final RouteImage routeImage;
-  const AppendRouteImage({this.routeId, this.routeImage});
+  const AddNewRouteImage({this.routeId, this.routeImage});
 }
 
 abstract class RouteImagesState {
@@ -60,10 +60,10 @@ class RouteImagesBloc extends Bloc<RouteImagesEvent, RouteImagesState> {
       routeIds.removeWhere((id) => _images.containsKey(id));
 
       try {
-        Map<String, dynamic> result =
+        Map<String, dynamic> routeImages =
             (await api.fetchRouteImages(routeIds))["route_images"];
-        var fetchedImages = result.map((id, model) =>
-            MapEntry(int.parse(id), RouteImage.fromJson(model)));
+        var fetchedImages = routeImages.map((routeId, model) =>
+            MapEntry(int.parse(routeId), RouteImage.fromJson(model)));
         _images.addAll(fetchedImages);
 
         yield RouteImagesLoaded(images: _images);
@@ -71,7 +71,7 @@ class RouteImagesBloc extends Bloc<RouteImagesEvent, RouteImagesState> {
       } catch (e, st) {
         yield RouteImagesError(exception: e, stackTrace: st);
       }
-    } else if (event is AppendRouteImage) {
+    } else if (event is AddNewRouteImage) {
       // Not uploading image to the database via API because all images are
       // uploaded as part of predictions at the moment.
       api.routeMatch(event.routeId, event.routeImage.routeImageId);

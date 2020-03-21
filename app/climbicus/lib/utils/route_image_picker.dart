@@ -21,18 +21,18 @@ const Map<ImageSource, Map<String, dynamic>> IMAGE_SOURCES = {
   },
 };
 
-class ImagePickerResults {
+class ImagePickerData {
   final RouteImage routeImage;
   final File image;
   final List<Prediction> predictions;
 
-  const ImagePickerResults(this.routeImage, this.image, this.predictions);
+  const ImagePickerData(this.routeImage, this.image, this.predictions);
 }
 
 class RouteImagePicker {
   final ApiProvider api = ApiProvider();
 
-  Future<ImagePickerResults> pickImage(ImageSource imageSource,
+  Future<ImagePickerData> pickImage(ImageSource imageSource,
       RouteImagesBloc routeImagesBloc) async {
     var image = await ImagePicker.pickImage(
       source: imageSource,
@@ -46,10 +46,13 @@ class RouteImagePicker {
 
     debugPrint("photo size: ${image.lengthSync()} bytes ($imageSource)");
 
-    var result = (await api.routePredictions(image));
-    List<dynamic> predictions = result["sorted_route_predictions"];
-    return ImagePickerResults(
-      RouteImage(result["route_image_id"], result["b64_image"]),
+    var imageAndPredictions = (await api.routePredictions(image));
+    List<dynamic> predictions = imageAndPredictions["sorted_route_predictions"];
+    return ImagePickerData(
+      RouteImage(
+          imageAndPredictions["route_image_id"],
+          imageAndPredictions["b64_image"]
+      ),
       image,
       predictions.map((model) => Prediction.fromJson(model)).toList(),
     );

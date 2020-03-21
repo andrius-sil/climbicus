@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddRoutePage extends StatefulWidget {
-  final ImagePickerResults results;
+  final ImagePickerData imgPickerData;
 
-  AddRoutePage({this.results});
+  AddRoutePage({this.imgPickerData});
 
   @override
   State<StatefulWidget> createState() => _AddRoutePageState();
@@ -24,7 +24,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
   void initState() {
     super.initState();
 
-    _takenImage = Image.file(widget.results.image);
+    _takenImage = Image.file(widget.imgPickerData.image);
     _gymRouteBloc = BlocProvider.of<GymRouteBloc>(context);
   }
 
@@ -94,10 +94,10 @@ class _AddRoutePageState extends State<AddRoutePage> {
   }
 
   Future<void> uploadAndNavigateBack() async {
-    _gymRouteBloc.add(AppendGymRouteWithUserLog(
+    _gymRouteBloc.add(AddNewGymRouteWithUserLog(
       grade: _selectedGrade,
       status: _selectedStatus,
-      routeImage: widget.results.routeImage,
+      routeImage: widget.imgPickerData.routeImage,
     ));
 
     Navigator.of(context).popUntil((route) => route.isFirst);

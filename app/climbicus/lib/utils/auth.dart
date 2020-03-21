@@ -17,9 +17,9 @@ class Auth {
   String get email => _email;
 
   Future<void> login(String email, String password) async {
-    var result = await api.login(email, password);
-    var accessToken = result["access_token"];
-    var userId = result["user_id"];
+    var userAuth = await api.login(email, password);
+    var accessToken = userAuth["access_token"];
+    var userId = userAuth["user_id"];
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("email", email);

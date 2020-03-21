@@ -96,7 +96,7 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
                   return;
                 }
 
-                _userRouteLogBloc.add(AppendUserRouteLog(
+                _userRouteLogBloc.add(AddNewUserRouteLog(
                     routeId: widget.selectedRouteId,
                     grade: widget.grade,
                     status: value,

@@ -69,8 +69,7 @@ class ApiProvider {
       throw exception;
     }
 
-    final Map result = jsonDecode(await response.stream.bytesToString());
-    return result;
+    return jsonDecode(await response.stream.bytesToString());
   }
 
   Future<Map> _requestJson(String method, String urlPath, Map requestData,
