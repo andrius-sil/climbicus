@@ -21,12 +21,12 @@ class CBIRPredictor:
     def get_model_version(self):
         return MODEL_VERSION
 
-    def process_image(self, imagefile):
+    def process_image(self, fbytes_image):
         """
         The input image needs to be the right format, colour and size
         JPEG compression is left for the app
         """
-        img = np.fromstring(imagefile, np.uint8)
+        img = np.fromstring(fbytes_image, np.uint8)
         img = cv2.imdecode(img, cv2.IMREAD_COLOR)
         # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         # TODO: sort out the colours
@@ -60,9 +60,9 @@ class CBIRPredictor:
             i['distance'] = dist
         return route_images
 
-    def predict_route(self, imagefile, route_images, top_n_categories):
+    def predict_route(self, fbytes_image, route_images, top_n_categories):
         """Makes a route predictions for a single image"""
-        img = self.process_image(imagefile)
+        img = self.process_image(fbytes_image)
         des = self.generate_descriptors(img)
         route_images = self.calc_record_distances(des, route_images, NMATCHES)
         prediction = CbirPrediction(des, top_n_categories, route_images)

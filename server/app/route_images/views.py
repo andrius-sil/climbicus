@@ -7,6 +7,8 @@ from app.models import RouteImages
 
 from flask import request, Blueprint, jsonify
 
+from app.utils.encoding import bytes_to_b64str
+
 blueprint = Blueprint("route_images_blueprint", __name__, url_prefix="/route_images")
 
 
@@ -32,8 +34,7 @@ def route_images():
     images = {}
     for route_image in q:
         fbytes = io.provider.download_file(route_image.path)
-        base64_bytes = base64.b64encode(fbytes)
-        base64_str = base64_bytes.decode("utf-8")
+        base64_str = bytes_to_b64str(fbytes)
 
         images[route_image.route_id] = {
             "route_image_id": route_image.id,

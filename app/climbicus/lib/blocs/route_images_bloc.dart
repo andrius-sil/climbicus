@@ -9,9 +9,19 @@ abstract class RouteImagesEvent {
 
 class FetchRouteImages extends RouteImagesEvent {
   final List<int> routeIds;
-  final String trigger;
+  const FetchRouteImages({@required this.routeIds});
+}
 
-  const FetchRouteImages({@required this.routeIds, this.trigger});
+class AddNewRouteImage extends RouteImagesEvent {
+  final int routeId;
+  final RouteImage routeImage;
+  const AddNewRouteImage({this.routeId, this.routeImage});
+}
+
+class UpdateRouteImage extends RouteImagesEvent {
+  final int routeId;
+  final int routeImageId;
+  const UpdateRouteImage({this.routeId, this.routeImageId});
 }
 
 abstract class RouteImagesState {
@@ -24,8 +34,7 @@ class RouteImagesLoading extends RouteImagesState {}
 
 class RouteImagesLoaded extends RouteImagesState {
   final Map<int, RouteImage> images;
-  final String trigger;
-  const RouteImagesLoaded({this.images, this.trigger});
+  const RouteImagesLoaded({this.images});
 }
 
 class RouteImagesError extends RouteImagesState {
@@ -57,17 +66,27 @@ class RouteImagesBloc extends Bloc<RouteImagesEvent, RouteImagesState> {
       routeIds.removeWhere((id) => _images.containsKey(id));
 
       try {
-        Map<String, dynamic> result =
+        Map<String, dynamic> routeImages =
             (await api.fetchRouteImages(routeIds))["route_images"];
-        var fetchedImages = result.map(
-            (id, model) => MapEntry(int.parse(id), RouteImage.fromJson(model)));
+        var fetchedImages = routeImages.map((routeId, model) =>
+            MapEntry(int.parse(routeId), RouteImage.fromJson(model)));
         _images.addAll(fetchedImages);
 
-        yield RouteImagesLoaded(images: _images, trigger: event.trigger);
+        yield RouteImagesLoaded(images: _images);
         return;
       } catch (e, st) {
         yield RouteImagesError(exception: e, stackTrace: st);
       }
+    } else if (event is AddNewRouteImage) {
+      // Not uploading image to the database via API because all images are
+      // uploaded as part of predictions at the moment.
+      api.routeMatch(event.routeId, event.routeImage.routeImageId);
+
+      _images[event.routeId] = event.routeImage;
+
+      yield RouteImagesLoaded(images: _images);
+    } else if (event is UpdateRouteImage) {
+      api.routeMatch(event.routeId, event.routeImageId);
     }
   }
 }

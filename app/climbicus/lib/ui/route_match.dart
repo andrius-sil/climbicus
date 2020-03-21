@@ -1,3 +1,4 @@
+import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/blocs/user_route_log_bloc.dart';
 import 'package:climbicus/utils/api.dart';
 import 'package:flutter/material.dart';
@@ -27,19 +28,20 @@ class RouteMatchPage extends StatefulWidget {
 class _RouteMatchPageState extends State<RouteMatchPage> {
   static const double columnSize = 200.0;
 
+  RouteImagesBloc _routeImagesBloc;
   UserRouteLogBloc _userRouteLogBloc;
 
   @override
   void initState() {
     super.initState();
 
-    widget.api.routeMatch(
-      widget.selectedRouteId,
-      widget.takenRouteImageId,
-      true,
-    );
-
     _userRouteLogBloc = BlocProvider.of<UserRouteLogBloc>(context);
+    _routeImagesBloc = BlocProvider.of<RouteImagesBloc>(context);
+
+    _routeImagesBloc.add(UpdateRouteImage(
+      routeId: widget.selectedRouteId,
+      routeImageId: widget.takenRouteImageId,
+    ));
   }
 
   @override
@@ -97,7 +99,7 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
                   return;
                 }
 
-                _userRouteLogBloc.add(AppendUserRouteLog(
+                _userRouteLogBloc.add(AddNewUserRouteLog(
                     routeId: widget.selectedRouteId,
                     grade: widget.grade,
                     status: value,
