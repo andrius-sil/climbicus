@@ -18,6 +18,12 @@ class AddNewRouteImage extends RouteImagesEvent {
   const AddNewRouteImage({this.routeId, this.routeImage});
 }
 
+class UpdateRouteImage extends RouteImagesEvent {
+  final int routeId;
+  final int routeImageId;
+  const UpdateRouteImage({this.routeId, this.routeImageId});
+}
+
 abstract class RouteImagesState {
   const RouteImagesState();
 }
@@ -79,6 +85,8 @@ class RouteImagesBloc extends Bloc<RouteImagesEvent, RouteImagesState> {
       _images[event.routeId] = event.routeImage;
 
       yield RouteImagesLoaded(images: _images);
+    } else if (event is UpdateRouteImage) {
+      api.routeMatch(event.routeId, event.routeImageId);
     }
   }
 }
