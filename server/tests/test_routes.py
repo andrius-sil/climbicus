@@ -1,3 +1,4 @@
+import base64
 import math
 from datetime import datetime
 from unittest import mock
@@ -8,6 +9,9 @@ import pytz
 from app.models import RouteImages, Routes
 from app import db
 from flask import json
+
+from app.utils.encoding import b64str_to_bytes
+
 
 def test_routes(client, auth_headers_user1):
     data = {
@@ -184,6 +188,14 @@ def test_cbir_predict_with_image(client, resource_dir, auth_headers_user1):
     assert resp.status_code == 200
     assert resp.is_json
 
-    with open(f"{resource_dir}/green_route_response_cbir.json", 'rb') as f:
-        green_route_response = json.load(f)
-    assert resp.get_json() == green_route_response
+    assert resp.json["route_image_id"] == 9
+    assert resp.json["sorted_route_predictions"] == [
+        { "grade": "7a", "route_id": 2 },
+        { "grade": "7a", "route_id": 4 },
+        { "grade": "7a", "route_id": 1 },
+        { "grade": "7a", "route_id": 3 },
+    ]
+
+    filepath = f"{resource_dir}/green_route.jpg"
+    with open(filepath, "rb") as f:
+        assert f.read() == b64str_to_bytes(resp.json["b64_image"])

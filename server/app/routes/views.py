@@ -7,6 +7,8 @@ from app.models import RouteImages, Routes
 
 from flask import abort, request, Blueprint, jsonify
 
+from app.utils.encoding import bytes_to_b64str
+
 blueprint = Blueprint("routes_blueprint", __name__, url_prefix="/routes")
 
 MAX_NUMBER_OF_PREDICTED_ROUTES = 20
@@ -68,7 +70,7 @@ def predict_cls():
     response = {"sorted_route_predictions": sorted_route_predictions}
 
     route_image_id = store_image(
-        imagefile=imagefile,
+        fs_image=imagefile,
         user_id=user_id,
         gym_id=gym_id,
         model_probability=predictor_results.get_class_probability(sorted_class_ids[0]),
@@ -86,8 +88,8 @@ def predict_cbir():
     user_id = json_data["user_id"]
     gym_id = json_data["gym_id"]
 
-    imagefile = request.files.get("image")
-    if imagefile is None:
+    fs_image = request.files.get("image")
+    if fs_image is None:
         abort(400, "image file is missing")
 
     results = (
@@ -106,30 +108,33 @@ def predict_cbir():
         }
         route_images.append(entry.copy())
 
-    cbir_prediction = cbir_predictor.predict_route(imagefile.read(), route_images, MAX_NUMBER_OF_PREDICTED_ROUTES)
+    fbytes_image = fs_image.read()
+
+    cbir_prediction = cbir_predictor.predict_route(fbytes_image, route_images, MAX_NUMBER_OF_PREDICTED_ROUTES)
     predicted_routes = cbir_prediction.get_predicted_routes()
     descriptor = cbir_prediction.get_descriptor()
 
     sorted_route_predictions = [{"route_id": r["route_id"], "grade": r["grade"]} for r in predicted_routes]
     response = {"sorted_route_predictions": sorted_route_predictions}
     route_image_id = store_image(
-        imagefile=imagefile,
+        fs_image=fs_image,
         user_id=user_id,
         gym_id=gym_id,
         model_version=cbir_predictor.get_model_version(),
         descriptors=descriptor,
     )
     response["route_image_id"] = route_image_id
+    response["b64_image"] = bytes_to_b64str(fbytes_image)
 
     return jsonify(response)
 
 
-def store_image(imagefile, user_id, gym_id, model_version, descriptors, model_probability=None):
+def store_image(fs_image, user_id, gym_id, model_version, descriptors, model_probability=None):
     now = datetime.datetime.utcnow()
     hex_id = uuid.uuid4().hex
     imagepath = f"route_images/from_users/{gym_id}/{now.year}/{now.month:02d}/{hex_id}.jpg"
 
-    saved_image_path = io.provider.upload_file(imagefile, imagepath)
+    saved_image_path = io.provider.upload_file(fs_image, imagepath)
 
     route_image = RouteImages(
         user_id=user_id,

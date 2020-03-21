@@ -4,6 +4,8 @@ from app.models import RouteImages
 from app import db
 from flask import json
 
+from app.utils.encoding import b64str_to_bytes
+
 
 def test_route_images(client, resource_dir, auth_headers_user2):
     routes = {
@@ -28,11 +30,10 @@ def test_route_images(client, resource_dir, auth_headers_user2):
 
         assert values["route_image_id"] == resp_values["route_image_id"]
 
-        image_bytes = base64.b64decode(resp_values["b64_image"])
         path = values["b64_image"]
         filepath = f"{resource_dir}/route_images/{path}"
         with open(filepath, "rb") as f:
-            assert f.read() == image_bytes
+            assert f.read() == b64str_to_bytes(resp_values["b64_image"])
 
         del route_images[str(route_id)]
 
