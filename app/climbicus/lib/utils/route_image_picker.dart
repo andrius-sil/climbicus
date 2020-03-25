@@ -1,12 +1,8 @@
 import 'dart:io';
 
 import 'package:climbicus/blocs/route_images_bloc.dart';
-import 'package:climbicus/json/prediction.dart';
-import 'package:climbicus/json/route_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
-import 'api.dart';
 
 const Map<ImageSource, Map<String, dynamic>> IMAGE_SOURCES = {
   ImageSource.gallery: {
@@ -21,18 +17,9 @@ const Map<ImageSource, Map<String, dynamic>> IMAGE_SOURCES = {
   },
 };
 
-class ImagePickerData {
-  final RouteImage routeImage;
-  final File image;
-  final List<Prediction> predictions;
-
-  const ImagePickerData(this.routeImage, this.image, this.predictions);
-}
-
 class RouteImagePicker {
-  final ApiProvider api = ApiProvider();
 
-  Future<ImagePickerData> pickImage(ImageSource imageSource,
+  Future<File> pickImage(ImageSource imageSource,
       RouteImagesBloc routeImagesBloc) async {
     var image = await ImagePicker.pickImage(
       source: imageSource,
@@ -40,21 +27,11 @@ class RouteImagePicker {
       imageQuality: 76,
     );
 
-    if (image == null) {
-      return null;
+    if (image != null) {
+      debugPrint("photo size: ${image.lengthSync()} bytes ($imageSource)");
+      return image;
     }
 
-    debugPrint("photo size: ${image.lengthSync()} bytes ($imageSource)");
-
-    var imageAndPredictions = (await api.routePredictions(image));
-    List<dynamic> predictions = imageAndPredictions["sorted_route_predictions"];
-    return ImagePickerData(
-      RouteImage(
-          imageAndPredictions["route_image_id"],
-          imageAndPredictions["b64_image"]
-      ),
-      image,
-      predictions.map((model) => Prediction.fromJson(model)).toList(),
-    );
+    return null;
   }
 }

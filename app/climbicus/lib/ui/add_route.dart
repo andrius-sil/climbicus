@@ -1,5 +1,5 @@
 import 'package:climbicus/blocs/gym_route_bloc.dart';
-import 'package:climbicus/utils/route_image_picker.dart';
+import 'package:climbicus/blocs/route_predictions_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

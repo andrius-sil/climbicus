@@ -1,9 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:climbicus/blocs/route_images_bloc.dart';
-import 'package:climbicus/json/route_image.dart';
+import 'package:climbicus/blocs/route_predictions_bloc.dart';
 import 'package:climbicus/ui/route_match.dart';
-import 'package:climbicus/utils/route_image_picker.dart';
+import 'package:climbicus/utils/api.dart';
 import 'package:climbicus/utils/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,10 +12,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'add_route.dart';
 
 class RoutePredictionsPage extends StatefulWidget {
+  final ApiProvider api = ApiProvider();
   final Settings settings = Settings();
-  final ImagePickerData imgPickerData;
+  final File image;
 
-  RoutePredictionsPage({this.imgPickerData});
+  RoutePredictionsPage({this.image});
 
   @override
   State<StatefulWidget> createState() => _RoutePredictionsPageState();
@@ -22,17 +24,23 @@ class RoutePredictionsPage extends StatefulWidget {
 
 class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
   Image _takenImage;
+  ImagePickerData _imgPickerData;
+
   RouteImagesBloc _routeImagesBloc;
+  RoutePredictionBloc _routePredictionBloc;
 
   @override
   void initState() {
     super.initState();
 
-    _takenImage = Image.file(widget.imgPickerData.image);
     _routeImagesBloc = BlocProvider.of<RouteImagesBloc>(context);
+    _routePredictionBloc = BlocProvider.of<RoutePredictionBloc>(context);
+    _routePredictionBloc.add(FetchRoutePrediction(
+        image: widget.image,
+        displayPredictionsNum: widget.settings.displayPredictionsNum,
+    ));
 
-    var routeIds = _routeIds();
-    _routeImagesBloc.add(FetchRouteImages(routeIds: routeIds));
+    _takenImage = Image.file(widget.image);
   }
 
   @override
@@ -52,11 +60,13 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
               ),
               Text("Our predictions:"),
               Expanded(
-                child: BlocBuilder<RouteImagesBloc, RouteImagesState>(
+                child: BlocBuilder<RoutePredictionBloc, RoutePredictionState>(
                   builder: (context, state) {
-                    if (state is RouteImagesLoaded) {
-                      return _buildPredictionsGrid(context, state.images);
-                    } else if (state is RouteImagesError) {
+                    if (state is RoutePredictionLoadedWithImages) {
+                      return _buildPredictionsGrid(context, state.imgPickerData, withImages: true);
+                    } else if (state is RoutePredictionLoaded) {
+                      return _buildPredictionsGrid(context, state.imgPickerData, withImages: false);
+                    } else if (state is RoutePredictionError) {
                       return ErrorWidget.builder(state.errorDetails);
                     }
 
@@ -64,9 +74,18 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
                   },
                 ),
               ),
-              RaisedButton(
-                child: Text('None of the above'),
-                onPressed: noMatch,
+              BlocBuilder<RoutePredictionBloc, RoutePredictionState>(
+                builder: (context, state) {
+                  if (state is RoutePredictionLoaded) {
+                    _imgPickerData = state.imgPickerData;
+                  } else {
+                    _imgPickerData = null;
+                  }
+                  return RaisedButton(
+                    child: Text('None of the above'),
+                    onPressed: _imgPickerData == null ? null : noMatch,
+                  );
+                }
               ),
             ]),
           ),
@@ -77,25 +96,29 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
   Future<void> noMatch() async {
     Navigator.push(context, MaterialPageRoute(
       builder: (BuildContext context) {
-        return AddRoutePage(imgPickerData: widget.imgPickerData);
+        return AddRoutePage(imgPickerData: _imgPickerData);
       },
     ));
   }
 
-  Widget _buildPredictionsGrid(
-      BuildContext context, Map<int, RouteImage> images) {
+  Widget _buildPredictionsGrid(BuildContext context, ImagePickerData imgPickerData, {bool withImages: true}) {
     List<Widget> widgets = [];
 
     for (var i = 0; i < widget.settings.displayPredictionsNum; i++) {
-      var fields = widget.imgPickerData.predictions[i];
+      var fields = imgPickerData.predictions[i];
       var routeId = fields.routeId;
       var grade = fields.grade;
 
       // Left side - image.
-      var imageFields = images[routeId];
-      var imageWidget = (imageFields != null)
-          ? Image.memory(base64.decode(imageFields.b64Image))
-          : Image.asset("images/no_image.png");
+      var imageFields = _routeImagesBloc.images[routeId];
+      var imageWidget;
+      if (!withImages) {
+        imageWidget = Container(width: 0, height: 0);
+      } else if (imageFields != null) {
+        imageWidget = Image.memory(base64.decode(imageFields.b64Image));
+      } else {
+        imageWidget = Image.asset("images/no_image.png");
+      }
       widgets.add(_buildRouteSelectWrapper(
         Container(
           color: Colors.grey[800],
@@ -105,6 +128,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
         routeId,
         imageWidget,
         grade,
+        imgPickerData.routeImage.routeImageId,
       ));
 
       // Right side - entry description.
@@ -118,10 +142,12 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
                 Text("route_id: ${fields.routeId}"),
                 Text("grade: $grade"),
               ],
-            )),
+            )
+        ),
         routeId,
         imageWidget,
         grade,
+        imgPickerData.routeImage.routeImageId,
       ));
     }
 
@@ -136,7 +162,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
   }
 
   Widget _buildRouteSelectWrapper(
-      Widget childWidget, int routeId, Image imageWidget, String grade) {
+      Widget childWidget, int routeId, Widget imageWidget, String grade, int takenRouteImageId) {
     return GestureDetector(
       onTap: () {
         Navigator.push(context, MaterialPageRoute(
@@ -144,7 +170,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
             return RouteMatchPage(
               selectedRouteId: routeId,
               selectedImage: imageWidget,
-              takenRouteImageId: widget.imgPickerData.routeImage.routeImageId,
+              takenRouteImageId: takenRouteImageId,
               takenImage: _takenImage,
               grade: grade,
             );
@@ -153,11 +179,5 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
       },
       child: childWidget,
     );
-  }
-
-  List<int> _routeIds() {
-    List<int> routeIds = List.generate(widget.settings.displayPredictionsNum,
-        (i) => widget.imgPickerData.predictions[i].routeId);
-    return routeIds;
   }
 }

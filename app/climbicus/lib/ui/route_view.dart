@@ -64,14 +64,14 @@ class _RouteViewPageState<T extends RouteBloc> extends State<RouteViewPage<T>> {
     widget.settings.imagePickerSource.forEach((imageSource) {
       widgets.add(FloatingActionButton(
         onPressed: () async {
-          var imgPickerData = await widget.imagePicker.pickImage(imageSource, _routeImagesBloc);
-          if (imgPickerData == null) {
+          var image = await widget.imagePicker.pickImage(imageSource, _routeImagesBloc);
+          if (image == null) {
             return;
           }
 
           Navigator.push(context, MaterialPageRoute(
             builder: (BuildContext context) {
-              return RoutePredictionsPage(imgPickerData: imgPickerData);
+              return RoutePredictionsPage(image: image);
             },
           ));
         },
