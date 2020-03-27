@@ -24,6 +24,8 @@ class UpdateGymRoute extends GymRouteEvent {}
 
 
 class GymRouteBloc extends RouteBloc<GymRouteEvent, RouteState> {
+  static const String TRIGGER = "GymRouteBloc";
+
   final ApiProvider api = ApiProvider();
   final RouteImagesBloc routeImagesBloc;
   final UserRouteLogBloc userRouteLogBloc;
@@ -33,7 +35,7 @@ class GymRouteBloc extends RouteBloc<GymRouteEvent, RouteState> {
 
   GymRouteBloc({this.routeImagesBloc, this.userRouteLogBloc}) {
     routeImagesSubscription = routeImagesBloc.listen((state) {
-      if (state is RouteImagesLoaded) {
+      if (state is RouteImagesLoaded && state.trigger == TRIGGER) {
         add(UpdateGymRoute());
       }
     });
@@ -53,7 +55,7 @@ class GymRouteBloc extends RouteBloc<GymRouteEvent, RouteState> {
             MapEntry(int.parse(routeId), jsonmdl.Route.fromJson(model)));
 
         var routeIds = _entries.keys.toList();
-        routeImagesBloc.add(FetchRouteImages(routeIds: routeIds));
+        routeImagesBloc.add(FetchRouteImages(routeIds: routeIds, trigger: TRIGGER));
 
         yield RouteLoaded(entries: _entries);
       } catch (e, st) {
@@ -79,6 +81,7 @@ class GymRouteBloc extends RouteBloc<GymRouteEvent, RouteState> {
       routeImagesBloc.add(AddNewRouteImage(
         routeId: newRoute["id"],
         routeImage: event.routeImage,
+        trigger: TRIGGER,
       ));
     }
 

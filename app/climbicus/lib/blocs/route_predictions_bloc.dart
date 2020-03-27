@@ -56,6 +56,8 @@ class UpdateRoutePrediction extends RoutePredictionEvent {}
 
 
 class RoutePredictionBloc extends Bloc<RoutePredictionEvent, RoutePredictionState> {
+  static const String TRIGGER = "RoutePredictionBloc";
+
   final ApiProvider api = ApiProvider();
   final RouteImagesBloc routeImagesBloc;
 
@@ -64,7 +66,7 @@ class RoutePredictionBloc extends Bloc<RoutePredictionEvent, RoutePredictionStat
 
   RoutePredictionBloc({this.routeImagesBloc}) {
     routeImagesSubscription = routeImagesBloc.listen((state) {
-      if (state is RouteImagesLoaded) {
+      if (state is RouteImagesLoaded && state.trigger == TRIGGER) {
         add(UpdateRoutePrediction());
       }
     });
@@ -91,7 +93,7 @@ class RoutePredictionBloc extends Bloc<RoutePredictionEvent, RoutePredictionStat
         );
 
         var routeIds = _routeIds(_imgPickerData.predictions, event.displayPredictionsNum);
-        routeImagesBloc.add(FetchRouteImages(routeIds: routeIds));
+        routeImagesBloc.add(FetchRouteImages(routeIds: routeIds, trigger: TRIGGER));
 
         yield RoutePredictionLoaded(imgPickerData: _imgPickerData);
       } catch (e, st) {

@@ -9,13 +9,15 @@ abstract class RouteImagesEvent {
 
 class FetchRouteImages extends RouteImagesEvent {
   final List<int> routeIds;
-  const FetchRouteImages({@required this.routeIds});
+  final String trigger;
+  const FetchRouteImages({@required this.routeIds, this.trigger});
 }
 
 class AddNewRouteImage extends RouteImagesEvent {
   final int routeId;
   final RouteImage routeImage;
-  const AddNewRouteImage({this.routeId, this.routeImage});
+  final String trigger;
+  const AddNewRouteImage({this.routeId, this.routeImage, this.trigger});
 }
 
 class UpdateRouteImage extends RouteImagesEvent {
@@ -34,7 +36,8 @@ class RouteImagesLoading extends RouteImagesState {}
 
 class RouteImagesLoaded extends RouteImagesState {
   final Map<int, RouteImage> images;
-  const RouteImagesLoaded({this.images});
+  final String trigger;
+  const RouteImagesLoaded({this.images, this.trigger});
 }
 
 class RouteImagesError extends RouteImagesState {
@@ -72,7 +75,7 @@ class RouteImagesBloc extends Bloc<RouteImagesEvent, RouteImagesState> {
             MapEntry(int.parse(routeId), RouteImage.fromJson(model)));
         _images.addAll(fetchedImages);
 
-        yield RouteImagesLoaded(images: _images);
+        yield RouteImagesLoaded(images: _images, trigger: event.trigger);
         return;
       } catch (e, st) {
         yield RouteImagesError(exception: e, stackTrace: st);
@@ -84,7 +87,7 @@ class RouteImagesBloc extends Bloc<RouteImagesEvent, RouteImagesState> {
 
       _images[event.routeId] = event.routeImage;
 
-      yield RouteImagesLoaded(images: _images);
+      yield RouteImagesLoaded(images: _images, trigger: event.trigger);
     } else if (event is UpdateRouteImage) {
       api.routeMatch(event.routeId, event.routeImageId);
     }
