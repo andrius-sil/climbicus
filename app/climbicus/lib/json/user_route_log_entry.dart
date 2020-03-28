@@ -9,7 +9,7 @@ class UserRouteLogEntry {
   int routeId;
   String grade;
   String status;
-  String createdAt;
+  DateTime createdAt;
 
   factory UserRouteLogEntry.fromJson(Map<String, dynamic> json) =>
       _$UserRouteLogEntryFromJson(json);

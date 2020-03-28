@@ -10,6 +10,64 @@ import 'package:climbicus/utils/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+
+class RouteListItem {
+  int entryId;
+  Widget image;
+  String title;
+  int routeId;
+  int imageId;
+  DateTime createdAt;
+  bool isExpanded;
+  RouteListItem({
+    this.entryId,
+    this.image,
+    this.title,
+    this.routeId,
+    this.imageId,
+    this.createdAt,
+    this.isExpanded: false
+  });
+}
+
+class HeaderListItem extends StatelessWidget {
+  final Widget image;
+  final String title;
+  final int routeId;
+  final int imageId;
+
+  const HeaderListItem({this.image, this.title, this.routeId, this.imageId});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(2),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Container(
+              height: 80,
+              child: Stack(
+                children: <Widget>[
+                  this.image,
+//                  Align(
+//                    alignment: Alignment.bottomLeft,
+//                    child: Text("route_id: $routeId, image_id: $imageId"),
+//                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(this.title),
+          ),
+        ],
+      ),
+    );
+  }
+
+}
 
 class RouteViewPage<T extends RouteBloc> extends StatefulWidget {
   final ApiProvider api = ApiProvider();
@@ -25,6 +83,8 @@ class RouteViewPage<T extends RouteBloc> extends StatefulWidget {
 class _RouteViewPageState<T extends RouteBloc> extends State<RouteViewPage<T>> {
   RouteImagesBloc _routeImagesBloc;
   RouteBloc _routeBloc;
+
+  List<RouteListItem> _items = [];
 
   @override
   void initState() {
@@ -89,23 +149,14 @@ class _RouteViewPageState<T extends RouteBloc> extends State<RouteViewPage<T>> {
   }
 
   Widget _buildLogbookGrid(Map entries, {bool withImages: true}) {
-    List<Widget> widgets = [];
+    Map<int, bool> isExpandedPrevious = Map.fromIterable(
+      _items,
+      key: (item) => item.entryId,
+      value: (item) => item.isExpanded,
+    );
+    _items.clear();
 
     (_sortEntriesByLogDate(entries)).forEach((entryId, fields) {
-      var displayAttrs = _routeBloc.displayAttrs(fields);
-      List<Text> textWidgets = [];
-      displayAttrs.forEach((String attr) => textWidgets.add(Text(attr)));
-
-      // Left side - entry description.
-      widgets.add(Container(
-          alignment: Alignment.center,
-          padding: const EdgeInsets.all(8),
-          color: Colors.grey[800],
-          child: Column(
-            children: textWidgets,
-          )));
-
-      // Right side - image.
       var routeId = _routeBloc.routeId(entryId, fields);
       var imageFields = _routeImagesBloc.images[routeId];
       var imageWidget;
@@ -117,29 +168,48 @@ class _RouteViewPageState<T extends RouteBloc> extends State<RouteViewPage<T>> {
         imageId = imageFields.routeImageId;
       } else {
         imageWidget = Image.asset("images/no_image.png");
-        imageId = "n/a";
+        imageId = -1;
       }
-      widgets.add(Container(
-        color: Colors.grey[700],
-        alignment: Alignment.center,
-        child: Stack(
-          children: <Widget>[
-            imageWidget,
-            Align(
-                alignment: Alignment.bottomLeft,
-                child: Text("route_id: $routeId, image_id: $imageId"),
-            ),
-          ],
-        ),
+
+      bool isExpanded = isExpandedPrevious.containsKey(entryId) ?
+          isExpandedPrevious[entryId] :
+          false;
+      _items.add(RouteListItem(
+          entryId: entryId,
+          image: imageWidget,
+          title: _routeBloc.displayTitle(fields),
+          routeId: routeId,
+          imageId: imageId,
+          createdAt: fields.createdAt,
+          isExpanded: isExpanded,
       ));
     });
 
-    return GridView.count(
-      primary: false,
-      padding: const EdgeInsets.all(20),
-      mainAxisSpacing: 10,
-      crossAxisCount: 2,
-      children: widgets,
+    return SingleChildScrollView(
+      child: ExpansionPanelList(
+        expansionCallback: (int i, bool isExpanded) {
+          setState(() {
+            _items[i].isExpanded = !isExpanded;
+          });
+        },
+        children: _items.map<ExpansionPanel>((RouteListItem item) {
+          return ExpansionPanel(
+            headerBuilder: (BuildContext context, bool isExpanded) {
+              return HeaderListItem(
+                image: item.image,
+                title: item.title,
+                routeId: item.routeId,
+                imageId: item.imageId,
+              );
+            },
+            body: ListTile(
+              subtitle: Text("added by Andrius (${DateFormat("yyyy-MM-dd").format(item.createdAt)})"),
+              trailing: Icon(Icons.delete),
+            ),
+            isExpanded: item.isExpanded,
+          );
+        }).toList(),
+      ),
     );
   }
 

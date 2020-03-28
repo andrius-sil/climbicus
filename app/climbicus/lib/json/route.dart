@@ -7,7 +7,7 @@ class Route {
   Route(this.grade, this.createdAt);
 
   String grade;
-  String createdAt;
+  DateTime createdAt;
 
   factory Route.fromJson(Map<String, dynamic> json) =>
       _$RouteFromJson(json);

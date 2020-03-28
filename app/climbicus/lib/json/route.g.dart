@@ -9,11 +9,13 @@ part of 'route.dart';
 Route _$RouteFromJson(Map<String, dynamic> json) {
   return Route(
     json['grade'] as String,
-    json['created_at'] as String,
+    json['created_at'] == null
+        ? null
+        : DateTime.parse(json['created_at'] as String),
   );
 }
 
 Map<String, dynamic> _$RouteToJson(Route instance) => <String, dynamic>{
       'grade': instance.grade,
-      'created_at': instance.createdAt,
+      'created_at': instance.createdAt?.toIso8601String(),
     };

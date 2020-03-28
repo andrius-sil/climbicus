@@ -92,8 +92,8 @@ class GymRouteBloc extends RouteBloc<GymRouteEvent, RouteState> {
   void fetch() => add(FetchGymRoute());
 
   @override
-  List<String> displayAttrs(entry) {
-    return [entry.grade, entry.createdAt];
+  String displayTitle(entry) {
+    return entry.grade;
   }
 
   @override

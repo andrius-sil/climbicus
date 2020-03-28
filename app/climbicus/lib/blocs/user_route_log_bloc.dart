@@ -81,8 +81,8 @@ class UserRouteLogBloc extends RouteBloc<UserRouteLogEvent, RouteState> {
   void fetch() => add(FetchUserRouteLog());
 
   @override
-  List<String> displayAttrs(entry) {
-    return [entry.grade, entry.status, entry.createdAt];
+  String displayTitle(entry) {
+    return "${entry.grade} - ${entry.status}";
   }
 
   @override
