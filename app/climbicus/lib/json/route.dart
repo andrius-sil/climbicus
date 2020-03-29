@@ -8,6 +8,7 @@ class Route {
 
   String grade;
   DateTime createdAt;
+  int userId;
 
   factory Route.fromJson(Map<String, dynamic> json) =>
       _$RouteFromJson(json);

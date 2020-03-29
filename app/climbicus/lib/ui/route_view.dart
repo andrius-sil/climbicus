@@ -19,6 +19,7 @@ class RouteListItem {
   int routeId;
   int imageId;
   DateTime createdAt;
+  String username;
   bool isExpanded;
   RouteListItem({
     this.entryId,
@@ -27,6 +28,7 @@ class RouteListItem {
     this.routeId,
     this.imageId,
     this.createdAt,
+    this.username,
     this.isExpanded: false
   });
 }
@@ -181,6 +183,7 @@ class _RouteViewPageState<T extends RouteBloc> extends State<RouteViewPage<T>> {
           routeId: routeId,
           imageId: imageId,
           createdAt: fields.createdAt,
+          username: fields.userId.toString(),
           isExpanded: isExpanded,
       ));
     });
@@ -203,8 +206,8 @@ class _RouteViewPageState<T extends RouteBloc> extends State<RouteViewPage<T>> {
               );
             },
             body: ListTile(
-              subtitle: Text("added by Andrius (${DateFormat("yyyy-MM-dd").format(item.createdAt)})"),
-              trailing: Icon(Icons.delete),
+              subtitle: Text("added by 'user ${item.username}' (${DateFormat("yyyy-MM-dd").format(item.createdAt)})"),
+//              trailing: Icon(Icons.delete),
             ),
             isExpanded: item.isExpanded,
           );

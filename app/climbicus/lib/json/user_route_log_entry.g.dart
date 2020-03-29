@@ -14,7 +14,7 @@ UserRouteLogEntry _$UserRouteLogEntryFromJson(Map<String, dynamic> json) {
     json['created_at'] == null
         ? null
         : DateTime.parse(json['created_at'] as String),
-  );
+  )..userId = json['user_id'] as int;
 }
 
 Map<String, dynamic> _$UserRouteLogEntryToJson(UserRouteLogEntry instance) =>
@@ -23,4 +23,5 @@ Map<String, dynamic> _$UserRouteLogEntryToJson(UserRouteLogEntry instance) =>
       'grade': instance.grade,
       'status': instance.status,
       'created_at': instance.createdAt?.toIso8601String(),
+      'user_id': instance.userId,
     };
