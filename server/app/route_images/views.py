@@ -12,7 +12,6 @@ blueprint = Blueprint("route_images_blueprint", __name__, url_prefix="/route_ima
 
 @blueprint.route("/", methods=["GET"])
 def route_images():
-    user_id = request.json["user_id"]
     route_ids = request.json["route_ids"]
 
     subquery = db.session.query(
@@ -29,16 +28,7 @@ def route_images():
         .select_entity_from(subquery) \
         .filter(subquery.c.rank == 1)
 
-    images = {}
-    for route_image in q:
-        fbytes = io.provider.download_file(route_image.path)
-        base64_str = bytes_to_b64str(fbytes)
-
-        images[route_image.route_id] = {
-            "route_image_id": route_image.id,
-            "b64_image": base64_str,
-        }
-
+    images = {route_image.route_id: route_image.model for route_image in q }
     return jsonify({"route_images": images})
 
 
@@ -64,4 +54,7 @@ def route_match(route_image_id):
         route_image.route_unmatched = True
     db.session.commit()
 
-    return jsonify({"msg": "Route image updated with user's route id choice"})
+    return jsonify({
+        "msg": "Route image updated with user's route id choice",
+        "route_image": route_image.model,
+    })
