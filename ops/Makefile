@@ -6,3 +6,6 @@ ec2-update-security-group-rules: check-env
 flutter-apk-install:
 	cd ../app/climbicus/; flutter build apk --split-per-abi; flutter install
 
+flutter-code-gen:
+	cd ../app/climbicus/; flutter pub run build_runner build
+
