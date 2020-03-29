@@ -41,6 +41,7 @@ def view():
     for user_route_log, route in results:
         logbook[user_route_log.id] = {
             "route_id": route.id,
+            "user_id": route.user_id,
             "grade": route.grade,
             "created_at": user_route_log.created_at.isoformat(),
             "status": user_route_log.status,

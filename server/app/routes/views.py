@@ -23,6 +23,7 @@ def route_list():
     gym_routes = {}
     for route in routes:
         gym_routes[route.id] = {
+            "user_id": route.user_id,
             "grade": route.grade,
             "created_at": route.created_at.isoformat(),
         }
@@ -33,9 +34,10 @@ def route_list():
 @blueprint.route("/", methods=["POST"])
 def add():
     gym_id = request.json["gym_id"]
+    user_id = request.json["user_id"]
     grade = request.json["grade"]
 
-    route = Routes(gym_id=gym_id, grade=grade, created_at=datetime.datetime.utcnow())
+    route = Routes(gym_id=gym_id, user_id=user_id, grade=grade, created_at=datetime.datetime.utcnow())
 
     db.session.add(route)
     db.session.commit()

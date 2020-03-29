@@ -42,6 +42,7 @@ class Gyms(db.Model):
 class Routes(db.Model):
     id = db.Column(db.Integer, db.Sequence('route_id_seq'), primary_key=True)
     gym_id = db.Column(db.Integer, db.ForeignKey('gyms.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     # TODO: class_id and id should have a 1-1 relationship
     class_id = db.Column(db.String, unique=True, nullable=True)
     # TODO: preset list of possible grades

@@ -24,9 +24,9 @@ def test_routes(client, auth_headers_user1):
     assert resp.is_json
 
     expected_routes = {
-        "100": {"grade": "6a", "created_at": "2019-03-04T10:10:10"},
-        "101": {"grade": "6a", "created_at": "2019-03-04T10:10:10"},
-        "102": {"grade": "6a", "created_at": "2019-03-04T10:10:10"},
+        "100": {"user_id": 2, "grade": "6a", "created_at": "2019-03-04T10:10:10"},
+        "101": {"user_id": 2, "grade": "6a", "created_at": "2019-03-04T10:10:10"},
+        "102": {"user_id": 2, "grade": "6a", "created_at": "2019-03-04T10:10:10"},
     }
 
     assert expected_routes == resp.json["routes"]
@@ -50,6 +50,7 @@ def test_add_route(client, app, auth_headers_user1):
     with app.app_context():
         route = Routes.query.filter_by(id=103).one()
         assert route.gym_id == 1
+        assert route.user_id == 1
         assert route.grade == "7a"
         assert route.created_at == datetime(2019, 3, 4, 10, 10, 10)
 
