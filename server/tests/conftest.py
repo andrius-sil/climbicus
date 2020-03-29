@@ -107,6 +107,7 @@ def app(resource_dir):
                 )
                 db.session.add(
                     RouteImages(
+                        route_id=i,
                         user_id=2,
                         model_probability=0.5,
                         model_version="first_version",

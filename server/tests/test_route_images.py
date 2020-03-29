@@ -1,10 +1,14 @@
-import base64
-
 from app.models import RouteImages
 from app import db
 from flask import json
 
-from app.utils.encoding import b64str_to_bytes
+from app.utils.encoding import b64str_to_bytes, bytes_to_b64str
+
+
+def _test_image_str(resource_dir, image_name):
+    filepath = f"{resource_dir}/route_images/{image_name}"
+    with open(filepath, "rb") as f:
+        return bytes_to_b64str(f.read())
 
 
 def test_route_images(client, resource_dir, auth_headers_user2):
@@ -39,6 +43,27 @@ def test_route_images(client, resource_dir, auth_headers_user2):
 
     # Check that only route images of interest were fetched from the server.
     assert len(route_images) == 0
+
+
+def test_all_route_images(client, resource_dir, auth_headers_user1):
+    data = {
+        "user_id": 1,
+    }
+    resp = client.get("/route_images/route/2", data=json.dumps(data), content_type="application/json", headers=auth_headers_user1)
+
+    assert resp.status_code == 200
+    assert resp.is_json
+
+    expected_route_images = [
+        { "id": 2, "route_id": 2, "user_id": 1, "created_at": "2019-03-04T10:10:10",
+          "b64_image": _test_image_str(resource_dir, "user1_route2.jpg") },
+        { "id": 3, "route_id": 2, "user_id": 2, "created_at": "2019-02-04T10:10:10",
+          "b64_image": _test_image_str(resource_dir, "user2_route2_1.jpg") },
+        { "id": 4, "route_id": 2, "user_id": 2, "created_at": "2019-02-04T10:10:10",
+          "b64_image": _test_image_str(resource_dir, "user2_route2_2.jpg") },
+    ]
+
+    assert resp.json["route_images"] == expected_route_images
 
 
 def test_route_match(client, app, auth_headers_user2):

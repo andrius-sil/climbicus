@@ -1,5 +1,3 @@
-import base64
-
 from sqlalchemy import func
 
 from app import db, io
@@ -41,6 +39,15 @@ def route_images():
             "b64_image": base64_str,
         }
 
+    return jsonify({"route_images": images})
+
+
+@blueprint.route("/route/<int:route_id>", methods=["GET"])
+def all_route_images(route_id):
+    q = db.session.query(RouteImages) \
+        .filter(RouteImages.route_id == route_id)
+
+    images = [route_image.model for route_image in q]
     return jsonify({"route_images": images})
 
 
