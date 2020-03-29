@@ -9,7 +9,7 @@ from app.models import RouteImages, Routes
 from app import db
 from flask import json
 
-from app.utils.encoding import test_image_str
+from tests.conftest import image_str
 
 
 def test_routes(client, auth_headers_user1):
@@ -198,5 +198,5 @@ def test_cbir_predict_with_image(client, resource_dir, auth_headers_user1):
 
     assert resp.json["route_image"] == {
         "id": 9, "route_id": None, "user_id": 1, "created_at": "2019-03-04T10:10:10",
-        "b64_image": test_image_str(resource_dir, "green_route.jpg")
+        "b64_image": image_str(resource_dir, "green_route.jpg")
     }

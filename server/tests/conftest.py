@@ -8,6 +8,7 @@ from app.models import Gyms, RouteImages, Routes, UserRouteLog, Users
 from datetime import datetime
 import pytz
 
+from app.utils.encoding import bytes_to_b64str
 from app.utils.io import InputOutputProvider
 
 DATABASE_CONNECTION_URI = "sqlite:///:memory:"
@@ -156,6 +157,12 @@ def client(app):
 @pytest.fixture(scope="session")
 def resource_dir():
     return os.path.join(os.path.dirname(os.path.realpath(__file__)), "resources")
+
+
+def image_str(resource_dir, image_name):
+    filepath = f"{resource_dir}/route_images/{image_name}"
+    with open(filepath, "rb") as f:
+        return bytes_to_b64str(f.read())
 
 
 @pytest.fixture(scope="function")
