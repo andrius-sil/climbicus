@@ -1,4 +1,3 @@
-import base64
 import math
 from datetime import datetime
 from unittest import mock
@@ -10,7 +9,7 @@ from app.models import RouteImages, Routes
 from app import db
 from flask import json
 
-from app.utils.encoding import b64str_to_bytes
+from app.utils.encoding import test_image_str
 
 
 def test_routes(client, auth_headers_user1):
@@ -174,6 +173,7 @@ def test_storing_image_path_to_db(app, client, resource_dir, auth_headers_user1)
     assert stored_image.created_at.isoformat() == "2019-03-04T10:10:10"
 
 
+@mock.patch("datetime.datetime", Mock(utcnow=lambda: datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)))
 def test_cbir_predict_with_image(client, resource_dir, auth_headers_user1):
     json_data = {
         "user_id": 1,
@@ -189,7 +189,6 @@ def test_cbir_predict_with_image(client, resource_dir, auth_headers_user1):
     assert resp.status_code == 200
     assert resp.is_json
 
-    assert resp.json["route_image_id"] == 9
     assert resp.json["sorted_route_predictions"] == [
         { "grade": "7a", "route_id": 2 },
         { "grade": "7a", "route_id": 4 },
@@ -197,6 +196,7 @@ def test_cbir_predict_with_image(client, resource_dir, auth_headers_user1):
         { "grade": "7a", "route_id": 3 },
     ]
 
-    filepath = f"{resource_dir}/green_route.jpg"
-    with open(filepath, "rb") as f:
-        assert f.read() == b64str_to_bytes(resp.json["b64_image"])
+    assert resp.json["route_image"] == {
+        "id": 9, "route_id": None, "user_id": 1, "created_at": "2019-03-04T10:10:10",
+        "b64_image": test_image_str(resource_dir, "green_route.jpg")
+    }

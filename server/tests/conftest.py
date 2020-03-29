@@ -20,16 +20,20 @@ class TestInputOutputProvider(InputOutputProvider):
         self.upload_dir = "/tmp/climbicus_tests"
 
     def download_file(self, remote_path):
-        filepath = f"{self.resource_dir}/route_images/{remote_path}"
+        filepath = remote_path
+        if not remote_path.startswith("/"):
+            filepath = f"{self.resource_dir}/route_images/{remote_path}"
         with open(filepath, "rb") as f:
             return f.read()
 
     def upload_file(self, file, remote_path):
+        file.seek(0)
         filepath = f"{self.upload_dir}/{remote_path}"
         filedir = os.path.dirname(filepath)
         if not os.path.exists(filedir):
             os.makedirs(filedir)
         file.save(filepath)
+        file.close()
         return filepath
 
 

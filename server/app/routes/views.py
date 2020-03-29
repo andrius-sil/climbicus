@@ -71,7 +71,7 @@ def predict_cls():
     sorted_route_predictions = [{"route_id": r.id, "grade": r.grade} for r in routes]
     response = {"sorted_route_predictions": sorted_route_predictions}
 
-    route_image_id = store_image(
+    route_image = store_image(
         fs_image=imagefile,
         user_id=user_id,
         gym_id=gym_id,
@@ -79,7 +79,7 @@ def predict_cls():
         model_version=predictor_results.model_version,
         descriptors="placeholder",
     )
-    response["route_image_id"] = route_image_id
+    response["route_image_id"] = route_image.id
 
     return jsonify(response)
 
@@ -118,15 +118,14 @@ def predict_cbir():
 
     sorted_route_predictions = [{"route_id": r["route_id"], "grade": r["grade"]} for r in predicted_routes]
     response = {"sorted_route_predictions": sorted_route_predictions}
-    route_image_id = store_image(
+    route_image = store_image(
         fs_image=fs_image,
         user_id=user_id,
         gym_id=gym_id,
         model_version=cbir_predictor.get_model_version(),
         descriptors=descriptor,
     )
-    response["route_image_id"] = route_image_id
-    response["b64_image"] = bytes_to_b64str(fbytes_image)
+    response["route_image"] = route_image.model
 
     return jsonify(response)
 
@@ -149,7 +148,7 @@ def store_image(fs_image, user_id, gym_id, model_version, descriptors, model_pro
     db.session.add(route_image)
     db.session.commit()
 
-    return route_image.id
+    return route_image
 
 
 def reorder_routes_by_classes(routes, sorted_class_ids):
