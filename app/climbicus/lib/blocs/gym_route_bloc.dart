@@ -6,6 +6,7 @@ import 'package:climbicus/blocs/user_route_log_bloc.dart';
 import 'package:climbicus/json/route.dart' as jsonmdl;
 import 'package:climbicus/json/route_image.dart';
 import 'package:climbicus/utils/api.dart';
+import 'package:climbicus/utils/time.dart';
 
 abstract class GymRouteEvent {
   const GymRouteEvent();
@@ -68,6 +69,7 @@ class GymRouteBloc extends RouteBloc<GymRouteEvent, RouteState> {
       _entries[newRoute["id"]] = jsonmdl.Route(
         event.grade,
         newRoute["created_at"],
+        api.userId,
       );
 
       yield RouteLoadedWithImages(entries: _entries);
@@ -92,8 +94,18 @@ class GymRouteBloc extends RouteBloc<GymRouteEvent, RouteState> {
   void fetch() => add(FetchGymRoute());
 
   @override
-  String displayTitle(entry) {
+  String headerTitle(entry) {
     return entry.grade;
+  }
+
+  @override
+  String bodyTitle(entry) {
+    return null;
+  }
+
+  @override
+  String bodySubtitle(entry) {
+    return "added by 'user ${entry.userId.toString()}' (${dateToString(entry.createdAt)})";
   }
 
   @override

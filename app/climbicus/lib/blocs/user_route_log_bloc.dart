@@ -4,6 +4,7 @@ import 'package:climbicus/blocs/route_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/json/user_route_log_entry.dart';
 import 'package:climbicus/utils/api.dart';
+import 'package:climbicus/utils/time.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
@@ -68,7 +69,8 @@ class UserRouteLogBloc extends RouteBloc<UserRouteLogEvent, RouteState> {
         event.routeId,
         event.grade,
         event.status,
-        newEntry["created_at"],
+        DateTime.parse(newEntry["created_at"]),
+        api.userId,
       );
 
       yield RouteLoadedWithImages(entries: _entries);
@@ -81,8 +83,18 @@ class UserRouteLogBloc extends RouteBloc<UserRouteLogEvent, RouteState> {
   void fetch() => add(FetchUserRouteLog());
 
   @override
-  String displayTitle(entry) {
+  String headerTitle(entry) {
     return "${entry.grade} - ${entry.status}";
+  }
+
+  @override
+  String bodyTitle(entry) {
+    return "${dateAndTimeToString(entry.createdAt)}";
+  }
+
+  @override
+  String bodySubtitle(entry) {
+    return "added by 'user ${entry.userId.toString()}'";
   }
 
   @override

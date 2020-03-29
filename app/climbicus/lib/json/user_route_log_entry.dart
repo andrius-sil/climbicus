@@ -4,7 +4,7 @@ part 'user_route_log_entry.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class UserRouteLogEntry {
-  UserRouteLogEntry(this.routeId, this.grade, this.status, this.createdAt);
+  UserRouteLogEntry(this.routeId, this.grade, this.status, this.createdAt, this.userId);
 
   int routeId;
   String grade;

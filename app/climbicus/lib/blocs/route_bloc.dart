@@ -32,7 +32,11 @@ class RouteError extends RouteState {
 abstract class RouteBloc<Event, Entry> extends Bloc<Event, RouteState> {
   void fetch();
 
-  String displayTitle(entry);
+  String headerTitle(entry);
+
+  String bodyTitle(entry);
+
+  String bodySubtitle(entry);
 
   int routeId(entryId, entry);
 }

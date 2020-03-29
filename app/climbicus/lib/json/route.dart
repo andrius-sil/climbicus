@@ -4,7 +4,7 @@ part 'route.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Route {
-  Route(this.grade, this.createdAt);
+  Route(this.grade, this.createdAt, this.userId);
 
   String grade;
   DateTime createdAt;

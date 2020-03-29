@@ -10,12 +10,13 @@ import 'package:climbicus/utils/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 
 class RouteListItem {
   int entryId;
   Widget image;
-  String title;
+  String headerTitle;
+  String bodyTitle;
+  String bodySubtitle;
   int routeId;
   int imageId;
   DateTime createdAt;
@@ -24,7 +25,9 @@ class RouteListItem {
   RouteListItem({
     this.entryId,
     this.image,
-    this.title,
+    this.headerTitle,
+    this.bodyTitle,
+    this.bodySubtitle,
     this.routeId,
     this.imageId,
     this.createdAt,
@@ -179,7 +182,9 @@ class _RouteViewPageState<T extends RouteBloc> extends State<RouteViewPage<T>> {
       _items.add(RouteListItem(
           entryId: entryId,
           image: imageWidget,
-          title: _routeBloc.displayTitle(fields),
+          headerTitle: _routeBloc.headerTitle(fields),
+          bodyTitle: _routeBloc.bodyTitle(fields),
+          bodySubtitle: _routeBloc.bodySubtitle(fields),
           routeId: routeId,
           imageId: imageId,
           createdAt: fields.createdAt,
@@ -200,13 +205,14 @@ class _RouteViewPageState<T extends RouteBloc> extends State<RouteViewPage<T>> {
             headerBuilder: (BuildContext context, bool isExpanded) {
               return HeaderListItem(
                 image: item.image,
-                title: item.title,
+                title: item.headerTitle,
                 routeId: item.routeId,
                 imageId: item.imageId,
               );
             },
             body: ListTile(
-              subtitle: Text("added by 'user ${item.username}' (${DateFormat("yyyy-MM-dd").format(item.createdAt)})"),
+              title: item.bodyTitle != null ? Text(item.bodyTitle): null,
+              subtitle: Text(item.bodySubtitle),
 //              trailing: Icon(Icons.delete),
             ),
             isExpanded: item.isExpanded,
