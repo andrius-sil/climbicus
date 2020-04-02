@@ -7,21 +7,22 @@ from app.models import RouteImages, Routes
 
 from flask import abort, request, Blueprint, jsonify
 
-from app.utils.encoding import bytes_to_b64str
-
 blueprint = Blueprint("routes_blueprint", __name__, url_prefix="/routes")
 
 MAX_NUMBER_OF_PREDICTED_ROUTES = 20
 
 
 @blueprint.route("/", methods=["GET"])
-def route_list():
+@blueprint.route("/<int:route_id>", methods=["GET"])
+def route_list(route_id=None):
     gym_id = request.json["gym_id"]
 
-    routes = db.session.query(Routes).filter(Routes.gym_id == gym_id).all()
+    query = db.session.query(Routes).filter(Routes.gym_id == gym_id)
+    if route_id:
+        query = query.filter(Routes.id == route_id)
 
     gym_routes = {}
-    for route in routes:
+    for route in query.all():
         gym_routes[route.id] = {
             "user_id": route.user_id,
             "grade": route.grade,

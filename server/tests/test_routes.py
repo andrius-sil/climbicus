@@ -31,6 +31,23 @@ def test_routes(client, auth_headers_user1):
     assert expected_routes == resp.json["routes"]
 
 
+def test_single_route(client, auth_headers_user1):
+    data = {
+        "user_id": 1,
+        "gym_id": 2,
+    }
+    resp = client.get("/routes/101", data=json.dumps(data), content_type="application/json", headers=auth_headers_user1)
+
+    assert resp.status_code == 200
+    assert resp.is_json
+
+    expected_routes = {
+        "101": {"user_id": 2, "grade": "6a", "created_at": "2019-03-04T10:10:10"},
+    }
+
+    assert expected_routes == resp.json["routes"]
+
+
 @mock.patch("datetime.datetime", Mock(utcnow=lambda: datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)))
 def test_add_route(client, app, auth_headers_user1):
     data = {

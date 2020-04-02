@@ -5,8 +5,6 @@ from app.models import RouteImages
 
 from flask import request, Blueprint, jsonify
 
-from app.utils.encoding import bytes_to_b64str
-
 blueprint = Blueprint("route_images_blueprint", __name__, url_prefix="/route_images")
 
 
