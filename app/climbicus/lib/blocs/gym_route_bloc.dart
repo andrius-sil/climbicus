@@ -66,9 +66,10 @@ class GymRouteBloc extends RouteBloc<GymRouteEvent, RouteState> {
       yield RouteLoadedWithImages(entries: _entries);
     } else if (event is AddNewGymRouteWithUserLog) {
       var newRoute = await api.routeAdd(event.grade);
+      // TODO: use fromJson
       _entries[newRoute["id"]] = jsonmdl.Route(
         event.grade,
-        newRoute["created_at"],
+        DateTime.parse(newRoute["created_at"]),
         api.userId,
       );
 

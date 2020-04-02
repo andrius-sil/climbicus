@@ -148,6 +148,10 @@ class ApiProvider {
     return _requestJson("GET", "route_images/", data);
   }
 
+  Future<Map> fetchRouteImagesAllRoute(int routeId) async {
+    return _requestJson("GET", "route_images/route/$routeId", {});
+  }
+
   Future<Map> fetchLogbook() async {
     Map data = {
       "gym_id": CASTLE_GYM_ID,

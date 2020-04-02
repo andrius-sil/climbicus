@@ -110,7 +110,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
       var grade = fields.grade;
 
       // Left side - image.
-      var imageFields = _routeImagesBloc.images[routeId];
+      var imageFields = _routeImagesBloc.images.defaultImage(routeId);
       var imageWidget;
       if (!withImages) {
         imageWidget = Container(width: 0, height: 0);
@@ -128,7 +128,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
         routeId,
         imageWidget,
         grade,
-        imgPickerData.routeImage.routeImageId,
+        imgPickerData.routeImage.id,
       ));
 
       // Right side - entry description.
@@ -147,7 +147,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
         routeId,
         imageWidget,
         grade,
-        imgPickerData.routeImage.routeImageId,
+        imgPickerData.routeImage.id,
       ));
     }
 

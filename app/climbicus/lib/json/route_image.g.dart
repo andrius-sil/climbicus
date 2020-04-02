@@ -8,13 +8,21 @@ part of 'route_image.dart';
 
 RouteImage _$RouteImageFromJson(Map<String, dynamic> json) {
   return RouteImage(
-    json['route_image_id'] as int,
+    json['id'] as int,
+    json['user_id'] as int,
+    json['route_id'] as int,
+    json['created_at'] == null
+        ? null
+        : DateTime.parse(json['created_at'] as String),
     json['b64_image'] as String,
   );
 }
 
 Map<String, dynamic> _$RouteImageToJson(RouteImage instance) =>
     <String, dynamic>{
-      'route_image_id': instance.routeImageId,
+      'id': instance.id,
+      'user_id': instance.userId,
+      'route_id': instance.routeId,
+      'created_at': instance.createdAt?.toIso8601String(),
       'b64_image': instance.b64Image,
     };

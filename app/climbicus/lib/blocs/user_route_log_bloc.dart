@@ -65,6 +65,7 @@ class UserRouteLogBloc extends RouteBloc<UserRouteLogEvent, RouteState> {
     } else if (event is AddNewUserRouteLog) {
       var newEntry = await api.logbookAdd(event.routeId, event.status);
 
+      // TODO: use fromJson
       _entries[newEntry["id"]] = UserRouteLogEntry(
         event.routeId,
         event.grade,

@@ -4,9 +4,12 @@ part 'route_image.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class RouteImage {
-  RouteImage(this.routeImageId, this.b64Image);
+  RouteImage(this.id, this.userId, this.routeId, this.createdAt, this.b64Image);
 
-  int routeImageId;
+  int id;
+  int userId;
+  int routeId;
+  DateTime createdAt;
   String b64Image;
 
   factory RouteImage.fromJson(Map<String, dynamic> json) =>

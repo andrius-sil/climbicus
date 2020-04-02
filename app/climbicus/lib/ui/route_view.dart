@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:climbicus/blocs/route_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
+import 'package:climbicus/ui/route_detailed.dart';
 import 'package:climbicus/ui/route_predictions.dart';
 import 'package:climbicus/utils/api.dart';
 import 'package:climbicus/utils/route_image_picker.dart';
@@ -51,16 +52,25 @@ class HeaderListItem extends StatelessWidget {
       child: Row(
         children: <Widget>[
           Expanded(
-            child: Container(
-              height: 80,
-              child: Stack(
-                children: <Widget>[
-                  this.image,
-//                  Align(
-//                    alignment: Alignment.bottomLeft,
-//                    child: Text("route_id: $routeId, image_id: $imageId"),
-//                  ),
-                ],
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (BuildContext context) {
+                    return RouteDetailedPage(routeId: this.routeId);
+                  },
+                ));
+              },
+              child: Container(
+                height: 80,
+                child: Stack(
+                  children: <Widget>[
+                    this.image,
+  //                  Align(
+  //                    alignment: Alignment.bottomLeft,
+  //                    child: Text("route_id: $routeId, image_id: $imageId"),
+  //                  ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -163,14 +173,14 @@ class _RouteViewPageState<T extends RouteBloc> extends State<RouteViewPage<T>> {
 
     (_sortEntriesByLogDate(entries)).forEach((entryId, fields) {
       var routeId = _routeBloc.routeId(entryId, fields);
-      var imageFields = _routeImagesBloc.images[routeId];
+      var routeImage = _routeImagesBloc.images.defaultImage(routeId);
       var imageWidget;
       var imageId;
       if (!withImages) {
         imageWidget = Container(width: 0, height: 0);
-      } else if (imageFields != null) {
-        imageWidget = Image.memory(base64.decode(imageFields.b64Image));
-        imageId = imageFields.routeImageId;
+      } else if (routeImage != null) {
+        imageWidget = Image.memory(base64.decode(routeImage.b64Image));
+        imageId = routeImage.id;
       } else {
         imageWidget = Image.asset("images/no_image.png");
         imageId = -1;
