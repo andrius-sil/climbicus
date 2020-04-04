@@ -26,7 +26,7 @@ def route_images():
         .select_entity_from(subquery) \
         .filter(subquery.c.rank == 1)
 
-    images = {route_image.route_id: route_image.model for route_image in q }
+    images = {route_image.route_id: route_image.api_model for route_image in q}
     return jsonify({"route_images": images})
 
 
@@ -35,7 +35,7 @@ def all_route_images(route_id):
     q = db.session.query(RouteImages) \
         .filter(RouteImages.route_id == route_id)
 
-    images = [route_image.model for route_image in q]
+    images = [route_image.api_model for route_image in q]
     return jsonify({"route_images": images})
 
 
@@ -54,5 +54,5 @@ def route_match(route_image_id):
 
     return jsonify({
         "msg": "Route image updated with user's route id choice",
-        "route_image": route_image.model,
+        "route_image": route_image.api_model,
     })

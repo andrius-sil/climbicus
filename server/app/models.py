@@ -73,7 +73,7 @@ class RouteImages(db.Model):
     descriptors = db.Column(db.JSON, nullable=False)
 
     @property
-    def model(self):
+    def api_model(self):
         fbytes = io.provider.download_file(self.path)
         base64_str = bytes_to_b64str(fbytes)
 

@@ -126,7 +126,7 @@ def predict_cbir():
         model_version=cbir_predictor.get_model_version(),
         descriptors=descriptor,
     )
-    response["route_image"] = route_image.model
+    response["route_image"] = route_image.api_model
 
     return jsonify(response)
 
