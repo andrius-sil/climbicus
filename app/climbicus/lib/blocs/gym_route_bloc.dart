@@ -6,12 +6,16 @@ import 'package:climbicus/blocs/user_route_log_bloc.dart';
 import 'package:climbicus/json/route.dart' as jsonmdl;
 import 'package:climbicus/json/route_image.dart';
 import 'package:climbicus/utils/api.dart';
+import 'package:climbicus/utils/time.dart';
 
 abstract class GymRouteEvent {
   const GymRouteEvent();
 }
 
-class FetchGymRoute extends GymRouteEvent {}
+class FetchGymRoutes extends GymRouteEvent {
+  final int routeId;
+  const FetchGymRoutes({this.routeId});
+}
 
 class AddNewGymRouteWithUserLog extends GymRouteEvent {
   final String grade;
@@ -31,10 +35,10 @@ class GymRouteBloc extends RouteBloc<GymRouteEvent, RouteState> {
   final UserRouteLogBloc userRouteLogBloc;
 
   Map<int, jsonmdl.Route> _entries = {};
-  StreamSubscription routeImagesSubscription;
+  StreamSubscription _routeImagesSubscription;
 
   GymRouteBloc({this.routeImagesBloc, this.userRouteLogBloc}) {
-    routeImagesSubscription = routeImagesBloc.listen((state) {
+    _routeImagesSubscription = routeImagesBloc.listen((state) {
       if (state is RouteImagesLoaded && state.trigger == TRIGGER) {
         add(UpdateGymRoute());
       }
@@ -46,16 +50,29 @@ class GymRouteBloc extends RouteBloc<GymRouteEvent, RouteState> {
 
   @override
   Stream<RouteState> mapEventToState(GymRouteEvent event) async* {
-    if (event is FetchGymRoute) {
+    if (event is FetchGymRoutes) {
       yield RouteLoading();
 
       try {
-        Map<String, dynamic> routes = (await api.fetchRoutes())["routes"];
-        _entries = routes.map((routeId, model) =>
+        var data;
+        if (event.routeId != null) {
+          if (_entries.containsKey(event.routeId)) {
+            yield RouteLoadedWithImages(entries: _entries);
+            return;
+          }
+          data = api.fetchOneRoute(event.routeId);
+        } else {
+          data = api.fetchRoutes();
+        }
+
+        Map<String, dynamic> routes = (await data)["routes"];
+        var newEntries = routes.map((routeId, model) =>
             MapEntry(int.parse(routeId), jsonmdl.Route.fromJson(model)));
+        _entries.addAll(newEntries);
 
         var routeIds = _entries.keys.toList();
-        routeImagesBloc.add(FetchRouteImages(routeIds: routeIds, trigger: TRIGGER));
+        routeImagesBloc.add(
+            FetchRouteImages(routeIds: routeIds, trigger: TRIGGER));
 
         yield RouteLoaded(entries: _entries);
       } catch (e, st) {
@@ -65,9 +82,11 @@ class GymRouteBloc extends RouteBloc<GymRouteEvent, RouteState> {
       yield RouteLoadedWithImages(entries: _entries);
     } else if (event is AddNewGymRouteWithUserLog) {
       var newRoute = await api.routeAdd(event.grade);
+      // TODO: use fromJson
       _entries[newRoute["id"]] = jsonmdl.Route(
         event.grade,
-        newRoute["created_at"],
+        DateTime.parse(newRoute["created_at"]),
+        api.userId,
       );
 
       yield RouteLoadedWithImages(entries: _entries);
@@ -89,11 +108,21 @@ class GymRouteBloc extends RouteBloc<GymRouteEvent, RouteState> {
   }
 
   @override
-  void fetch() => add(FetchGymRoute());
+  void fetch() => add(FetchGymRoutes());
 
   @override
-  List<String> displayAttrs(entry) {
-    return [entry.grade, entry.createdAt];
+  String headerTitle(entry) {
+    return entry.grade;
+  }
+
+  @override
+  String bodyTitle(entry) {
+    return null;
+  }
+
+  @override
+  String bodySubtitle(entry) {
+    return "added by 'user ${entry.userId.toString()}' (${dateToString(entry.createdAt)})";
   }
 
   @override
@@ -101,7 +130,7 @@ class GymRouteBloc extends RouteBloc<GymRouteEvent, RouteState> {
 
   @override
   Future<void> close() {
-    routeImagesSubscription.cancel();
+    _routeImagesSubscription.cancel();
     return super.close();
   }
 }

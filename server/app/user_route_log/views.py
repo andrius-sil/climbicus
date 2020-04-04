@@ -29,18 +29,22 @@ def add():
 
 
 @blueprint.route("/", methods=["GET"])
-def view():
+@blueprint.route("/<int:route_id>", methods=["GET"])
+def view(route_id=None):
     user_id = request.json["user_id"]
     gym_id = request.json["gym_id"]
 
-    results = db.session.query(UserRouteLog, Routes) \
-        .filter_by(user_id=user_id, gym_id=gym_id) \
-        .join(Routes) \
-        .all()
+    query = db.session.query(UserRouteLog, Routes) \
+        .filter_by(user_id=user_id, gym_id=gym_id)
+    if route_id:
+        query = query.filter_by(route_id=route_id)
+    query = query.join(Routes)
+
     logbook = {}
-    for user_route_log, route in results:
+    for user_route_log, route in query.all():
         logbook[user_route_log.id] = {
             "route_id": route.id,
+            "user_id": route.user_id,
             "grade": route.grade,
             "created_at": user_route_log.created_at.isoformat(),
             "status": user_route_log.status,

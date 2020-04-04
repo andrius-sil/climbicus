@@ -8,6 +8,7 @@ from app.models import Gyms, RouteImages, Routes, UserRouteLog, Users
 from datetime import datetime
 import pytz
 
+from app.utils.encoding import bytes_to_b64str
 from app.utils.io import InputOutputProvider
 
 DATABASE_CONNECTION_URI = "sqlite:///:memory:"
@@ -20,16 +21,20 @@ class TestInputOutputProvider(InputOutputProvider):
         self.upload_dir = "/tmp/climbicus_tests"
 
     def download_file(self, remote_path):
-        filepath = f"{self.resource_dir}/route_images/{remote_path}"
+        filepath = remote_path
+        if not remote_path.startswith("/"):
+            filepath = f"{self.resource_dir}/route_images/{remote_path}"
         with open(filepath, "rb") as f:
             return f.read()
 
     def upload_file(self, file, remote_path):
+        file.seek(0)
         filepath = f"{self.upload_dir}/{remote_path}"
         filedir = os.path.dirname(filepath)
         if not os.path.exists(filedir):
             os.makedirs(filedir)
         file.save(filepath)
+        file.close()
         return filepath
 
 
@@ -71,13 +76,13 @@ def app(resource_dir):
         for i in range(1, 100):  # has to be at least the number of classes
             db.session.add(
                 Routes(
-                    gym_id=1, class_id=str(i), grade="7a", created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
+                    gym_id=1, user_id=1, class_id=str(i), grade="7a", created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
                 )
             )
         for i in range(100, 103):
             db.session.add(
                 Routes(
-                    gym_id=2, class_id=str(i), grade="6a", created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
+                    gym_id=2, user_id=2, class_id=str(i), grade="6a", created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
                 )
             )
         db.session.flush()
@@ -107,6 +112,7 @@ def app(resource_dir):
                 )
                 db.session.add(
                     RouteImages(
+                        route_id=i,
                         user_id=2,
                         model_probability=0.5,
                         model_version="first_version",
@@ -131,6 +137,13 @@ def app(resource_dir):
                     status="flash",
                     created_at=datetime(2012, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
                 ),
+                UserRouteLog(
+                    route_id=1,
+                    user_id=1,
+                    gym_id=1,
+                    status="did-not-finish",
+                    created_at=datetime(2012, 3, 2, 10, 10, 10, tzinfo=pytz.UTC),
+                ),
             ]
         )
         db.session.commit()
@@ -151,6 +164,12 @@ def client(app):
 @pytest.fixture(scope="session")
 def resource_dir():
     return os.path.join(os.path.dirname(os.path.realpath(__file__)), "resources")
+
+
+def image_str(resource_dir, image_name):
+    filepath = f"{resource_dir}/route_images/{image_name}"
+    with open(filepath, "rb") as f:
+        return bytes_to_b64str(f.read())
 
 
 @pytest.fixture(scope="function")

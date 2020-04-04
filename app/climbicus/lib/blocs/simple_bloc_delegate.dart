@@ -18,6 +18,7 @@ class SimpleBlocDelegate extends BlocDelegate {
   @override
   void onError(Bloc bloc, Object error, StackTrace stacktrace) {
     super.onError(bloc, error, stacktrace);
-    debugPrint("Error: $error");
+    var errorDetails = FlutterErrorDetails(exception: error, stack: stacktrace);
+    FlutterError.dumpErrorToConsole(errorDetails);
   }
 }

@@ -4,10 +4,11 @@ part 'route.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Route {
-  Route(this.grade, this.createdAt);
+  Route(this.grade, this.createdAt, this.userId);
 
   String grade;
-  String createdAt;
+  DateTime createdAt;
+  int userId;
 
   factory Route.fromJson(Map<String, dynamic> json) =>
       _$RouteFromJson(json);

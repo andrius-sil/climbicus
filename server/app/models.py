@@ -1,7 +1,8 @@
 from sqlalchemy.ext.hybrid import hybrid_property
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from app import db
+from app import db, io
+from app.utils.encoding import bytes_to_b64str
 
 
 def model_repr(name, **kwargs):
@@ -42,6 +43,7 @@ class Gyms(db.Model):
 class Routes(db.Model):
     id = db.Column(db.Integer, db.Sequence('route_id_seq'), primary_key=True)
     gym_id = db.Column(db.Integer, db.ForeignKey('gyms.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     # TODO: class_id and id should have a 1-1 relationship
     class_id = db.Column(db.String, unique=True, nullable=True)
     # TODO: preset list of possible grades
@@ -69,6 +71,19 @@ class RouteImages(db.Model):
     path = db.Column(db.String, unique=True, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
     descriptors = db.Column(db.JSON, nullable=False)
+
+    @property
+    def api_model(self):
+        fbytes = io.provider.download_file(self.path)
+        base64_str = bytes_to_b64str(fbytes)
+
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "route_id": self.route_id,
+            "created_at": self.created_at.isoformat(),
+            "b64_image": base64_str,
+        }
 
     def __repr__(self):
         return model_repr("RouteImage", id=self.id, user_id=self.user_id, route_id=self.route_id,

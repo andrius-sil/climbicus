@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:climbicus/blocs/route_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
+import 'package:climbicus/ui/route_detailed.dart';
 import 'package:climbicus/ui/route_predictions.dart';
 import 'package:climbicus/utils/api.dart';
 import 'package:climbicus/utils/route_image_picker.dart';
@@ -10,6 +11,84 @@ import 'package:climbicus/utils/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+class RouteListItem {
+  int entryId;
+  Widget image;
+  String headerTitle;
+  String bodyTitle;
+  String bodySubtitle;
+  int routeId;
+  int imageId;
+  String grade;
+  DateTime createdAt;
+  String username;
+  bool isExpanded;
+  RouteListItem({
+    this.entryId,
+    this.image,
+    this.headerTitle,
+    this.bodyTitle,
+    this.bodySubtitle,
+    this.routeId,
+    this.imageId,
+    this.grade,
+    this.createdAt,
+    this.username,
+    this.isExpanded: false
+  });
+}
+
+class HeaderListItem extends StatelessWidget {
+  final Widget image;
+  final String title;
+  final int routeId;
+  final int imageId;
+  final String grade;
+
+  const HeaderListItem({this.image, this.title, this.routeId, this.imageId, this.grade});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(2),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (BuildContext context) {
+                    return RouteDetailedPage(
+                        routeId: this.routeId,
+                        routeGrade: this.grade,
+                    );
+                  },
+                ));
+              },
+              child: Container(
+                height: 80,
+                child: Stack(
+                  children: <Widget>[
+                    this.image,
+  //                  Align(
+  //                    alignment: Alignment.bottomLeft,
+  //                    child: Text("route_id: $routeId, image_id: $imageId"),
+  //                  ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(this.title),
+          ),
+        ],
+      ),
+    );
+  }
+
+}
 
 class RouteViewPage<T extends RouteBloc> extends StatefulWidget {
   final ApiProvider api = ApiProvider();
@@ -25,6 +104,8 @@ class RouteViewPage<T extends RouteBloc> extends StatefulWidget {
 class _RouteViewPageState<T extends RouteBloc> extends State<RouteViewPage<T>> {
   RouteImagesBloc _routeImagesBloc;
   RouteBloc _routeBloc;
+
+  List<RouteListItem> _items = [];
 
   @override
   void initState() {
@@ -89,57 +170,73 @@ class _RouteViewPageState<T extends RouteBloc> extends State<RouteViewPage<T>> {
   }
 
   Widget _buildLogbookGrid(Map entries, {bool withImages: true}) {
-    List<Widget> widgets = [];
+    Map<int, bool> isExpandedPrevious = Map.fromIterable(
+      _items,
+      key: (item) => item.entryId,
+      value: (item) => item.isExpanded,
+    );
+    _items.clear();
 
     (_sortEntriesByLogDate(entries)).forEach((entryId, fields) {
-      var displayAttrs = _routeBloc.displayAttrs(fields);
-      List<Text> textWidgets = [];
-      displayAttrs.forEach((String attr) => textWidgets.add(Text(attr)));
-
-      // Left side - entry description.
-      widgets.add(Container(
-          alignment: Alignment.center,
-          padding: const EdgeInsets.all(8),
-          color: Colors.grey[800],
-          child: Column(
-            children: textWidgets,
-          )));
-
-      // Right side - image.
       var routeId = _routeBloc.routeId(entryId, fields);
-      var imageFields = _routeImagesBloc.images[routeId];
+      var routeImage = _routeImagesBloc.images.defaultImage(routeId);
       var imageWidget;
       var imageId;
       if (!withImages) {
         imageWidget = Container(width: 0, height: 0);
-      } else if (imageFields != null) {
-        imageWidget = Image.memory(base64.decode(imageFields.b64Image));
-        imageId = imageFields.routeImageId;
+      } else if (routeImage != null) {
+        imageWidget = Image.memory(base64.decode(routeImage.b64Image));
+        imageId = routeImage.id;
       } else {
         imageWidget = Image.asset("images/no_image.png");
-        imageId = "n/a";
+        imageId = -1;
       }
-      widgets.add(Container(
-        color: Colors.grey[700],
-        alignment: Alignment.center,
-        child: Stack(
-          children: <Widget>[
-            imageWidget,
-            Align(
-                alignment: Alignment.bottomLeft,
-                child: Text("route_id: $routeId, image_id: $imageId"),
-            ),
-          ],
-        ),
+
+      bool isExpanded = isExpandedPrevious.containsKey(entryId) ?
+          isExpandedPrevious[entryId] :
+          false;
+      _items.add(RouteListItem(
+          entryId: entryId,
+          image: imageWidget,
+          headerTitle: _routeBloc.headerTitle(fields),
+          bodyTitle: _routeBloc.bodyTitle(fields),
+          bodySubtitle: _routeBloc.bodySubtitle(fields),
+          routeId: routeId,
+          imageId: imageId,
+          grade: fields.grade,
+          createdAt: fields.createdAt,
+          username: fields.userId.toString(),
+          isExpanded: isExpanded,
       ));
     });
 
-    return GridView.count(
-      primary: false,
-      padding: const EdgeInsets.all(20),
-      mainAxisSpacing: 10,
-      crossAxisCount: 2,
-      children: widgets,
+    return SingleChildScrollView(
+      child: ExpansionPanelList(
+        expansionCallback: (int i, bool isExpanded) {
+          setState(() {
+            _items[i].isExpanded = !isExpanded;
+          });
+        },
+        children: _items.map<ExpansionPanel>((RouteListItem item) {
+          return ExpansionPanel(
+            headerBuilder: (BuildContext context, bool isExpanded) {
+              return HeaderListItem(
+                image: item.image,
+                title: item.headerTitle,
+                routeId: item.routeId,
+                imageId: item.imageId,
+                grade: item.grade,
+              );
+            },
+            body: ListTile(
+              title: item.bodyTitle != null ? Text(item.bodyTitle): null,
+              subtitle: Text(item.bodySubtitle),
+//              trailing: Icon(Icons.delete),
+            ),
+            isExpanded: item.isExpanded,
+          );
+        }).toList(),
+      ),
     );
   }
 

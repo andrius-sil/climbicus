@@ -22,7 +22,7 @@ class RouteLoadedWithImages extends RouteLoaded {
 class RouteError extends RouteState {
   FlutterErrorDetails errorDetails;
 
-  RouteError({Exception exception, StackTrace stackTrace}):
+  RouteError({Object exception, StackTrace stackTrace}):
         errorDetails = FlutterErrorDetails(exception: exception, stack: stackTrace) {
     FlutterError.dumpErrorToConsole(errorDetails);
   }
@@ -32,7 +32,11 @@ class RouteError extends RouteState {
 abstract class RouteBloc<Event, Entry> extends Bloc<Event, RouteState> {
   void fetch();
 
-  List<String> displayAttrs(entry);
+  String headerTitle(entry);
+
+  String bodyTitle(entry);
+
+  String bodySubtitle(entry);
 
   int routeId(entryId, entry);
 }

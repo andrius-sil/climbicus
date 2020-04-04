@@ -4,6 +4,7 @@ import 'package:climbicus/blocs/route_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/json/user_route_log_entry.dart';
 import 'package:climbicus/utils/api.dart';
+import 'package:climbicus/utils/time.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
@@ -11,7 +12,10 @@ abstract class UserRouteLogEvent {
   const UserRouteLogEvent();
 }
 
-class FetchUserRouteLog extends UserRouteLogEvent {}
+class FetchUserRouteLog extends UserRouteLogEvent {
+  final int routeId;
+  const FetchUserRouteLog({this.routeId});
+}
 
 class AddNewUserRouteLog extends UserRouteLogEvent {
   final int routeId;
@@ -30,10 +34,10 @@ class UserRouteLogBloc extends RouteBloc<UserRouteLogEvent, RouteState> {
   final RouteImagesBloc routeImagesBloc;
 
   Map<int, UserRouteLogEntry> _entries = {};
-  StreamSubscription routeImagesSubscription;
+  StreamSubscription _routeImagesSubscription;
 
   UserRouteLogBloc({@required this.routeImagesBloc}) {
-    routeImagesSubscription = routeImagesBloc.listen((state) {
+    _routeImagesSubscription = routeImagesBloc.listen((state) {
       if (state is RouteImagesLoaded && state.trigger == TRIGGER) {
         add(UpdateUserRouteLog());
       }
@@ -49,8 +53,18 @@ class UserRouteLogBloc extends RouteBloc<UserRouteLogEvent, RouteState> {
       yield RouteLoading();
 
       try {
-        _entries = (await api.fetchLogbook()).map((userRouteLogId, model) =>
+        var data;
+        if (event.routeId != null) {
+          // TODO: avoid redundant fetches if logbook already contains routeId
+          data = api.fetchLogbookOneRoute(event.routeId);
+        } else {
+          data = api.fetchLogbook();
+        }
+
+        Map<String, dynamic> logbook = (await data);
+        var newEntries = logbook.map((userRouteLogId, model) =>
             MapEntry(int.parse(userRouteLogId), UserRouteLogEntry.fromJson(model)));
+        _entries.addAll(newEntries);
 
         var routeIds = _entries.values.map((entry) => entry.routeId).toList();
         routeImagesBloc.add(FetchRouteImages(routeIds: routeIds, trigger: TRIGGER));
@@ -64,11 +78,13 @@ class UserRouteLogBloc extends RouteBloc<UserRouteLogEvent, RouteState> {
     } else if (event is AddNewUserRouteLog) {
       var newEntry = await api.logbookAdd(event.routeId, event.status);
 
+      // TODO: use fromJson
       _entries[newEntry["id"]] = UserRouteLogEntry(
         event.routeId,
         event.grade,
         event.status,
-        newEntry["created_at"],
+        DateTime.parse(newEntry["created_at"]),
+        api.userId,
       );
 
       yield RouteLoadedWithImages(entries: _entries);
@@ -81,8 +97,18 @@ class UserRouteLogBloc extends RouteBloc<UserRouteLogEvent, RouteState> {
   void fetch() => add(FetchUserRouteLog());
 
   @override
-  List<String> displayAttrs(entry) {
-    return [entry.grade, entry.status, entry.createdAt];
+  String headerTitle(entry) {
+    return "${entry.grade} - ${entry.status}";
+  }
+
+  @override
+  String bodyTitle(entry) {
+    return "${dateAndTimeToString(entry.createdAt)}";
+  }
+
+  @override
+  String bodySubtitle(entry) {
+    return "added by 'user ${entry.userId.toString()}'";
   }
 
   @override
@@ -90,7 +116,7 @@ class UserRouteLogBloc extends RouteBloc<UserRouteLogEvent, RouteState> {
 
   @override
   Future<void> close() {
-    routeImagesSubscription.cancel();
+    _routeImagesSubscription.cancel();
     return super.close();
   }
 }

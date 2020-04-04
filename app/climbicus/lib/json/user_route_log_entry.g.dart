@@ -11,7 +11,10 @@ UserRouteLogEntry _$UserRouteLogEntryFromJson(Map<String, dynamic> json) {
     json['route_id'] as int,
     json['grade'] as String,
     json['status'] as String,
-    json['created_at'] as String,
+    json['created_at'] == null
+        ? null
+        : DateTime.parse(json['created_at'] as String),
+    json['user_id'] as int,
   );
 }
 
@@ -20,5 +23,6 @@ Map<String, dynamic> _$UserRouteLogEntryToJson(UserRouteLogEntry instance) =>
       'route_id': instance.routeId,
       'grade': instance.grade,
       'status': instance.status,
-      'created_at': instance.createdAt,
+      'created_at': instance.createdAt?.toIso8601String(),
+      'user_id': instance.userId,
     };

@@ -40,11 +40,9 @@ class ApiProvider {
   final client = http.Client();
 
   String _accessToken;
-  int _userId;
+  int userId;
 
   set accessToken(String value) => _accessToken = value;
-
-  set userId(int value) => _userId = value;
 
   ApiException _apiException(response, responseJson) {
     switch (response.statusCode) {
@@ -81,7 +79,7 @@ class ApiProvider {
 
     Map data = {};
     if (auth) {
-      data["user_id"] = _userId;
+      data["user_id"] = userId;
     }
     data.addAll(requestData);
     request.body = json.encode(data);
@@ -103,7 +101,7 @@ class ApiProvider {
         filename: basename(image.path));
     request.files.add(multipartFile);
 
-    Map data = {"user_id": _userId};
+    Map data = {"user_id": userId};
     data.addAll(requestData);
     request.fields["json"] = json.encode(data);
 
@@ -150,12 +148,24 @@ class ApiProvider {
     return _requestJson("GET", "route_images/", data);
   }
 
+  Future<Map> fetchRouteImagesAllRoute(int routeId) async {
+    return _requestJson("GET", "route_images/route/$routeId", {});
+  }
+
   Future<Map> fetchLogbook() async {
     Map data = {
       "gym_id": CASTLE_GYM_ID,
     };
 
     return _requestJson("GET", "user_route_log/", data);
+  }
+
+  Future<Map> fetchLogbookOneRoute(int routeId) async {
+    Map data = {
+      "gym_id": CASTLE_GYM_ID,
+    };
+
+    return _requestJson("GET", "user_route_log/$routeId", data);
   }
 
   Future<Map> routePredictions(File image) async {
@@ -170,6 +180,13 @@ class ApiProvider {
       "gym_id": CASTLE_GYM_ID,
     };
     return _requestJson("GET", "routes/", data);
+  }
+
+  Future<Map> fetchOneRoute(int routeId) async {
+    Map data = {
+      "gym_id": CASTLE_GYM_ID,
+    };
+    return _requestJson("GET", "routes/$routeId", data);
   }
 
   Future<Map> routeAdd(String grade) async {
