@@ -137,6 +137,13 @@ def app(resource_dir):
                     status="flash",
                     created_at=datetime(2012, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
                 ),
+                UserRouteLog(
+                    route_id=1,
+                    user_id=1,
+                    gym_id=1,
+                    status="did-not-finish",
+                    created_at=datetime(2012, 3, 2, 10, 10, 10, tzinfo=pytz.UTC),
+                ),
             ]
         )
         db.session.commit()
