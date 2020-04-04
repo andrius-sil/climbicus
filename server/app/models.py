@@ -44,14 +44,11 @@ class Routes(db.Model):
     id = db.Column(db.Integer, db.Sequence('route_id_seq'), primary_key=True)
     gym_id = db.Column(db.Integer, db.ForeignKey('gyms.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    # TODO: class_id and id should have a 1-1 relationship
-    class_id = db.Column(db.String, unique=True, nullable=True)
-    # TODO: preset list of possible grades
     grade = db.Column(db.String, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
-        return model_repr("Route", id=self.id, gym_id=self.gym_id, class_id=self.class_id, grade=self.grade)
+        return model_repr("Route", id=self.id, gym_id=self.gym_id, grade=self.grade)
 
 
 class RouteImages(db.Model):
@@ -66,7 +63,6 @@ class RouteImages(db.Model):
     route_id = db.Column(db.Integer, db.ForeignKey('routes.id'))
     route_unmatched = db.Column(db.Boolean, nullable=False, default=False)
 
-    model_probability = db.Column(db.Float)
     model_version = db.Column(db.String, nullable=False)
     path = db.Column(db.String, unique=True, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)

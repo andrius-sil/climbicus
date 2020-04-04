@@ -41,10 +41,8 @@ class TestInputOutputProvider(InputOutputProvider):
 @pytest.fixture(scope="function")
 def app(resource_dir):
     """Create and configure a new app instance for each test."""
-    model_files_path = f"{resource_dir}/"
     app = create_app(
         db_connection_uri=DATABASE_CONNECTION_URI,
-        model_files_path=model_files_path,
         jwt_secret_key=JWT_SECRET_KEY,
         io_provider=TestInputOutputProvider(resource_dir),
     )
@@ -76,13 +74,13 @@ def app(resource_dir):
         for i in range(1, 100):  # has to be at least the number of classes
             db.session.add(
                 Routes(
-                    gym_id=1, user_id=1, class_id=str(i), grade="7a", created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
+                    gym_id=1, user_id=1, grade="7a", created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
                 )
             )
         for i in range(100, 103):
             db.session.add(
                 Routes(
-                    gym_id=2, user_id=2, class_id=str(i), grade="6a", created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
+                    gym_id=2, user_id=2, grade="6a", created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
                 )
             )
         db.session.flush()
@@ -91,7 +89,6 @@ def app(resource_dir):
                 RouteImages(
                     route_id=i,
                     user_id=1,
-                    model_probability=0.5,
                     model_version="first_version",
                     path=f"user1_route{i}.jpg",
                     created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
@@ -103,7 +100,6 @@ def app(resource_dir):
                     RouteImages(
                         route_id=i,
                         user_id=2,
-                        model_probability=0.5,
                         model_version="first_version",
                         path=f"user2_route{i}_1.jpg",
                         created_at=datetime(2019, 2, 4, 10, 10, 10, tzinfo=pytz.UTC),
@@ -114,7 +110,6 @@ def app(resource_dir):
                     RouteImages(
                         route_id=i,
                         user_id=2,
-                        model_probability=0.5,
                         model_version="first_version",
                         path=f"user2_route{i}_2.jpg",
                         created_at=datetime(2019, 2, 4, 10, 10, 10, tzinfo=pytz.UTC),

@@ -31,9 +31,6 @@ docker-stop: check-env
 ec2-deploy: check-env
 	rsync -aHv --delete-during --exclude-from rsync_exclude.txt . ec2-climbicus-${ENV}:/home/ec2-user/climbicus/
 
-model-deploy: check-env
-	aws s3 sync s3://climbicus-${ENV}/models/current/ server/predictor/model_files/
-
 tests:
 	docker exec climbicus_server_1 python -m pytest -v $(args) ./tests
 

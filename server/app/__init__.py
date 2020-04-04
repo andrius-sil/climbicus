@@ -4,17 +4,15 @@ from flask_sqlalchemy import SQLAlchemy
 
 from app.app_handlers import register_handlers
 from app.utils.io import InputOutput
-from predictor.cls_predictor import CLSPredictor
 from predictor.cbir_predictor import CBIRPredictor
 
 
 db = SQLAlchemy()
-cls_predictor = CLSPredictor()
 cbir_predictor = CBIRPredictor()
 io = InputOutput()
 
 
-def create_app(db_connection_uri, model_files_path, jwt_secret_key, io_provider, disable_auth=False):
+def create_app(db_connection_uri, jwt_secret_key, io_provider, disable_auth=False):
     app = Flask(__name__)
 
     app.config["JWT_SECRET_KEY"] = jwt_secret_key
@@ -34,8 +32,6 @@ def create_app(db_connection_uri, model_files_path, jwt_secret_key, io_provider,
     app.config["SQLALCHEMY_DATABASE_URI"] = db_connection_uri
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.init_app(app)
-
-    cls_predictor.load_model(model_files_path)
 
     io.load(io_provider)
 
