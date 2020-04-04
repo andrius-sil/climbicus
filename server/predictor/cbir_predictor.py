@@ -6,6 +6,9 @@ NMATCHES = 10
 MODEL_VERSION = "cbir_v1"
 MAX_IMG_WIDTH = 512
 
+class InvalidImageException(Exception):
+    pass
+
 
 class CBIRPredictor:
     """
@@ -28,6 +31,9 @@ class CBIRPredictor:
         """
         img = np.fromstring(fbytes_image, np.uint8)
         img = cv2.imdecode(img, cv2.IMREAD_COLOR)
+        if img is None:
+            raise InvalidImageException()
+
         # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         # TODO: sort out the colours
         # resizing required for the predictor
