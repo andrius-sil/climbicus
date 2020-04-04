@@ -45,7 +45,7 @@ def test_index(client, auth_headers_user1):
     resp = client.get("/", data=json.dumps(data), content_type="application/json", headers=auth_headers_user1)
 
     assert resp.status_code == 200
-    assert b"Flask Dockerized" in resp.data
+    assert b"Keep calm and crimp harder" in resp.data
 
 
 def test_index_no_auth_header(client):
