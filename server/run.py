@@ -2,7 +2,6 @@ import os
 
 from app import create_app
 from app.utils.io import S3InputOutputProvider
-from predictor.model_parameters import MODEL_FILES_PATH
 
 user = os.environ["POSTGRES_USER"]
 password = os.environ["POSTGRES_PASSWORD"]
@@ -20,7 +19,6 @@ print(f"Running on '{ENV}'")
 
 app = create_app(
     db_connection_uri=DATABASE_CONNECTION_URI,
-    model_files_path=MODEL_FILES_PATH,
     jwt_secret_key=JWT_SECRET_KEY,
     io_provider=S3InputOutputProvider(ENV),
     disable_auth=DISABLE_AUTH,

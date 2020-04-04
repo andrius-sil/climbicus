@@ -2,7 +2,7 @@ import datetime
 import json
 import uuid
 
-from app import db, cls_predictor, cbir_predictor, io
+from app import db, cbir_predictor, io
 from app.models import RouteImages, Routes
 
 from flask import abort, request, Blueprint, jsonify
@@ -48,41 +48,6 @@ def add():
         "created_at": route.created_at.isoformat(),
         "msg": "Route added",
     })
-
-
-@blueprint.route("/predictions_cls", methods=["POST"])
-def predict_cls():
-    json_data = json.loads(request.form["json"])
-    user_id = json_data["user_id"]
-    gym_id = json_data["gym_id"]
-
-    imagefile = request.files.get("image")
-    if imagefile is None:
-        abort(400, "image file is missing")
-    try:
-        predictor_results = cls_predictor.predict_route(imagefile)
-    except OSError:
-        abort(400, "not a valid image")
-
-    sorted_class_ids = predictor_results.get_sorted_class_ids(max_results=MAX_NUMBER_OF_PREDICTED_ROUTES)
-
-    routes = db.session.query(Routes).filter(Routes.gym_id == gym_id, Routes.class_id.in_(sorted_class_ids)).all()
-    routes = reorder_routes_by_classes(routes, sorted_class_ids)
-
-    sorted_route_predictions = [{"route_id": r.id, "grade": r.grade} for r in routes]
-    response = {"sorted_route_predictions": sorted_route_predictions}
-
-    route_image = store_image(
-        fs_image=imagefile,
-        user_id=user_id,
-        gym_id=gym_id,
-        model_probability=predictor_results.get_class_probability(sorted_class_ids[0]),
-        model_version=predictor_results.model_version,
-        descriptors="placeholder",
-    )
-    response["route_image_id"] = route_image.id
-
-    return jsonify(response)
 
 
 @blueprint.route("/predictions_cbir", methods=["POST"])
@@ -131,7 +96,7 @@ def predict_cbir():
     return jsonify(response)
 
 
-def store_image(fs_image, user_id, gym_id, model_version, descriptors, model_probability=None):
+def store_image(fs_image, user_id, gym_id, model_version, descriptors):
     now = datetime.datetime.utcnow()
     hex_id = uuid.uuid4().hex
     imagepath = f"route_images/from_users/{gym_id}/{now.year}/{now.month:02d}/{hex_id}.jpg"
@@ -140,7 +105,6 @@ def store_image(fs_image, user_id, gym_id, model_version, descriptors, model_pro
 
     route_image = RouteImages(
         user_id=user_id,
-        model_probability=model_probability,
         model_version=model_version,
         path=saved_image_path,
         created_at=now,
@@ -150,9 +114,3 @@ def store_image(fs_image, user_id, gym_id, model_version, descriptors, model_pro
     db.session.commit()
 
     return route_image
-
-
-def reorder_routes_by_classes(routes, sorted_class_ids):
-    route_map = {r.class_id: r for r in routes}
-    sorted_routes = [route_map[c] for c in sorted_class_ids]
-    return sorted_routes
