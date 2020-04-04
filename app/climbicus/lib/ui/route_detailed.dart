@@ -158,6 +158,11 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
 
       ascents.add(Text("${entry.status} - ${dateToString(entry.createdAt)}"));
     }
+
+    if (ascents.isEmpty) {
+      return Text("no ascents yet..");
+    }
+
     return Column(
       children: ascents,
     );
