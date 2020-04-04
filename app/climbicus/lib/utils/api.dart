@@ -160,6 +160,14 @@ class ApiProvider {
     return _requestJson("GET", "user_route_log/", data);
   }
 
+  Future<Map> fetchLogbookOneRoute(int routeId) async {
+    Map data = {
+      "gym_id": CASTLE_GYM_ID,
+    };
+
+    return _requestJson("GET", "user_route_log/$routeId", data);
+  }
+
   Future<Map> routePredictions(File image) async {
     Map data = {
       "gym_id": CASTLE_GYM_ID,
@@ -172,6 +180,13 @@ class ApiProvider {
       "gym_id": CASTLE_GYM_ID,
     };
     return _requestJson("GET", "routes/", data);
+  }
+
+  Future<Map> fetchOneRoute(int routeId) async {
+    Map data = {
+      "gym_id": CASTLE_GYM_ID,
+    };
+    return _requestJson("GET", "routes/$routeId", data);
   }
 
   Future<Map> routeAdd(String grade) async {

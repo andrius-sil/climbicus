@@ -36,7 +36,7 @@ class RoutePredictionLoadedWithImages extends RoutePredictionLoaded {
 class RoutePredictionError extends RoutePredictionState {
   FlutterErrorDetails errorDetails;
 
-  RoutePredictionError({Exception exception, StackTrace stackTrace}):
+  RoutePredictionError({Object exception, StackTrace stackTrace}):
         errorDetails = FlutterErrorDetails(exception: exception, stack: stackTrace) {
     FlutterError.dumpErrorToConsole(errorDetails);
   }

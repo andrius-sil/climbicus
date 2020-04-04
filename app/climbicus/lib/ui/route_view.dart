@@ -20,6 +20,7 @@ class RouteListItem {
   String bodySubtitle;
   int routeId;
   int imageId;
+  String grade;
   DateTime createdAt;
   String username;
   bool isExpanded;
@@ -31,6 +32,7 @@ class RouteListItem {
     this.bodySubtitle,
     this.routeId,
     this.imageId,
+    this.grade,
     this.createdAt,
     this.username,
     this.isExpanded: false
@@ -42,8 +44,9 @@ class HeaderListItem extends StatelessWidget {
   final String title;
   final int routeId;
   final int imageId;
+  final String grade;
 
-  const HeaderListItem({this.image, this.title, this.routeId, this.imageId});
+  const HeaderListItem({this.image, this.title, this.routeId, this.imageId, this.grade});
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +59,10 @@ class HeaderListItem extends StatelessWidget {
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(
                   builder: (BuildContext context) {
-                    return RouteDetailedPage(routeId: this.routeId);
+                    return RouteDetailedPage(
+                        routeId: this.routeId,
+                        routeGrade: this.grade,
+                    );
                   },
                 ));
               },
@@ -197,6 +203,7 @@ class _RouteViewPageState<T extends RouteBloc> extends State<RouteViewPage<T>> {
           bodySubtitle: _routeBloc.bodySubtitle(fields),
           routeId: routeId,
           imageId: imageId,
+          grade: fields.grade,
           createdAt: fields.createdAt,
           username: fields.userId.toString(),
           isExpanded: isExpanded,
@@ -218,6 +225,7 @@ class _RouteViewPageState<T extends RouteBloc> extends State<RouteViewPage<T>> {
                 title: item.headerTitle,
                 routeId: item.routeId,
                 imageId: item.imageId,
+                grade: item.grade,
               );
             },
             body: ListTile(

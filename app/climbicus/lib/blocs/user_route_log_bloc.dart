@@ -12,7 +12,10 @@ abstract class UserRouteLogEvent {
   const UserRouteLogEvent();
 }
 
-class FetchUserRouteLog extends UserRouteLogEvent {}
+class FetchUserRouteLog extends UserRouteLogEvent {
+  final int routeId;
+  const FetchUserRouteLog({this.routeId});
+}
 
 class AddNewUserRouteLog extends UserRouteLogEvent {
   final int routeId;
@@ -31,10 +34,10 @@ class UserRouteLogBloc extends RouteBloc<UserRouteLogEvent, RouteState> {
   final RouteImagesBloc routeImagesBloc;
 
   Map<int, UserRouteLogEntry> _entries = {};
-  StreamSubscription routeImagesSubscription;
+  StreamSubscription _routeImagesSubscription;
 
   UserRouteLogBloc({@required this.routeImagesBloc}) {
-    routeImagesSubscription = routeImagesBloc.listen((state) {
+    _routeImagesSubscription = routeImagesBloc.listen((state) {
       if (state is RouteImagesLoaded && state.trigger == TRIGGER) {
         add(UpdateUserRouteLog());
       }
@@ -50,8 +53,18 @@ class UserRouteLogBloc extends RouteBloc<UserRouteLogEvent, RouteState> {
       yield RouteLoading();
 
       try {
-        _entries = (await api.fetchLogbook()).map((userRouteLogId, model) =>
+        var data;
+        if (event.routeId != null) {
+          // TODO: avoid redundant fetches if logbook already contains routeId
+          data = api.fetchLogbookOneRoute(event.routeId);
+        } else {
+          data = api.fetchLogbook();
+        }
+
+        Map<String, dynamic> logbook = (await data);
+        var newEntries = logbook.map((userRouteLogId, model) =>
             MapEntry(int.parse(userRouteLogId), UserRouteLogEntry.fromJson(model)));
+        _entries.addAll(newEntries);
 
         var routeIds = _entries.values.map((entry) => entry.routeId).toList();
         routeImagesBloc.add(FetchRouteImages(routeIds: routeIds, trigger: TRIGGER));
@@ -103,7 +116,7 @@ class UserRouteLogBloc extends RouteBloc<UserRouteLogEvent, RouteState> {
 
   @override
   Future<void> close() {
-    routeImagesSubscription.cancel();
+    _routeImagesSubscription.cancel();
     return super.close();
   }
 }

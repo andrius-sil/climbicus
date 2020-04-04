@@ -97,7 +97,7 @@ class RouteImagesLoaded extends RouteImagesState {
 class RouteImagesError extends RouteImagesState {
   FlutterErrorDetails errorDetails;
 
-  RouteImagesError({Exception exception, StackTrace stackTrace}):
+  RouteImagesError({Object exception, StackTrace stackTrace}):
         errorDetails = FlutterErrorDetails(exception: exception, stack: stackTrace) {
     FlutterError.dumpErrorToConsole(errorDetails);
   }
@@ -120,6 +120,10 @@ class RouteImagesBloc extends Bloc<RouteImagesEvent, RouteImagesState> {
 
       // Do not fetch already present route images.
       routeIds.removeWhere((id) => images.contains(id));
+      if (routeIds.isEmpty) {
+        yield RouteImagesLoaded(images: images, trigger: event.trigger);
+        return;
+      }
 
       try {
         Map<String, dynamic> routeImages =

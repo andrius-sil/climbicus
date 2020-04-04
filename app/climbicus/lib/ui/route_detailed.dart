@@ -1,14 +1,21 @@
 import 'dart:convert';
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:climbicus/blocs/gym_route_bloc.dart';
+import 'package:climbicus/blocs/user_route_log_bloc.dart';
+import 'package:climbicus/json/route.dart' as jsonmdl;
+import 'package:climbicus/blocs/route_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
+import 'package:climbicus/json/user_route_log_entry.dart';
+import 'package:climbicus/utils/time.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RouteDetailedPage extends StatefulWidget {
   final int routeId;
+  final String routeGrade;
 
-  const RouteDetailedPage({@required this.routeId});
+  const RouteDetailedPage({@required this.routeId, @required this.routeGrade});
 
   @override
   State<StatefulWidget> createState() => _RouteDetailedPage();
@@ -16,6 +23,8 @@ class RouteDetailedPage extends StatefulWidget {
 
 class _RouteDetailedPage extends State<RouteDetailedPage> {
   RouteImagesBloc _routeImagesBloc;
+  GymRouteBloc _gymRouteBloc;
+  UserRouteLogBloc _userRouteLogBloc;
 
   int _current = 0;
 
@@ -24,29 +33,58 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
     super.initState();
 
     _routeImagesBloc = BlocProvider.of<RouteImagesBloc>(context);
+    _gymRouteBloc = BlocProvider.of<GymRouteBloc>(context);
+    _userRouteLogBloc = BlocProvider.of<UserRouteLogBloc>(context);
 
-    _routeImagesBloc.add(FetchRouteImagesAll(
-      routeId: widget.routeId,
-    ));
+    _routeImagesBloc.add(FetchRouteImagesAll(routeId: widget.routeId,));
+    _gymRouteBloc.add(FetchGymRoutes(routeId: widget.routeId));
+    _userRouteLogBloc.add(FetchUserRouteLog(routeId: widget.routeId));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('a route'),
+        title: Text('${widget.routeGrade} route'),
       ),
-      body: BlocBuilder<RouteImagesBloc, RouteImagesState>(
-        builder: (context, state) {
-          if (state is RouteImagesLoaded) {
-            return _buildImageCarousel(state.images);
-          } else if (state is RouteImagesError) {
-            return ErrorWidget.builder(state.errorDetails);
-          }
+      body: Column(
+        children: <Widget>[
+          BlocBuilder<RouteImagesBloc, RouteImagesState>(
+            builder: (context, state) {
+              if (state is RouteImagesLoaded) {
+                return _buildImageCarousel(state.images);
+              } else if (state is RouteImagesError) {
+                return ErrorWidget.builder(state.errorDetails);
+              }
 
-          return CircularProgressIndicator();
-        },
-      ),
+              return CircularProgressIndicator();
+            },
+          ),
+          BlocBuilder<GymRouteBloc, RouteState>(
+            builder: (context, state) {
+              if (state is RouteLoaded) {
+                return _buildRouteDetails(state.entries);
+              } else if (state is RouteError) {
+                return ErrorWidget.builder(state.errorDetails);
+              }
+
+              return CircularProgressIndicator();
+            },
+          ),
+          Text("Your ascents:"),
+          BlocBuilder<UserRouteLogBloc, RouteState>(
+            builder: (context, state) {
+              if (state is RouteLoaded) {
+                return _buildRouteAscents(state.entries);
+              } else if (state is RouteError) {
+                return ErrorWidget.builder(state.errorDetails);
+              }
+
+              return CircularProgressIndicator();
+            },
+          ),
+        ],
+      )
     );
   }
 
@@ -63,6 +101,8 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
     return Stack(children: [
       CarouselSlider(
         height: 200,
+        viewportFraction: 0.5,
+        enlargeCenterPage: true,
         enableInfiniteScroll: false,
         items: allImages.values.map((img) {
           return Builder(
@@ -101,5 +141,25 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
         ),
       ),
     ]);
+  }
+
+  Widget _buildRouteDetails(Map<int, jsonmdl.Route> entries) {
+    var currentRoute = entries[widget.routeId];
+
+    return Text("added by 'user ${currentRoute.userId.toString()}' (${dateToString(currentRoute.createdAt)})");
+  }
+
+  Widget _buildRouteAscents(Map<int, UserRouteLogEntry> entries) {
+    List<Widget> ascents = [];
+    for (UserRouteLogEntry entry in entries.values) {
+      if (entry.routeId != widget.routeId) {
+        continue;
+      }
+
+      ascents.add(Text("${entry.status} - ${dateToString(entry.createdAt)}"));
+    }
+    return Column(
+      children: ascents,
+    );
   }
 }
