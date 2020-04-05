@@ -75,9 +75,9 @@ class AddNewRouteImage extends RouteImagesEvent {
 }
 
 class UpdateRouteImage extends RouteImagesEvent {
-  final int routeId;
   final int routeImageId;
-  const UpdateRouteImage({this.routeId, this.routeImageId});
+  final int routeId;
+  const UpdateRouteImage({@required this.routeImageId, this.routeId});
 }
 
 abstract class RouteImagesState {
@@ -153,13 +153,13 @@ class RouteImagesBloc extends Bloc<RouteImagesEvent, RouteImagesState> {
   } else if (event is AddNewRouteImage) {
       // Not uploading image to the database via API because all images are
       // uploaded as part of predictions at the moment.
-      api.routeMatch(event.routeId, event.routeImage.id);
+      api.routeMatch(event.routeImage.id, event.routeId);
 
       images.addRoutes({event.routeId: event.routeImage});
 
       yield RouteImagesLoaded(images: images, trigger: event.trigger);
     } else if (event is UpdateRouteImage) {
-      api.routeMatch(event.routeId, event.routeImageId);
+      api.routeMatch(event.routeImageId, event.routeId);
     }
   }
 }

@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/blocs/route_predictions_bloc.dart';
 import 'package:climbicus/ui/route_match.dart';
-import 'package:climbicus/utils/api.dart';
 import 'package:climbicus/utils/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,7 +11,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'add_route.dart';
 
 class RoutePredictionsPage extends StatefulWidget {
-  final ApiProvider api = ApiProvider();
   final Settings settings = Settings();
   final File image;
 

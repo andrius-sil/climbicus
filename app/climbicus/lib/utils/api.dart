@@ -120,10 +120,9 @@ class ApiProvider {
     return _requestJson("POST", "login", data, auth: false);
   }
 
-  Future<Map> routeMatch(
-      int routeId, int routeImageId, {bool routeMatched: true}) async {
+  Future<Map> routeMatch(int routeImageId, int routeId) async {
     Map data = {
-      "is_match": routeMatched ? 1 : 0,
+      "is_match": (routeId != null) ? 1 : 0,
       "route_id": routeId,
     };
 

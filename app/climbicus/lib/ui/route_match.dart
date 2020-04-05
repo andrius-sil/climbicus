@@ -1,12 +1,9 @@
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/blocs/user_route_log_bloc.dart';
-import 'package:climbicus/utils/api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RouteMatchPage extends StatefulWidget {
-  final ApiProvider api = ApiProvider();
-
   final int selectedRouteId;
   final Image selectedImage;
   final int takenRouteImageId;
