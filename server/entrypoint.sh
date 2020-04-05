@@ -9,6 +9,7 @@ Commands
 dev          : Start Flask development server
 prod         : Start uwsgi & nginx server
 recreate-db  : Recreate the database
+routes       : List all Flask endpoints
 shell        : Start Bash shell
 help         : Show this message
 """
@@ -23,6 +24,9 @@ case "$1" in
     ;;
     recreate-db)
         flask recreate-db
+    ;;
+    routes)
+        flask routes
     ;;
     shell)
         /bin/bash
