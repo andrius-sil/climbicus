@@ -52,10 +52,16 @@ def test_all_route_images(client, resource_dir, auth_headers_user1):
 
 
 def test_route_match(client, app, resource_dir, auth_headers_user2):
+    with app.app_context():
+        route_image = db.session.query(RouteImages).filter_by(id=4).one()
+        route_image.route_id = None
+        route_image.route_unmatched = True
+        db.session.commit()
+
     data = {
         "user_id": 2,
         "is_match": 1,
-        "route_id": 2,
+        "route_id": 3,
     }
     resp = client.patch("/route_images/4", data=json.dumps(data), content_type="application/json", headers=auth_headers_user2)
 
@@ -64,18 +70,17 @@ def test_route_match(client, app, resource_dir, auth_headers_user2):
     assert resp.json["msg"] == "Route image updated with user's route id choice"
 
     assert resp.json["route_image"] == {
-        "id": 4, "route_id": 2, "user_id": 2, "created_at": "2019-02-04T10:10:10",
+        "id": 4, "route_id": 3, "user_id": 2, "created_at": "2019-02-04T10:10:10",
         "b64_image": image_str(resource_dir, "user2_route2_2.jpg")
     }
 
     with app.app_context():
         route_image = db.session.query(RouteImages).filter_by(id=4).one()
-        assert route_image.route_id == 2
+        assert route_image.route_id == 3
         assert not route_image.route_unmatched
 
 
-@pytest.mark.skip(reason="WIP")
-def test_route_match_no_match(client, app, auth_headers_user2):
+def test_route_match_no_match(client, app, resource_dir, auth_headers_user2):
     data = {
         "user_id": 2,
         "is_match": 0,
@@ -86,6 +91,11 @@ def test_route_match_no_match(client, app, auth_headers_user2):
     assert resp.status_code == 200
     assert resp.is_json
     assert resp.json["msg"] == "Route image updated with user's route id choice"
+
+    assert resp.json["route_image"] == {
+        "id": 4, "route_id": None, "user_id": 2, "created_at": "2019-02-04T10:10:10",
+        "b64_image": image_str(resource_dir, "user2_route2_2.jpg")
+    }
 
     with app.app_context():
         route_image = db.session.query(RouteImages).filter_by(id=4).one()

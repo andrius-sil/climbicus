@@ -1,9 +1,8 @@
-import math
 from datetime import datetime
 from unittest import mock
 from unittest.mock import Mock
+from uuid import UUID
 
-import pytest
 import pytz
 
 from app.models import RouteImages, Routes
@@ -72,7 +71,6 @@ def test_add_route(client, app, auth_headers_user1):
         assert route.created_at == datetime(2019, 3, 4, 10, 10, 10)
 
 
-@pytest.mark.skip(reason="WIP")
 def test_predict_no_image(client, auth_headers_user1):
     json_data = {
         "user_id": 1,
@@ -81,35 +79,13 @@ def test_predict_no_image(client, auth_headers_user1):
     data = {
         "json": json.dumps(json_data),
     }
-    resp = client.post("/routes/predictions_cls", data=data, headers=auth_headers_user1)
+    resp = client.post("/routes/predictions_cbir", data=data, headers=auth_headers_user1)
 
     assert resp.status_code == 400
     assert resp.is_json
     assert resp.json["msg"] == "image file is missing"
 
 
-@pytest.mark.skip(reason="WIP")
-def test_predict_with_image(client, resource_dir, auth_headers_user1):
-    json_data = {
-        "user_id": 1,
-        "gym_id": 1,
-    }
-    data = {
-        "json": json.dumps(json_data),
-        "image": open(f"{resource_dir}/green_route.jpg", "rb"),
-    }
-
-    resp = client.post("/routes/predictions_cls", data=data, headers=auth_headers_user1)
-
-    assert resp.status_code == 200
-    assert resp.is_json
-
-    with open(f"{resource_dir}/green_route_response.json", 'rb') as f:
-        green_route_response = json.load(f)
-    assert resp.get_json() == green_route_response
-
-
-@pytest.mark.skip(reason="WIP")
 def test_predict_with_invalid_image(client, auth_headers_user1):
     json_data = {
         "user_id": 1,
@@ -120,91 +96,67 @@ def test_predict_with_invalid_image(client, auth_headers_user1):
         "image": b"thisIsNotAnImage",
     }
 
-    resp = client.post("/routes/predictions_cls", data=data, headers=auth_headers_user1)
+    resp = client.post("/routes/predictions_cbir", data=data, headers=auth_headers_user1)
     assert resp.status_code == 400
     assert resp.is_json
     assert resp.json["msg"] == "image file is missing"
 
 
-@pytest.mark.skip(reason="WIP")
 def test_predict_with_corrupt_image(client, resource_dir, auth_headers_user1):
-    """
-    Testing with a file which is not a real image.
-    """
     json_data = {
         "user_id": 1,
         "gym_id": 1,
     }
     data = {
         "json": json.dumps(json_data),
-        "image": open(f"{resource_dir}/corrupt_route.jpg", "rb"),
+        "image": open(f"{resource_dir}/route_images/corrupt_route.jpg", "rb"),
     }
 
-    resp = client.post("/routes/predictions_cls", data=data, headers=auth_headers_user1)
+    resp = client.post("/routes/predictions_cbir", data=data, headers=auth_headers_user1)
     assert resp.status_code == 400
     assert resp.is_json
-    assert resp.json["msg"] == "not a valid image"
+    assert resp.json["msg"] == "image file is invalid"
 
 
-@pytest.mark.skip(reason="WIP")
+@mock.patch("datetime.datetime", Mock(utcnow=lambda: datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)))
 def test_predict_with_unknown_image(client, resource_dir, auth_headers_user1):
-    """
-    Testing with an image of a route unknown to the model.
-    """
     json_data = {
         "user_id": 1,
         "gym_id": 1,
     }
     data = {
         "json": json.dumps(json_data),
-        "image": open(f"{resource_dir}/unknown_route.jpg", "rb"),
+        "image": open(f"{resource_dir}/route_images/unknown_route.jpg", "rb"),
     }
 
-    resp = client.post("/routes/predictions_cls", data=data, headers=auth_headers_user1)
-    # For now, the current model still predicts a route with high probability, hence we cannot say "this is unknown
-    # route"
+    resp = client.post("/routes/predictions_cbir", data=data, headers=auth_headers_user1)
+
     assert resp.status_code == 200
     assert resp.is_json
 
-    with open(f"{resource_dir}/unknown_route_response.json", 'rb') as f:
-        unknown_route_response = json.load(f)
-    assert resp.get_json() == unknown_route_response
+    assert resp.json["sorted_route_predictions"] == [
+        { "grade": "7a", "route_id": 1 },
+        { "grade": "7a", "route_id": 2 },
+        { "grade": "7a", "route_id": 3 },
+        { "grade": "7a", "route_id": 4 },
+    ]
+
+    assert resp.json["route_image"] == {
+        "id": 9, "route_id": None, "user_id": 1, "created_at": "2019-03-04T10:10:10",
+        "b64_image": image_str(resource_dir, "unknown_route.jpg")
+    }
 
 
-@pytest.mark.skip(reason="WIP")
 @mock.patch("datetime.datetime", Mock(utcnow=lambda: datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)))
-def test_storing_image_path_to_db(app, client, resource_dir, auth_headers_user1):
-    """
-    Testing with an image of a route unknown to the model.
-    """
+@mock.patch("uuid.uuid4", lambda: UUID('12345678123456781234567812345678'))
+def test_cbir_predict_with_image(app, client, resource_dir, auth_headers_user1):
     json_data = {
         "user_id": 1,
         "gym_id": 1,
     }
     data = {
         "json": json.dumps(json_data),
-        "image": open(f"{resource_dir}/unknown_route.jpg", "rb"),
-    }
-
-    resp = client.post("/routes/predictions_cls", data=data, headers=auth_headers_user1)
-    assert resp.status_code == 200
-    assert resp.is_json
-
-    with app.app_context():
-        stored_image = db.session.query(RouteImages).filter_by(id=resp.json['route_image_id']).one_or_none()
-
-    assert stored_image.created_at.isoformat() == "2019-03-04T10:10:10"
-
-
-@mock.patch("datetime.datetime", Mock(utcnow=lambda: datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)))
-def test_cbir_predict_with_image(client, resource_dir, auth_headers_user1):
-    json_data = {
-        "user_id": 1,
-        "gym_id": 1,
-    }
-    data = {
-        "json": json.dumps(json_data),
-        "image": open(f"{resource_dir}/green_route.jpg", "rb"),
+        "image": open(f"{resource_dir}/route_images/green_route.jpg", "rb"),
     }
 
     resp = client.post("/routes/predictions_cbir", data=data, headers=auth_headers_user1)
@@ -223,3 +175,14 @@ def test_cbir_predict_with_image(client, resource_dir, auth_headers_user1):
         "id": 9, "route_id": None, "user_id": 1, "created_at": "2019-03-04T10:10:10",
         "b64_image": image_str(resource_dir, "green_route.jpg")
     }
+
+    with app.app_context():
+        stored_image = db.session.query(RouteImages).filter_by(id=9).one()
+        assert stored_image.id == 9
+        assert stored_image.user_id == 1
+        assert stored_image.route_id is None
+        assert stored_image.route_unmatched == False
+        assert stored_image.model_version == "cbir_v1"
+        assert stored_image.path == "/tmp/climbicus_tests/route_images/from_users/1/2019/03/12345678123456781234567812345678.jpg"
+        assert stored_image.created_at == datetime(2019, 3, 4, 10, 10, 10)
+        assert stored_image.descriptors == json.load(open(f"{resource_dir}/cbir/green_route_descriptor.json"))

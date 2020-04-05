@@ -7,6 +7,8 @@ from app.models import RouteImages, Routes
 
 from flask import abort, request, Blueprint, jsonify
 
+from predictor.cbir_predictor import InvalidImageException
+
 blueprint = Blueprint("routes_blueprint", __name__, url_prefix="/routes")
 
 MAX_NUMBER_OF_PREDICTED_ROUTES = 20
@@ -78,7 +80,11 @@ def predict_cbir():
 
     fbytes_image = fs_image.read()
 
-    cbir_prediction = cbir_predictor.predict_route(fbytes_image, route_images, MAX_NUMBER_OF_PREDICTED_ROUTES)
+    try:
+        cbir_prediction = cbir_predictor.predict_route(fbytes_image, route_images, MAX_NUMBER_OF_PREDICTED_ROUTES)
+    except InvalidImageException:
+        abort(400, "image file is invalid")
+        return
     predicted_routes = cbir_prediction.get_predicted_routes()
     descriptor = cbir_prediction.get_descriptor()
 
