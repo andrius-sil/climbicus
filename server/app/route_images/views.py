@@ -49,6 +49,7 @@ def route_match(route_image_id):
     if user_match == 1:
         route_image.route_id = route_id
     else:
+        route_image.route_id = None
         route_image.route_unmatched = True
     db.session.commit()
 
