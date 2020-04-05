@@ -52,6 +52,12 @@ def test_all_route_images(client, resource_dir, auth_headers_user1):
 
 
 def test_route_match(client, app, resource_dir, auth_headers_user2):
+    with app.app_context():
+        route_image = db.session.query(RouteImages).filter_by(id=4).one()
+        route_image.route_id = None
+        route_image.route_unmatched = True
+        db.session.commit()
+
     data = {
         "user_id": 2,
         "is_match": 1,

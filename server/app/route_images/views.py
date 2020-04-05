@@ -48,6 +48,7 @@ def route_match(route_image_id):
     route_image = db.session.query(RouteImages).filter_by(id=route_image_id, user_id=user_id).one()
     if user_match == 1:
         route_image.route_id = route_id
+        route_image.route_unmatched = False
     else:
         route_image.route_id = None
         route_image.route_unmatched = True
