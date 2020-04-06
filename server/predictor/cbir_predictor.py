@@ -31,8 +31,8 @@ class CBIRPredictor:
         The input image needs to be the right format, colour and size
         JPEG compression is left for the app
         """
-        img = np.fromstring(fbytes_image, np.uint8)
-        img = cv2.imdecode(img, cv2.COLOR_BGR2GRAY)
+        img_arr = np.fromstring(fbytes_image, np.uint8)
+        img = cv2.imdecode(img_arr, cv2.COLOR_BGR2GRAY)
         if img is None:
             raise InvalidImageException()
 
