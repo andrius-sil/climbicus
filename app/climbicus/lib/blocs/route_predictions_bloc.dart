@@ -3,10 +3,16 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
-import 'package:climbicus/json/prediction.dart';
+import 'package:climbicus/json/route.dart' as jsonmdl;
 import 'package:climbicus/json/route_image.dart';
 import 'package:climbicus/utils/api.dart';
 import 'package:flutter/widgets.dart';
+
+class Prediction {
+  jsonmdl.Route route;
+  RouteImage routeImage;
+  Prediction({this.route, this.routeImage});
+}
 
 class ImagePickerData {
   final RouteImage routeImage;
@@ -86,7 +92,10 @@ class RoutePredictionBloc extends Bloc<RoutePredictionEvent, RoutePredictionStat
         _imgPickerData = ImagePickerData(
           RouteImage.fromJson(imageAndPredictions["route_image"]),
           event.image,
-          predictions.map((model) => Prediction.fromJson(model)).toList(),
+          predictions.map((model) => Prediction(
+              route: jsonmdl.Route.fromJson(model["route"]),
+              routeImage: RouteImage.fromJson(model["route_image"]),
+          )).toList(),
         );
 
         var routeIds = _routeIds(_imgPickerData.predictions, event.displayPredictionsNum);
@@ -110,7 +119,7 @@ class RoutePredictionBloc extends Bloc<RoutePredictionEvent, RoutePredictionStat
   }
 
   List<int> _routeIds(List<Prediction> predictions, int displayPredictionsNum) {
-    List<int> routeIds = List.generate(displayPredictionsNum, (i) => predictions[i].routeId);
+    List<int> routeIds = List.generate(displayPredictionsNum, (i) => predictions[i].route.id);
     return routeIds;
   }
 }

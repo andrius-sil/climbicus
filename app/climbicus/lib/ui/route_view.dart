@@ -5,7 +5,6 @@ import 'package:climbicus/blocs/route_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/ui/route_detailed.dart';
 import 'package:climbicus/ui/route_predictions.dart';
-import 'package:climbicus/utils/api.dart';
 import 'package:climbicus/utils/route_image_picker.dart';
 import 'package:climbicus/utils/settings.dart';
 import 'package:flutter/material.dart';
@@ -91,7 +90,6 @@ class HeaderListItem extends StatelessWidget {
 }
 
 class RouteViewPage<T extends RouteBloc> extends StatefulWidget {
-  final ApiProvider api = ApiProvider();
   final RouteImagePicker imagePicker = RouteImagePicker();
   final Settings settings = Settings();
 

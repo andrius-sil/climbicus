@@ -104,8 +104,8 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
 
     for (var i = 0; i < widget.settings.displayPredictionsNum; i++) {
       var fields = imgPickerData.predictions[i];
-      var routeId = fields.routeId;
-      var grade = fields.grade;
+      var routeId = fields.route.id;
+      var grade = fields.route.grade;
 
       // Left side - image.
       var imageFields = _routeImagesBloc.images.defaultImage(routeId);
@@ -136,7 +136,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
             color: Colors.grey[800],
             child: Column(
               children: <Widget>[
-                Text("route_id: ${fields.routeId}"),
+                Text("route_id: ${fields.route.id}"),
                 Text("grade: $grade"),
               ],
             )

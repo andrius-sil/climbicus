@@ -54,36 +54,36 @@ class CBIRPredictor:
         _, des = self.orb.detectAndCompute(img, None)
         return des
 
-    def calc_record_distances(self, des, route_images, nmatches):
+    def calc_record_distances(self, des, routes_and_images, nmatches):
         """
         Obtains match distances for the query image with all available descriptors
         """
-        for i in route_images:
-            i_descriptors = np.array(json.loads(i['descriptors'])).astype('uint8')
+        for i in routes_and_images:
+            i_descriptors = np.array(json.loads(i['route_image'].descriptors)).astype('uint8')
             matches = self.matcher.match(des, i_descriptors)
             matches = sorted(matches, key=lambda x: x.distance)
             dist = sum([x.distance for x in matches[:nmatches]])
             i['distance'] = dist
-        return route_images
+        return routes_and_images
 
-    def predict_route(self, fbytes_image, route_images, top_n_categories):
+    def predict_route(self, fbytes_image, routes_and_images, top_n_categories):
         """Makes a route predictions for a single image"""
         img = self.process_image(fbytes_image)
         des = self.generate_descriptors(img)
-        route_images = self.calc_record_distances(des, route_images, NMATCHES)
-        prediction = CbirPrediction(des, top_n_categories, route_images)
+        routes_and_images = self.calc_record_distances(des, routes_and_images, NMATCHES)
+        prediction = CBIRPrediction(des, top_n_categories, routes_and_images)
         return prediction
 
 
-class CbirPrediction:
+class CBIRPrediction:
     """
     This class defines individual prediction made by CBIRPredictor for a provided image
     """
-    def __init__(self, des, top_n_categories, route_images):
+    def __init__(self, des, top_n_categories, routes_and_images):
         self.query_descriptor_json = json.dumps(des.tolist())
-        self.top_n_predictions = self.find_top_predictions(route_images, top_n_categories)
+        self.top_n_predictions = self.find_top_predictions(routes_and_images, top_n_categories)
 
-    def find_top_predictions(self, route_images, top_n_categories):
+    def find_top_predictions(self, routes_and_images, top_n_categories):
         """
         Using distances from each descriptor array, finds n route_id's that match best
         """
@@ -92,14 +92,14 @@ class CbirPrediction:
             """ Distinct elements in list preserving order """
             seen = set()
             seen_add = seen.add
-            return [x for x in seq if not (x['route_id'] in seen or seen_add(x['route_id']))]
+            return [x for x in seq if not (x['route'].id in seen or seen_add(x['route'].id))]
 
-        route_images_sorted = sorted(route_images, key=lambda x: x['distance'])
-        distinct_prediction_route_images = distinct_with_order(route_images_sorted)
+        routes_and_images_sorted = sorted(routes_and_images, key=lambda x: x['distance'])
+        distinct_prediction_route_images = distinct_with_order(routes_and_images_sorted)
         top_n_route_images = distinct_prediction_route_images[:top_n_categories]
         return top_n_route_images
 
-    def get_predicted_routes(self):
+    def get_predicted_routes_and_images(self):
         return self.top_n_predictions
 
     def get_descriptor(self):
