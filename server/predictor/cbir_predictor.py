@@ -7,6 +7,7 @@ MODEL_VERSION = "cbir_v1"
 MAX_IMG_WIDTH = 512
 MAX_FEATURES = 450
 
+
 class InvalidImageException(Exception):
     pass
 
