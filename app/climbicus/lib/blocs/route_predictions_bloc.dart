@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
-import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/json/route.dart' as jsonmdl;
 import 'package:climbicus/json/route_image.dart';
 import 'package:climbicus/utils/api.dart';
@@ -35,10 +34,6 @@ class RoutePredictionLoaded extends RoutePredictionState {
   const RoutePredictionLoaded({this.imgPickerData});
 }
 
-class RoutePredictionLoadedWithImages extends RoutePredictionLoaded {
-  const RoutePredictionLoadedWithImages({imgPickerData}) : super(imgPickerData: imgPickerData);
-}
-
 class RoutePredictionError extends RoutePredictionState {
   FlutterErrorDetails errorDetails;
 
@@ -58,25 +53,13 @@ class FetchRoutePrediction extends RoutePredictionEvent {
   const FetchRoutePrediction({this.image, this.displayPredictionsNum});
 }
 
-class UpdateRoutePrediction extends RoutePredictionEvent {}
-
 
 class RoutePredictionBloc extends Bloc<RoutePredictionEvent, RoutePredictionState> {
   static const String TRIGGER = "RoutePredictionBloc";
 
   final ApiProvider api = ApiProvider();
-  final RouteImagesBloc routeImagesBloc;
 
   ImagePickerData _imgPickerData;
-  StreamSubscription routeImagesSubscription;
-
-  RoutePredictionBloc({this.routeImagesBloc}) {
-    routeImagesSubscription = routeImagesBloc.listen((state) {
-      if (state is RouteImagesLoaded && state.trigger == TRIGGER) {
-        add(UpdateRoutePrediction());
-      }
-    });
-  }
 
   @override
   RoutePredictionState get initialState => RoutePredictionUninitialized();
@@ -97,29 +80,12 @@ class RoutePredictionBloc extends Bloc<RoutePredictionEvent, RoutePredictionStat
               routeImage: RouteImage.fromJson(model["route_image"]),
           )).toList(),
         );
-
-        var routeIds = _routeIds(_imgPickerData.predictions, event.displayPredictionsNum);
-        routeImagesBloc.add(FetchRouteImages(routeIds: routeIds, trigger: TRIGGER));
-
         yield RoutePredictionLoaded(imgPickerData: _imgPickerData);
       } catch (e, st) {
         yield RoutePredictionError(exception: e, stackTrace: st);
       }
-    } else if (event is UpdateRoutePrediction) {
-      yield RoutePredictionLoadedWithImages(imgPickerData: _imgPickerData);
     }
 
     return;
-  }
-
-  @override
-  Future<void> close() {
-    routeImagesSubscription.cancel();
-    return super.close();
-  }
-
-  List<int> _routeIds(List<Prediction> predictions, int displayPredictionsNum) {
-    List<int> routeIds = List.generate(displayPredictionsNum, (i) => predictions[i].route.id);
-    return routeIds;
   }
 }
