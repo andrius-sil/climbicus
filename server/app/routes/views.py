@@ -25,11 +25,7 @@ def route_list(route_id=None):
 
     gym_routes = {}
     for route in query.all():
-        gym_routes[route.id] = {
-            "user_id": route.user_id,
-            "grade": route.grade,
-            "created_at": route.created_at.isoformat(),
-        }
+        gym_routes[route.id] = route.api_model
 
     return jsonify({"routes": gym_routes})
 
@@ -46,9 +42,8 @@ def add():
     db.session.commit()
 
     return jsonify({
-        "id": route.id,
-        "created_at": route.created_at.isoformat(),
         "msg": "Route added",
+        "route": route.api_model,
     })
 
 

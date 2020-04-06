@@ -6,7 +6,6 @@ import 'package:climbicus/blocs/user_route_log_bloc.dart';
 import 'package:climbicus/json/route.dart' as jsonmdl;
 import 'package:climbicus/blocs/route_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
-import 'package:climbicus/json/user_route_log_entry.dart';
 import 'package:climbicus/utils/time.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -152,11 +151,11 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
   Widget _buildRouteAscents(Map<int, UserRouteLogEntry> entries) {
     List<Widget> ascents = [];
     for (UserRouteLogEntry entry in entries.values) {
-      if (entry.routeId != widget.routeId) {
+      if (entry.userRouteLog.routeId != widget.routeId) {
         continue;
       }
 
-      ascents.add(Text("${entry.status} - ${dateToString(entry.createdAt)}"));
+      ascents.add(Text("${entry.userRouteLog.status} - ${dateToString(entry.userRouteLog.createdAt)}"));
     }
 
     if (ascents.isEmpty) {

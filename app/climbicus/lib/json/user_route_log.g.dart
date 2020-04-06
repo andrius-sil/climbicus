@@ -1,28 +1,30 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user_route_log_entry.dart';
+part of 'user_route_log.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-UserRouteLogEntry _$UserRouteLogEntryFromJson(Map<String, dynamic> json) {
-  return UserRouteLogEntry(
+UserRouteLog _$UserRouteLogFromJson(Map<String, dynamic> json) {
+  return UserRouteLog(
+    json['id'] as int,
     json['route_id'] as int,
-    json['grade'] as String,
+    json['user_id'] as int,
+    json['gym_id'] as int,
     json['status'] as String,
     json['created_at'] == null
         ? null
         : DateTime.parse(json['created_at'] as String),
-    json['user_id'] as int,
   );
 }
 
-Map<String, dynamic> _$UserRouteLogEntryToJson(UserRouteLogEntry instance) =>
+Map<String, dynamic> _$UserRouteLogToJson(UserRouteLog instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'route_id': instance.routeId,
-      'grade': instance.grade,
+      'user_id': instance.userId,
+      'gym_id': instance.gymId,
       'status': instance.status,
       'created_at': instance.createdAt?.toIso8601String(),
-      'user_id': instance.userId,
     };

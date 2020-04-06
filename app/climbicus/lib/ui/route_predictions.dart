@@ -125,7 +125,6 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
         ),
         routeId,
         imageWidget,
-        grade,
         imgPickerData.routeImage.id,
       ));
 
@@ -144,7 +143,6 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
         ),
         routeId,
         imageWidget,
-        grade,
         imgPickerData.routeImage.id,
       ));
     }
@@ -160,7 +158,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
   }
 
   Widget _buildRouteSelectWrapper(
-      Widget childWidget, int routeId, Widget imageWidget, String grade, int takenRouteImageId) {
+      Widget childWidget, int routeId, Widget imageWidget, int takenRouteImageId) {
     return GestureDetector(
       onTap: () {
         Navigator.push(context, MaterialPageRoute(
@@ -170,7 +168,6 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
               selectedImage: imageWidget,
               takenRouteImageId: takenRouteImageId,
               takenImage: _takenImage,
-              grade: grade,
             );
           },
         ));

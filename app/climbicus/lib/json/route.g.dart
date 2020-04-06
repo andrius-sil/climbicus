@@ -8,16 +8,20 @@ part of 'route.dart';
 
 Route _$RouteFromJson(Map<String, dynamic> json) {
   return Route(
+    json['id'] as int,
+    json['gym_id'] as int,
+    json['user_id'] as int,
     json['grade'] as String,
     json['created_at'] == null
         ? null
         : DateTime.parse(json['created_at'] as String),
-    json['user_id'] as int,
   );
 }
 
 Map<String, dynamic> _$RouteToJson(Route instance) => <String, dynamic>{
+      'id': instance.id,
+      'gym_id': instance.gymId,
+      'user_id': instance.userId,
       'grade': instance.grade,
       'created_at': instance.createdAt?.toIso8601String(),
-      'user_id': instance.userId,
     };

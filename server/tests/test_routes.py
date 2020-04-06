@@ -23,9 +23,9 @@ def test_routes(client, auth_headers_user1):
     assert resp.is_json
 
     expected_routes = {
-        "100": {"user_id": 2, "grade": "6a", "created_at": "2019-03-04T10:10:10"},
-        "101": {"user_id": 2, "grade": "6a", "created_at": "2019-03-04T10:10:10"},
-        "102": {"user_id": 2, "grade": "6a", "created_at": "2019-03-04T10:10:10"},
+        "100": {"created_at": "2019-03-04T10:10:10", "grade": "6a", "gym_id": 2, "id": 100, "user_id": 2},
+        "101": {"created_at": "2019-03-04T10:10:10", "grade": "6a", "gym_id": 2, "id": 101, "user_id": 2},
+        "102": {"created_at": "2019-03-04T10:10:10", "grade": "6a", "gym_id": 2, "id": 102, "user_id": 2},
     }
 
     assert expected_routes == resp.json["routes"]
@@ -42,7 +42,7 @@ def test_single_route(client, auth_headers_user1):
     assert resp.is_json
 
     expected_routes = {
-        "101": {"user_id": 2, "grade": "6a", "created_at": "2019-03-04T10:10:10"},
+        "101": {"created_at": "2019-03-04T10:10:10", "grade": "6a", "gym_id": 2, "id": 101, "user_id": 2},
     }
 
     assert expected_routes == resp.json["routes"]
@@ -59,9 +59,8 @@ def test_add_route(client, app, auth_headers_user1):
 
     assert resp.status_code == 200
     assert resp.is_json
-    assert resp.json["id"] == 103
     assert resp.json["msg"] == "Route added"
-    assert resp.json["created_at"] == "2019-03-04T10:10:10"
+    assert resp.json["route"] == {"created_at": "2019-03-04T10:10:10", "grade": "7a", "gym_id": 1, "id": 103, "user_id": 1}
 
     with app.app_context():
         route = Routes.query.filter_by(id=103).one()

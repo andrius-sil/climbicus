@@ -81,24 +81,19 @@ class GymRouteBloc extends RouteBloc<GymRouteEvent, RouteState> {
     } else if (event is UpdateGymRoute) {
       yield RouteLoadedWithImages(entries: _entries);
     } else if (event is AddNewGymRouteWithUserLog) {
-      var newRoute = await api.routeAdd(event.grade);
-      // TODO: use fromJson
-      _entries[newRoute["id"]] = jsonmdl.Route(
-        event.grade,
-        DateTime.parse(newRoute["created_at"]),
-        api.userId,
-      );
+      var results = await api.routeAdd(event.grade);
+      var newRoute = jsonmdl.Route.fromJson(results["route"]);
+      _entries[newRoute.id] = newRoute;
 
       yield RouteLoadedWithImages(entries: _entries);
 
       userRouteLogBloc.add(AddNewUserRouteLog(
-        routeId: newRoute["id"],
-        grade: event.grade,
+        routeId: newRoute.id,
         status: event.status,
       ));
 
       routeImagesBloc.add(AddNewRouteImage(
-        routeId: newRoute["id"],
+        routeId: newRoute.id,
         routeImage: event.routeImage,
         trigger: TRIGGER,
       ));
