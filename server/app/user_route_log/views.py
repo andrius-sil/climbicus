@@ -22,9 +22,8 @@ def add():
     db.session.commit()
 
     return jsonify({
-        "id": log_entry.id,
-        "created_at": log_entry.created_at.isoformat(),
         "msg": "Route status added to log",
+        "user_route_log": log_entry.api_model,
     })
 
 
@@ -43,10 +42,7 @@ def view(route_id=None):
     logbook = {}
     for user_route_log, route in query.all():
         logbook[user_route_log.id] = {
-            "route_id": route.id,
-            "user_id": route.user_id,
+            "user_route_log": user_route_log.api_model,
             "grade": route.grade,
-            "created_at": user_route_log.created_at.isoformat(),
-            "status": user_route_log.status,
         }
     return jsonify(logbook)

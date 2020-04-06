@@ -8,14 +8,12 @@ class RouteMatchPage extends StatefulWidget {
   final Image selectedImage;
   final int takenRouteImageId;
   final Image takenImage;
-  final String grade;
 
   RouteMatchPage({
     this.selectedRouteId,
     this.selectedImage,
     this.takenRouteImageId,
     this.takenImage,
-    this.grade,
   });
 
   @override
@@ -98,7 +96,6 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
 
                 _userRouteLogBloc.add(AddNewUserRouteLog(
                     routeId: widget.selectedRouteId,
-                    grade: widget.grade,
                     status: value,
                 ));
 

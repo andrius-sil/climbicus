@@ -23,9 +23,7 @@ void main() {
     MultiBlocProvider(
       providers: [
         BlocProvider<RouteImagesBloc>(create: (context) => RouteImagesBloc()),
-        BlocProvider<RoutePredictionBloc>(create: (context) => RoutePredictionBloc(
-          routeImagesBloc: BlocProvider.of<RouteImagesBloc>(context),
-        )),
+        BlocProvider<RoutePredictionBloc>(create: (context) => RoutePredictionBloc()),
         BlocProvider<UserRouteLogBloc>(create: (context) => UserRouteLogBloc(
           routeImagesBloc: BlocProvider.of<RouteImagesBloc>(context),
         )),

@@ -47,6 +47,16 @@ class Routes(db.Model):
     grade = db.Column(db.String, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
+    @property
+    def api_model(self):
+        return {
+            "id": self.id,
+            "gym_id": self.gym_id,
+            "user_id": self.user_id,
+            "grade": self.grade,
+            "created_at": self.created_at.isoformat(),
+        }
+
     def __repr__(self):
         return model_repr("Route", id=self.id, gym_id=self.gym_id, grade=self.grade)
 
@@ -93,6 +103,17 @@ class UserRouteLog(db.Model):
     gym_id = db.Column(db.Integer, db.ForeignKey('gyms.id'), nullable=False)
     status = db.Column(db.String, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
+
+    @property
+    def api_model(self):
+        return {
+            "id": self.id,
+            "route_id": self.route_id,
+            "user_id": self.user_id,
+            "gym_id": self.gym_id,
+            "status": self.status,
+            "created_at": self.created_at.isoformat(),
+        }
 
     def __repr__(self):
         return model_repr("UserRouteLog", id=self.id, route_id=self.route_id, user_id=self.user_id, gym_id=self.gym_id, status=self.status, created_at=self.created_at)

@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/blocs/route_predictions_bloc.dart';
 import 'package:climbicus/ui/route_match.dart';
 import 'package:climbicus/utils/settings.dart';
@@ -24,14 +23,12 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
   Image _takenImage;
   ImagePickerData _imgPickerData;
 
-  RouteImagesBloc _routeImagesBloc;
   RoutePredictionBloc _routePredictionBloc;
 
   @override
   void initState() {
     super.initState();
 
-    _routeImagesBloc = BlocProvider.of<RouteImagesBloc>(context);
     _routePredictionBloc = BlocProvider.of<RoutePredictionBloc>(context);
     _routePredictionBloc.add(FetchRoutePrediction(
         image: widget.image,
@@ -60,10 +57,8 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
               Expanded(
                 child: BlocBuilder<RoutePredictionBloc, RoutePredictionState>(
                   builder: (context, state) {
-                    if (state is RoutePredictionLoadedWithImages) {
-                      return _buildPredictionsGrid(context, state.imgPickerData, withImages: true);
-                    } else if (state is RoutePredictionLoaded) {
-                      return _buildPredictionsGrid(context, state.imgPickerData, withImages: false);
+                    if (state is RoutePredictionLoaded) {
+                      return _buildPredictionsGrid(context, state.imgPickerData);
                     } else if (state is RoutePredictionError) {
                       return ErrorWidget.builder(state.errorDetails);
                     }
@@ -99,24 +94,19 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
     ));
   }
 
-  Widget _buildPredictionsGrid(BuildContext context, ImagePickerData imgPickerData, {bool withImages: true}) {
+  Widget _buildPredictionsGrid(BuildContext context, ImagePickerData imgPickerData) {
     List<Widget> widgets = [];
 
     for (var i = 0; i < widget.settings.displayPredictionsNum; i++) {
       var fields = imgPickerData.predictions[i];
-      var routeId = fields.routeId;
-      var grade = fields.grade;
+      var routeId = fields.route.id;
+      var grade = fields.route.grade;
 
       // Left side - image.
-      var imageFields = _routeImagesBloc.images.defaultImage(routeId);
-      var imageWidget;
-      if (!withImages) {
-        imageWidget = Container(width: 0, height: 0);
-      } else if (imageFields != null) {
-        imageWidget = Image.memory(base64.decode(imageFields.b64Image));
-      } else {
-        imageWidget = Image.asset("images/no_image.png");
-      }
+      var routeImage = fields.routeImage;
+      var imageWidget = (routeImage != null) ?
+        Image.memory(base64.decode(routeImage.b64Image)) :
+        Image.asset("images/no_image.png");
       widgets.add(_buildRouteSelectWrapper(
         Container(
           color: Colors.grey[800],
@@ -125,7 +115,6 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
         ),
         routeId,
         imageWidget,
-        grade,
         imgPickerData.routeImage.id,
       ));
 
@@ -137,14 +126,13 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
             color: Colors.grey[800],
             child: Column(
               children: <Widget>[
-                Text("route_id: ${fields.routeId}"),
+                Text("route_id: ${fields.route.id}"),
                 Text("grade: $grade"),
               ],
             )
         ),
         routeId,
         imageWidget,
-        grade,
         imgPickerData.routeImage.id,
       ));
     }
@@ -160,7 +148,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
   }
 
   Widget _buildRouteSelectWrapper(
-      Widget childWidget, int routeId, Widget imageWidget, String grade, int takenRouteImageId) {
+      Widget childWidget, int routeId, Widget imageWidget, int takenRouteImageId) {
     return GestureDetector(
       onTap: () {
         Navigator.push(context, MaterialPageRoute(
@@ -170,7 +158,6 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
               selectedImage: imageWidget,
               takenRouteImageId: takenRouteImageId,
               takenImage: _takenImage,
-              grade: grade,
             );
           },
         ));

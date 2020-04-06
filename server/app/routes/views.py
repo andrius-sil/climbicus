@@ -25,11 +25,7 @@ def route_list(route_id=None):
 
     gym_routes = {}
     for route in query.all():
-        gym_routes[route.id] = {
-            "user_id": route.user_id,
-            "grade": route.grade,
-            "created_at": route.created_at.isoformat(),
-        }
+        gym_routes[route.id] = route.api_model
 
     return jsonify({"routes": gym_routes})
 
@@ -46,9 +42,8 @@ def add():
     db.session.commit()
 
     return jsonify({
-        "id": route.id,
-        "created_at": route.created_at.isoformat(),
         "msg": "Route added",
+        "route": route.api_model,
     })
 
 
@@ -62,34 +57,26 @@ def predict_cbir():
     if fs_image is None:
         abort(400, "image file is missing")
 
-    results = (
-        db.session.query(RouteImages, Routes)
-        .join(Routes, Routes.id == RouteImages.route_id)
+    query = db.session.query(RouteImages, Routes) \
+        .join(Routes, Routes.id == RouteImages.route_id) \
         .filter(Routes.gym_id == gym_id)
-        .all()
-    )
-    route_images = []
-    for route_image, route in results:
-        entry = {
-            "id": route_image.id,
-            "route_id": route_image.route_id,
-            "grade": route.grade,
-            "descriptors": route_image.descriptors,
-        }
-        route_images.append(entry.copy())
+
+    routes_and_images = [{"route_image": route_image, "route": route} for (route_image, route) in query.all()]
 
     fbytes_image = fs_image.read()
-
     try:
-        cbir_prediction = cbir_predictor.predict_route(fbytes_image, route_images, MAX_NUMBER_OF_PREDICTED_ROUTES)
+        cbir_prediction = cbir_predictor.predict_route(fbytes_image, routes_and_images, MAX_NUMBER_OF_PREDICTED_ROUTES)
     except InvalidImageException:
         abort(400, "image file is invalid")
         return
-    predicted_routes = cbir_prediction.get_predicted_routes()
+    predicted_routes_and_images = cbir_prediction.get_predicted_routes_and_images()
     descriptor = cbir_prediction.get_descriptor()
 
-    sorted_route_predictions = [{"route_id": r["route_id"], "grade": r["grade"]} for r in predicted_routes]
-    response = {"sorted_route_predictions": sorted_route_predictions}
+    sorted_route_and_image_predictions = [{
+        "route_image": r["route_image"].api_model,
+        "route": r["route"].api_model,
+    } for r in predicted_routes_and_images]
+    response = {"sorted_route_predictions": sorted_route_and_image_predictions}
     route_image = store_image(
         fs_image=fs_image,
         user_id=user_id,
