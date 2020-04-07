@@ -2,9 +2,11 @@ import cv2
 import json
 import numpy as np
 
-NMATCHES = 10
+NMATCHES = 5
 MODEL_VERSION = "cbir_v1"
 MAX_IMG_WIDTH = 512
+MAX_FEATURES = 450
+
 
 class InvalidImageException(Exception):
     pass
@@ -19,7 +21,7 @@ class CBIRPredictor:
     """
     def __init__(self):
         self.matcher = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
-        self.orb = cv2.ORB_create()
+        self.orb = cv2.ORB_create(MAX_FEATURES)
 
     def get_model_version(self):
         return MODEL_VERSION
@@ -29,13 +31,11 @@ class CBIRPredictor:
         The input image needs to be the right format, colour and size
         JPEG compression is left for the app
         """
-        img = np.fromstring(fbytes_image, np.uint8)
-        img = cv2.imdecode(img, cv2.IMREAD_COLOR)
+        img_arr = np.frombuffer(fbytes_image, np.uint8)
+        img = cv2.imdecode(img_arr, cv2.COLOR_BGR2GRAY)
         if img is None:
             raise InvalidImageException()
 
-        # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        # TODO: sort out the colours
         # resizing required for the predictor
         w = img.shape[1]
         h = img.shape[0]
@@ -62,6 +62,7 @@ class CBIRPredictor:
             i_descriptors = np.array(json.loads(i['route_image'].descriptors)).astype('uint8')
             matches = self.matcher.match(des, i_descriptors)
             matches = sorted(matches, key=lambda x: x.distance)
+            # TODO: should check that we have NMATCHES to start with
             dist = sum([x.distance for x in matches[:nmatches]])
             i['distance'] = dist
         return routes_and_images
@@ -104,4 +105,3 @@ class CBIRPrediction:
 
     def get_descriptor(self):
         return self.query_descriptor_json
-

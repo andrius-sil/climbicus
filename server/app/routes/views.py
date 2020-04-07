@@ -76,7 +76,7 @@ def predict_cbir():
         "route_image": r["route_image"].api_model,
         "route": r["route"].api_model,
     } for r in predicted_routes_and_images]
-    response = {"sorted_route_predictions": sorted_route_and_image_predictions}
+    response = {"sorted_route_and_image_predictions": sorted_route_and_image_predictions}
     route_image = store_image(
         fs_image=fs_image,
         user_id=user_id,
