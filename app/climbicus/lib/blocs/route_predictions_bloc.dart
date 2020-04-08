@@ -71,7 +71,7 @@ class RoutePredictionBloc extends Bloc<RoutePredictionEvent, RoutePredictionStat
 
       try {
         var imageAndPredictions = (await api.routePredictions(event.image));
-        List<dynamic> predictions = imageAndPredictions["sorted_route_predictions"];
+        List<dynamic> predictions = imageAndPredictions["sorted_route_and_image_predictions"];
         _imgPickerData = ImagePickerData(
           RouteImage.fromJson(imageAndPredictions["route_image"]),
           event.image,
