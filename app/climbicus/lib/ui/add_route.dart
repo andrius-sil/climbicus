@@ -1,4 +1,4 @@
-import 'package:climbicus/blocs/gym_route_bloc.dart';
+import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/blocs/route_predictions_bloc.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +18,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
 
   Image _takenImage;
 
-  GymRouteBloc _gymRouteBloc;
+  GymRoutesBloc _gymRoutesBloc;
   RouteImagesBloc _routeImagesBloc;
 
   String _selectedGrade = NOT_SELECTED;
@@ -29,7 +29,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
     super.initState();
 
     _takenImage = Image.file(widget.imgPickerData.image);
-    _gymRouteBloc = BlocProvider.of<GymRouteBloc>(context);
+    _gymRoutesBloc = BlocProvider.of<GymRoutesBloc>(context);
     _routeImagesBloc = BlocProvider.of<RouteImagesBloc>(context);
 
     _routeImagesBloc.add(UpdateRouteImage(
@@ -103,7 +103,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
   }
 
   Future<void> uploadAndNavigateBack() async {
-    _gymRouteBloc.add(AddNewGymRouteWithUserLog(
+    _gymRoutesBloc.add(AddNewGymRouteWithUserLog(
       grade: _selectedGrade,
       status: _selectedStatus,
       routeImage: widget.imgPickerData.routeImage,
