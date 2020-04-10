@@ -21,6 +21,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
   GymRoutesBloc _gymRoutesBloc;
   RouteImagesBloc _routeImagesBloc;
 
+  String _selectedCategory = NOT_SELECTED;
   String _selectedGrade = NOT_SELECTED;
   String _selectedStatus = NOT_SELECTED;
 
@@ -50,6 +51,25 @@ class _AddRoutePageState extends State<AddRoutePage> {
             height: 200.0,
             width: 200.0,
             child: _takenImage,
+          ),
+          Text("Select category"),
+          DropdownButton<String>(
+            value: _selectedCategory,
+            items: <String>[
+              NOT_SELECTED,
+              "sport",
+              "bouldering",
+            ].map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            onChanged: (String value) {
+              setState(() {
+                _selectedCategory = value;
+              });
+            },
           ),
           Text("Select grade"),
           DropdownButton<String>(
@@ -93,7 +113,9 @@ class _AddRoutePageState extends State<AddRoutePage> {
           ),
           RaisedButton(
             child: Text('Add'),
-            onPressed: (_selectedGrade == NOT_SELECTED || _selectedStatus == NOT_SELECTED) ?
+            onPressed: (_selectedCategory == NOT_SELECTED ||
+                        _selectedGrade == NOT_SELECTED ||
+                        _selectedStatus == NOT_SELECTED) ?
               null :
               uploadAndNavigateBack,
           ),
@@ -104,6 +126,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
 
   Future<void> uploadAndNavigateBack() async {
     _gymRoutesBloc.add(AddNewGymRouteWithUserLog(
+      category: _selectedCategory,
       grade: _selectedGrade,
       status: _selectedStatus,
       routeImage: widget.imgPickerData.routeImage,

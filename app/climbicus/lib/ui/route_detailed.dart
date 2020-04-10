@@ -49,6 +49,7 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
             },
           ),
           _buildRouteDetails(),
+          Text(widget.routeWithLogs.route.category),
           Text("Your ascents:"),
           _buildRouteAscents(),
         ],

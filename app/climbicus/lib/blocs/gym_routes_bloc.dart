@@ -86,10 +86,12 @@ class AddNewUserRouteLog extends GymRoutesEvent {
 }
 
 class AddNewGymRouteWithUserLog extends GymRoutesEvent {
+  final String category;
   final String grade;
   final String status;
   final RouteImage routeImage;
   const AddNewGymRouteWithUserLog({
+    @required this.category,
     @required this.grade,
     @required this.status,
     @required this.routeImage,
@@ -149,7 +151,7 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
 
       yield GymRoutesLoadedWithImages(entries: _entries);
     } else if (event is AddNewGymRouteWithUserLog) {
-      var results = await api.routeAdd(event.grade);
+      var results = await api.routeAdd(event.category, event.grade);
       var newRoute = jsonmdl.Route.fromJson(results["route"]);
       _entries.addRoute(newRoute);
 
