@@ -71,16 +71,18 @@ def app(resource_dir):
             Gyms(name="VauxWest", created_at=datetime(2020, 1, 11, 10, 10, 10, tzinfo=pytz.UTC)),
         ])
         db.session.flush()
-        for i in range(1, 100):  # has to be at least the number of classes
+        for i in range(1, 100):
             db.session.add(
                 Routes(
-                    gym_id=1, user_id=1, grade="7a", created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
+                    gym_id=1, user_id=1, category="bouldering", grade="7a", created_at=datetime(2019, 3, 4, 10, 10, 10,
+                                                                                 tzinfo=pytz.UTC)
                 )
             )
         for i in range(100, 103):
             db.session.add(
                 Routes(
-                    gym_id=2, user_id=2, grade="6a", created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
+                    gym_id=2, user_id=2, category="sport", grade="6a", created_at=datetime(2019, 3, 4, 10, 10, 10,
+                                                                                       tzinfo=pytz.UTC)
                 )
             )
         db.session.flush()

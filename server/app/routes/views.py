@@ -35,8 +35,10 @@ def add():
     gym_id = request.json["gym_id"]
     user_id = request.json["user_id"]
     grade = request.json["grade"]
+    category = request.json["category"]
 
-    route = Routes(gym_id=gym_id, user_id=user_id, grade=grade, created_at=datetime.datetime.utcnow())
+    route = Routes(gym_id=gym_id, user_id=user_id, grade=grade, category=category,
+                   created_at=datetime.datetime.utcnow())
 
     db.session.add(route)
     db.session.commit()
@@ -51,6 +53,7 @@ def add():
 def predict_cbir():
     json_data = json.loads(request.form["json"])
     user_id = json_data["user_id"]
+    category = json_data["category"]
     gym_id = json_data["gym_id"]
 
     fs_image = request.files.get("image")
@@ -59,7 +62,7 @@ def predict_cbir():
 
     query = db.session.query(RouteImages, Routes) \
         .join(Routes, Routes.id == RouteImages.route_id) \
-        .filter(Routes.gym_id == gym_id)
+        .filter(Routes.gym_id == gym_id, Routes.category == category)
 
     routes_and_images = [{"route_image": route_image, "route": route} for (route_image, route) in query.all()]
 
