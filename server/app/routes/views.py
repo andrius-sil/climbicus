@@ -35,8 +35,10 @@ def add():
     gym_id = request.json["gym_id"]
     user_id = request.json["user_id"]
     grade = request.json["grade"]
+    category = request.json["category"]
 
-    route = Routes(gym_id=gym_id, user_id=user_id, grade=grade, created_at=datetime.datetime.utcnow())
+    route = Routes(gym_id=gym_id, user_id=user_id, grade=grade, category=category,
+                   created_at=datetime.datetime.utcnow())
 
     db.session.add(route)
     db.session.commit()

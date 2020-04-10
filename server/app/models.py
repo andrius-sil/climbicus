@@ -1,5 +1,7 @@
+from enum import Enum, auto
+
 from sqlalchemy.ext.hybrid import hybrid_property
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from app import db, io
 from app.utils.encoding import bytes_to_b64str
@@ -40,10 +42,16 @@ class Gyms(db.Model):
         return model_repr("Gym", id=self.id, name=self.name)
 
 
+class RouteCategory(Enum):
+    bouldering = auto()
+    sport = auto()
+
+
 class Routes(db.Model):
     id = db.Column(db.Integer, db.Sequence('route_id_seq'), primary_key=True)
     gym_id = db.Column(db.Integer, db.ForeignKey('gyms.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    category = db.Column(db.Enum(RouteCategory), nullable=False)
     grade = db.Column(db.String, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
@@ -53,12 +61,13 @@ class Routes(db.Model):
             "id": self.id,
             "gym_id": self.gym_id,
             "user_id": self.user_id,
+            "category": self.category.name,
             "grade": self.grade,
             "created_at": self.created_at.isoformat(),
         }
 
     def __repr__(self):
-        return model_repr("Route", id=self.id, gym_id=self.gym_id, grade=self.grade)
+        return model_repr("Route", id=self.id, gym_id=self.gym_id, category=self.category.name, grade=self.grade)
 
 
 class RouteImages(db.Model):
