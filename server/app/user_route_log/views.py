@@ -11,13 +11,13 @@ blueprint = Blueprint("user_route_log_blueprint", __name__, url_prefix="/user_ro
 @blueprint.route("/", methods=["POST"])
 def add():
     user_id = request.json["user_id"]
-    completion_status = request.json["completion_status"]
-    number_of_attempts = request.json["number_of_attempts"]
+    completed = request.json["completed"]
+    num_attempts = request.json["num_attempts"]
     route_id = request.json["route_id"]
     gym_id = request.json["gym_id"]
 
-    log_entry = UserRouteLog(route_id=route_id, user_id=user_id, gym_id=gym_id, completion_status=completion_status,
-                             number_of_attempts=number_of_attempts, created_at=datetime.datetime.utcnow())
+    log_entry = UserRouteLog(route_id=route_id, user_id=user_id, gym_id=gym_id, completed=completed,
+                             num_attempts=num_attempts, created_at=datetime.datetime.utcnow())
 
     db.session.add(log_entry)
     db.session.commit()

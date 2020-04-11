@@ -1,4 +1,4 @@
-route_id,user_id,gym_id,completion_status,number_of_attempts,created_at
+route_id,user_id,gym_id,completed,num_attempts,created_at
 1,1,1,True,None,2019-10-10 00:00:00+0
 2,1,1,True,None,2019-10-10 00:00:00+0
 1,1,1,True,1,2019-10-12 00:00:00+0
