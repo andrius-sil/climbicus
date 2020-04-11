@@ -110,7 +110,8 @@ class UserRouteLog(db.Model):
     route_id = db.Column(db.Integer, db.ForeignKey('routes.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     gym_id = db.Column(db.Integer, db.ForeignKey('gyms.id'), nullable=False)
-    status = db.Column(db.String, nullable=False)
+    completed = db.Column(db.Boolean, nullable=False)
+    num_attempts = db.Column(db.Integer)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     @property
@@ -120,9 +121,12 @@ class UserRouteLog(db.Model):
             "route_id": self.route_id,
             "user_id": self.user_id,
             "gym_id": self.gym_id,
-            "status": self.status,
+            "completed": self.completed,
+            "num_attempts": self.num_attempts,
             "created_at": self.created_at.isoformat(),
         }
 
     def __repr__(self):
-        return model_repr("UserRouteLog", id=self.id, route_id=self.route_id, user_id=self.user_id, gym_id=self.gym_id, status=self.status, created_at=self.created_at)
+        return model_repr("UserRouteLog", id=self.id, route_id=self.route_id, user_id=self.user_id,
+                          gym_id=self.gym_id, completed=self.completed,
+                          num_attempts=self.num_attempts, created_at=self.created_at)
