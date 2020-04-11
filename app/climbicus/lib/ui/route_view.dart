@@ -14,27 +14,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RouteListItem {
   RouteWithLogs routeWithLogs;
-  int routeId;
   Widget image;
   String headerTitle;
   String bodyTitle;
   String bodySubtitle;
-  int imageId;
-  String grade;
-  DateTime createdAt;
-  String username;
   bool isExpanded;
   RouteListItem({
     this.routeWithLogs,
-    this.routeId,
     this.image,
     this.headerTitle,
     this.bodyTitle,
     this.bodySubtitle,
-    this.imageId,
-    this.grade,
-    this.createdAt,
-    this.username,
     this.isExpanded: false
   });
 }
@@ -43,11 +33,8 @@ class HeaderListItem extends StatelessWidget {
   final RouteWithLogs routeWithLogs;
   final Widget image;
   final String title;
-  final int routeId;
-  final int imageId;
-  final String grade;
 
-  const HeaderListItem({this.routeWithLogs, this.image, this.title, this.routeId, this.imageId, this.grade});
+  const HeaderListItem({this.routeWithLogs, this.image, this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -168,41 +155,34 @@ class _RouteViewPageState extends State<RouteViewPage> {
   }
 
   Widget _buildLogbookGrid(RoutesWithLogs entries, {bool withImages: true}) {
-    Map<int, bool> isExpandedPrevious = Map.fromIterable(
-      _items,
-      key: (item) => item.routeId,
-      value: (item) => item.isExpanded,
-    );
+    Map<int, bool> isExpandedPrevious = {};
+    _items.forEach((item) => isExpandedPrevious[item.routeWithLogs.route.id] = item.isExpanded);
     _items.clear();
 
     (_sortEntriesByLogDate(entries.allRoutes())).forEach((routeId, routeWithLogs) {
       var routeImage = _routeImagesBloc.images.defaultImage(routeId);
       var imageWidget;
-      var imageId;
       if (!withImages) {
         imageWidget = Container(width: 0, height: 0);
       } else if (routeImage != null) {
         imageWidget = Image.memory(base64.decode(routeImage.b64Image));
-        imageId = routeImage.id;
       } else {
         imageWidget = Image.asset("images/no_image.png");
-        imageId = -1;
       }
 
       bool isExpanded = isExpandedPrevious.containsKey(routeId) ?
           isExpandedPrevious[routeId] :
           false;
+
+      var logTitle = routeWithLogs.userRouteLogs.isEmpty ?
+          "" :
+          "- climbed";
       _items.add(RouteListItem(
           routeWithLogs: routeWithLogs,
-          routeId: routeId,
           image: imageWidget,
-          headerTitle: routeWithLogs.route.grade,
+          headerTitle: routeWithLogs.route.grade + logTitle,
           bodyTitle: "${dateToString(routeWithLogs.route.createdAt)}",
-          bodySubtitle: "added by usr '${routeWithLogs.route.userId.toString()}'",
-          imageId: imageId,
-          grade: routeWithLogs.route.grade,
-          createdAt: routeWithLogs.route.createdAt,
-          username: routeWithLogs.route.userId.toString(),
+          bodySubtitle: "added by user '${routeWithLogs.route.userId.toString()}'",
           isExpanded: isExpanded,
       ));
     });
@@ -221,9 +201,6 @@ class _RouteViewPageState extends State<RouteViewPage> {
                 routeWithLogs: item.routeWithLogs,
                 image: item.image,
                 title: item.headerTitle,
-                routeId: item.routeId,
-                imageId: item.imageId,
-                grade: item.grade,
               );
             },
             body: ListTile(
@@ -238,7 +215,7 @@ class _RouteViewPageState extends State<RouteViewPage> {
     );
   }
 
-  LinkedHashMap _sortEntriesByLogDate(Map<int, RouteWithLogs> entries) {
+  Map<int, RouteWithLogs> _sortEntriesByLogDate(Map<int, RouteWithLogs> entries) {
     var sortedKeys = entries.keys.toList(growable: false)
       ..sort((k1, k2) => entries[k2].route.createdAt.compareTo(entries[k1].route.createdAt));
 
