@@ -12,9 +12,11 @@ import 'add_route.dart';
 
 class RoutePredictionsPage extends StatefulWidget {
   final Settings settings = Settings();
-  final File image;
 
-  RoutePredictionsPage({this.image});
+  final File image;
+  final String routeCategory;
+
+  RoutePredictionsPage({this.image, this.routeCategory});
 
   @override
   State<StatefulWidget> createState() => _RoutePredictionsPageState();
@@ -33,6 +35,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
     _routePredictionBloc = BlocProvider.of<RoutePredictionBloc>(context);
     _routePredictionBloc.add(FetchRoutePrediction(
         image: widget.image,
+        routeCategory: widget.routeCategory,
         displayPredictionsNum: widget.settings.displayPredictionsNum,
     ));
 

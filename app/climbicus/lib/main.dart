@@ -95,13 +95,13 @@ class _HomePageState extends State<HomePage> {
         return LoginPage(appBarActions: appBarActions(), loginCallback: _loggedIn);
       case AuthStatus.loggedIn:
         return DefaultTabController(
-          length: 1,
+          length: 2,
           child: Scaffold(
             appBar: AppBar(
               bottom: TabBar(
                 tabs: [
-//                  Tab(text: "Logbook"),
-                  Tab(text: "Gym"),
+                  Tab(text: "Sport"),
+                  Tab(text: "Bouldering"),
                 ],
               ),
               title: Text("Routes"),
@@ -109,8 +109,8 @@ class _HomePageState extends State<HomePage> {
             ),
             body: TabBarView(
               children: <Widget>[
-//                RouteViewPage<UserRouteLogBloc>(),
-                RouteViewPage(),
+                RouteViewPage(routeCategory: "sport"),
+                RouteViewPage(routeCategory: "bouldering"),
               ],
             ),
           ),

@@ -71,13 +71,15 @@ class RouteViewPage extends StatefulWidget {
   final RouteImagePicker imagePicker = RouteImagePicker();
   final Settings settings = Settings();
 
-  RouteViewPage();
+  final String routeCategory;
+
+  RouteViewPage({this.routeCategory});
 
   @override
   State<StatefulWidget> createState() => _RouteViewPageState();
 }
 
-class _RouteViewPageState extends State<RouteViewPage> {
+class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveClientMixin {
   RouteImagesBloc _routeImagesBloc;
   GymRoutesBloc _gymRoutesBloc;
 
@@ -129,13 +131,13 @@ class _RouteViewPageState extends State<RouteViewPage> {
 
           Navigator.push(context, MaterialPageRoute(
             builder: (BuildContext context) {
-              return RoutePredictionsPage(image: image);
+              return RoutePredictionsPage(image: image, routeCategory: widget.routeCategory);
             },
           ));
         },
         tooltip: IMAGE_SOURCES[imageSource]["tooltip"],
         child: Icon(IMAGE_SOURCES[imageSource]["icon"]),
-        heroTag: IMAGE_SOURCES[imageSource]["heroTag"],
+        heroTag: "${IMAGE_SOURCES[imageSource]["heroTag"]}-${widget.routeCategory}",
       ));
 
       if (imageSource != widget.settings.imagePickerSource.last) {
@@ -152,6 +154,10 @@ class _RouteViewPageState extends State<RouteViewPage> {
     _items.clear();
 
     (_sortEntriesByLogDate(entries.allRoutes())).forEach((routeId, routeWithLogs) {
+      if (routeWithLogs.route.category != widget.routeCategory) {
+        return;
+      }
+
       var routeImage = _routeImagesBloc.images.defaultImage(routeId);
       var imageWidget = (!withImages) ?
         Container(width: 0, height: 0) :
@@ -163,7 +169,7 @@ class _RouteViewPageState extends State<RouteViewPage> {
 
       var logTitle = routeWithLogs.userRouteLogs.isEmpty ?
           "" :
-          "- climbed";
+          " - climbed";
       _items.add(RouteListItem(
           routeWithLogs: routeWithLogs,
           image: imageWidget,
@@ -209,4 +215,7 @@ class _RouteViewPageState extends State<RouteViewPage> {
     return LinkedHashMap.fromIterable(sortedKeys,
         key: (k) => k, value: (k) => entries[k]);
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

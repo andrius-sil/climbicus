@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RouteMatchPage extends StatefulWidget {
   final int selectedRouteId;
-  final Image selectedImage;
+  final Widget selectedImage;
   final int takenRouteImageId;
   final Image takenImage;
 
