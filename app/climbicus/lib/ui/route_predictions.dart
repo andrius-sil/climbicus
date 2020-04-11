@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:climbicus/blocs/route_predictions_bloc.dart';
 import 'package:climbicus/ui/route_match.dart';
 import 'package:climbicus/utils/settings.dart';
+import 'package:climbicus/utils/time.dart';
 import 'package:climbicus/widgets/b64image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -98,12 +99,9 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
     List<Widget> widgets = [];
 
     for (var i = 0; i < widget.settings.displayPredictionsNum; i++) {
-      var fields = imgPickerData.predictions[i];
-      var routeId = fields.route.id;
-      var grade = fields.route.grade;
-
+      var prediction = imgPickerData.predictions[i];
       // Left side - image.
-      var routeImage = fields.routeImage;
+      var routeImage = prediction.routeImage;
       var imageWidget = B64Image(routeImage);
       widgets.add(_buildRouteSelectWrapper(
         Container(
@@ -111,7 +109,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
           alignment: Alignment.center,
           child: imageWidget,
         ),
-        routeId,
+        prediction.route.id,
         imageWidget,
         imgPickerData.routeImage.id,
       ));
@@ -124,12 +122,12 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
             color: Colors.grey[800],
             child: Column(
               children: <Widget>[
-                Text("route_id: ${fields.route.id}"),
-                Text("grade: $grade"),
+                Text("grade: ${prediction.route.grade}"),
+                Text("${dateToString(prediction.route.createdAt)}"),
               ],
             )
         ),
-        routeId,
+        prediction.route.id,
         imageWidget,
         imgPickerData.routeImage.id,
       ));
