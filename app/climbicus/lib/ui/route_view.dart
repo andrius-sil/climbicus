@@ -1,5 +1,4 @@
 import 'dart:collection';
-import 'dart:convert';
 
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
@@ -8,6 +7,7 @@ import 'package:climbicus/ui/route_predictions.dart';
 import 'package:climbicus/utils/route_image_picker.dart';
 import 'package:climbicus/utils/settings.dart';
 import 'package:climbicus/utils/time.dart';
+import 'package:climbicus/widgets/b64image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -53,15 +53,7 @@ class HeaderListItem extends StatelessWidget {
               },
               child: Container(
                 height: 80,
-                child: Stack(
-                  children: <Widget>[
-                    this.image,
-  //                  Align(
-  //                    alignment: Alignment.bottomLeft,
-  //                    child: Text("route_id: $routeId, image_id: $imageId"),
-  //                  ),
-                  ],
-                ),
+                child: this.image,
               ),
             ),
           ),
@@ -161,16 +153,11 @@ class _RouteViewPageState extends State<RouteViewPage> {
 
     (_sortEntriesByLogDate(entries.allRoutes())).forEach((routeId, routeWithLogs) {
       var routeImage = _routeImagesBloc.images.defaultImage(routeId);
-      var imageWidget;
-      if (!withImages) {
-        imageWidget = Container(width: 0, height: 0);
-      } else if (routeImage != null) {
-        imageWidget = Image.memory(base64.decode(routeImage.b64Image));
-      } else {
-        imageWidget = Image.asset("images/no_image.png");
-      }
+      var imageWidget = (!withImages) ?
+        Container(width: 0, height: 0) :
+        B64Image(routeImage);
 
-      bool isExpanded = isExpandedPrevious.containsKey(routeId) ?
+    bool isExpanded = isExpandedPrevious.containsKey(routeId) ?
           isExpandedPrevious[routeId] :
           false;
 

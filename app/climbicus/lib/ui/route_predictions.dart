@@ -1,9 +1,9 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:climbicus/blocs/route_predictions_bloc.dart';
 import 'package:climbicus/ui/route_match.dart';
 import 'package:climbicus/utils/settings.dart';
+import 'package:climbicus/widgets/b64image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -104,9 +104,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
 
       // Left side - image.
       var routeImage = fields.routeImage;
-      var imageWidget = (routeImage != null) ?
-        Image.memory(base64.decode(routeImage.b64Image)) :
-        Image.asset("images/no_image.png");
+      var imageWidget = B64Image(routeImage);
       widgets.add(_buildRouteSelectWrapper(
         Container(
           color: Colors.grey[800],

@@ -1,9 +1,8 @@
-import 'dart:convert';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/utils/time.dart';
+import 'package:climbicus/widgets/b64image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -63,7 +62,7 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
       return Container(
         height: 200,
         alignment: Alignment.center,
-        child: Image.asset("images/no_image.png"),
+        child: B64Image(null),
       );
     }
 
@@ -77,7 +76,7 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
           return Builder(
             builder: (BuildContext context) {
               return Container(
-                child: Image.memory(base64.decode(img.b64Image)),
+                child: B64Image(img),
               );
             }
           );
