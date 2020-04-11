@@ -1,4 +1,4 @@
-import 'package:climbicus/blocs/gym_route_bloc.dart';
+import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/blocs/route_predictions_bloc.dart';
 import 'package:flutter/material.dart';
@@ -18,9 +18,10 @@ class _AddRoutePageState extends State<AddRoutePage> {
 
   Image _takenImage;
 
-  GymRouteBloc _gymRouteBloc;
+  GymRoutesBloc _gymRoutesBloc;
   RouteImagesBloc _routeImagesBloc;
 
+  String _selectedCategory = NOT_SELECTED;
   String _selectedGrade = NOT_SELECTED;
   String _selectedStatus = NOT_SELECTED;
 
@@ -29,7 +30,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
     super.initState();
 
     _takenImage = Image.file(widget.imgPickerData.image);
-    _gymRouteBloc = BlocProvider.of<GymRouteBloc>(context);
+    _gymRoutesBloc = BlocProvider.of<GymRoutesBloc>(context);
     _routeImagesBloc = BlocProvider.of<RouteImagesBloc>(context);
 
     _routeImagesBloc.add(UpdateRouteImage(
@@ -50,6 +51,25 @@ class _AddRoutePageState extends State<AddRoutePage> {
             height: 200.0,
             width: 200.0,
             child: _takenImage,
+          ),
+          Text("Select category"),
+          DropdownButton<String>(
+            value: _selectedCategory,
+            items: <String>[
+              NOT_SELECTED,
+              "sport",
+              "bouldering",
+            ].map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            onChanged: (String value) {
+              setState(() {
+                _selectedCategory = value;
+              });
+            },
           ),
           Text("Select grade"),
           DropdownButton<String>(
@@ -93,7 +113,9 @@ class _AddRoutePageState extends State<AddRoutePage> {
           ),
           RaisedButton(
             child: Text('Add'),
-            onPressed: (_selectedGrade == NOT_SELECTED || _selectedStatus == NOT_SELECTED) ?
+            onPressed: (_selectedCategory == NOT_SELECTED ||
+                        _selectedGrade == NOT_SELECTED ||
+                        _selectedStatus == NOT_SELECTED) ?
               null :
               uploadAndNavigateBack,
           ),
@@ -103,7 +125,8 @@ class _AddRoutePageState extends State<AddRoutePage> {
   }
 
   Future<void> uploadAndNavigateBack() async {
-    _gymRouteBloc.add(AddNewGymRouteWithUserLog(
+    _gymRoutesBloc.add(AddNewGymRouteWithUserLog(
+      category: _selectedCategory,
       grade: _selectedGrade,
       status: _selectedStatus,
       routeImage: widget.imgPickerData.routeImage,

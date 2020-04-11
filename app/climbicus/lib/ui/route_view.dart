@@ -1,51 +1,40 @@
 import 'dart:collection';
-import 'dart:convert';
 
-import 'package:climbicus/blocs/route_bloc.dart';
+import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/ui/route_detailed.dart';
 import 'package:climbicus/ui/route_predictions.dart';
 import 'package:climbicus/utils/route_image_picker.dart';
 import 'package:climbicus/utils/settings.dart';
+import 'package:climbicus/utils/time.dart';
+import 'package:climbicus/widgets/b64image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RouteListItem {
-  int entryId;
+  RouteWithLogs routeWithLogs;
   Widget image;
   String headerTitle;
   String bodyTitle;
   String bodySubtitle;
-  int routeId;
-  int imageId;
-  String grade;
-  DateTime createdAt;
-  String username;
   bool isExpanded;
   RouteListItem({
-    this.entryId,
+    this.routeWithLogs,
     this.image,
     this.headerTitle,
     this.bodyTitle,
     this.bodySubtitle,
-    this.routeId,
-    this.imageId,
-    this.grade,
-    this.createdAt,
-    this.username,
     this.isExpanded: false
   });
 }
 
 class HeaderListItem extends StatelessWidget {
+  final RouteWithLogs routeWithLogs;
   final Widget image;
   final String title;
-  final int routeId;
-  final int imageId;
-  final String grade;
 
-  const HeaderListItem({this.image, this.title, this.routeId, this.imageId, this.grade});
+  const HeaderListItem({this.routeWithLogs, this.image, this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -58,24 +47,13 @@ class HeaderListItem extends StatelessWidget {
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(
                   builder: (BuildContext context) {
-                    return RouteDetailedPage(
-                        routeId: this.routeId,
-                        routeGrade: this.grade,
-                    );
+                    return RouteDetailedPage(routeWithLogs: this.routeWithLogs);
                   },
                 ));
               },
               child: Container(
                 height: 80,
-                child: Stack(
-                  children: <Widget>[
-                    this.image,
-  //                  Align(
-  //                    alignment: Alignment.bottomLeft,
-  //                    child: Text("route_id: $routeId, image_id: $imageId"),
-  //                  ),
-                  ],
-                ),
+                child: this.image,
               ),
             ),
           ),
@@ -89,19 +67,21 @@ class HeaderListItem extends StatelessWidget {
 
 }
 
-class RouteViewPage<T extends RouteBloc> extends StatefulWidget {
+class RouteViewPage extends StatefulWidget {
   final RouteImagePicker imagePicker = RouteImagePicker();
   final Settings settings = Settings();
 
-  RouteViewPage();
+  final String routeCategory;
+
+  RouteViewPage({this.routeCategory});
 
   @override
-  State<StatefulWidget> createState() => _RouteViewPageState<T>();
+  State<StatefulWidget> createState() => _RouteViewPageState();
 }
 
-class _RouteViewPageState<T extends RouteBloc> extends State<RouteViewPage<T>> {
+class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveClientMixin {
   RouteImagesBloc _routeImagesBloc;
-  RouteBloc _routeBloc;
+  GymRoutesBloc _gymRoutesBloc;
 
   List<RouteListItem> _items = [];
 
@@ -110,20 +90,21 @@ class _RouteViewPageState<T extends RouteBloc> extends State<RouteViewPage<T>> {
     super.initState();
 
     _routeImagesBloc = BlocProvider.of<RouteImagesBloc>(context);
-    _routeBloc = BlocProvider.of<T>(context);
-    _routeBloc.fetch();
+    _gymRoutesBloc = BlocProvider.of<GymRoutesBloc>(context);
+
+    _gymRoutesBloc.add(FetchGymRoutes());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<T, RouteState>(
+      body: BlocBuilder<GymRoutesBloc, GymRoutesState>(
         builder: (context, state) {
-          if (state is RouteLoadedWithImages) {
+          if (state is GymRoutesLoadedWithImages) {
             return _buildLogbookGrid(state.entries, withImages: true);
-          } else if (state is RouteLoaded) {
+          } else if (state is GymRoutesLoaded) {
             return _buildLogbookGrid(state.entries, withImages: false);
-          } else if (state is RouteError) {
+          } else if (state is GymRoutesError) {
             return ErrorWidget.builder(state.errorDetails);
           }
 
@@ -150,13 +131,13 @@ class _RouteViewPageState<T extends RouteBloc> extends State<RouteViewPage<T>> {
 
           Navigator.push(context, MaterialPageRoute(
             builder: (BuildContext context) {
-              return RoutePredictionsPage(image: image);
+              return RoutePredictionsPage(image: image, routeCategory: widget.routeCategory);
             },
           ));
         },
         tooltip: IMAGE_SOURCES[imageSource]["tooltip"],
         child: Icon(IMAGE_SOURCES[imageSource]["icon"]),
-        heroTag: IMAGE_SOURCES[imageSource]["heroTag"],
+        heroTag: "${IMAGE_SOURCES[imageSource]["heroTag"]}-${widget.routeCategory}",
       ));
 
       if (imageSource != widget.settings.imagePickerSource.last) {
@@ -167,43 +148,34 @@ class _RouteViewPageState<T extends RouteBloc> extends State<RouteViewPage<T>> {
     return widgets;
   }
 
-  Widget _buildLogbookGrid(Map entries, {bool withImages: true}) {
-    Map<int, bool> isExpandedPrevious = Map.fromIterable(
-      _items,
-      key: (item) => item.entryId,
-      value: (item) => item.isExpanded,
-    );
+  Widget _buildLogbookGrid(RoutesWithLogs entries, {bool withImages: true}) {
+    Map<int, bool> isExpandedPrevious = {};
+    _items.forEach((item) => isExpandedPrevious[item.routeWithLogs.route.id] = item.isExpanded);
     _items.clear();
 
-    (_sortEntriesByLogDate(entries)).forEach((entryId, fields) {
-      var routeId = _routeBloc.routeId(entryId, fields);
-      var routeImage = _routeImagesBloc.images.defaultImage(routeId);
-      var imageWidget;
-      var imageId;
-      if (!withImages) {
-        imageWidget = Container(width: 0, height: 0);
-      } else if (routeImage != null) {
-        imageWidget = Image.memory(base64.decode(routeImage.b64Image));
-        imageId = routeImage.id;
-      } else {
-        imageWidget = Image.asset("images/no_image.png");
-        imageId = -1;
+    (_sortEntriesByLogDate(entries.allRoutes())).forEach((routeId, routeWithLogs) {
+      if (routeWithLogs.route.category != widget.routeCategory) {
+        return;
       }
 
-      bool isExpanded = isExpandedPrevious.containsKey(entryId) ?
-          isExpandedPrevious[entryId] :
+      var routeImage = _routeImagesBloc.images.defaultImage(routeId);
+      var imageWidget = (!withImages) ?
+        Container(width: 0, height: 0) :
+        B64Image(routeImage);
+
+    bool isExpanded = isExpandedPrevious.containsKey(routeId) ?
+          isExpandedPrevious[routeId] :
           false;
+
+      var logTitle = routeWithLogs.userRouteLogs.isEmpty ?
+          "" :
+          " - climbed";
       _items.add(RouteListItem(
-          entryId: entryId,
+          routeWithLogs: routeWithLogs,
           image: imageWidget,
-          headerTitle: _routeBloc.headerTitle(fields),
-          bodyTitle: _routeBloc.bodyTitle(fields),
-          bodySubtitle: _routeBloc.bodySubtitle(fields),
-          routeId: routeId,
-          imageId: imageId,
-          grade: fields.grade,
-          createdAt: fields.createdAt,
-          username: fields.userId.toString(),
+          headerTitle: routeWithLogs.route.grade + logTitle,
+          bodyTitle: "${dateToString(routeWithLogs.route.createdAt)}",
+          bodySubtitle: "added by user '${routeWithLogs.route.userId.toString()}'",
           isExpanded: isExpanded,
       ));
     });
@@ -219,11 +191,9 @@ class _RouteViewPageState<T extends RouteBloc> extends State<RouteViewPage<T>> {
           return ExpansionPanel(
             headerBuilder: (BuildContext context, bool isExpanded) {
               return HeaderListItem(
+                routeWithLogs: item.routeWithLogs,
                 image: item.image,
                 title: item.headerTitle,
-                routeId: item.routeId,
-                imageId: item.imageId,
-                grade: item.grade,
               );
             },
             body: ListTile(
@@ -238,12 +208,14 @@ class _RouteViewPageState<T extends RouteBloc> extends State<RouteViewPage<T>> {
     );
   }
 
-  LinkedHashMap _sortEntriesByLogDate(Map entries) {
+  Map<int, RouteWithLogs> _sortEntriesByLogDate(Map<int, RouteWithLogs> entries) {
     var sortedKeys = entries.keys.toList(growable: false)
-      ..sort(
-          (k1, k2) => entries[k2].createdAt.compareTo(entries[k1].createdAt));
+      ..sort((k1, k2) => entries[k2].route.createdAt.compareTo(entries[k1].route.createdAt));
 
     return LinkedHashMap.fromIterable(sortedKeys,
         key: (k) => k, value: (k) => entries[k]);
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

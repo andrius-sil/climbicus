@@ -167,9 +167,10 @@ class ApiProvider {
     return _requestJson("GET", "user_route_log/$routeId", data);
   }
 
-  Future<Map> routePredictions(File image) async {
+  Future<Map> routePredictions(File image, String category) async {
     Map data = {
       "gym_id": CASTLE_GYM_ID,
+      "category": category,
     };
     return _requestMultipart(image, "POST", "routes/predictions_cbir", data);
   }
@@ -188,9 +189,10 @@ class ApiProvider {
     return _requestJson("GET", "routes/$routeId", data);
   }
 
-  Future<Map> routeAdd(String grade) async {
+  Future<Map> routeAdd(String category, String grade) async {
     Map data = {
       "gym_id": CASTLE_GYM_ID,
+      "category": category,
       "grade": grade,
     };
 

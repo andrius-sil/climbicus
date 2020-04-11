@@ -1,8 +1,7 @@
 import 'package:bloc/bloc.dart';
-import 'package:climbicus/blocs/gym_route_bloc.dart';
+import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/blocs/route_predictions_bloc.dart';
-import 'package:climbicus/blocs/user_route_log_bloc.dart';
 import 'package:climbicus/ui/login.dart';
 import 'package:climbicus/ui/route_view.dart';
 import 'package:climbicus/ui/settings.dart';
@@ -24,12 +23,8 @@ void main() {
       providers: [
         BlocProvider<RouteImagesBloc>(create: (context) => RouteImagesBloc()),
         BlocProvider<RoutePredictionBloc>(create: (context) => RoutePredictionBloc()),
-        BlocProvider<UserRouteLogBloc>(create: (context) => UserRouteLogBloc(
+        BlocProvider<GymRoutesBloc>(create: (context) => GymRoutesBloc(
           routeImagesBloc: BlocProvider.of<RouteImagesBloc>(context),
-        )),
-        BlocProvider<GymRouteBloc>(create: (context) => GymRouteBloc(
-          routeImagesBloc: BlocProvider.of<RouteImagesBloc>(context),
-          userRouteLogBloc: BlocProvider.of<UserRouteLogBloc>(context),
         )),
       ],
       child: MaterialApp(
@@ -105,8 +100,8 @@ class _HomePageState extends State<HomePage> {
             appBar: AppBar(
               bottom: TabBar(
                 tabs: [
-                  Tab(text: "Logbook"),
-                  Tab(text: "Gym"),
+                  Tab(text: "Sport"),
+                  Tab(text: "Bouldering"),
                 ],
               ),
               title: Text("Routes"),
@@ -114,8 +109,8 @@ class _HomePageState extends State<HomePage> {
             ),
             body: TabBarView(
               children: <Widget>[
-                RouteViewPage<UserRouteLogBloc>(),
-                RouteViewPage<GymRouteBloc>(),
+                RouteViewPage(routeCategory: "sport"),
+                RouteViewPage(routeCategory: "bouldering"),
               ],
             ),
           ),

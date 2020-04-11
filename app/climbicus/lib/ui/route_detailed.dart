@@ -1,20 +1,15 @@
-import 'dart:convert';
-
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:climbicus/blocs/gym_route_bloc.dart';
-import 'package:climbicus/blocs/user_route_log_bloc.dart';
-import 'package:climbicus/json/route.dart' as jsonmdl;
-import 'package:climbicus/blocs/route_bloc.dart';
+import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/utils/time.dart';
+import 'package:climbicus/widgets/b64image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RouteDetailedPage extends StatefulWidget {
-  final int routeId;
-  final String routeGrade;
+  final RouteWithLogs routeWithLogs;
 
-  const RouteDetailedPage({@required this.routeId, @required this.routeGrade});
+  const RouteDetailedPage({@required this.routeWithLogs});
 
   @override
   State<StatefulWidget> createState() => _RouteDetailedPage();
@@ -22,8 +17,6 @@ class RouteDetailedPage extends StatefulWidget {
 
 class _RouteDetailedPage extends State<RouteDetailedPage> {
   RouteImagesBloc _routeImagesBloc;
-  GymRouteBloc _gymRouteBloc;
-  UserRouteLogBloc _userRouteLogBloc;
 
   int _current = 0;
 
@@ -32,19 +25,14 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
     super.initState();
 
     _routeImagesBloc = BlocProvider.of<RouteImagesBloc>(context);
-    _gymRouteBloc = BlocProvider.of<GymRouteBloc>(context);
-    _userRouteLogBloc = BlocProvider.of<UserRouteLogBloc>(context);
-
-    _routeImagesBloc.add(FetchRouteImagesAll(routeId: widget.routeId,));
-    _gymRouteBloc.add(FetchGymRoutes(routeId: widget.routeId));
-    _userRouteLogBloc.add(FetchUserRouteLog(routeId: widget.routeId));
+    _routeImagesBloc.add(FetchRouteImagesAll(routeId: widget.routeWithLogs.route.id));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.routeGrade} route'),
+        title: Text('${widget.routeWithLogs.route.grade} route'),
       ),
       body: Column(
         children: <Widget>[
@@ -59,41 +47,22 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
               return CircularProgressIndicator();
             },
           ),
-          BlocBuilder<GymRouteBloc, RouteState>(
-            builder: (context, state) {
-              if (state is RouteLoaded) {
-                return _buildRouteDetails(state.entries);
-              } else if (state is RouteError) {
-                return ErrorWidget.builder(state.errorDetails);
-              }
-
-              return CircularProgressIndicator();
-            },
-          ),
+          _buildRouteDetails(),
+          Text(widget.routeWithLogs.route.category),
           Text("Your ascents:"),
-          BlocBuilder<UserRouteLogBloc, RouteState>(
-            builder: (context, state) {
-              if (state is RouteLoaded) {
-                return _buildRouteAscents(state.entries);
-              } else if (state is RouteError) {
-                return ErrorWidget.builder(state.errorDetails);
-              }
-
-              return CircularProgressIndicator();
-            },
-          ),
+          _buildRouteAscents(),
         ],
       )
     );
   }
 
   Widget _buildImageCarousel(Images images) {
-    var allImages = images.allImages(widget.routeId);
+    var allImages = images.allImages(widget.routeWithLogs.route.id);
     if (allImages == null) {
       return Container(
         height: 200,
         alignment: Alignment.center,
-        child: Image.asset("images/no_image.png"),
+        child: B64Image(null),
       );
     }
 
@@ -107,7 +76,7 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
           return Builder(
             builder: (BuildContext context) {
               return Container(
-                child: Image.memory(base64.decode(img.b64Image)),
+                child: B64Image(img),
               );
             }
           );
@@ -142,20 +111,14 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
     ]);
   }
 
-  Widget _buildRouteDetails(Map<int, jsonmdl.Route> entries) {
-    var currentRoute = entries[widget.routeId];
-
-    return Text("added by 'user ${currentRoute.userId.toString()}' (${dateToString(currentRoute.createdAt)})");
+  Widget _buildRouteDetails() {
+    return Text("added by 'user ${widget.routeWithLogs.route.userId.toString()}' (${dateToString(widget.routeWithLogs.route.createdAt)})");
   }
 
-  Widget _buildRouteAscents(Map<int, UserRouteLogEntry> entries) {
+  Widget _buildRouteAscents() {
     List<Widget> ascents = [];
-    for (UserRouteLogEntry entry in entries.values) {
-      if (entry.userRouteLog.routeId != widget.routeId) {
-        continue;
-      }
-
-      ascents.add(Text("${entry.userRouteLog.status} - ${dateToString(entry.userRouteLog.createdAt)}"));
+    for (var userRouteLog in widget.routeWithLogs.userRouteLogs.values) {
+      ascents.add(Text("${userRouteLog.status} - ${dateToString(userRouteLog.createdAt)}"));
     }
 
     if (ascents.isEmpty) {

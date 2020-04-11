@@ -150,7 +150,7 @@ class RouteImagesBloc extends Bloc<RouteImagesEvent, RouteImagesState> {
       } catch (e, st) {
         yield RouteImagesError(exception: e, stackTrace: st);
       }
-  } else if (event is AddNewRouteImage) {
+    } else if (event is AddNewRouteImage) {
       // Not uploading image to the database via API because all images are
       // uploaded as part of predictions at the moment.
       api.routeMatch(event.routeImage.id, event.routeId);
@@ -160,6 +160,11 @@ class RouteImagesBloc extends Bloc<RouteImagesEvent, RouteImagesState> {
       yield RouteImagesLoaded(images: images, trigger: event.trigger);
     } else if (event is UpdateRouteImage) {
       api.routeMatch(event.routeImageId, event.routeId);
+      // TODO: update 'images' in case of no routeId
+
+      yield RouteImagesLoaded(images: images);
     }
+
+    return;
   }
 }

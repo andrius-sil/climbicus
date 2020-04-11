@@ -49,8 +49,9 @@ abstract class RoutePredictionEvent {
 
 class FetchRoutePrediction extends RoutePredictionEvent {
   final File image;
+  final String routeCategory;
   final int displayPredictionsNum;
-  const FetchRoutePrediction({this.image, this.displayPredictionsNum});
+  const FetchRoutePrediction({this.image, this.routeCategory, this.displayPredictionsNum});
 }
 
 
@@ -70,7 +71,7 @@ class RoutePredictionBloc extends Bloc<RoutePredictionEvent, RoutePredictionStat
       yield RoutePredictionLoading();
 
       try {
-        var imageAndPredictions = (await api.routePredictions(event.image));
+        var imageAndPredictions = (await api.routePredictions(event.image, event.routeCategory));
         List<dynamic> predictions = imageAndPredictions["sorted_route_and_image_predictions"];
         _imgPickerData = ImagePickerData(
           RouteImage.fromJson(imageAndPredictions["route_image"]),
