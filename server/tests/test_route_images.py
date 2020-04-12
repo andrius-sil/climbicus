@@ -19,11 +19,11 @@ def test_route_images(client, resource_dir, auth_headers_user2):
     assert resp.is_json
 
     expected_route_images = {
-        "1": { "id": 1, "route_id": 1, "user_id": 1, "created_at": "2019-03-04T10:10:10",
+        "1": { "id": 1, "route_id": 1, "user_id": 1, "created_at": "2019-03-04T10:10:10+00:00",
           "b64_image": image_str(resource_dir, "user1_route1.jpg") },
-        "2": { "id": 3, "route_id": 2, "user_id": 2, "created_at": "2019-02-04T10:10:10",
+        "2": { "id": 3, "route_id": 2, "user_id": 2, "created_at": "2019-02-04T10:10:10+00:00",
           "b64_image": image_str(resource_dir, "user2_route2_1.jpg") },
-        "3": { "id": 5, "route_id": 3, "user_id": 1, "created_at": "2019-03-04T10:10:10",
+        "3": { "id": 5, "route_id": 3, "user_id": 1, "created_at": "2019-03-04T10:10:10+00:00",
           "b64_image": image_str(resource_dir, "user1_route3.jpg") },
     }
 
@@ -40,11 +40,11 @@ def test_all_route_images(client, resource_dir, auth_headers_user1):
     assert resp.is_json
 
     expected_route_images = [
-        { "id": 2, "route_id": 2, "user_id": 1, "created_at": "2019-03-04T10:10:10",
+        { "id": 2, "route_id": 2, "user_id": 1, "created_at": "2019-03-04T10:10:10+00:00",
           "b64_image": image_str(resource_dir, "user1_route2.jpg") },
-        { "id": 3, "route_id": 2, "user_id": 2, "created_at": "2019-02-04T10:10:10",
+        { "id": 3, "route_id": 2, "user_id": 2, "created_at": "2019-02-04T10:10:10+00:00",
           "b64_image": image_str(resource_dir, "user2_route2_1.jpg") },
-        { "id": 4, "route_id": 2, "user_id": 2, "created_at": "2019-02-04T10:10:10",
+        { "id": 4, "route_id": 2, "user_id": 2, "created_at": "2019-02-04T10:10:10+00:00",
           "b64_image": image_str(resource_dir, "user2_route2_2.jpg") },
     ]
 
@@ -70,7 +70,7 @@ def test_route_match(client, app, resource_dir, auth_headers_user2):
     assert resp.json["msg"] == "Route image updated with user's route id choice"
 
     assert resp.json["route_image"] == {
-        "id": 4, "route_id": 3, "user_id": 2, "created_at": "2019-02-04T10:10:10",
+        "id": 4, "route_id": 3, "user_id": 2, "created_at": "2019-02-04T10:10:10+00:00",
         "b64_image": image_str(resource_dir, "user2_route2_2.jpg")
     }
 
@@ -93,7 +93,7 @@ def test_route_match_no_match(client, app, resource_dir, auth_headers_user2):
     assert resp.json["msg"] == "Route image updated with user's route id choice"
 
     assert resp.json["route_image"] == {
-        "id": 4, "route_id": None, "user_id": 2, "created_at": "2019-02-04T10:10:10",
+        "id": 4, "route_id": None, "user_id": 2, "created_at": "2019-02-04T10:10:10+00:00",
         "b64_image": image_str(resource_dir, "user2_route2_2.jpg")
     }
 

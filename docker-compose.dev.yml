@@ -1,6 +1,9 @@
 version: '2'
 services:
   db:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./db
     restart: unless-stopped
     env_file:
       - dev_secrets.env

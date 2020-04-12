@@ -23,11 +23,11 @@ def test_routes(client, auth_headers_user1):
     assert resp.is_json
 
     expected_routes = {
-        "100": {"category": "sport", "created_at": "2019-03-04T10:10:10", "grade": "6a", "gym_id": 2, "id": 100,
+        "100": {"category": "sport", "created_at": "2019-03-04T10:10:10+00:00", "grade": "6a", "gym_id": 2, "id": 100,
                 "user_id": 2},
-        "101": {"category": "sport", "created_at": "2019-03-04T10:10:10", "grade": "6a", "gym_id": 2, "id": 101,
+        "101": {"category": "sport", "created_at": "2019-03-04T10:10:10+00:00", "grade": "6a", "gym_id": 2, "id": 101,
                 "user_id": 2},
-        "102": {"category": "sport", "created_at": "2019-03-04T10:10:10", "grade": "6a", "gym_id": 2, "id": 102,
+        "102": {"category": "sport", "created_at": "2019-03-04T10:10:10+00:00", "grade": "6a", "gym_id": 2, "id": 102,
                 "user_id": 2},
     }
 
@@ -45,7 +45,7 @@ def test_single_route(client, auth_headers_user1):
     assert resp.is_json
 
     expected_routes = {
-        "101": {"category": "sport", "created_at": "2019-03-04T10:10:10", "grade": "6a", "gym_id": 2, "id": 101,
+        "101": {"category": "sport", "created_at": "2019-03-04T10:10:10+00:00", "grade": "6a", "gym_id": 2, "id": 101,
                 "user_id": 2},
     }
 
@@ -65,7 +65,7 @@ def test_add_route(client, app, auth_headers_user1):
     assert resp.status_code == 200
     assert resp.is_json
     assert resp.json["msg"] == "Route added"
-    assert resp.json["route"] == {"category": "sport", "created_at": "2019-03-04T10:10:10", "grade": "7a",
+    assert resp.json["route"] == {"category": "sport", "created_at": "2019-03-04T10:10:10+00:00", "grade": "7a",
                                   "gym_id": 1, "id": 103, "user_id": 1}
 
     with app.app_context():
@@ -73,7 +73,7 @@ def test_add_route(client, app, auth_headers_user1):
         assert route.gym_id == 1
         assert route.user_id == 1
         assert route.grade == "7a"
-        assert route.created_at == datetime(2019, 3, 4, 10, 10, 10)
+        assert route.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
 
 
 def test_predict_no_image(client, auth_headers_user1):
@@ -145,30 +145,30 @@ def test_predict_with_unknown_image(client, resource_dir, auth_headers_user1):
 
     assert resp.json["sorted_route_and_image_predictions"] == [
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10', 'grade': '7a', 'gym_id': 1,
+            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'grade': '7a', 'gym_id': 1,
                       'id': 2, 'user_id': 1},
             'route_image': {'b64_image': image_str(resource_dir, "user2_route2_1.jpg"), 'created_at':
-                '2019-02-04T10:10:10', 'id': 3, 'route_id': 2, 'user_id': 2},
+                '2019-02-04T10:10:10+00:00', 'id': 3, 'route_id': 2, 'user_id': 2},
         },
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10', 'grade': '7a', 'gym_id': 1, 'id': 4, 'user_id': 1},
+            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'grade': '7a', 'gym_id': 1, 'id': 4, 'user_id': 1},
             'route_image': {'b64_image': image_str(resource_dir, "user2_route4_1.jpg"), 'created_at':
-                '2019-02-04T10:10:10', 'id': 7, 'route_id': 4, 'user_id': 2},
+                '2019-02-04T10:10:10+00:00', 'id': 7, 'route_id': 4, 'user_id': 2},
         },
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10', 'grade': '7a', 'gym_id': 1, 'id': 1, 'user_id': 1},
+            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'grade': '7a', 'gym_id': 1, 'id': 1, 'user_id': 1},
             'route_image': {'b64_image': image_str(resource_dir, "user1_route1.jpg"), 'created_at':
-                '2019-03-04T10:10:10', 'id': 1, 'route_id': 1, 'user_id': 1},
+                '2019-03-04T10:10:10+00:00', 'id': 1, 'route_id': 1, 'user_id': 1},
         },
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10', 'grade': '7a', 'gym_id': 1, 'id': 3, 'user_id': 1},
+            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'grade': '7a', 'gym_id': 1, 'id': 3, 'user_id': 1},
             'route_image': {'b64_image': image_str(resource_dir, "user1_route3.jpg"), 'created_at':
-                '2019-03-04T10:10:10', 'id': 5, 'route_id': 3, 'user_id': 1},
+                '2019-03-04T10:10:10+00:00', 'id': 5, 'route_id': 3, 'user_id': 1},
         },
     ]
 
     assert resp.json["route_image"] == {
-        "id": 9, "route_id": None, "user_id": 1, "created_at": "2019-03-04T10:10:10",
+        "id": 9, "route_id": None, "user_id": 1, "created_at": "2019-03-04T10:10:10+00:00",
         "b64_image": image_str(resource_dir, "unknown_route.jpg")
     }
 
@@ -193,27 +193,27 @@ def test_cbir_predict_with_image(app, client, resource_dir, auth_headers_user1):
 
     assert resp.json["sorted_route_and_image_predictions"] == [
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10', 'grade': '7a', 'gym_id': 1, 'id': 2, 'user_id': 1},
+            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'grade': '7a', 'gym_id': 1, 'id': 2, 'user_id': 1},
             'route_image': {'b64_image': image_str(resource_dir, "user2_route2_2.jpg"), 'created_at':
-                '2019-02-04T10:10:10', 'id': 4, 'route_id': 2, 'user_id': 2},
+                '2019-02-04T10:10:10+00:00', 'id': 4, 'route_id': 2, 'user_id': 2},
         },
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10', 'grade': '7a', 'gym_id': 1, 'id': 4, 'user_id': 1},
+            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'grade': '7a', 'gym_id': 1, 'id': 4, 'user_id': 1},
             'route_image': {'b64_image': image_str(resource_dir, "user2_route4_2.jpg"), 'created_at':
-                '2019-02-04T10:10:10', 'id': 8, 'route_id': 4, 'user_id': 2},
+                '2019-02-04T10:10:10+00:00', 'id': 8, 'route_id': 4, 'user_id': 2},
         },
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10', 'grade': '7a', 'gym_id': 1, 'id': 1, 'user_id': 1},
-            'route_image': {'b64_image': image_str(resource_dir, "user1_route1.jpg"), 'created_at': '2019-03-04T10:10:10', 'id': 1, 'route_id': 1, 'user_id': 1},
+            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'grade': '7a', 'gym_id': 1, 'id': 1, 'user_id': 1},
+            'route_image': {'b64_image': image_str(resource_dir, "user1_route1.jpg"), 'created_at': '2019-03-04T10:10:10+00:00', 'id': 1, 'route_id': 1, 'user_id': 1},
         },
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10', 'grade': '7a', 'gym_id': 1, 'id': 3, 'user_id': 1},
-            'route_image': {'b64_image': image_str(resource_dir, "user1_route3.jpg"), 'created_at': '2019-03-04T10:10:10', 'id': 5, 'route_id': 3, 'user_id': 1},
+            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'grade': '7a', 'gym_id': 1, 'id': 3, 'user_id': 1},
+            'route_image': {'b64_image': image_str(resource_dir, "user1_route3.jpg"), 'created_at': '2019-03-04T10:10:10+00:00', 'id': 5, 'route_id': 3, 'user_id': 1},
         },
     ]
 
     assert resp.json["route_image"] == {
-        "id": 9, "route_id": None, "user_id": 1, "created_at": "2019-03-04T10:10:10",
+        "id": 9, "route_id": None, "user_id": 1, "created_at": "2019-03-04T10:10:10+00:00",
         "b64_image": image_str(resource_dir, "green_route.jpg")
     }
 
@@ -225,5 +225,5 @@ def test_cbir_predict_with_image(app, client, resource_dir, auth_headers_user1):
         assert stored_image.route_unmatched == False
         assert stored_image.model_version == "cbir_v1"
         assert stored_image.path == "/tmp/climbicus_tests/route_images/from_users/1/2019/03/12345678123456781234567812345678.jpg"
-        assert stored_image.created_at == datetime(2019, 3, 4, 10, 10, 10)
+        assert stored_image.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
         assert stored_image.descriptors == json.load(open(f"{resource_dir}/cbir/green_route_descriptor.json"))

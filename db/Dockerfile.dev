@@ -1,0 +1,4 @@
+FROM postgres:11
+
+COPY create_test_user.sql /docker-entrypoint-initdb.d/
+
