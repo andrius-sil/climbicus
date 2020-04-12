@@ -12,7 +12,8 @@ UserRouteLog _$UserRouteLogFromJson(Map<String, dynamic> json) {
     json['route_id'] as int,
     json['user_id'] as int,
     json['gym_id'] as int,
-    json['status'] as String,
+    json['completed'] as bool,
+    json['num_attempts'] as int,
     json['created_at'] == null
         ? null
         : DateTime.parse(json['created_at'] as String),
@@ -25,6 +26,7 @@ Map<String, dynamic> _$UserRouteLogToJson(UserRouteLog instance) =>
       'route_id': instance.routeId,
       'user_id': instance.userId,
       'gym_id': instance.gymId,
-      'status': instance.status,
+      'completed': instance.completed,
+      'num_attempts': instance.numAttempts,
       'created_at': instance.createdAt?.toIso8601String(),
     };

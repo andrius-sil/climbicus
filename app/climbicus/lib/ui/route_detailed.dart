@@ -118,7 +118,9 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
   Widget _buildRouteAscents() {
     List<Widget> ascents = [];
     for (var userRouteLog in widget.routeWithLogs.userRouteLogs.values) {
-      ascents.add(Text("${userRouteLog.status} - ${dateToString(userRouteLog.createdAt)}"));
+      var status = (userRouteLog.completed) ? "sent" : "attempted";
+      var tries = (userRouteLog.numAttempts == null) ? "" : "(${userRouteLog.numAttempts} tries)";
+      ascents.add(Text("$status $tries - ${dateToString(userRouteLog.createdAt)}"));
     }
 
     if (ascents.isEmpty) {

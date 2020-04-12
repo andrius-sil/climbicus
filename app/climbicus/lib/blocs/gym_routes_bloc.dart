@@ -78,10 +78,12 @@ class UpdateLoadedGymRoutes extends GymRoutesEvent {}
 
 class AddNewUserRouteLog extends GymRoutesEvent {
   final int routeId;
-  final String status;
+  final bool completed;
+  final int numAttempts;
   const AddNewUserRouteLog({
     @required this.routeId,
-    @required this.status,
+    @required this.completed,
+    @required this.numAttempts,
   });
 }
 
@@ -144,7 +146,7 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
     } else if (event is UpdateLoadedGymRoutes) {
       yield GymRoutesLoadedWithImages(entries: _entries);
     } else if (event is AddNewUserRouteLog) {
-      var results = await api.logbookAdd(event.routeId, event.status);
+      var results = await api.logbookAdd(event.routeId, event.completed, event.numAttempts);
       var newUserRouteLog = UserRouteLog.fromJson(results["user_route_log"]);
 
       _entries.addUserRouteLog(newUserRouteLog);
@@ -155,10 +157,10 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
       var newRoute = jsonmdl.Route.fromJson(results["route"]);
       _entries.addRoute(newRoute);
 
-      this.add(AddNewUserRouteLog(
-        routeId: newRoute.id,
-        status: event.status,
-      ));
+//      this.add(AddNewUserRouteLog(
+//        routeId: newRoute.id,
+//        status: event.status,
+//      ));
 
       yield GymRoutesLoadedWithImages(entries: _entries);
 

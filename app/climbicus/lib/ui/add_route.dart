@@ -124,7 +124,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
     );
   }
 
-  Future<void> uploadAndNavigateBack() async {
+  void uploadAndNavigateBack() {
     _gymRoutesBloc.add(AddNewGymRouteWithUserLog(
       category: _selectedCategory,
       grade: _selectedGrade,
