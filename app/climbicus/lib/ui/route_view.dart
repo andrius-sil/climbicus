@@ -124,7 +124,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
     widget.settings.imagePickerSource.forEach((imageSource) {
       widgets.add(FloatingActionButton(
         onPressed: () async {
-          var image = await widget.imagePicker.pickImage(imageSource, _routeImagesBloc);
+          var image = await widget.imagePicker.pickImage(imageSource);
           if (image == null) {
             return;
           }
