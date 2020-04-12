@@ -113,9 +113,8 @@ def store_image(fs_image, user_id, gym_id, model_version, descriptors):
     return route_image
 
 
-@blueprint.route("/grade_list", methods=["GET"])
+@blueprint.route("/grade_systems", methods=["GET"])
 def grade_systems():
-    grade_system = request.json["grade_system"]
-    grade_list = GradeSystems().get_system_grades(grade_system)
+    all_grade_systems = GradeSystems.get_grade_systems()
 
-    return jsonify({"grade_list": grade_list})
+    return jsonify({"grade_systems": all_grade_systems})
