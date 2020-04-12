@@ -3,7 +3,7 @@ import json
 import uuid
 
 from app import db, cbir_predictor, io
-from app.models import RouteImages, Routes
+from app.models import RouteImages, Routes, GradeSystems
 
 from flask import abort, request, Blueprint, jsonify
 
@@ -34,10 +34,11 @@ def route_list(route_id=None):
 def add():
     gym_id = request.json["gym_id"]
     user_id = request.json["user_id"]
-    grade = request.json["grade"]
+    lower_grade = request.json["lower_grade"]
+    upper_grade = request.json["upper_grade"]
     category = request.json["category"]
 
-    route = Routes(gym_id=gym_id, user_id=user_id, grade=grade, category=category,
+    route = Routes(gym_id=gym_id, user_id=user_id, lower_grade=lower_grade, upper_grade=upper_grade, category=category,
                    created_at=datetime.datetime.utcnow())
 
     db.session.add(route)
@@ -110,3 +111,10 @@ def store_image(fs_image, user_id, gym_id, model_version, descriptors):
     db.session.commit()
 
     return route_image
+
+
+@blueprint.route("/grade_systems", methods=["GET"])
+def grade_systems():
+    all_grade_systems = GradeSystems.get_grade_systems()
+
+    return jsonify({"grade_systems": all_grade_systems})

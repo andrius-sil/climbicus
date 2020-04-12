@@ -23,15 +23,38 @@ def test_routes(client, auth_headers_user1):
     assert resp.is_json
 
     expected_routes = {
-        "100": {"category": "sport", "created_at": "2019-03-04T10:10:10+00:00", "grade": "6a", "gym_id": 2, "id": 100,
-                "user_id": 2},
-        "101": {"category": "sport", "created_at": "2019-03-04T10:10:10+00:00", "grade": "6a", "gym_id": 2, "id": 101,
-                "user_id": 2},
-        "102": {"category": "sport", "created_at": "2019-03-04T10:10:10+00:00", "grade": "6a", "gym_id": 2, "id": 102,
-                "user_id": 2},
+        "100": {"category": "sport", "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 100,
+                "lower_grade": "Font_7A", "upper_grade": "Font_7A", "user_id": 2},
+        "101": {"category": "sport", "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 101,
+                "lower_grade": "Font_7A", "upper_grade": "Font_7A", "user_id": 2},
+        "102": {"category": "sport", "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 102,
+                "lower_grade": "Font_7A", "upper_grade": "Font_7A", "user_id": 2},
     }
 
     assert expected_routes == resp.json["routes"]
+
+
+def test_grade_systems(client, auth_headers_user1):
+    data = {
+        "user_id": 1,
+        "gym_id": 2,
+    }
+    resp = client.get("/routes/grade_systems", data=json.dumps(data), content_type="application/json",
+                      headers=auth_headers_user1)
+
+    assert resp.status_code == 200
+    assert resp.is_json
+
+    grade_systems = {
+        'V': ['VB', 'V0-', 'V0', 'V0+', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7', 'V8', 'V9', 'V10', 'V11', 'V12',
+              'V13', 'V14', 'V15', 'V16', 'V17'],
+        'French': ['1', '2', '3', '4', '4a', '4b', '4c', '5a', '5b', '5c', '6a', '6a+', '6b', '6b+', '6c', '6c+', '7a',
+                   '7a+', '7b', '7b+', '8a', '8a+', '8b', '8b+', '8c', '8c+'],
+        'Font': ['3', '4-', '4', '4+', '5', '5+', '6A', '6A+', '6B', '6B+', '6C', '6C+', '7A', '7A+', '7B', '7B+',
+                 '7C', '7C+', '8A', '8A+', '8B', '8B+', '8C', '8C+', '9A'],
+    }
+
+    assert grade_systems == resp.json["grade_systems"]
 
 
 def test_single_route(client, auth_headers_user1):
@@ -45,8 +68,8 @@ def test_single_route(client, auth_headers_user1):
     assert resp.is_json
 
     expected_routes = {
-        "101": {"category": "sport", "created_at": "2019-03-04T10:10:10+00:00", "grade": "6a", "gym_id": 2, "id": 101,
-                "user_id": 2},
+        "101": {"category": "sport", "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 101,
+                "lower_grade": "Font_7A", "upper_grade": "Font_7A", "user_id": 2},
     }
 
     assert expected_routes == resp.json["routes"]
@@ -58,21 +81,23 @@ def test_add_route(client, app, auth_headers_user1):
         "user_id": 1,
         "gym_id": 1,
         "category": "sport",
-        "grade": "7a",
+        "lower_grade": "Font_7A",
+        "upper_grade": "Font_7A",
     }
     resp = client.post("/routes/", data=json.dumps(data), content_type="application/json", headers=auth_headers_user1)
 
     assert resp.status_code == 200
     assert resp.is_json
     assert resp.json["msg"] == "Route added"
-    assert resp.json["route"] == {"category": "sport", "created_at": "2019-03-04T10:10:10+00:00", "grade": "7a",
-                                  "gym_id": 1, "id": 103, "user_id": 1}
+    assert resp.json["route"] == {"category": "sport", "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 1,
+                                  "id": 103, "lower_grade": "Font_7A", "upper_grade": "Font_7A", "user_id": 1}
 
     with app.app_context():
         route = Routes.query.filter_by(id=103).one()
         assert route.gym_id == 1
         assert route.user_id == 1
-        assert route.grade == "7a"
+        assert route.lower_grade == "Font_7A"
+        assert route.upper_grade == "Font_7A"
         assert route.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
 
 
@@ -145,23 +170,26 @@ def test_predict_with_unknown_image(client, resource_dir, auth_headers_user1):
 
     assert resp.json["sorted_route_and_image_predictions"] == [
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'grade': '7a', 'gym_id': 1,
-                      'id': 2, 'user_id': 1},
+            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 2,
+                      'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1},
             'route_image': {'b64_image': image_str(resource_dir, "user2_route2_1.jpg"), 'created_at':
                 '2019-02-04T10:10:10+00:00', 'id': 3, 'route_id': 2, 'user_id': 2},
         },
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'grade': '7a', 'gym_id': 1, 'id': 4, 'user_id': 1},
+            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 4,
+                      'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1},
             'route_image': {'b64_image': image_str(resource_dir, "user2_route4_1.jpg"), 'created_at':
                 '2019-02-04T10:10:10+00:00', 'id': 7, 'route_id': 4, 'user_id': 2},
         },
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'grade': '7a', 'gym_id': 1, 'id': 1, 'user_id': 1},
+            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 1,
+                      'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1},
             'route_image': {'b64_image': image_str(resource_dir, "user1_route1.jpg"), 'created_at':
                 '2019-03-04T10:10:10+00:00', 'id': 1, 'route_id': 1, 'user_id': 1},
         },
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'grade': '7a', 'gym_id': 1, 'id': 3, 'user_id': 1},
+            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 3,
+                      'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1},
             'route_image': {'b64_image': image_str(resource_dir, "user1_route3.jpg"), 'created_at':
                 '2019-03-04T10:10:10+00:00', 'id': 5, 'route_id': 3, 'user_id': 1},
         },
@@ -193,21 +221,25 @@ def test_cbir_predict_with_image(app, client, resource_dir, auth_headers_user1):
 
     assert resp.json["sorted_route_and_image_predictions"] == [
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'grade': '7a', 'gym_id': 1, 'id': 2, 'user_id': 1},
+            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 2,
+                      'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1},
             'route_image': {'b64_image': image_str(resource_dir, "user2_route2_2.jpg"), 'created_at':
                 '2019-02-04T10:10:10+00:00', 'id': 4, 'route_id': 2, 'user_id': 2},
         },
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'grade': '7a', 'gym_id': 1, 'id': 4, 'user_id': 1},
+            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 4,
+                      'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1},
             'route_image': {'b64_image': image_str(resource_dir, "user2_route4_2.jpg"), 'created_at':
                 '2019-02-04T10:10:10+00:00', 'id': 8, 'route_id': 4, 'user_id': 2},
         },
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'grade': '7a', 'gym_id': 1, 'id': 1, 'user_id': 1},
+            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 1,
+                      'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1},
             'route_image': {'b64_image': image_str(resource_dir, "user1_route1.jpg"), 'created_at': '2019-03-04T10:10:10+00:00', 'id': 1, 'route_id': 1, 'user_id': 1},
         },
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'grade': '7a', 'gym_id': 1, 'id': 3, 'user_id': 1},
+            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 3,
+                      'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1},
             'route_image': {'b64_image': image_str(resource_dir, "user1_route3.jpg"), 'created_at': '2019-03-04T10:10:10+00:00', 'id': 5, 'route_id': 3, 'user_id': 1},
         },
     ]
