@@ -48,38 +48,12 @@ class RouteCategory(Enum):
     sport = auto()
 
 
-class GradeSystems:
-    def __init__(self):
-        self.systems = {
-            'V': ['VB', 'V0-', 'V0', 'V0+', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7', 'V8', 'V9', 'V10', 'V11', 'V12',
-                  'V13', 'V14', 'V15', 'V16', 'V17'],
-            'French': ['1', '2', '3', '4', '4a', '4b', '4c', '5a', '5b', '5c', '6a', '6a+', '6b', '6b+', '6c', '6c+', '7a',
-                       '7a+', '7b', '7b+', '8a', '8a+', '8b', '8b+', '8c', '8c+'],
-            'Font': ['3', '4-', '4', '4+', '5', '5+', '6A', '6A+', '6B', '6B+', '6C', '6C+', '7A', '7A+', '7B', '7B+',
-                     '7C', '7C+', '8A', '8A+', '8B', '8B+', '8C', '8C+', '9A'],
-        }
-
-    def gen_enum_list(self):
-        enum_list = []
-        for system, grades in self.systems.items():
-            for g in grades:
-                enum_list.append(f"{system}_{g}")
-        return enum_list
-
-    def get_system_grades(self, system):
-        return self.systems[system]
-
-
-grade_enum_values = GradeSystems().gen_enum_list()
-
-
 class Routes(db.Model):
     id = db.Column(db.Integer, db.Sequence('route_id_seq'), primary_key=True)
     gym_id = db.Column(db.Integer, db.ForeignKey('gyms.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     category = db.Column(db.Enum(RouteCategory), nullable=False)
-    lower_grade = db.Column(db.Enum(*grade_enum_values, name='lowergrade'), nullable=False)
-    upper_grade = db.Column(db.Enum(*grade_enum_values, name='uppergrade'), nullable=False)
+    grade = db.Column(db.String, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     @property
