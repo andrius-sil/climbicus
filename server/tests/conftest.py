@@ -2,6 +2,7 @@ import os
 
 import pytest
 from flask_jwt_extended import create_access_token
+from sqlalchemy_utils import create_database, database_exists
 
 from app import create_app, db
 from app.models import Gyms, RouteImages, Routes, UserRouteLog, Users
@@ -11,7 +12,7 @@ import pytz
 from app.utils.encoding import bytes_to_b64str
 from app.utils.io import InputOutputProvider
 
-DATABASE_CONNECTION_URI = "sqlite:///:memory:"
+DATABASE_CONNECTION_URI = "postgresql+psycopg2://tester:test@db:5432/climbicus_tests"
 JWT_SECRET_KEY = "super-secret-key"
 
 
@@ -41,6 +42,9 @@ class TestInputOutputProvider(InputOutputProvider):
 @pytest.fixture(scope="function")
 def app(resource_dir):
     """Create and configure a new app instance for each test."""
+    if not database_exists(DATABASE_CONNECTION_URI):
+        create_database(DATABASE_CONNECTION_URI)
+
     app = create_app(
         db_connection_uri=DATABASE_CONNECTION_URI,
         jwt_secret_key=JWT_SECRET_KEY,
@@ -50,6 +54,7 @@ def app(resource_dir):
     app.testing = True
 
     with app.app_context():
+        db.drop_all()
         db.create_all()
 
         db.session.add(
@@ -152,7 +157,6 @@ def app(resource_dir):
 
     with app.app_context():
         db.session.remove()
-        db.drop_all()
 
 
 @pytest.fixture

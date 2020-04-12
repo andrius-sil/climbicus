@@ -5,13 +5,8 @@ ifndef ENV
 	$(error ENV is undefined)
 endif
 
-docker-build-server:
-	docker build -t climbicus_server server/
-
-docker-build-db:
-	docker build -t climbicus_db db/
-
-docker-build: docker-build-server docker-build-db
+docker-build: check-env
+	docker-compose -f docker-compose.yml -f docker-compose.${ENV}.yml build $(args)
 
 docker-run: check-env
 	docker-compose -f docker-compose.yml -f docker-compose.${ENV}.yml run server $(args)
