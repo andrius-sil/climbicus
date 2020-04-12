@@ -1,5 +1,6 @@
 from enum import Enum, auto
 
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.hybrid import hybrid_property
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -85,7 +86,7 @@ class RouteImages(db.Model):
     model_version = db.Column(db.String, nullable=False)
     path = db.Column(db.String, unique=True, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
-    descriptors = db.Column(db.JSON, nullable=False)
+    descriptors = db.Column(JSONB, nullable=False)
 
     @property
     def api_model(self):
