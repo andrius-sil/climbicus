@@ -79,15 +79,15 @@ def app(resource_dir):
         for i in range(1, 100):
             db.session.add(
                 Routes(
-                    gym_id=1, user_id=1, category="bouldering", grade="7a", created_at=datetime(2019, 3, 4, 10, 10, 10,
-                                                                                 tzinfo=pytz.UTC)
+                    gym_id=1, user_id=1, category="bouldering", lower_grade="V_V1", upper_grade="V_V1",
+                    created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
                 )
             )
         for i in range(100, 103):
             db.session.add(
                 Routes(
-                    gym_id=2, user_id=2, category="sport", grade="6a", created_at=datetime(2019, 3, 4, 10, 10, 10,
-                                                                                       tzinfo=pytz.UTC)
+                    gym_id=2, user_id=2, category="sport", lower_grade="Font_7A", upper_grade="Font_7A",
+                    created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
                 )
             )
         db.session.flush()

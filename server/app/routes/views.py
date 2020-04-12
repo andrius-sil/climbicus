@@ -34,10 +34,11 @@ def route_list(route_id=None):
 def add():
     gym_id = request.json["gym_id"]
     user_id = request.json["user_id"]
-    grade = request.json["grade"]
+    lower_grade = request.json["lower_grade"]
+    upper_grade = request.json["upper_grade"]
     category = request.json["category"]
 
-    route = Routes(gym_id=gym_id, user_id=user_id, grade=grade, category=category,
+    route = Routes(gym_id=gym_id, user_id=user_id, lower_grade=lower_grade, upper_grade=upper_grade, category=category,
                    created_at=datetime.datetime.utcnow())
 
     db.session.add(route)

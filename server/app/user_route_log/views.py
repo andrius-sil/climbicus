@@ -44,6 +44,7 @@ def view(route_id=None):
     for user_route_log, route in query.all():
         logbook[user_route_log.id] = {
             "user_route_log": user_route_log.api_model,
-            "grade": route.grade,
+            # TODO: simplify the query to avoid this
+            "lower_grade": route.lower_grade,
         }
     return jsonify(logbook)

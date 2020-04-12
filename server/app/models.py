@@ -89,12 +89,14 @@ class Routes(db.Model):
             "gym_id": self.gym_id,
             "user_id": self.user_id,
             "category": self.category.name,
-            "grade": self.grade,
+            "lower_grade": self.lower_grade,
+            "upper_grade": self.upper_grade,
             "created_at": self.created_at.isoformat(),
         }
 
     def __repr__(self):
-        return model_repr("Route", id=self.id, gym_id=self.gym_id, category=self.category.name, grade=self.grade)
+        return model_repr("Route", id=self.id, gym_id=self.gym_id, category=self.category.name,
+                          lower_grade=self.lower_grade, upper_grade=self.upper_grade)
 
 
 class RouteImages(db.Model):
