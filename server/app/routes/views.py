@@ -3,7 +3,7 @@ import json
 import uuid
 
 from app import db, cbir_predictor, io
-from app.models import RouteImages, Routes
+from app.models import RouteImages, Routes, GradeSystems
 
 from flask import abort, request, Blueprint, jsonify
 
@@ -111,3 +111,11 @@ def store_image(fs_image, user_id, gym_id, model_version, descriptors):
     db.session.commit()
 
     return route_image
+
+
+@blueprint.route("/grade_list", methods=["GET"])
+def grade_systems():
+    grade_system = request.json["grade_system"]
+    grade_list = GradeSystems().get_system_grades(grade_system)
+
+    return jsonify({"grade_list": grade_list})

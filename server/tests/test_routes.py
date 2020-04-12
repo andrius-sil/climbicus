@@ -34,6 +34,24 @@ def test_routes(client, auth_headers_user1):
     assert expected_routes == resp.json["routes"]
 
 
+def test_grade_list(client, auth_headers_user1):
+    data = {
+        "user_id": 1,
+        "gym_id": 2,
+        "grade_system": "V",
+    }
+    resp = client.get("/routes/grade_list", data=json.dumps(data), content_type="application/json",
+                      headers=auth_headers_user1)
+
+    assert resp.status_code == 200
+    assert resp.is_json
+
+    grade_list = ['VB', 'V0-', 'V0', 'V0+', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7', 'V8', 'V9', 'V10', 'V11',
+                  'V12', 'V13', 'V14', 'V15', 'V16', 'V17']
+
+    assert grade_list == resp.json["grade_list"]
+
+
 def test_single_route(client, auth_headers_user1):
     data = {
         "user_id": 1,
