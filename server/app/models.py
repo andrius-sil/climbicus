@@ -59,19 +59,15 @@ class GradeSystems:
     }
 
     @staticmethod
-    def gen_enum_list():
+    def enum_list():
         enum_list = []
         for system, grades in GradeSystems.systems.items():
             for g in grades:
                 enum_list.append(f"{system}_{g}")
         return enum_list
 
-    @staticmethod
-    def get_grade_systems():
-        return GradeSystems.systems
 
-
-grade_enum_values = GradeSystems.gen_enum_list()
+grade_enum_values = GradeSystems.enum_list()
 
 
 class Routes(db.Model):
