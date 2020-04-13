@@ -111,10 +111,3 @@ def store_image(fs_image, user_id, gym_id, model_version, descriptors):
     db.session.commit()
 
     return route_image
-
-
-@blueprint.route("/grade_systems", methods=["GET"])
-def grade_systems():
-    all_grade_systems = GradeSystems.get_grade_systems()
-
-    return jsonify({"grade_systems": all_grade_systems})

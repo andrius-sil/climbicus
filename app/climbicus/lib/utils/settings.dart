@@ -17,6 +17,7 @@ class Settings {
   }
 
   static const Map<String, String> serverUrls = {
+    "local": "http://x1carbon:5000",
     "dev": "http://3.11.0.15:5000",
     "prod": "http://3.11.49.99:5000",
   };
@@ -36,7 +37,7 @@ class Settings {
     storeSetting("display_predictions_num", i.toString());
   }
 
-  String _server = "dev";
+  String _server = "local";
 
   String get server => _server;
 

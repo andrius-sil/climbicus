@@ -1,5 +1,7 @@
 import os
 
+from werkzeug.middleware.profiler import ProfilerMiddleware
+
 from app import create_app
 from app.utils.io import S3InputOutputProvider
 
@@ -23,3 +25,8 @@ app = create_app(
     io_provider=S3InputOutputProvider(ENV),
     disable_auth=DISABLE_AUTH,
 )
+
+FLASK_PROFILE = os.getenv("FLASK_PROFILE", False)
+if FLASK_PROFILE:
+    app.wsgi_app = ProfilerMiddleware(app.wsgi_app)
+

@@ -194,7 +194,8 @@ class ApiProvider {
     Map data = {
       "gym_id": CASTLE_GYM_ID,
       "category": category,
-      "grade": grade,
+      "lower_grade": grade,
+      "upper_grade": grade,
     };
 
     return _requestJson("POST", "routes/", data);

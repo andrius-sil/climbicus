@@ -15,6 +15,7 @@ services:
       - ENV=dev
       - PYTHONUNBUFFERED=1
       - FLASK_ENV=development
+      #- FLASK_PROFILE=1
     volumes:
       - ./server/:/app
       - $HOME/.aws/credentials:/root/.aws/credentials:ro

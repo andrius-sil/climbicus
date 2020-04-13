@@ -65,17 +65,18 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
                   ],
                 )),
                 Expanded(
-                    child: Column(
-                  children: <Widget>[
-                    Text("Selected photo:"),
-                    Container(
-                      color: Colors.white,
-                      height: columnSize,
-                      width: columnSize,
-                      child: widget.selectedImage,
-                    ),
-                  ],
-                )),
+                  child: Column(
+                    children: <Widget>[
+                      Text("Selected photo:"),
+                      Container(
+                        color: Colors.white,
+                        height: columnSize,
+                        width: columnSize,
+                        child: widget.selectedImage,
+                      ),
+                    ],
+                ),
+                ),
               ],
             ),
             Text("sent clean?"),

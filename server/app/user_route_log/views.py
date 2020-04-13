@@ -34,17 +34,12 @@ def view(route_id=None):
     user_id = request.json["user_id"]
     gym_id = request.json["gym_id"]
 
-    query = db.session.query(UserRouteLog, Routes) \
+    query = db.session.query(UserRouteLog) \
         .filter_by(user_id=user_id, gym_id=gym_id)
     if route_id:
         query = query.filter_by(route_id=route_id)
-    query = query.join(Routes)
 
     logbook = {}
-    for user_route_log, route in query.all():
-        logbook[user_route_log.id] = {
-            "user_route_log": user_route_log.api_model,
-            # TODO: simplify the query to avoid this
-            "lower_grade": route.lower_grade,
-        }
+    for user_route_log in query.all():
+        logbook[user_route_log.id] = user_route_log.api_model
     return jsonify(logbook)

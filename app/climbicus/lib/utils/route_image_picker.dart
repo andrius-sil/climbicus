@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -19,8 +18,7 @@ const Map<ImageSource, Map<String, dynamic>> IMAGE_SOURCES = {
 
 class RouteImagePicker {
 
-  Future<File> pickImage(ImageSource imageSource,
-      RouteImagesBloc routeImagesBloc) async {
+  Future<File> pickImage(ImageSource imageSource) async {
     var image = await ImagePicker.pickImage(
       source: imageSource,
       maxWidth: 1028,
