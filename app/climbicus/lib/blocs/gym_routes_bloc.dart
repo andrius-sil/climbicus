@@ -132,7 +132,7 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
 
         var newLogbook = (await dataLogbook).map((userRouteLogId, model) =>
             MapEntry(int.parse(userRouteLogId),
-                UserRouteLog.fromJson(model["user_route_log"])));
+                UserRouteLog.fromJson(model)));
         Map<String, dynamic> resultsRoutes = (await dataRoutes)["routes"];
         var newRoutes = resultsRoutes.map((routeId, model) =>
             MapEntry(int.parse(routeId), jsonmdl.Route.fromJson(model)));
