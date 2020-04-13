@@ -90,12 +90,14 @@ class AddNewUserRouteLog extends GymRoutesEvent {
 class AddNewGymRouteWithUserLog extends GymRoutesEvent {
   final String category;
   final String grade;
-  final String status;
+  final bool completed;
+  final int numAttempts;
   final RouteImage routeImage;
   const AddNewGymRouteWithUserLog({
     @required this.category,
     @required this.grade,
-    @required this.status,
+    @required this.completed,
+    @required this.numAttempts,
     @required this.routeImage,
   });
 }
@@ -157,10 +159,11 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
       var newRoute = jsonmdl.Route.fromJson(results["route"]);
       _entries.addRoute(newRoute);
 
-//      this.add(AddNewUserRouteLog(
-//        routeId: newRoute.id,
-//        status: event.status,
-//      ));
+      this.add(AddNewUserRouteLog(
+        routeId: newRoute.id,
+        completed: event.completed,
+        numAttempts: event.numAttempts,
+      ));
 
       yield GymRoutesLoadedWithImages(entries: _entries);
 
