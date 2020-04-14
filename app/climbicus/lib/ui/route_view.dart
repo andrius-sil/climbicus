@@ -7,7 +7,7 @@ import 'package:climbicus/ui/route_predictions.dart';
 import 'package:climbicus/utils/route_image_picker.dart';
 import 'package:climbicus/utils/settings.dart';
 import 'package:climbicus/utils/time.dart';
-import 'package:climbicus/widgets/b64image.dart';
+import 'package:climbicus/widgets/route_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -100,15 +100,13 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
     return Scaffold(
       body: BlocBuilder<GymRoutesBloc, GymRoutesState>(
         builder: (context, state) {
-          if (state is GymRoutesLoadedWithImages) {
-            return _buildLogbookGrid(state.entries, withImages: true);
-          } else if (state is GymRoutesLoaded) {
-            return _buildLogbookGrid(state.entries, withImages: false);
+          if (state is GymRoutesLoaded) {
+            return _buildLogbookGrid(state.entries);
           } else if (state is GymRoutesError) {
             return ErrorWidget.builder(state.errorDetails);
           }
 
-          return CircularProgressIndicator();
+          return Center(child: CircularProgressIndicator());
         },
       ),
       floatingActionButton: Column(
@@ -148,7 +146,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
     return widgets;
   }
 
-  Widget _buildLogbookGrid(RoutesWithLogs entries, {bool withImages: true}) {
+  Widget _buildLogbookGrid(RoutesWithLogs entries) {
     Map<int, bool> isExpandedPrevious = {};
     _items.forEach((item) => isExpandedPrevious[item.routeWithLogs.route.id] = item.isExpanded);
     _items.clear();
@@ -158,12 +156,18 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
         return;
       }
 
-      var routeImage = _routeImagesBloc.images.defaultImage(routeId);
-      var imageWidget = (!withImages) ?
-        Container(width: 0, height: 0) :
-        B64Image(routeImage);
+      var imageWidget = BlocBuilder<RouteImagesBloc, RouteImagesState>(
+        builder: (context, state) {
+          if (state is RouteImagesLoaded) {
+            var routeImage = _routeImagesBloc.images.defaultImage(routeId);
+            return RouteImageWidget(routeImage);
+          } else {
+            return Container(width: 0, height: 0);
+          }
+        },
+      );
 
-    bool isExpanded = isExpandedPrevious.containsKey(routeId) ?
+      bool isExpanded = isExpandedPrevious.containsKey(routeId) ?
           isExpandedPrevious[routeId] :
           false;
 

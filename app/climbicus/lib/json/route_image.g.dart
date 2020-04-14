@@ -14,7 +14,7 @@ RouteImage _$RouteImageFromJson(Map<String, dynamic> json) {
     json['created_at'] == null
         ? null
         : DateTime.parse(json['created_at'] as String),
-    json['b64_image'] as String,
+    json['path'] as String,
   );
 }
 
@@ -24,5 +24,5 @@ Map<String, dynamic> _$RouteImageToJson(RouteImage instance) =>
       'user_id': instance.userId,
       'route_id': instance.routeId,
       'created_at': instance.createdAt?.toIso8601String(),
-      'b64_image': instance.b64Image,
+      'path': instance.path,
     };

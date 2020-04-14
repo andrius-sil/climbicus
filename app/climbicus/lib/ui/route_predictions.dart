@@ -4,7 +4,7 @@ import 'package:climbicus/blocs/route_predictions_bloc.dart';
 import 'package:climbicus/ui/route_match.dart';
 import 'package:climbicus/utils/settings.dart';
 import 'package:climbicus/utils/time.dart';
-import 'package:climbicus/widgets/b64image.dart';
+import 'package:climbicus/widgets/route_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -67,7 +67,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
                       return ErrorWidget.builder(state.errorDetails);
                     }
 
-                    return CircularProgressIndicator();
+                    return Center(child: CircularProgressIndicator());
                   },
                 ),
               ),
@@ -105,7 +105,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
       var prediction = imgPickerData.predictions[i];
       // Left side - image.
       var routeImage = prediction.routeImage;
-      var imageWidget = B64Image(routeImage);
+      var imageWidget = RouteImageWidget(routeImage);
       widgets.add(_buildRouteSelectWrapper(
         Container(
           color: Colors.grey[800],
