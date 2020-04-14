@@ -2,7 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/utils/time.dart';
-import 'package:climbicus/widgets/b64image.dart';
+import 'package:climbicus/widgets/route_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -44,7 +44,7 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
                 return ErrorWidget.builder(state.errorDetails);
               }
 
-              return CircularProgressIndicator();
+              return Center(child: CircularProgressIndicator());
             },
           ),
           _buildRouteDetails(),
@@ -62,7 +62,7 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
       return Container(
         height: 200,
         alignment: Alignment.center,
-        child: B64Image(null),
+        child: RouteImageWidget(null),
       );
     }
 
@@ -76,7 +76,7 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
           return Builder(
             builder: (BuildContext context) {
               return Container(
-                child: B64Image(img),
+                child: RouteImageWidget(img),
               );
             }
           );

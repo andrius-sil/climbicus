@@ -3,7 +3,7 @@ import json
 import uuid
 
 from app import db, cbir_predictor, io
-from app.models import RouteImages, Routes, GradeSystems
+from app.models import RouteImages, Routes
 
 from flask import abort, request, Blueprint, jsonify
 

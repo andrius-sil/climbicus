@@ -55,10 +55,6 @@ class GymRoutesLoaded extends GymRoutesState {
   const GymRoutesLoaded({@required this.entries});
 }
 
-class GymRoutesLoadedWithImages extends GymRoutesLoaded {
-  const GymRoutesLoadedWithImages({entries}) : super(entries: entries);
-}
-
 class GymRoutesError extends GymRoutesState {
   FlutterErrorDetails errorDetails;
 
@@ -146,14 +142,14 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
         yield GymRoutesError(exception: e, stackTrace: st);
       }
     } else if (event is UpdateLoadedGymRoutes) {
-      yield GymRoutesLoadedWithImages(entries: _entries);
+      yield GymRoutesLoaded(entries: _entries);
     } else if (event is AddNewUserRouteLog) {
       var results = await api.logbookAdd(event.routeId, event.completed, event.numAttempts);
       var newUserRouteLog = UserRouteLog.fromJson(results["user_route_log"]);
 
       _entries.addUserRouteLog(newUserRouteLog);
 
-      yield GymRoutesLoadedWithImages(entries: _entries);
+      yield GymRoutesLoaded(entries: _entries);
     } else if (event is AddNewGymRouteWithUserLog) {
       var results = await api.routeAdd(event.category, event.grade);
       var newRoute = jsonmdl.Route.fromJson(results["route"]);
@@ -165,7 +161,7 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
         numAttempts: event.numAttempts,
       ));
 
-      yield GymRoutesLoadedWithImages(entries: _entries);
+      yield GymRoutesLoaded(entries: _entries);
 
       routeImagesBloc.add(AddNewRouteImage(
         routeId: newRoute.id,

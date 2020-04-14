@@ -1,7 +1,7 @@
 import datetime
 
 from app import db
-from app.models import Routes, UserRouteLog
+from app.models import UserRouteLog
 
 from flask import request, Blueprint, jsonify
 
