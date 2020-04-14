@@ -56,8 +56,6 @@ class FetchRoutePrediction extends RoutePredictionEvent {
 
 
 class RoutePredictionBloc extends Bloc<RoutePredictionEvent, RoutePredictionState> {
-  static const String TRIGGER = "RoutePredictionBloc";
-
   final ApiProvider api = ApiProvider();
 
   ImagePickerData _imgPickerData;
