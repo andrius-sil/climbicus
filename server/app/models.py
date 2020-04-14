@@ -4,8 +4,13 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.hybrid import hybrid_property
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from app import db, io
-from app.utils.encoding import bytes_to_b64str
+from app import db
+
+
+CDNS = {
+    "dev": "http://d20pe4bldujy3.cloudfront.net",
+    "prod": "http://dbva1qhoik6aa.cloudfront.net",
+}
 
 
 def model_repr(name, **kwargs):
@@ -115,15 +120,15 @@ class RouteImages(db.Model):
 
     @property
     def api_model(self):
-        fbytes = io.provider.download_file(self.path)
-        base64_str = bytes_to_b64str(fbytes)
-
+        path_cdn = self.path
+        path_cdn = path_cdn.replace("s3://climbicus-dev", CDNS["dev"])
+        path_cdn = path_cdn.replace("s3://climbicus-prod", CDNS["prod"])
         return {
             "id": self.id,
             "user_id": self.user_id,
             "route_id": self.route_id,
             "created_at": self.created_at.isoformat(),
-            "b64_image": base64_str,
+            "path": path_cdn,
         }
 
     def __repr__(self):

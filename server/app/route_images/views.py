@@ -1,6 +1,6 @@
 from sqlalchemy import func
 
-from app import db, io
+from app import db
 from app.models import RouteImages
 
 from flask import request, Blueprint, jsonify
