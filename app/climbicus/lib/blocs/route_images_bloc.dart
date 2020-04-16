@@ -58,8 +58,7 @@ abstract class RouteImagesEvent {
 
 class FetchRouteImages extends RouteImagesEvent {
   final List<int> routeIds;
-  final String trigger;
-  const FetchRouteImages({@required this.routeIds, this.trigger});
+  const FetchRouteImages({@required this.routeIds});
 }
 
 class FetchRouteImagesAll extends RouteImagesEvent {
@@ -70,8 +69,7 @@ class FetchRouteImagesAll extends RouteImagesEvent {
 class AddNewRouteImage extends RouteImagesEvent {
   final int routeId;
   final RouteImage routeImage;
-  final String trigger;
-  const AddNewRouteImage({this.routeId, this.routeImage, this.trigger});
+  const AddNewRouteImage({this.routeId, this.routeImage});
 }
 
 class UpdateRouteImage extends RouteImagesEvent {
@@ -90,8 +88,7 @@ class RouteImagesLoading extends RouteImagesState {}
 
 class RouteImagesLoaded extends RouteImagesState {
   final Images images;
-  final String trigger;
-  const RouteImagesLoaded({this.images, this.trigger});
+  const RouteImagesLoaded({this.images});
 }
 
 class RouteImagesError extends RouteImagesState {
@@ -121,7 +118,7 @@ class RouteImagesBloc extends Bloc<RouteImagesEvent, RouteImagesState> {
       // Do not fetch already present route images.
       routeIds.removeWhere((id) => images.contains(id));
       if (routeIds.isEmpty) {
-        yield RouteImagesLoaded(images: images, trigger: event.trigger);
+        yield RouteImagesLoaded(images: images);
         return;
       }
 
@@ -132,7 +129,7 @@ class RouteImagesBloc extends Bloc<RouteImagesEvent, RouteImagesState> {
             MapEntry(int.parse(routeId), RouteImage.fromJson(model)));
         images.addRoutes(fetchedImages);
 
-        yield RouteImagesLoaded(images: images, trigger: event.trigger);
+        yield RouteImagesLoaded(images: images);
         return;
       } catch (e, st) {
         yield RouteImagesError(exception: e, stackTrace: st);
@@ -157,7 +154,7 @@ class RouteImagesBloc extends Bloc<RouteImagesEvent, RouteImagesState> {
 
       images.addRoutes({event.routeId: event.routeImage});
 
-      yield RouteImagesLoaded(images: images, trigger: event.trigger);
+      yield RouteImagesLoaded(images: images);
     } else if (event is UpdateRouteImage) {
       api.routeMatch(event.routeImageId, event.routeId);
       // TODO: update 'images' in case of no routeId
