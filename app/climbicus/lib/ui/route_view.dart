@@ -2,15 +2,16 @@ import 'dart:collection';
 
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
+import 'package:climbicus/blocs/settings_bloc.dart';
 import 'package:climbicus/ui/route_detailed.dart';
 import 'package:climbicus/ui/route_predictions.dart';
 import 'package:climbicus/utils/route_image_picker.dart';
-import 'package:climbicus/utils/settings.dart';
 import 'package:climbicus/utils/time.dart';
 import 'package:climbicus/widgets/route_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 class RouteListItem {
   RouteWithLogs routeWithLogs;
@@ -69,7 +70,6 @@ class HeaderListItem extends StatelessWidget {
 
 class RouteViewPage extends StatefulWidget {
   final RouteImagePicker imagePicker = RouteImagePicker();
-  final Settings settings = Settings();
 
   final String routeCategory;
 
@@ -109,17 +109,21 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
           return Center(child: CircularProgressIndicator());
         },
       ),
-      floatingActionButton: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: _buildImagePicker(),
+      floatingActionButton: BlocBuilder<SettingsBloc, SettingsState>(
+        builder: (context, state) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: _buildImagePicker(state.imagePickerSources),
+          );
+        }
       ),
     );
   }
 
-  List<Widget> _buildImagePicker() {
+  List<Widget> _buildImagePicker(List<ImageSource> imagePickerSources) {
     List<Widget> widgets = [];
 
-    widget.settings.imagePickerSource.forEach((imageSource) {
+    imagePickerSources.forEach((imageSource) {
       widgets.add(FloatingActionButton(
         onPressed: () async {
           var image = await widget.imagePicker.pickImage(imageSource);
@@ -138,7 +142,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
         heroTag: "${IMAGE_SOURCES[imageSource]["heroTag"]}-${widget.routeCategory}",
       ));
 
-      if (imageSource != widget.settings.imagePickerSource.last) {
+      if (imageSource != imagePickerSources.last) {
         widgets.add(SizedBox(height: 16.0));
       }
     });

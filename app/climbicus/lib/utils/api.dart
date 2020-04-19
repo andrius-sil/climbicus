@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:async/async.dart';
-import 'package:climbicus/utils/settings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
@@ -35,14 +34,14 @@ class ApiProvider {
 
   factory ApiProvider() => _apiProvider;
 
-  final Settings settings = Settings();
-
   final client = http.Client();
 
   String _accessToken;
   int userId;
+  String _serverUrl;
 
   set accessToken(String value) => _accessToken = value;
+  set serverUrl(String value) => _serverUrl = value;
 
   ApiException _apiException(response, responseJson) {
     switch (response.statusCode) {
@@ -72,7 +71,7 @@ class ApiProvider {
 
   Future<Map> _requestJson(String method, String urlPath, Map requestData,
       {bool auth = true}) async {
-    var uri = Uri.parse("${settings.serverUrl}/$urlPath");
+    var uri = Uri.parse("${_serverUrl}/$urlPath");
     var request = http.Request(method, uri);
 
     request.headers["Content-Type"] = "application/json";
@@ -92,7 +91,7 @@ class ApiProvider {
 
   Future<Map> _requestMultipart(
       File image, String method, String urlPath, Map requestData) async {
-    var uri = Uri.parse("${settings.serverUrl}/$urlPath");
+    var uri = Uri.parse("${_serverUrl}/$urlPath");
     var request = http.MultipartRequest("POST", uri);
 
     var stream = http.ByteStream(DelegatingStream.typed(image.openRead()));

@@ -5,14 +5,25 @@ import 'package:climbicus/blocs/route_predictions_bloc.dart';
 import 'package:climbicus/ui/login.dart';
 import 'package:climbicus/ui/route_view.dart';
 import 'package:climbicus/ui/settings.dart';
+import 'package:climbicus/utils/api.dart';
 import 'package:climbicus/utils/auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'blocs/settings_bloc.dart';
 import 'blocs/simple_bloc_delegate.dart';
+import 'env.dart';
 
-void main() {
+
+const Map<Environment, String> SERVER_URLS = {
+  Environment.dev: "http://x1carbon:5000",
+  Environment.stag: "http://3.11.0.15:5000",
+  Environment.prod: "http://3.11.49.99:5000",
+};
+
+
+void mainDelegate(Environment env) {
   ErrorWidget.builder = _buildErrorWidget;
   debugPrint = _debugPrintWrapper;
 
@@ -21,6 +32,7 @@ void main() {
   runApp(
     MultiBlocProvider(
       providers: [
+        BlocProvider<SettingsBloc>(create: (context) => SettingsBloc()),
         BlocProvider<RouteImagesBloc>(create: (context) => RouteImagesBloc()),
         BlocProvider<RoutePredictionBloc>(create: (context) => RoutePredictionBloc()),
         BlocProvider<GymRoutesBloc>(create: (context) => GymRoutesBloc(
@@ -29,7 +41,7 @@ void main() {
       ],
       child: MaterialApp(
         theme: ThemeData.dark(),
-        home: HomePage(),
+        home: HomePage(env: env),
       ),
     ),
   );
@@ -48,6 +60,9 @@ Widget _buildErrorWidget(FlutterErrorDetails details) {
 }
 
 class HomePage extends StatefulWidget {
+  final Environment env;
+  HomePage({this.env});
+
   @override
   State<StatefulWidget> createState() => _HomePageState();
 }
@@ -60,7 +75,16 @@ enum AuthStatus {
 
 class _HomePageState extends State<HomePage> {
   final Auth auth = Auth();
+  final ApiProvider api = ApiProvider();
+
   AuthStatus authStatus = AuthStatus.notDetermined;
+
+  @override
+  void initState() {
+    super.initState();
+
+    api.serverUrl = SERVER_URLS[widget.env];
+  }
 
   @override
   void didChangeDependencies() {
@@ -92,28 +116,37 @@ class _HomePageState extends State<HomePage> {
       case AuthStatus.notDetermined:
         return _buildWaitingPage();
       case AuthStatus.notLoggedIn:
-        return LoginPage(appBarActions: appBarActions(), loginCallback: _loggedIn);
+        return LoginPage(loginCallback: _loggedIn);
       case AuthStatus.loggedIn:
-        return DefaultTabController(
-          length: 2,
-          child: Scaffold(
-            appBar: AppBar(
-              bottom: TabBar(
-                tabs: [
-                  Tab(text: "Sport"),
-                  Tab(text: "Bouldering"),
-                ],
+        return BlocBuilder<SettingsBloc, SettingsState>(
+          builder: (context, state) {
+            if (state is SettingsUninitialized) {
+              return _buildWaitingPage();
+            }
+            return DefaultTabController(
+              length: 2,
+              child: Scaffold(
+                appBar: AppBar(
+                  bottom: TabBar(
+                    tabs: [
+                      Tab(text: "Sport"),
+                      Tab(text: "Bouldering"),
+                    ],
+                  ),
+                  title: Text("Routes"),
+                ),
+                body: TabBarView(
+                  children: <Widget>[
+                    RouteViewPage(routeCategory: "sport"),
+                    RouteViewPage(routeCategory: "bouldering"),
+                  ],
+                ),
+                drawer: Drawer(
+                  child: SettingsPage(env: widget.env, logoutCallback: _loggedOut),
+                ),
               ),
-              title: Text("Routes"),
-              actions: appBarActions(),
-            ),
-            body: TabBarView(
-              children: <Widget>[
-                RouteViewPage(routeCategory: "sport"),
-                RouteViewPage(routeCategory: "bouldering"),
-              ],
-            ),
-          ),
+            );
+          }
         );
     }
   }
@@ -125,25 +158,5 @@ class _HomePageState extends State<HomePage> {
         child: CircularProgressIndicator(),
       ),
     );
-  }
-
-  List<Widget> appBarActions() {
-    return [
-      IconButton(
-        icon: const Icon(Icons.settings),
-        tooltip: 'Settings menu',
-        onPressed: () {
-          openSettingsPage(context);
-        },
-      ),
-    ];
-  }
-
-  void openSettingsPage(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(
-      builder: (BuildContext context) {
-        return SettingsPage(logoutCallback: _loggedOut);
-      },
-    ));
   }
 }
