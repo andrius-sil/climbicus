@@ -188,30 +188,33 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
       ));
     });
 
-    return SingleChildScrollView(
-      child: ExpansionPanelList(
-        expansionCallback: (int i, bool isExpanded) {
-          setState(() {
-            _items[i].isExpanded = !isExpanded;
-          });
-        },
-        children: _items.map<ExpansionPanel>((RouteListItem item) {
-          return ExpansionPanel(
-            headerBuilder: (BuildContext context, bool isExpanded) {
-              return HeaderListItem(
-                routeWithLogs: item.routeWithLogs,
-                image: item.image,
-                title: item.headerTitle,
-              );
-            },
-            body: ListTile(
-              title: item.bodyTitle != null ? Text(item.bodyTitle): null,
-              subtitle: Text(item.bodySubtitle),
-//              trailing: Icon(Icons.delete),
-            ),
-            isExpanded: item.isExpanded,
-          );
-        }).toList(),
+    return Scrollbar(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.only(bottom: 160),
+        child: ExpansionPanelList(
+          expansionCallback: (int i, bool isExpanded) {
+            setState(() {
+              _items[i].isExpanded = !isExpanded;
+            });
+          },
+          children: _items.map<ExpansionPanel>((RouteListItem item) {
+            return ExpansionPanel(
+              headerBuilder: (BuildContext context, bool isExpanded) {
+                return HeaderListItem(
+                  routeWithLogs: item.routeWithLogs,
+                  image: item.image,
+                  title: item.headerTitle,
+                );
+              },
+              body: ListTile(
+                title: item.bodyTitle != null ? Text(item.bodyTitle): null,
+                subtitle: Text(item.bodySubtitle),
+  //              trailing: Icon(Icons.delete),
+              ),
+              isExpanded: item.isExpanded,
+            );
+          }).toList(),
+        ),
       ),
     );
   }
