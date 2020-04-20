@@ -6,6 +6,7 @@ import 'package:climbicus/utils/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:package_info/package_info.dart';
 
 class SettingsPage extends StatefulWidget {
   final Auth auth = Auth();
@@ -58,11 +59,10 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
               ListTile(
-                title: Text(_versionString()),
+                title: Text("Version"),
+                subtitle: Text(_versionString(state.packageInfo)),
               ),
-            ] +
-            _buildImagePickerSelection(state.imagePicker) +
-            _buildDisplayPredictionsNumSelection(),
+            ] + _buildDevSettings(state.imagePicker)
           );
       })),
     );
@@ -101,13 +101,13 @@ class _SettingsPageState extends State<SettingsPage> {
     Navigator.pop(context);
   }
 
-  String _versionString() {
-    String version = "v0.1";
-    if (widget.env == Environment.prod) {
+  String _versionString(PackageInfo packageInfo) {
+    String version = packageInfo.version;
+    if (widget.env != Environment.dev) {
       return version;
     }
 
-    return "$version - ${widget.env}";
+    return "$version (${packageInfo.buildNumber}) ${widget.env}";
   }
 
   List<Widget> _buildImagePickerSelection(String selectedImagePicker) {
@@ -148,5 +148,14 @@ class _SettingsPageState extends State<SettingsPage> {
           _settingsBloc.displayPredictionsNum = val.toInt(),
       ),
     ];
+  }
+
+  List<Widget> _buildDevSettings(String imagePicker) {
+    if (widget.env != Environment.dev) {
+      return [];
+    }
+
+    return _buildImagePickerSelection(imagePicker) +
+        _buildDisplayPredictionsNumSelection();
   }
 }

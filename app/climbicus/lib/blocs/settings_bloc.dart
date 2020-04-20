@@ -2,6 +2,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -16,11 +17,13 @@ class SettingsState {
   final String imagePicker;
   final int displayPredictionsNum;
   final int gymId;
+  final PackageInfo packageInfo;
 
   SettingsState({
     @required this.imagePicker,
     @required this.displayPredictionsNum,
     @required this.gymId,
+    @required this.packageInfo,
   });
 
   List<ImageSource> get imagePickerSources => IMAGE_PICKERS[imagePicker];
@@ -50,6 +53,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   String _imagePicker = "both";
   int _displayPredictionsNum = 3;
   int _gymId = 1;
+  PackageInfo _packageInfo;
 
   int get gymId => _gymId;
 
@@ -67,6 +71,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     imagePicker: _imagePicker,
     displayPredictionsNum: _displayPredictionsNum,
     gymId: _gymId,
+    packageInfo: _packageInfo,
   );
 
   @override
@@ -77,6 +82,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     _displayPredictionsNum = int.parse(await retrieveSetting(
         "display_predictions_num", _displayPredictionsNum.toString()));
     _gymId = int.parse(await retrieveSetting("gym_id", _gymId.toString()));
+
+    _packageInfo = await PackageInfo.fromPlatform();
 
     add(InitialisedSettings());
   }
