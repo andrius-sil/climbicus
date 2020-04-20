@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:climbicus/blocs/route_predictions_bloc.dart';
 import 'package:climbicus/blocs/settings_bloc.dart';
@@ -101,7 +102,9 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
   Widget _buildPredictionsGrid(BuildContext context, ImagePickerData imgPickerData) {
     List<Widget> widgets = [];
 
-    for (var i = 0; i < _settingsBloc.displayPredictionsNum; i++) {
+    var displayPredictionsNum = min(imgPickerData.predictions.length,
+        _settingsBloc.displayPredictionsNum);
+    for (var i = 0; i < displayPredictionsNum; i++) {
       var prediction = imgPickerData.predictions[i];
       // Left side - image.
       var routeImage = prediction.routeImage;
