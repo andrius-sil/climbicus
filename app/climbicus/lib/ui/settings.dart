@@ -1,5 +1,7 @@
+import 'package:climbicus/blocs/gyms_bloc.dart';
 import 'package:climbicus/blocs/settings_bloc.dart';
 import 'package:climbicus/env.dart';
+import 'package:climbicus/ui/gyms.dart';
 import 'package:climbicus/utils/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -41,19 +43,53 @@ class _SettingsPageState extends State<SettingsPage> {
         BlocBuilder<SettingsBloc, SettingsState>(builder: (context, state) {
           return ListView(
             children: <Widget>[
-              Text("${widget.auth.email}"),
-              RaisedButton(
-                child: Text('Log Out'),
-                onPressed: logout,
+              ListTile(
+                title: _buildGymTitle(_settingsBloc.gymId),
+                trailing: RaisedButton(
+                  child: Text('Switch'),
+                  onPressed: openGymsPage,
+                ),
               ),
-              Text(_versionString()),
-              Text("Dev settings:"),
+              ListTile(
+                title: Text("Logged in as ${widget.auth.email}"),
+                trailing: RaisedButton(
+                  child: Text('Log Out'),
+                  onPressed: logout,
+                ),
+              ),
+              ListTile(
+                title: Text(_versionString()),
+              ),
             ] +
             _buildImagePickerSelection(state.imagePicker) +
             _buildDisplayPredictionsNumSelection(),
           );
       })),
     );
+  }
+
+  Widget _buildGymTitle(int gymId) {
+    return BlocBuilder<GymsBloc, GymsState>(
+      builder: (context, state) {
+        if (state is GymsLoaded) {
+          return Text("Your gym: ${state.gyms[gymId].name}");
+        }
+
+        return Text("");
+      }
+    );
+  }
+
+
+  void openGymsPage() {
+    // Close the drawer first.
+    Navigator.pop(context);
+
+    Navigator.push(context, MaterialPageRoute(
+      builder: (BuildContext context) {
+        return GymsPage();
+      },
+    ));
   }
 
   Future<void> logout() async {
@@ -76,7 +112,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
   List<Widget> _buildImagePickerSelection(String selectedImagePicker) {
     List<Widget> widgets = [
-      Text("Image Picker"),
+      ListTile(
+        title: Text("Image Picker"),
+      )
     ];
     IMAGE_PICKERS.forEach((sourceName, source) {
       widgets.add(
@@ -94,7 +132,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
   List<Widget> _buildDisplayPredictionsNumSelection() {
     return [
-      Text("Display number of predictions (${displayPredictionsNum.toInt()})"),
+      ListTile(
+        title: Text("Display number of predictions (${displayPredictionsNum.toInt()})")
+      ),
       Slider(
         value: displayPredictionsNum,
         min: 1.0,

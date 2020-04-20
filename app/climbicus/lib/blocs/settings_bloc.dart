@@ -15,10 +15,12 @@ const Map<String, List<ImageSource>> IMAGE_PICKERS = {
 class SettingsState {
   final String imagePicker;
   final int displayPredictionsNum;
+  final int gymId;
 
   SettingsState({
     @required this.imagePicker,
     @required this.displayPredictionsNum,
+    @required this.gymId,
   });
 
   List<ImageSource> get imagePickerSources => IMAGE_PICKERS[imagePicker];
@@ -37,11 +39,19 @@ class ImagePickerChanged extends SettingsEvent {
   const ImagePickerChanged({@required this.imagePicker});
 }
 
+class GymChanged extends SettingsEvent {
+  final int gymId;
+  const GymChanged({@required this.gymId});
+}
+
 
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   // Initialise settings with default values.
   String _imagePicker = "both";
   int _displayPredictionsNum = 3;
+  int _gymId = 1;
+
+  int get gymId => _gymId;
 
   int get displayPredictionsNum => _displayPredictionsNum;
   set displayPredictionsNum(int i) {
@@ -56,6 +66,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   SettingsState createState() => SettingsState(
     imagePicker: _imagePicker,
     displayPredictionsNum: _displayPredictionsNum,
+    gymId: _gymId,
   );
 
   @override
@@ -65,6 +76,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     _imagePicker = await retrieveSetting("image_picker", _imagePicker);
     _displayPredictionsNum = int.parse(await retrieveSetting(
         "display_predictions_num", _displayPredictionsNum.toString()));
+    _gymId = int.parse(await retrieveSetting("gym_id", _gymId.toString()));
 
     add(InitialisedSettings());
   }
@@ -77,6 +89,10 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       _imagePicker = event.imagePicker;
       yield createState();
       storeSetting("image_picker", _imagePicker);
+    } else if (event is GymChanged) {
+      _gymId = event.gymId;
+      yield createState();
+      storeSetting("gym_id", _gymId.toString());
     }
   }
 

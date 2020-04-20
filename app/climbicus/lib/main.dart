@@ -11,6 +11,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'blocs/gyms_bloc.dart';
 import 'blocs/settings_bloc.dart';
 import 'blocs/simple_bloc_delegate.dart';
 import 'env.dart';
@@ -33,6 +34,7 @@ void mainDelegate(Environment env) {
     MultiBlocProvider(
       providers: [
         BlocProvider<SettingsBloc>(create: (context) => SettingsBloc()),
+        BlocProvider<GymsBloc>(create: (context) => GymsBloc()),
         BlocProvider<RouteImagesBloc>(create: (context) => RouteImagesBloc()),
         BlocProvider<RoutePredictionBloc>(create: (context) => RoutePredictionBloc()),
         BlocProvider<GymRoutesBloc>(create: (context) => GymRoutesBloc(
@@ -123,6 +125,9 @@ class _HomePageState extends State<HomePage> {
             if (state is SettingsUninitialized) {
               return _buildWaitingPage();
             }
+
+            api.gymId = state.gymId;
+
             return DefaultTabController(
               length: 2,
               child: Scaffold(
@@ -133,7 +138,7 @@ class _HomePageState extends State<HomePage> {
                       Tab(text: "Bouldering"),
                     ],
                   ),
-                  title: Text("Routes"),
+                  title: _buildTitle(state.gymId),
                 ),
                 body: TabBarView(
                   children: <Widget>[
@@ -149,6 +154,18 @@ class _HomePageState extends State<HomePage> {
           }
         );
     }
+  }
+
+  Widget _buildTitle(int gymId) {
+    return BlocBuilder<GymsBloc, GymsState>(
+      builder: (context, state) {
+        if (state is GymsLoaded) {
+          return Text(state.gyms[gymId].name);
+        }
+
+        return Text("");
+      }
+    );
   }
 
   Widget _buildWaitingPage() {

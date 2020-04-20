@@ -25,8 +25,6 @@ class UnauthorizedApiException extends ApiException {
 }
 
 class ApiProvider {
-  static const CASTLE_GYM_ID = 1;
-
   // Singleton factory.
   ApiProvider._internal();
 
@@ -39,9 +37,11 @@ class ApiProvider {
   String _accessToken;
   int userId;
   String _serverUrl;
+  int _gymId;
 
   set accessToken(String value) => _accessToken = value;
   set serverUrl(String value) => _serverUrl = value;
+  set gymId(int value) => _gymId = value;
 
   ApiException _apiException(response, responseJson) {
     switch (response.statusCode) {
@@ -71,7 +71,7 @@ class ApiProvider {
 
   Future<Map> _requestJson(String method, String urlPath, Map requestData,
       {bool auth = true}) async {
-    var uri = Uri.parse("${_serverUrl}/$urlPath");
+    var uri = Uri.parse("$_serverUrl/$urlPath");
     var request = http.Request(method, uri);
 
     request.headers["Content-Type"] = "application/json";
@@ -91,7 +91,7 @@ class ApiProvider {
 
   Future<Map> _requestMultipart(
       File image, String method, String urlPath, Map requestData) async {
-    var uri = Uri.parse("${_serverUrl}/$urlPath");
+    var uri = Uri.parse("$_serverUrl/$urlPath");
     var request = http.MultipartRequest("POST", uri);
 
     var stream = http.ByteStream(DelegatingStream.typed(image.openRead()));
@@ -133,7 +133,7 @@ class ApiProvider {
       "route_id": routeId,
       "completed": completed,
       "num_attempts": numAttempts,
-      "gym_id": CASTLE_GYM_ID,
+      "gym_id": _gymId,
     };
 
     return _requestJson("POST", "user_route_log/", data);
@@ -153,7 +153,7 @@ class ApiProvider {
 
   Future<Map> fetchLogbook() async {
     Map data = {
-      "gym_id": CASTLE_GYM_ID,
+      "gym_id": _gymId,
     };
 
     return _requestJson("GET", "user_route_log/", data);
@@ -161,7 +161,7 @@ class ApiProvider {
 
   Future<Map> fetchLogbookOneRoute(int routeId) async {
     Map data = {
-      "gym_id": CASTLE_GYM_ID,
+      "gym_id": _gymId,
     };
 
     return _requestJson("GET", "user_route_log/$routeId", data);
@@ -169,7 +169,7 @@ class ApiProvider {
 
   Future<Map> routePredictions(File image, String category) async {
     Map data = {
-      "gym_id": CASTLE_GYM_ID,
+      "gym_id": _gymId,
       "category": category,
     };
     return _requestMultipart(image, "POST", "routes/predictions_cbir", data);
@@ -177,26 +177,30 @@ class ApiProvider {
 
   Future<Map> fetchRoutes() async {
     Map data = {
-      "gym_id": CASTLE_GYM_ID,
+      "gym_id": _gymId,
     };
     return _requestJson("GET", "routes/", data);
   }
 
   Future<Map> fetchOneRoute(int routeId) async {
     Map data = {
-      "gym_id": CASTLE_GYM_ID,
+      "gym_id": _gymId,
     };
     return _requestJson("GET", "routes/$routeId", data);
   }
 
   Future<Map> routeAdd(String category, String grade) async {
     Map data = {
-      "gym_id": CASTLE_GYM_ID,
+      "gym_id": _gymId,
       "category": category,
       "lower_grade": grade,
       "upper_grade": grade,
     };
 
     return _requestJson("POST", "routes/", data);
+  }
+
+  Future<Map> fetchGyms() async {
+    return _requestJson("GET", "gyms/", {});
   }
 }
