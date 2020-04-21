@@ -1,7 +1,7 @@
 from flask import json
 
 
-def test_routes(client, auth_headers_user1):
+def test_gyms(client, auth_headers_user1):
     data = {
         "user_id": 1,
     }
