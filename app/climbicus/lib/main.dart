@@ -142,8 +142,8 @@ class _HomePageState extends State<HomePage> {
                 ),
                 body: TabBarView(
                   children: <Widget>[
-                    RouteViewPage(routeCategory: "sport"),
-                    RouteViewPage(routeCategory: "bouldering"),
+                    RouteViewPage(routeCategory: "sport", gymId: state.gymId),
+                    RouteViewPage(routeCategory: "bouldering", gymId: state.gymId),
                   ],
                 ),
                 drawer: Drawer(

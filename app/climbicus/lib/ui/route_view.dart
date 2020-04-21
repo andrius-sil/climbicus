@@ -72,8 +72,10 @@ class RouteViewPage extends StatefulWidget {
   final RouteImagePicker imagePicker = RouteImagePicker();
 
   final String routeCategory;
+  final int gymId;
 
-  RouteViewPage({this.routeCategory});
+  RouteViewPage({@required this.routeCategory, @required this.gymId}) :
+        super(key: ValueKey("$gymId-$routeCategory"));
 
   @override
   State<StatefulWidget> createState() => _RouteViewPageState();
@@ -97,6 +99,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: BlocBuilder<GymRoutesBloc, GymRoutesState>(
         builder: (context, state) {

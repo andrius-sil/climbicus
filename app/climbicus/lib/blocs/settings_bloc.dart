@@ -35,7 +35,7 @@ abstract class SettingsEvent {
   const SettingsEvent();
 }
 
-class InitialisedSettings extends SettingsEvent {}
+class InitializedSettings extends SettingsEvent {}
 
 class ImagePickerChanged extends SettingsEvent {
   final String imagePicker;
@@ -85,12 +85,12 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
 
     _packageInfo = await PackageInfo.fromPlatform();
 
-    add(InitialisedSettings());
+    add(InitializedSettings());
   }
 
   @override
   Stream<SettingsState> mapEventToState(SettingsEvent event) async* {
-    if (event is InitialisedSettings) {
+    if (event is InitializedSettings) {
       yield createState();
     } else if (event is ImagePickerChanged) {
       _imagePicker = event.imagePicker;
