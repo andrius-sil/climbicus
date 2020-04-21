@@ -70,8 +70,6 @@ abstract class GymRoutesEvent {
 
 class FetchGymRoutes extends GymRoutesEvent {}
 
-class UpdateLoadedGymRoutes extends GymRoutesEvent {}
-
 class AddNewUserRouteLog extends GymRoutesEvent {
   final int routeId;
   final bool completed;
@@ -103,16 +101,9 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
 
   final RouteImagesBloc routeImagesBloc;
 
-  StreamSubscription _routeImagesSubscription;
   RoutesWithLogs _entries;
 
-  GymRoutesBloc({@required this.routeImagesBloc}) {
-    _routeImagesSubscription = routeImagesBloc.listen((state) {
-      if (state is RouteImagesLoaded) {
-        add(UpdateLoadedGymRoutes());
-      }
-    });
-  }
+  GymRoutesBloc({@required this.routeImagesBloc});
 
   @override
   GymRoutesState get initialState => GymRoutesUninitialized();
@@ -141,8 +132,6 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
       } catch (e, st) {
         yield GymRoutesError(exception: e, stackTrace: st);
       }
-    } else if (event is UpdateLoadedGymRoutes) {
-      yield GymRoutesLoaded(entries: _entries);
     } else if (event is AddNewUserRouteLog) {
       var results = await api.logbookAdd(event.routeId, event.completed, event.numAttempts);
       var newUserRouteLog = UserRouteLog.fromJson(results["user_route_log"]);
@@ -170,11 +159,5 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
     }
 
     return;
-  }
-
-  @override
-  Future<void> close() {
-    _routeImagesSubscription.cancel();
-    return super.close();
   }
 }

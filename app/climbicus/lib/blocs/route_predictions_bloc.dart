@@ -50,8 +50,7 @@ abstract class RoutePredictionEvent {
 class FetchRoutePrediction extends RoutePredictionEvent {
   final File image;
   final String routeCategory;
-  final int displayPredictionsNum;
-  const FetchRoutePrediction({this.image, this.routeCategory, this.displayPredictionsNum});
+  const FetchRoutePrediction({this.image, this.routeCategory});
 }
 
 

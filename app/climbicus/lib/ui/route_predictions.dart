@@ -1,8 +1,9 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:climbicus/blocs/route_predictions_bloc.dart';
+import 'package:climbicus/blocs/settings_bloc.dart';
 import 'package:climbicus/ui/route_match.dart';
-import 'package:climbicus/utils/settings.dart';
 import 'package:climbicus/utils/time.dart';
 import 'package:climbicus/widgets/route_image.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'add_route.dart';
 
 class RoutePredictionsPage extends StatefulWidget {
-  final Settings settings = Settings();
 
   final File image;
   final String routeCategory;
@@ -26,17 +26,18 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
   Image _takenImage;
   ImagePickerData _imgPickerData;
 
+  SettingsBloc _settingsBloc;
   RoutePredictionBloc _routePredictionBloc;
 
   @override
   void initState() {
     super.initState();
 
+    _settingsBloc = BlocProvider.of<SettingsBloc>(context);
     _routePredictionBloc = BlocProvider.of<RoutePredictionBloc>(context);
     _routePredictionBloc.add(FetchRoutePrediction(
         image: widget.image,
         routeCategory: widget.routeCategory,
-        displayPredictionsNum: widget.settings.displayPredictionsNum,
     ));
 
     _takenImage = Image.file(widget.image);
@@ -101,7 +102,9 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
   Widget _buildPredictionsGrid(BuildContext context, ImagePickerData imgPickerData) {
     List<Widget> widgets = [];
 
-    for (var i = 0; i < widget.settings.displayPredictionsNum; i++) {
+    var displayPredictionsNum = min(imgPickerData.predictions.length,
+        _settingsBloc.displayPredictionsNum);
+    for (var i = 0; i < displayPredictionsNum; i++) {
       var prediction = imgPickerData.predictions[i];
       // Left side - image.
       var routeImage = prediction.routeImage;
