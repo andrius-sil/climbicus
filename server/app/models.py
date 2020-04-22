@@ -8,7 +8,7 @@ from app import db
 
 
 CDNS = {
-    "dev": "http://d20pe4bldujy3.cloudfront.net",
+    "stag": "http://d2lk98030gxain.cloudfront.net",
     "prod": "http://dbva1qhoik6aa.cloudfront.net",
 }
 
@@ -129,7 +129,7 @@ class RouteImages(db.Model):
     @property
     def api_model(self):
         path_cdn = self.path
-        path_cdn = path_cdn.replace("s3://climbicus-dev", CDNS["dev"])
+        path_cdn = path_cdn.replace("s3://climbicus-stag", CDNS["stag"])
         path_cdn = path_cdn.replace("s3://climbicus-prod", CDNS["prod"])
         return {
             "id": self.id,
