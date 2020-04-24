@@ -1,6 +1,6 @@
 DOCKER := docker
-NAMESPACE = gc
-IMAGENAME=climbicus
+NAMESPACE = climbicus
+IMAGENAME = training
 CONTAINER_ID = $(NAMESPACE)_$(IMAGENAME)
 VOLUMES = -v $(PWD):/srv/app \
 					-v $(PWD)/.jupyter:/root/.jupyter \
