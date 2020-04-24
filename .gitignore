@@ -3,6 +3,7 @@
 *.idea/
 *.ipynb_checkpoints/
 *.jupyter
+stag_secrets.env
 prod_secrets.env
 __pycache__
 server/predictor/model_files/
