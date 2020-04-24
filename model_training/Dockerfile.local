@@ -1,5 +1,4 @@
 FROM python:3.6
-MAINTAINER GoCardless Data <data@gocardless.com>
 
 # install graphviz for visualisation
 RUN apt-get update && apt-get install -y graphviz xdg-utils
