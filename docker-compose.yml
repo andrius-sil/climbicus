@@ -1,20 +1,10 @@
 version: '2'
 services:
-  db:
-    build:
-      dockerfile: Dockerfile
-      context: ./db
-    ports:
-      - "5432:5432"
-    command:
-      postgres -c track_commit_timestamp=on
   server:
     build:
       dockerfile: Dockerfile
       context: ./server
     ports:
       - "5000:5000"
-    depends_on:
-      - db
     entrypoint:
       - /app/entrypoint.sh

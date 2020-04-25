@@ -25,6 +25,7 @@ docker-stop: check-env
 
 ec2-deploy: check-env
 	rsync -aHv --delete-during --exclude-from rsync_exclude.txt . ec2-climbicus-${ENV}:/home/ec2-user/climbicus/
+	rsync ${ENV}_secrets.env ec2-climbicus-${ENV}:/home/ec2-user/climbicus/
 
 tests:
 	docker exec climbicus_server_1 python -m pytest -v $(args) ./tests

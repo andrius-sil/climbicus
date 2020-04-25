@@ -3,9 +3,9 @@ services:
   server:
     restart: always
     env_file:
-      - prod_secrets.env
+      - stag_secrets.env
     environment:
-      - ENV=prod
+      - ENV=stag
       - PYTHONUNBUFFERED=1
     command:
       "main-server"

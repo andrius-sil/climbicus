@@ -4,3 +4,4 @@ model_training/*
 __pycache__/*
 .pytest_cache__/*
 .idea/*
+*_secrets.env

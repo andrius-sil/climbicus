@@ -6,8 +6,8 @@ show_help() {
 echo """
 Commands
 
-dev          : Start Flask development server
-prod         : Start uwsgi & nginx server
+dev-server   : Start Flask development server
+main-server  : Start uwsgi & nginx server
 recreate-db  : Recreate the database
 routes       : List all Flask endpoints
 shell        : Start Bash shell
@@ -16,10 +16,10 @@ help         : Show this message
 }
 
 case "$1" in
-    dev)
+    dev-server)
         flask run --host=0.0.0.0
     ;;
-    prod)
+    main-server)
         /usr/bin/supervisord
     ;;
     recreate-db)
