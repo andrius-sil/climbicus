@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
-import 'package:climbicus/json/route.dart' as jsonmdl;
-import 'package:climbicus/json/route_image.dart';
+import 'package:climbicus/models/route.dart' as jsonmdl;
+import 'package:climbicus/models/route_image.dart';
 import 'package:climbicus/utils/api.dart';
 import 'package:flutter/widgets.dart';
 

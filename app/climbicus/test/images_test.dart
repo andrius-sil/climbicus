@@ -1,6 +1,6 @@
 
 import 'package:climbicus/blocs/route_images_bloc.dart';
-import 'package:climbicus/json/route_image.dart';
+import 'package:climbicus/models/route_image.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

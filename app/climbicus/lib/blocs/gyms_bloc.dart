@@ -1,7 +1,7 @@
 
 
 import 'package:bloc/bloc.dart';
-import 'package:climbicus/json/gym.dart';
+import 'package:climbicus/models/gym.dart';
 import 'package:climbicus/utils/api.dart';
 import 'package:flutter/foundation.dart';
 

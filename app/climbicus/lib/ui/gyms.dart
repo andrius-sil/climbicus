@@ -1,7 +1,7 @@
 
 import 'package:climbicus/blocs/gyms_bloc.dart';
 import 'package:climbicus/blocs/settings_bloc.dart';
-import 'package:climbicus/json/gym.dart';
+import 'package:climbicus/models/gym.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

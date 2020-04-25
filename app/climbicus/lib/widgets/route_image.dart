@@ -1,4 +1,4 @@
-import 'package:climbicus/json/route_image.dart';
+import 'package:climbicus/models/route_image.dart';
 import 'package:flutter/material.dart';
 
 class RouteImageWidget extends StatelessWidget {
