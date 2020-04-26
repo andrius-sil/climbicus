@@ -1,13 +1,8 @@
-import 'package:climbicus/utils/api.dart';
-import 'package:climbicus/utils/auth.dart';
+import 'package:climbicus/blocs/login_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginPage extends StatefulWidget {
-  final Auth auth = Auth();
-  final VoidCallback loginCallback;
-
-  LoginPage({@required this.loginCallback});
-
   @override
   State<StatefulWidget> createState() => _LoginPageState();
 }
@@ -15,8 +10,17 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
+  LoginBloc _loginBloc;
+
   String _email;
   String _password;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _loginBloc = BlocProvider.of<LoginBloc>(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,18 +28,39 @@ class _LoginPageState extends State<LoginPage> {
       appBar: AppBar(
         title: Text("Login"),
       ),
-      body: Container(
-        child: Form(
-          key: formKey,
-          child: ListView(
-            children: buildInputs() + buildSubmitButtons(),
-          ),
+      body: BlocListener<LoginBloc, LoginState>(
+        listener: (context, state) {
+          var errorMsg = null;
+          if (state is LoginError) {
+            errorMsg = "Ooops.. an error has occured";
+          } else if (state is LoginUnauthorized) {
+            errorMsg = "Incorrect email and password. Please try again.";
+          }
+          if (errorMsg != null) {
+            final snackBar = SnackBar(
+              backgroundColor: Colors.deepOrange,
+              content: Text(errorMsg),
+            );
+            Scaffold.of(context).showSnackBar(snackBar);
+          }
+        },
+        child: BlocBuilder<LoginBloc, LoginState>(
+          builder: (context, state) {
+            return Container(
+              child: Form(
+                key: formKey,
+                child: ListView(
+                  children: _buildInputs() + _buildSubmitButtons(state),
+                ),
+              ),
+            );
+          }
         ),
       ),
     );
   }
 
-  List<Widget> buildInputs() {
+  List<Widget> _buildInputs() {
     return <Widget>[
       TextFormField(
         key: Key('email'),
@@ -54,42 +79,28 @@ class _LoginPageState extends State<LoginPage> {
     ];
   }
 
-  List<Widget> buildSubmitButtons() {
+  List<Widget> _buildSubmitButtons(LoginState state) {
     return <Widget>[
       Builder(
-          builder: (BuildContext context) => RaisedButton(
-                key: Key('logIn'),
-                child: Text('Log in'),
-                onPressed: () => validateAndLogin(context),
-              ))
+        builder: (BuildContext context) => RaisedButton(
+          key: Key('logIn'),
+          child: Text('Log in'),
+          onPressed: state is LoginLoading ? null : () => validateAndLogin(context),
+        )
+      )
     ];
   }
 
-  Future<void> validateAndLogin(BuildContext context) async {
+  void validateAndLogin(BuildContext context) {
     final FormState form = formKey.currentState;
     if (!form.validate()) {
       return;
     }
-
     form.save();
 
-    var errorMsg;
-
-    try {
-      await widget.auth.login(_email, _password);
-      widget.loginCallback();
-    } on UnauthorizedApiException {
-      errorMsg = "Incorrect email and password. Please try again.";
-    } on Exception {
-      errorMsg = "Ooops.. an error has occured";
-    }
-
-    if (errorMsg != null) {
-      final snackBar = SnackBar(
-        backgroundColor: Colors.deepOrange,
-        content: Text(errorMsg),
-      );
-      Scaffold.of(context).showSnackBar(snackBar);
-    }
+    _loginBloc.add(LoginButtonPressed(
+      email: _email,
+      password: _password,
+    ));
   }
 }

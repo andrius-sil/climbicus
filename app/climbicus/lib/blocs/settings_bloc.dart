@@ -1,6 +1,8 @@
 
 import 'package:bloc/bloc.dart';
+import 'package:climbicus/repositories/api_repository.dart';
 import 'package:flutter/foundation.dart';
+import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -49,6 +51,8 @@ class GymChanged extends SettingsEvent {
 
 
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
+  final getIt = GetIt.instance;
+
   // Initialise settings with default values.
   String _imagePicker = "both";
   int _displayPredictionsNum = 3;
@@ -65,6 +69,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
 
   SettingsBloc() {
     retrieveSettings();
+
+    getIt<ApiRepository>().gymId = _gymId;
   }
 
   SettingsState createState() => SettingsState(
@@ -98,6 +104,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       storeSetting("image_picker", _imagePicker);
     } else if (event is GymChanged) {
       _gymId = event.gymId;
+      getIt<ApiRepository>().gymId = _gymId;
       yield createState();
       storeSetting("gym_id", _gymId.toString());
     }

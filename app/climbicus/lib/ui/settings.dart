@@ -1,26 +1,28 @@
+import 'package:climbicus/blocs/authentication_bloc.dart';
 import 'package:climbicus/blocs/gyms_bloc.dart';
 import 'package:climbicus/blocs/settings_bloc.dart';
 import 'package:climbicus/env.dart';
+import 'package:climbicus/repositories/user_repository.dart';
 import 'package:climbicus/ui/gyms.dart';
-import 'package:climbicus/utils/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:package_info/package_info.dart';
 
 class SettingsPage extends StatefulWidget {
-  final Auth auth = Auth();
-
   final Environment env;
-  final VoidCallback logoutCallback;
 
-  SettingsPage({@required this.env, @required this.logoutCallback});
+  SettingsPage({@required this.env});
 
   @override
   State<StatefulWidget> createState() => _SettingsPageState();
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  final getIt = GetIt.instance;
+
+  AuthenticationBloc _authenticationBloc;
   SettingsBloc _settingsBloc;
 
   double displayPredictionsNum;
@@ -29,6 +31,7 @@ class _SettingsPageState extends State<SettingsPage> {
   void initState() {
     super.initState();
 
+    _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
     _settingsBloc = BlocProvider.of<SettingsBloc>(context);
 
     displayPredictionsNum = _settingsBloc.displayPredictionsNum.toDouble();
@@ -52,7 +55,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
               ListTile(
-                title: Text("Logged in as ${widget.auth.email}"),
+                title: Text("Logged in as ${getIt<UserRepository>().email}"),
                 trailing: RaisedButton(
                   child: Text('Log Out'),
                   onPressed: logout,
@@ -95,8 +98,7 @@ class _SettingsPageState extends State<SettingsPage> {
   Future<void> logout() async {
     debugPrint("user logging out");
 
-    await widget.auth.logout();
-    widget.logoutCallback();
+    _authenticationBloc.add(LoggedOut());
 
     Navigator.pop(context);
   }

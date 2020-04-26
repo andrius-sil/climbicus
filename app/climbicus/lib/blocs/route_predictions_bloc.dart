@@ -4,8 +4,9 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:climbicus/models/route.dart' as jsonmdl;
 import 'package:climbicus/models/route_image.dart';
-import 'package:climbicus/utils/api.dart';
+import 'package:climbicus/repositories/api_repository.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get_it/get_it.dart';
 
 class Prediction {
   jsonmdl.Route route;
@@ -55,7 +56,7 @@ class FetchRoutePrediction extends RoutePredictionEvent {
 
 
 class RoutePredictionBloc extends Bloc<RoutePredictionEvent, RoutePredictionState> {
-  final ApiProvider api = ApiProvider();
+  final getIt = GetIt.instance;
 
   ImagePickerData _imgPickerData;
 
@@ -68,7 +69,7 @@ class RoutePredictionBloc extends Bloc<RoutePredictionEvent, RoutePredictionStat
       yield RoutePredictionLoading();
 
       try {
-        var imageAndPredictions = (await api.routePredictions(event.image, event.routeCategory));
+        var imageAndPredictions = (await getIt<ApiRepository>().routePredictions(event.image, event.routeCategory));
         List<dynamic> predictions = imageAndPredictions["sorted_route_and_image_predictions"];
         _imgPickerData = ImagePickerData(
           RouteImage.fromJson(imageAndPredictions["route_image"]),

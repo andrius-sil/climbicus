@@ -1,7 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:climbicus/models/route_image.dart';
-import 'package:climbicus/utils/api.dart';
+import 'package:climbicus/repositories/api_repository.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get_it/get_it.dart';
 
 
 class ImagesData {
@@ -101,7 +102,7 @@ class RouteImagesError extends RouteImagesState {
 }
 
 class RouteImagesBloc extends Bloc<RouteImagesEvent, RouteImagesState> {
-  final ApiProvider api = ApiProvider();
+  final getIt = GetIt.instance;
 
   final Images images = Images();
 
@@ -124,7 +125,7 @@ class RouteImagesBloc extends Bloc<RouteImagesEvent, RouteImagesState> {
 
       try {
         Map<String, dynamic> routeImages =
-            (await api.fetchRouteImages(routeIds))["route_images"];
+            (await getIt<ApiRepository>().fetchRouteImages(routeIds))["route_images"];
         var fetchedImages = routeImages.map((routeId, model) =>
             MapEntry(int.parse(routeId), RouteImage.fromJson(model)));
         images.addRoutes(fetchedImages);
@@ -139,7 +140,7 @@ class RouteImagesBloc extends Bloc<RouteImagesEvent, RouteImagesState> {
 
       try {
         List<dynamic> routeImages =
-            (await api.fetchRouteImagesAllRoute(event.routeId))["route_images"];
+            (await getIt<ApiRepository>().fetchRouteImagesAllRoute(event.routeId))["route_images"];
         var fetchedImages = routeImages.map((model) => RouteImage.fromJson(model)).toList();
         images.addRouteImages(event.routeId, fetchedImages);
 
@@ -150,13 +151,13 @@ class RouteImagesBloc extends Bloc<RouteImagesEvent, RouteImagesState> {
     } else if (event is AddNewRouteImage) {
       // Not uploading image to the database via API because all images are
       // uploaded as part of predictions at the moment.
-      api.routeMatch(event.routeImage.id, event.routeId);
+      getIt<ApiRepository>().routeMatch(event.routeImage.id, event.routeId);
 
       images.addRoutes({event.routeId: event.routeImage});
 
       yield RouteImagesLoaded(images: images);
     } else if (event is UpdateRouteImage) {
-      api.routeMatch(event.routeImageId, event.routeId);
+      getIt<ApiRepository>().routeMatch(event.routeImageId, event.routeId);
       // TODO: update 'images' in case of no routeId
 
       yield RouteImagesLoaded(images: images);

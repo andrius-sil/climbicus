@@ -5,8 +5,9 @@ import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/models/route.dart' as jsonmdl;
 import 'package:climbicus/models/route_image.dart';
 import 'package:climbicus/models/user_route_log.dart';
-import 'package:climbicus/utils/api.dart';
+import 'package:climbicus/repositories/api_repository.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get_it/get_it.dart';
 
 class RouteWithLogs {
   jsonmdl.Route route;
@@ -97,7 +98,7 @@ class AddNewGymRouteWithUserLog extends GymRoutesEvent {
 }
 
 class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
-  final ApiProvider api = ApiProvider();
+  final getIt = GetIt.instance;
 
   final RouteImagesBloc routeImagesBloc;
 
@@ -114,8 +115,8 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
       yield GymRoutesLoading();
 
       try {
-        var dataLogbook = api.fetchLogbook();
-        var dataRoutes = api.fetchRoutes();
+        var dataLogbook = getIt<ApiRepository>().fetchLogbook();
+        var dataRoutes = getIt<ApiRepository>().fetchRoutes();
 
         var newLogbook = (await dataLogbook).map((userRouteLogId, model) =>
             MapEntry(int.parse(userRouteLogId),
@@ -133,14 +134,14 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
         yield GymRoutesError(exception: e, stackTrace: st);
       }
     } else if (event is AddNewUserRouteLog) {
-      var results = await api.logbookAdd(event.routeId, event.completed, event.numAttempts);
+      var results = await getIt<ApiRepository>().logbookAdd(event.routeId, event.completed, event.numAttempts);
       var newUserRouteLog = UserRouteLog.fromJson(results["user_route_log"]);
 
       _entries.addUserRouteLog(newUserRouteLog);
 
       yield GymRoutesLoaded(entries: _entries);
     } else if (event is AddNewGymRouteWithUserLog) {
-      var results = await api.routeAdd(event.category, event.grade);
+      var results = await getIt<ApiRepository>().routeAdd(event.category, event.grade);
       var newRoute = jsonmdl.Route.fromJson(results["route"]);
       _entries.addRoute(newRoute);
 

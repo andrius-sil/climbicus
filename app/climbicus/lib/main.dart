@@ -2,16 +2,19 @@ import 'package:bloc/bloc.dart';
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/blocs/route_predictions_bloc.dart';
+import 'package:climbicus/repositories/api_repository.dart';
+import 'package:climbicus/repositories/user_repository.dart';
 import 'package:climbicus/ui/login.dart';
 import 'package:climbicus/ui/route_view.dart';
 import 'package:climbicus/ui/settings.dart';
-import 'package:climbicus/utils/api.dart';
-import 'package:climbicus/utils/auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 
+import 'blocs/authentication_bloc.dart';
 import 'blocs/gyms_bloc.dart';
+import 'blocs/login_bloc.dart';
 import 'blocs/settings_bloc.dart';
 import 'blocs/simple_bloc_delegate.dart';
 import 'env.dart';
@@ -30,9 +33,19 @@ void mainDelegate(Environment env) {
 
   BlocSupervisor.delegate = SimpleBlocDelegate();
 
+  final getIt = GetIt.instance;
+  getIt.registerSingleton<ApiRepository>(ApiRepository(
+    serverUrl: SERVER_URLS[env],
+  ));
+  getIt.registerSingleton<UserRepository>(UserRepository());
+
   runApp(
     MultiBlocProvider(
       providers: [
+        BlocProvider<AuthenticationBloc>(create: (context) => AuthenticationBloc()),
+        BlocProvider<LoginBloc>(create: (context) => LoginBloc(
+          authenticationBloc: BlocProvider.of<AuthenticationBloc>(context),
+        )),
         BlocProvider<SettingsBloc>(create: (context) => SettingsBloc()),
         BlocProvider<GymsBloc>(create: (context) => GymsBloc()),
         BlocProvider<RouteImagesBloc>(create: (context) => RouteImagesBloc()),
@@ -63,97 +76,61 @@ Widget _buildErrorWidget(FlutterErrorDetails details) {
 
 class HomePage extends StatefulWidget {
   final Environment env;
-  HomePage({this.env});
+
+  HomePage({@required this.env});
 
   @override
   State<StatefulWidget> createState() => _HomePageState();
 }
 
-enum AuthStatus {
-  notDetermined,
-  notLoggedIn,
-  loggedIn,
-}
-
 class _HomePageState extends State<HomePage> {
-  final Auth auth = Auth();
-  final ApiProvider api = ApiProvider();
-
-  AuthStatus authStatus = AuthStatus.notDetermined;
-
-  @override
-  void initState() {
-    super.initState();
-
-    api.serverUrl = SERVER_URLS[widget.env];
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    auth.loggedIn().then((bool userLoggedIn) {
-      setState(() {
-        authStatus =
-            userLoggedIn ? AuthStatus.loggedIn : AuthStatus.notLoggedIn;
-      });
-    });
-  }
-
-  void _loggedIn() {
-    setState(() {
-      authStatus = AuthStatus.loggedIn;
-    });
-  }
-
-  void _loggedOut() {
-    setState(() {
-      authStatus = AuthStatus.notLoggedIn;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    switch (authStatus) {
-      case AuthStatus.notDetermined:
+    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+      builder: (context, state) {
+        if (state is AuthenticationAuthenticated) {
+          return _buildHomePage();
+        } else if (state is AuthenticationUnauthenticated) {
+          return LoginPage();
+        }
+
         return _buildWaitingPage();
-      case AuthStatus.notLoggedIn:
-        return LoginPage(loginCallback: _loggedIn);
-      case AuthStatus.loggedIn:
-        return BlocBuilder<SettingsBloc, SettingsState>(
-          builder: (context, state) {
-            if (state is SettingsUninitialized) {
-              return _buildWaitingPage();
-            }
+      }
+    );
+  }
 
-            api.gymId = state.gymId;
+  Widget _buildHomePage() {
+    return BlocBuilder<SettingsBloc, SettingsState>(
+        builder: (context, state) {
+          if (state is SettingsUninitialized) {
+            return _buildWaitingPage();
+          }
 
-            return DefaultTabController(
-              length: 2,
-              child: Scaffold(
-                appBar: AppBar(
-                  bottom: TabBar(
-                    tabs: [
-                      Tab(text: "Sport"),
-                      Tab(text: "Bouldering"),
-                    ],
-                  ),
-                  title: _buildTitle(state.gymId),
-                ),
-                body: TabBarView(
-                  children: <Widget>[
-                    RouteViewPage(routeCategory: "sport", gymId: state.gymId),
-                    RouteViewPage(routeCategory: "bouldering", gymId: state.gymId),
+          return DefaultTabController(
+            length: 2,
+            child: Scaffold(
+              appBar: AppBar(
+                bottom: TabBar(
+                  tabs: [
+                    Tab(text: "Sport"),
+                    Tab(text: "Bouldering"),
                   ],
                 ),
-                drawer: Drawer(
-                  child: SettingsPage(env: widget.env, logoutCallback: _loggedOut),
-                ),
+                title: _buildTitle(state.gymId),
               ),
-            );
-          }
-        );
-    }
+              body: TabBarView(
+                children: <Widget>[
+                  RouteViewPage(routeCategory: "sport", gymId: state.gymId),
+                  RouteViewPage(routeCategory: "bouldering", gymId: state.gymId),
+                ],
+              ),
+              drawer: Drawer(
+                child: SettingsPage(env: widget.env),
+              ),
+            ),
+          );
+        }
+    );
   }
 
   Widget _buildTitle(int gymId) {

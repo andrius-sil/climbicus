@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:async/async.dart';
+import 'package:climbicus/repositories/user_repository.dart';
 import 'package:flutter/foundation.dart';
+import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 
@@ -24,24 +26,16 @@ class UnauthorizedApiException extends ApiException {
       : super(response, responseJson);
 }
 
-class ApiProvider {
-  // Singleton factory.
-  ApiProvider._internal();
+class ApiRepository {
+  final getIt = GetIt.instance;
 
-  static final ApiProvider _apiProvider = ApiProvider._internal();
-
-  factory ApiProvider() => _apiProvider;
-
+  final String serverUrl;
   final client = http.Client();
 
-  String _accessToken;
-  int userId;
-  String _serverUrl;
   int _gymId;
-
-  set accessToken(String value) => _accessToken = value;
-  set serverUrl(String value) => _serverUrl = value;
   set gymId(int value) => _gymId = value;
+
+  ApiRepository({this.serverUrl});
 
   ApiException _apiException(response, responseJson) {
     switch (response.statusCode) {
@@ -54,7 +48,8 @@ class ApiProvider {
 
   Future<Map> _request(http.BaseRequest request, bool auth) async {
     if (auth) {
-      request.headers["Authorization"] = "Bearer $_accessToken";
+      var accessToken = getIt<UserRepository>().accessToken;
+      request.headers["Authorization"] = "Bearer $accessToken";
     }
 
     final response = await client.send(request);
@@ -71,14 +66,14 @@ class ApiProvider {
 
   Future<Map> _requestJson(String method, String urlPath, Map requestData,
       {bool auth = true}) async {
-    var uri = Uri.parse("$_serverUrl/$urlPath");
+    var uri = Uri.parse("$serverUrl/$urlPath");
     var request = http.Request(method, uri);
 
     request.headers["Content-Type"] = "application/json";
 
     Map data = {};
     if (auth) {
-      data["user_id"] = userId;
+      data["user_id"] = getIt<UserRepository>().userId;
     }
     data.addAll(requestData);
     request.body = json.encode(data);
@@ -91,7 +86,7 @@ class ApiProvider {
 
   Future<Map> _requestMultipart(
       File image, String method, String urlPath, Map requestData) async {
-    var uri = Uri.parse("$_serverUrl/$urlPath");
+    var uri = Uri.parse("$serverUrl/$urlPath");
     var request = http.MultipartRequest("POST", uri);
 
     var stream = http.ByteStream(DelegatingStream.typed(image.openRead()));
@@ -100,7 +95,7 @@ class ApiProvider {
         filename: basename(image.path));
     request.files.add(multipartFile);
 
-    Map data = {"user_id": userId};
+    Map data = {"user_id": getIt<UserRepository>().userId};
     data.addAll(requestData);
     request.fields["json"] = json.encode(data);
 

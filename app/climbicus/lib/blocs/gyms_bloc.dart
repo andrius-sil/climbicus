@@ -2,8 +2,9 @@
 
 import 'package:bloc/bloc.dart';
 import 'package:climbicus/models/gym.dart';
-import 'package:climbicus/utils/api.dart';
+import 'package:climbicus/repositories/api_repository.dart';
 import 'package:flutter/foundation.dart';
+import 'package:get_it/get_it.dart';
 
 abstract class GymsState {
   const GymsState();
@@ -34,7 +35,7 @@ abstract class GymsEvent {
 class FetchGyms extends GymsEvent {}
 
 class GymsBloc extends Bloc<GymsEvent, GymsState> {
-  final ApiProvider api = ApiProvider();
+  final getIt = GetIt.instance;
 
   GymsBloc() {
     add(FetchGyms());
@@ -49,7 +50,7 @@ class GymsBloc extends Bloc<GymsEvent, GymsState> {
       yield GymsLoading();
 
       try {
-        Map<String, dynamic> results = (await api.fetchGyms())["gyms"];
+        Map<String, dynamic> results = (await getIt<ApiRepository>().fetchGyms())["gyms"];
         var gyms = results.map((gymId, model) =>
             MapEntry(int.parse(gymId), Gym.fromJson(model)));
 
