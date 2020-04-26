@@ -62,19 +62,23 @@ class _LoginPageState extends State<LoginPage> {
 
   List<Widget> _buildInputs() {
     return <Widget>[
-      TextFormField(
-        key: Key('email'),
-        keyboardType: TextInputType.emailAddress,
-        decoration: InputDecoration(labelText: 'Email'),
-        validator: (value) => value.isEmpty ? "Email can't be empty" : null,
-        onSaved: (value) => _email = value,
+      ListTile(
+        title: TextFormField(
+          key: Key('email'),
+          keyboardType: TextInputType.emailAddress,
+          decoration: InputDecoration(labelText: 'Email'),
+          validator: (value) => value.isEmpty ? "Email can't be empty" : null,
+          onSaved: (value) => _email = value,
+        ),
       ),
-      TextFormField(
-        key: Key('password'),
-        obscureText: true,
-        decoration: InputDecoration(labelText: 'Password'),
-        validator: (value) => value.isEmpty ? "Password can't be empty" : null,
-        onSaved: (value) => _password = value,
+      ListTile(
+        title: TextFormField(
+          key: Key('password'),
+          obscureText: true,
+          decoration: InputDecoration(labelText: 'Password'),
+          validator: (value) => value.isEmpty ? "Password can't be empty" : null,
+          onSaved: (value) => _password = value,
+        ),
       ),
     ];
   }
@@ -82,11 +86,13 @@ class _LoginPageState extends State<LoginPage> {
   List<Widget> _buildSubmitButtons(LoginState state) {
     return <Widget>[
       Builder(
-        builder: (BuildContext context) => RaisedButton(
-          key: Key('logIn'),
-          child: Text('Log in'),
-          onPressed: state is LoginLoading ? null : () => validateAndLogin(context),
-        )
+        builder: (BuildContext context) => ListTile(
+          title: RaisedButton(
+            key: Key('logIn'),
+            child: Text('Log in'),
+            onPressed: state is LoginLoading ? null : () => validateAndLogin(context),
+          ),
+        ),
       )
     ];
   }
