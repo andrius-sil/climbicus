@@ -1,11 +1,12 @@
 
 import 'package:climbicus/repositories/api_repository.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class UserRepository {
   final getIt = GetIt.instance;
+  final secureStorage = FlutterSecureStorage();
 
   String _accessToken;
   String _email;
@@ -31,10 +32,9 @@ class UserRepository {
     _userId = userAuth["user_id"];
     _email = email;
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("access_token", _accessToken);
-    prefs.setInt("user_id", _userId);
-    prefs.setString("email", _email);
+    await secureStorage.write(key: "access_token", value: _accessToken);
+    await secureStorage.write(key: "user_id", value: _userId.toString());
+    await secureStorage.write(key: "email", value: _email);
   }
 
   Future<void> deauthenticate() async {
@@ -42,19 +42,21 @@ class UserRepository {
     _userId = null;
     _email = null;
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove("access_token");
-    prefs.remove("user_id");
-    prefs.remove("email");
+    await secureStorage.delete(key: "access_token");
+    await secureStorage.delete(key: "user_id");
+    await secureStorage.delete(key: "email");
   }
 
   Future<bool> hasAuthenticated() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _accessToken = await secureStorage.read(key: "access_token");
 
-    _accessToken = prefs.getString("access_token");
-    _userId = prefs.getInt("user_id");
-    _email = prefs.getString("email");
+    if (_accessToken == null) {
+      return false;
+    }
 
-    return _accessToken != null;
+    _userId = int.parse(await secureStorage.read(key: "user_id"));
+    _email = await secureStorage.read(key: "email");
+
+    return true;
   }
 }
