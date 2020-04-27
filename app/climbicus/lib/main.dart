@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
+import 'package:climbicus/blocs/register_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/blocs/route_predictions_bloc.dart';
 import 'package:climbicus/repositories/api_repository.dart';
@@ -44,6 +45,9 @@ void mainDelegate(Environment env) {
       providers: [
         BlocProvider<AuthenticationBloc>(create: (context) => AuthenticationBloc()),
         BlocProvider<LoginBloc>(create: (context) => LoginBloc(
+          authenticationBloc: BlocProvider.of<AuthenticationBloc>(context),
+        )),
+        BlocProvider<RegisterBloc>(create: (context) => RegisterBloc(
           authenticationBloc: BlocProvider.of<AuthenticationBloc>(context),
         )),
         BlocProvider<SettingsBloc>(create: (context) => SettingsBloc()),

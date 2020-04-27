@@ -26,6 +26,11 @@ class UnauthorizedApiException extends ApiException {
       : super(response, responseJson);
 }
 
+class ConflictingResourceApiException extends ApiException {
+  ConflictingResourceApiException(http.StreamedResponse response, String responseJson)
+      : super(response, responseJson);
+}
+
 class ApiRepository {
   final getIt = GetIt.instance;
 
@@ -41,6 +46,8 @@ class ApiRepository {
     switch (response.statusCode) {
       case 401:
         return UnauthorizedApiException(response, responseJson);
+      case 409:
+        return ConflictingResourceApiException(response, responseJson);
       default:
         return ApiException(response, responseJson);
     }
@@ -112,6 +119,15 @@ class ApiRepository {
     };
 
     return _requestJson("POST", "login", data, auth: false);
+  }
+
+  Future<Map> register(String email, String password) async {
+    Map data = {
+      "email": email,
+      "password": password,
+    };
+
+    return _requestJson("POST", "register", data, auth: false);
   }
 
   Future<Map> routeMatch(int routeImageId, int routeId) async {

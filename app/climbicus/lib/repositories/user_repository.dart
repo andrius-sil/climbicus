@@ -16,6 +16,13 @@ class UserRepository {
   String get email => _email;
   int get userId => _userId;
 
+  Future<void> register({
+    @required String email,
+    @required String password,
+  }) async {
+    await getIt<ApiRepository>().register(email, password);
+  }
+
   Future<Map> authenticate({
     @required String email,
     @required String password,

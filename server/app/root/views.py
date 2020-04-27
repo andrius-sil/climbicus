@@ -1,6 +1,10 @@
+import datetime
+
+from sqlalchemy.exc import IntegrityError
 from flask import Blueprint, request, abort, jsonify, current_app
 from flask_jwt_extended import create_access_token
 
+from app import db
 from app.app_handlers import no_jwt_required
 from app.models import Users
 
@@ -32,6 +36,28 @@ def login():
         access_token=access_token,
         user_id=user.id,
     )
+
+
+@blueprint.route("/register", methods=["POST"])
+@no_jwt_required
+def register():
+    if not request.is_json:
+        abort(400, "Request data should be in JSON format")
+
+    email = request.json.get("email", None)
+    password = request.json.get("password", None)
+
+    try:
+        user = Users(email=email, password=password, created_at = datetime.datetime.utcnow())
+
+        db.session.add(user)
+        db.session.commit()
+    except IntegrityError:
+        abort(409, "User already exists")
+
+    return jsonify({
+        "msg": "New user created",
+    })
 
 
 @blueprint.route("/", methods=["GET"])

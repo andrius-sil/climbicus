@@ -1,5 +1,7 @@
 from flask import json
 
+from app.models import Users
+
 
 def test_login(client):
     data = {
@@ -36,6 +38,35 @@ def test_login_with_invalid_password(client):
     assert resp.status_code == 401
     assert resp.is_json
     assert resp.json["msg"] == "incorrect email and password"
+
+
+def test_register(client, app):
+    data = {
+        "email": "new@tester.com",
+        "password": "newpass",
+    }
+    resp = client.post("/register", data=json.dumps(data), content_type="application/json")
+
+    assert resp.status_code == 200
+    assert resp.is_json
+    assert resp.json["msg"] == "New user created"
+
+    with app.app_context():
+        user = Users.query.filter_by(id=3).one()
+        assert user.email == "new@tester.com"
+        assert user.check_password("newpass")
+
+
+def test_register_email_already_taken(client, app):
+    data = {
+        "email": "test1@testing.com",
+        "password": "newpass",
+    }
+    resp = client.post("/register", data=json.dumps(data), content_type="application/json")
+
+    assert resp.status_code == 409
+    assert resp.is_json
+    assert resp.json["msg"] == "User already exists"
 
 
 def test_index(client, auth_headers_user1):
