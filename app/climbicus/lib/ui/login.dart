@@ -1,4 +1,5 @@
 import 'package:climbicus/blocs/login_bloc.dart';
+import 'package:climbicus/ui/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -93,7 +94,23 @@ class _LoginPageState extends State<LoginPage> {
             onPressed: state is LoginLoading ? null : () => validateAndLogin(context),
           ),
         ),
-      )
+      ),
+      ListTile(
+        title: Row(
+          children: <Widget>[
+            Text("New user?"),
+            FlatButton(
+              textColor: Colors.blue,
+              child: Text(
+                "Register",
+                style: TextStyle(fontSize: 18),
+              ),
+              onPressed: navigateRegister,
+            ),
+          ],
+          mainAxisAlignment: MainAxisAlignment.center,
+        ),
+      ),
     ];
   }
 
@@ -107,6 +124,14 @@ class _LoginPageState extends State<LoginPage> {
     _loginBloc.add(LoginButtonPressed(
       email: _email,
       password: _password,
+    ));
+  }
+
+  void navigateRegister() {
+    Navigator.push(context, MaterialPageRoute(
+      builder: (BuildContext context) {
+        return RegisterPage();
+      },
     ));
   }
 }
