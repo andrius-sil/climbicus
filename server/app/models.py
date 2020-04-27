@@ -43,6 +43,8 @@ class Users(db.Model):
 class Gyms(db.Model):
     id = db.Column(db.Integer, db.Sequence('gym_id_seq'), primary_key=True)
     name = db.Column(db.String, nullable=False)
+    has_bouldering = db.Column(db.Boolean, nullable=False)
+    has_sport = db.Column(db.Boolean, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     @property
@@ -50,6 +52,8 @@ class Gyms(db.Model):
         return {
             "id": self.id,
             "name": self.name,
+            "has_bouldering": self.has_bouldering,
+            "has_sport": self.has_sport,
             "created_at": self.created_at.isoformat(),
         }
 
