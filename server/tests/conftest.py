@@ -72,8 +72,10 @@ def app(resource_dir):
             )
         )
         db.session.add_all([
-            Gyms(name="The Castle Climbing Centre", created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)),
-            Gyms(name="VauxWest", created_at=datetime(2020, 1, 11, 10, 10, 10, tzinfo=pytz.UTC)),
+            Gyms(name="The Castle Climbing Centre", has_bouldering=True, has_sport=True,
+                 created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)),
+            Gyms(name="VauxWest", has_bouldering=True, has_sport=False,
+                 created_at=datetime(2020, 1, 11, 10, 10, 10, tzinfo=pytz.UTC)),
         ])
         db.session.flush()
         for i in range(1, 100):
