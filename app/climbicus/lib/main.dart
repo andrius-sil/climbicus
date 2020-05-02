@@ -4,6 +4,7 @@ import 'package:climbicus/blocs/register_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/blocs/route_predictions_bloc.dart';
 import 'package:climbicus/repositories/api_repository.dart';
+import 'package:climbicus/repositories/settings_repository.dart';
 import 'package:climbicus/repositories/user_repository.dart';
 import 'package:climbicus/ui/login.dart';
 import 'package:climbicus/ui/route_view.dart';
@@ -39,6 +40,9 @@ void mainDelegate(Environment env) {
     serverUrl: SERVER_URLS[env],
   ));
   getIt.registerSingleton<UserRepository>(UserRepository());
+  getIt.registerSingleton<SettingsRepository>(SettingsRepository(
+      env: env,
+  ));
 
   runApp(
     MultiBlocProvider(
