@@ -154,6 +154,15 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
   }
 
   Widget _buildLogbookGrid(RoutesWithLogs entries) {
+    if (entries.isEmpty) {
+      return Center(
+        child: Text(
+          "No routes in this gym yet..",
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
+
     Map<int, bool> isExpandedPrevious = {};
     _items.forEach((item) => isExpandedPrevious[item.routeWithLogs.route.id] = item.isExpanded);
     _items.clear();

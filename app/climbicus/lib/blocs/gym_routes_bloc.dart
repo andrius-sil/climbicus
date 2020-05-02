@@ -29,6 +29,8 @@ class RoutesWithLogs {
     });
   }
 
+  bool get isEmpty => _data.isEmpty;
+
   List<int> routeIds() => _data.keys.toList();
 
   void addRoute(jsonmdl.Route route) {

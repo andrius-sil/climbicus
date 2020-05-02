@@ -20,6 +20,7 @@ import 'blocs/login_bloc.dart';
 import 'blocs/settings_bloc.dart';
 import 'blocs/simple_bloc_delegate.dart';
 import 'env.dart';
+import 'models/gym.dart';
 
 
 const Map<Environment, String> SERVER_URLS = {
@@ -109,35 +110,53 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildHomePage() {
     return BlocBuilder<SettingsBloc, SettingsState>(
-        builder: (context, state) {
-          if (state is SettingsUninitialized) {
+        builder: (context, settingsState) {
+          if (settingsState is SettingsUninitialized) {
             return _buildWaitingPage();
           }
 
-          return DefaultTabController(
-            length: 2,
-            child: Scaffold(
-              appBar: AppBar(
-                bottom: TabBar(
-                  tabs: [
-                    Tab(text: "Sport"),
-                    Tab(text: "Bouldering"),
-                  ],
-                ),
-                title: _buildTitle(state.gymId),
-              ),
-              body: TabBarView(
-                children: <Widget>[
-                  RouteViewPage(routeCategory: "sport", gymId: state.gymId),
-                  RouteViewPage(routeCategory: "bouldering", gymId: state.gymId),
-                ],
-              ),
-              drawer: Drawer(
-                child: SettingsPage(env: widget.env),
-              ),
-            ),
+          return BlocBuilder<GymsBloc, GymsState>(
+            builder: (context, gymState) {
+              if (gymState is GymsLoaded) {
+                return _buildRouteTabView(settingsState.gymId, gymState.gyms);
+              }
+
+              return _buildWaitingPage();
+            }
           );
+
         }
+    );
+  }
+
+  Widget _buildRouteTabView(int gymId, Map<int, Gym> gyms) {
+    List<Tab> tabs = [];
+    List<RouteViewPage> tabViews = [];
+    if (gyms[gymId].hasSport) {
+      tabViews.add(RouteViewPage(routeCategory: "sport", gymId: gymId));
+      tabs.add(Tab(text: "Sport"));
+    }
+    if (gyms[gymId].hasBouldering) {
+      tabViews.add(RouteViewPage(routeCategory: "bouldering", gymId: gymId));
+      tabs.add(Tab(text: "Bouldering"));
+    }
+
+    return DefaultTabController(
+      length: tabs.length,
+      child: Scaffold(
+        appBar: AppBar(
+          bottom: TabBar(
+            tabs: tabs,
+          ),
+          title: _buildTitle(gymId),
+        ),
+        body: TabBarView(
+          children: tabViews,
+        ),
+        drawer: Drawer(
+          child: SettingsPage(env: widget.env),
+        ),
+      ),
     );
   }
 

@@ -8,6 +8,8 @@ class Gym {
 
   int id;
   String name;
+  bool hasBouldering;
+  bool hasSport;
   DateTime createdAt;
 
   factory Gym.fromJson(Map<String, dynamic> json) => _$GymFromJson(json);

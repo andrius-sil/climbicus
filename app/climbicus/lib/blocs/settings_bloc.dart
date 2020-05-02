@@ -69,8 +69,6 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
 
   SettingsBloc() {
     retrieveSettings();
-
-    getIt<ApiRepository>().gymId = _gymId;
   }
 
   SettingsState createState() => SettingsState(
@@ -90,6 +88,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     _gymId = int.parse(await retrieveSetting("gym_id", _gymId.toString()));
 
     _packageInfo = await PackageInfo.fromPlatform();
+
+    getIt<ApiRepository>().gymId = _gymId;
 
     add(InitializedSettings());
   }
