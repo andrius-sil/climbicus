@@ -2,4 +2,4 @@ name,has_bouldering,has_sport,created_at
 The Castle Climbing Centre,True,True,2019-10-10 00:00:00+0
 Yonder,True,False,2018-04-17 00:00:00+0
 Lockdown Climbing,True,False,2020-03-17 00:00:00+0
-Strange World Centre,True,False,1999-03-02 00:00:00+0
+Strange World Centre,False,True,1999-03-02 00:00:00+0
