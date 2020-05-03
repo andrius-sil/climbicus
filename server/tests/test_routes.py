@@ -128,6 +128,7 @@ def test_predict_with_corrupt_image(client, resource_dir, auth_headers_user1):
 
 @mock.patch("datetime.datetime", Mock(utcnow=lambda: datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)))
 @mock.patch("uuid.uuid4", lambda: UUID('12345678123456781234567812345678'))
+@mock.patch("predictor.cbir_predictor.MATCH_DISTANCE_THRESHOLD", 1000)
 def test_predict_with_unknown_image(client, resource_dir, auth_headers_user1):
     json_data = {
         "user_id": 1,
@@ -179,6 +180,7 @@ def test_predict_with_unknown_image(client, resource_dir, auth_headers_user1):
 
 @mock.patch("datetime.datetime", Mock(utcnow=lambda: datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)))
 @mock.patch("uuid.uuid4", lambda: UUID('12345678123456781234567812345678'))
+@mock.patch("predictor.cbir_predictor.MATCH_DISTANCE_THRESHOLD", 1000)
 def test_cbir_predict_with_image(app, client, resource_dir, auth_headers_user1):
     json_data = {
         "user_id": 1,
@@ -235,3 +237,36 @@ def test_cbir_predict_with_image(app, client, resource_dir, auth_headers_user1):
         assert stored_image.path == "/tmp/climbicus_tests/route_images/from_users/1/2019/03/12345678123456781234567812345678.jpg"
         assert stored_image.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
         assert stored_image.descriptors == json.load(open(f"{resource_dir}/cbir/green_route_descriptor.json"))
+
+
+@mock.patch("predictor.cbir_predictor.MATCH_DISTANCE_THRESHOLD", 200)
+def test_cbir_apply_threshold(app, client, resource_dir, auth_headers_user1):
+    json_data = {
+        "user_id": 1,
+        "category": "bouldering",
+        "gym_id": 1,
+    }
+    data = {
+        "json": json.dumps(json_data),
+        "image": open(f"{resource_dir}/route_images/green_route.jpg", "rb"),
+    }
+
+    resp = client.post("/routes/predictions_cbir", data=data, headers=auth_headers_user1)
+
+    assert resp.status_code == 200
+    assert resp.is_json
+
+    assert resp.json["sorted_route_and_image_predictions"] == [
+        {
+            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 2,
+                      'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1},
+            'route_image': {'path': "user2_route2_2.jpg", 'created_at':
+                '2019-02-04T10:10:10+00:00', 'id': 4, 'route_id': 2, 'user_id': 2},
+        },
+        {
+            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 4,
+                      'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1},
+            'route_image': {'path': "user2_route4_2.jpg", 'created_at': '2019-02-04T10:10:10+00:00', 'id': 8,
+                            'route_id': 4, 'user_id': 2},
+        },
+    ]
