@@ -202,7 +202,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
 
     return Scrollbar(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.only(bottom: 160),
+        padding: const EdgeInsets.only(bottom: 80),
         child: ExpansionPanelList(
           expansionCallback: (int i, bool isExpanded) {
             setState(() {
