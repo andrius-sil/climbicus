@@ -13,6 +13,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
+const MAX_ROUTES_VISIBLE = 100;
+
 class RouteListItem {
   RouteWithLogs routeWithLogs;
   Widget image;
@@ -167,8 +169,13 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
     _items.forEach((item) => isExpandedPrevious[item.routeWithLogs.route.id] = item.isExpanded);
     _items.clear();
 
+    var i = 0;
     (_sortEntriesByLogDate(entries.allRoutes())).forEach((routeId, routeWithLogs) {
       if (routeWithLogs.route.category != widget.routeCategory) {
+        return;
+      }
+
+      if (++i > MAX_ROUTES_VISIBLE) {
         return;
       }
 
