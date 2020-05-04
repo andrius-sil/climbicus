@@ -53,6 +53,8 @@ class CBIRPredictor:
         Obtains keypoints and their descriptors for an image
         """
         _, des = self.orb.detectAndCompute(img, None)
+        if des is None:
+            raise InvalidImageException()
         return des
 
     def calc_record_distances(self, des, routes_and_images, nmatches):
