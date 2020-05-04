@@ -6,6 +6,7 @@ NMATCHES = 5
 MODEL_VERSION = "cbir_v1"
 MAX_IMG_WIDTH = 512
 MAX_FEATURES = 450
+MATCH_DISTANCE_THRESHOLD = 137
 
 
 class InvalidImageException(Exception):
@@ -89,13 +90,17 @@ class CBIRPrediction:
         Using distances from each descriptor array, finds n route_id's that match best
         """
 
+        def filter_non_matches(routes_and_images):
+            return [r for r in routes_and_images if r['distance'] <= MATCH_DISTANCE_THRESHOLD]
+
         def distinct_with_order(seq):
             """ Distinct elements in list preserving order """
             seen = set()
             seen_add = seen.add
             return [x for x in seq if not (x['route'].id in seen or seen_add(x['route'].id))]
 
-        routes_and_images_sorted = sorted(routes_and_images, key=lambda x: x['distance'])
+        routes_and_images_filtered = filter_non_matches(routes_and_images)
+        routes_and_images_sorted = sorted(routes_and_images_filtered, key=lambda x: x['distance'])
         distinct_prediction_route_images = distinct_with_order(routes_and_images_sorted)
         top_n_route_images = distinct_prediction_route_images[:top_n_categories]
         return top_n_route_images
