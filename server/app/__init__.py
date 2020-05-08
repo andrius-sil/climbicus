@@ -1,3 +1,5 @@
+import boto3
+from celery import Celery
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
@@ -7,9 +9,35 @@ from app.utils.io import InputOutput
 from predictor.cbir_predictor import CBIRPredictor
 
 
+def create_celery(app_name=__name__):
+    redis_uri = "redis://redis:6379"
+    return Celery(
+        app_name,
+        backend=redis_uri,
+        broker=redis_uri,
+        include=['app.tasks'],
+    )
+
+
 db = SQLAlchemy()
 cbir_predictor = CBIRPredictor()
+
 io = InputOutput()
+s3_client = boto3.client("s3")
+
+celery = create_celery()
+
+
+def init_celery(celery, app):
+    celery.conf.update(app.config)
+
+    class ContextTask(celery.Task):
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return self.run(*args, **kwargs)
+
+    celery.Task = ContextTask
+
 
 
 def create_app(db_connection_uri, jwt_secret_key, io_provider, disable_auth=False):
@@ -35,6 +63,8 @@ def create_app(db_connection_uri, jwt_secret_key, io_provider, disable_auth=Fals
     db.init_app(app)
 
     io.load(io_provider)
+
+    init_celery(celery, app)
 
     from app.commands import recreate_db_cmd
     app.cli.add_command(recreate_db_cmd)

@@ -10,16 +10,22 @@ services:
       - "5432:5432"
     command:
       postgres -c track_commit_timestamp=on
+  worker:
+    env_file:
+      - dev_secrets.env
+    volumes:
+      - ./server/:/app
+      - $HOME/.aws/credentials:/root/.aws/credentials:ro
   server:
     env_file:
       - dev_secrets.env
     depends_on:
       - db
+      - worker
     environment:
       - ENV=dev
       - PYTHONUNBUFFERED=1
       - FLASK_ENV=development
-      #- FLASK_PROFILE=1
     volumes:
       - ./server/:/app
       - $HOME/.aws/credentials:/root/.aws/credentials:ro

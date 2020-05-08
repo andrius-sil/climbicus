@@ -9,7 +9,7 @@ from app.models import Gyms, RouteImages, Routes, UserRouteLog, Users
 from datetime import datetime
 import pytz
 
-from app.utils.encoding import bytes_to_b64str
+from app.utils.encoding import bytes_to_b64str, b64str_to_bytes
 from app.utils.io import InputOutputProvider
 
 DATABASE_CONNECTION_URI = "postgresql+psycopg2://tester:test@db:5432/climbicus_tests"
@@ -28,15 +28,8 @@ class TestInputOutputProvider(InputOutputProvider):
         with open(filepath, "rb") as f:
             return f.read()
 
-    def upload_file(self, file, remote_path):
-        file.seek(0)
-        filepath = f"{self.upload_dir}/{remote_path}"
-        filedir = os.path.dirname(filepath)
-        if not os.path.exists(filedir):
-            os.makedirs(filedir)
-        file.save(filepath)
-        file.close()
-        return filepath
+    def upload_filepath(self, remote_path):
+        return f"{self.upload_dir}/{remote_path}"
 
 
 @pytest.fixture(scope="function")

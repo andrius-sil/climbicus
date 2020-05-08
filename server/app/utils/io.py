@@ -2,7 +2,6 @@ import re
 from abc import ABC, abstractmethod
 
 import boto3
-import werkzeug
 
 
 class InputOutput:
@@ -21,7 +20,7 @@ class InputOutputProvider(ABC):
         pass
 
     @abstractmethod
-    def upload_file(self, file: werkzeug.FileStorage, remote_path):
+    def upload_filepath(self, remote_path):
         pass
 
 
@@ -47,15 +46,5 @@ class S3InputOutputProvider(InputOutputProvider):
 
         return resp["Body"].read()
 
-    def upload_file(self, file, remote_path):
-        file.seek(0)
-        resp = self.s3.put_object(
-            Body=file,
-            Bucket=self.bucket,
-            Key=remote_path,
-            ContentType=file.content_type,
-        )
-
-        assert resp["ResponseMetadata"]["HTTPStatusCode"] == 200
-
+    def upload_filepath(self, remote_path):
         return f"s3://{self.bucket}/{remote_path}"

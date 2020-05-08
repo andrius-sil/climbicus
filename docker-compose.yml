@@ -1,6 +1,18 @@
 version: '2'
 services:
+  redis:
+    image: redis:latest
+  worker:
+    build:
+      dockerfile: Dockerfile
+      context: ./server
+    command:
+      celery -A app.celery worker --loglevel=info
+    depends_on:
+      - redis
   server:
+    depends_on:
+      - worker
     build:
       dockerfile: Dockerfile
       context: ./server
