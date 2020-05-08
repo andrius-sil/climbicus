@@ -29,4 +29,4 @@ def upload_file_task(b64_str, bucket, remote_path, content_type):
 
     assert resp["ResponseMetadata"]["HTTPStatusCode"] == 200
 
-    return remote_path
+    return f"s3://{bucket}/{remote_path}"
