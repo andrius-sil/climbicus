@@ -116,8 +116,7 @@ def upload_file(file: werkzeug.datastructures.FileStorage, remote_path):
 def store_image(fs_image, user_id, gym_id, model_version, descriptors):
     now = datetime.datetime.utcnow()
     hex_id = uuid.uuid4().hex
-    # imagepath = f"route_images/from_users/gym_id={gym_id}/year={now.year}/month={now.month:02d}/{hex_id}.jpg"
-    imagepath = f"route_images/from_users/{gym_id}/{now.year}/{now.month:02d}/{hex_id}.jpg"
+    imagepath = f"route_images/from_users/gym_id={gym_id}/year={now.year}/month={now.month:02d}/{hex_id}.jpg"
 
     saved_image_path = upload_file(fs_image, imagepath)
 
