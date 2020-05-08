@@ -2,6 +2,8 @@ version: '2'
 services:
   redis:
     image: redis:latest
+    sysctls:
+      - net.core.somaxconn=4096
   worker:
     build:
       dockerfile: Dockerfile
