@@ -79,7 +79,7 @@ def predict_cbir():
         abort(400, "image file is invalid")
         return
     predicted_routes_and_images = cbir_prediction.get_predicted_routes_and_images()
-    descriptor = cbir_prediction.get_descriptor()
+    descriptor = cbir_prediction.descriptor_bytes()
 
     sorted_route_and_image_predictions = [{
         "route_image": r["route_image"].api_model,

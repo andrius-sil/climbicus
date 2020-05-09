@@ -1,6 +1,7 @@
 import pandas as pd
 
 from app.models import Gyms, RouteImages, Routes, UserRouteLog, Users
+from app.utils.encoding import json_to_nparraybytes
 
 
 def preload_dummy_data(db):
@@ -16,7 +17,7 @@ def preload_dummy_data(db):
 def load_table(db, ModelClass):
     def preformat_row(row):
         if "descriptors" in row:
-            row["descriptors"] = row["descriptors"].encode("utf-8")
+            row["descriptors"] = json_to_nparraybytes(row["descriptors"])
         return row
 
 

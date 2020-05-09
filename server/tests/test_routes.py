@@ -9,6 +9,8 @@ from app.models import RouteImages, Routes
 from app import db
 from flask import json
 
+from app.utils.encoding import json_to_nparraybytes
+
 
 def test_routes(client, auth_headers_user1):
     data = {
@@ -236,7 +238,8 @@ def test_cbir_predict_with_image(app, client, resource_dir, auth_headers_user1):
         assert stored_image.model_version == "cbir_v1"
         assert stored_image.path == "/tmp/climbicus_tests/route_images/from_users/gym_id=1/year=2019/month=03/12345678123456781234567812345678.jpg"
         assert stored_image.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
-        assert stored_image.descriptors.decode("utf-8") == json.load(open(f"{resource_dir}/cbir/green_route_descriptor.json"))
+        with open(f"{resource_dir}/cbir/green_route_descriptor.json") as f:
+            assert stored_image.descriptors == json_to_nparraybytes(f.read())
 
 
 @mock.patch("predictor.cbir_predictor.MATCH_DISTANCE_THRESHOLD", 200)
