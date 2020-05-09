@@ -129,7 +129,7 @@ class RouteImages(db.Model):
     model_version = db.Column(db.String, nullable=False)
     path = db.Column(db.String, unique=True, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
-    descriptors = db.Column(JSONB, nullable=False)
+    descriptors = db.Column(db.LargeBinary, nullable=True)
 
     @property
     def api_model(self):

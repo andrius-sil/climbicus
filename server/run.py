@@ -28,5 +28,8 @@ app = create_app(
 
 FLASK_PROFILE = os.getenv("FLASK_PROFILE", False)
 if FLASK_PROFILE:
-    app.wsgi_app = ProfilerMiddleware(app.wsgi_app)
+    profiledir = "/profile_flask"
+    if not os.path.exists(profiledir):
+        os.makedirs(profiledir)
+    app.wsgi_app = ProfilerMiddleware(app.wsgi_app, profile_dir=profiledir)
 

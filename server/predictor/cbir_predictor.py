@@ -1,6 +1,6 @@
 import cv2
-import json
 import numpy as np
+import orjson
 
 NMATCHES = 5
 MODEL_VERSION = "cbir_v1"
@@ -62,7 +62,7 @@ class CBIRPredictor:
         Obtains match distances for the query image with all available descriptors
         """
         for i in routes_and_images:
-            i_descriptors = np.array(json.loads(i['route_image'].descriptors)).astype('uint8')
+            i_descriptors = np.array(orjson.loads(i['route_image'].descriptors)).astype('uint8')
             matches = self.matcher.match(des, i_descriptors)
             matches = sorted(matches, key=lambda x: x.distance)
             # TODO: should check that we have NMATCHES to start with
@@ -84,7 +84,7 @@ class CBIRPrediction:
     This class defines individual prediction made by CBIRPredictor for a provided image
     """
     def __init__(self, des, top_n_categories, routes_and_images):
-        self.query_descriptor_json = json.dumps(des.tolist())
+        self.query_descriptor_json = orjson.dumps(des.tolist())
         self.top_n_predictions = self.find_top_predictions(routes_and_images, top_n_categories)
 
     def find_top_predictions(self, routes_and_images, top_n_categories):
