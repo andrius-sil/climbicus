@@ -25,8 +25,8 @@ import 'models/gym.dart';
 
 const Map<Environment, String> SERVER_URLS = {
   Environment.dev: "http://x1carbon:5000",
-  Environment.stag: "http://3.11.0.15:5000",
-  Environment.prod: "http://3.11.49.99:5000",
+  Environment.stag: "http://stag.climbicus.com:5000",
+  Environment.prod: "http://prod.climbicus.com:5000",
 };
 
 
