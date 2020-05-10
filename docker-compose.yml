@@ -1,6 +1,20 @@
-version: '2'
+version: '2.1'
 services:
+  redis:
+    image: redis:latest
+    sysctls:
+      - net.core.somaxconn=4096
+  worker:
+    build:
+      dockerfile: Dockerfile
+      context: ./server
+    command:
+      celery -A app.celery worker --loglevel=info
+    depends_on:
+      - redis
   server:
+    depends_on:
+      - worker
     build:
       dockerfile: Dockerfile
       context: ./server
