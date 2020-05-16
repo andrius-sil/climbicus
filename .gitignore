@@ -5,6 +5,8 @@
 *.jupyter
 stag_secrets.env
 prod_secrets.env
+key.properties
+key.jks
 __pycache__
 server/predictor/model_files/
 model_training/callbacks/
