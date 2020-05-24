@@ -48,7 +48,7 @@ class _CameraCustomState extends State<CameraCustom> {
                   padding: const EdgeInsets.all(8),
                   child: FractionallySizedBox(
                     widthFactor: 0.7,
-                    child: Image.network("http://dev-cdn.climbicus.com/overlay_white.png"),
+                    child: Image.network("http://dev-cdn.climbicus.com/assets/overlay_white.png"),
                   ),
                 ),
               ),
