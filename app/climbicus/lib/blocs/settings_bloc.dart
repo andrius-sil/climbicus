@@ -3,32 +3,21 @@ import 'package:bloc/bloc.dart';
 import 'package:climbicus/repositories/api_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
-const Map<String, List<ImageSource>> IMAGE_PICKERS = {
-  "gallery": [ImageSource.gallery],
-  "camera": [ImageSource.camera],
-  "both": [ImageSource.gallery, ImageSource.camera]
-};
-
 
 class SettingsState {
-  final String imagePicker;
   final int displayPredictionsNum;
   final int gymId;
   final PackageInfo packageInfo;
 
   SettingsState({
-    @required this.imagePicker,
     @required this.displayPredictionsNum,
     @required this.gymId,
     @required this.packageInfo,
   });
-
-  List<ImageSource> get imagePickerSources => IMAGE_PICKERS[imagePicker];
 }
 
 class SettingsUninitialized extends SettingsState {}
@@ -38,11 +27,6 @@ abstract class SettingsEvent {
 }
 
 class InitializedSettings extends SettingsEvent {}
-
-class ImagePickerChanged extends SettingsEvent {
-  final String imagePicker;
-  const ImagePickerChanged({@required this.imagePicker});
-}
 
 class GymChanged extends SettingsEvent {
   final int gymId;
@@ -72,7 +56,6 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   }
 
   SettingsState createState() => SettingsState(
-    imagePicker: _imagePicker,
     displayPredictionsNum: _displayPredictionsNum,
     gymId: _gymId,
     packageInfo: _packageInfo,
@@ -98,10 +81,6 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   Stream<SettingsState> mapEventToState(SettingsEvent event) async* {
     if (event is InitializedSettings) {
       yield createState();
-    } else if (event is ImagePickerChanged) {
-      _imagePicker = event.imagePicker;
-      yield createState();
-      storeSetting("image_picker", _imagePicker);
     } else if (event is GymChanged) {
       _gymId = event.gymId;
       getIt<ApiRepository>().gymId = _gymId;

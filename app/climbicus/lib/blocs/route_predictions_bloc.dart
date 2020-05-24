@@ -6,6 +6,7 @@ import 'package:climbicus/models/route.dart' as jsonmdl;
 import 'package:climbicus/models/route_image.dart';
 import 'package:climbicus/repositories/api_repository.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get_it/get_it.dart';
 
 class Prediction {
@@ -69,11 +70,19 @@ class RoutePredictionBloc extends Bloc<RoutePredictionEvent, RoutePredictionStat
       yield RoutePredictionLoading();
 
       try {
-        var imageAndPredictions = (await getIt<ApiRepository>().routePredictions(event.image, event.routeCategory));
+        var compressedImage = await FlutterImageCompress.compressAndGetFile(
+          event.image.absolute.path,
+          "${event.image.absolute.path}.compressed.jpg",
+          minWidth: 1024,
+          quality: 75,
+        );
+        debugPrint("compressed photo size: ${compressedImage.lengthSync()} bytes");
+
+        var imageAndPredictions = (await getIt<ApiRepository>().routePredictions(compressedImage, event.routeCategory));
         List<dynamic> predictions = imageAndPredictions["sorted_route_and_image_predictions"];
         _imgPickerData = ImagePickerData(
           RouteImage.fromJson(imageAndPredictions["route_image"]),
-          event.image,
+          compressedImage,
           predictions.map((model) => Prediction(
               route: jsonmdl.Route.fromJson(model["route"]),
               routeImage: RouteImage.fromJson(model["route_image"]),

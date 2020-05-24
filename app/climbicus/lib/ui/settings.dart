@@ -65,7 +65,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 title: Text("Version"),
                 subtitle: Text(_versionString(state.packageInfo)),
               ),
-            ] + _buildDevSettings(state.imagePicker)
+            ] + _buildDevSettings()
           );
       })),
     );
@@ -112,26 +112,6 @@ class _SettingsPageState extends State<SettingsPage> {
     return "$version (${packageInfo.buildNumber}) ${widget.env}";
   }
 
-  List<Widget> _buildImagePickerSelection(String selectedImagePicker) {
-    List<Widget> widgets = [
-      ListTile(
-        title: Text("Image Picker"),
-      )
-    ];
-    IMAGE_PICKERS.forEach((sourceName, source) {
-      widgets.add(
-        RadioListTile(
-          title: Text(sourceName),
-          value: sourceName,
-          groupValue: selectedImagePicker,
-          onChanged: (String val) =>
-              _settingsBloc.add(ImagePickerChanged(imagePicker: val))
-        ),
-      );
-    });
-    return widgets;
-  }
-
   List<Widget> _buildDisplayPredictionsNumSelection() {
     return [
       ListTile(
@@ -152,12 +132,11 @@ class _SettingsPageState extends State<SettingsPage> {
     ];
   }
 
-  List<Widget> _buildDevSettings(String imagePicker) {
+  List<Widget> _buildDevSettings() {
     if (widget.env != Environment.dev) {
       return [];
     }
 
-    return _buildImagePickerSelection(imagePicker) +
-        _buildDisplayPredictionsNumSelection();
+    return _buildDisplayPredictionsNumSelection();
   }
 }

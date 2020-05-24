@@ -2,16 +2,14 @@ import 'dart:collection';
 
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
-import 'package:climbicus/blocs/settings_bloc.dart';
 import 'package:climbicus/ui/route_detailed.dart';
 import 'package:climbicus/ui/route_predictions.dart';
-import 'package:climbicus/utils/route_image_picker.dart';
 import 'package:climbicus/utils/time.dart';
+import 'package:climbicus/widgets/camera_custom.dart';
 import 'package:climbicus/widgets/route_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 
 const MAX_ROUTES_VISIBLE = 100;
 
@@ -71,8 +69,6 @@ class HeaderListItem extends StatelessWidget {
 }
 
 class RouteViewPage extends StatefulWidget {
-  final RouteImagePicker imagePicker = RouteImagePicker();
-
   final String routeCategory;
   final int gymId;
 
@@ -114,45 +110,32 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
           return Center(child: CircularProgressIndicator());
         },
       ),
-      floatingActionButton: BlocBuilder<SettingsBloc, SettingsState>(
-        builder: (context, state) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: _buildImagePicker(state.imagePickerSources),
-          );
-        }
-      ),
+      floatingActionButton: _buildImagePicker(),
     );
   }
 
-  List<Widget> _buildImagePicker(List<ImageSource> imagePickerSources) {
-    List<Widget> widgets = [];
+  Widget _buildImagePicker() {
+    return FloatingActionButton(
+      onPressed: () async {
+        final imageFile = await Navigator.push(context, MaterialPageRoute(
+          builder: (BuildContext context) {
+            return CameraCustom();
+          },
+        ));
+        if (imageFile == null) {
+          return;
+        }
 
-    imagePickerSources.forEach((imageSource) {
-      widgets.add(FloatingActionButton(
-        onPressed: () async {
-          var image = await widget.imagePicker.pickImage(imageSource);
-          if (image == null) {
-            return;
-          }
-
-          Navigator.push(context, MaterialPageRoute(
-            builder: (BuildContext context) {
-              return RoutePredictionsPage(image: image, routeCategory: widget.routeCategory);
-            },
-          ));
-        },
-        tooltip: IMAGE_SOURCES[imageSource]["tooltip"],
-        child: Icon(IMAGE_SOURCES[imageSource]["icon"]),
-        heroTag: "${IMAGE_SOURCES[imageSource]["heroTag"]}-${widget.routeCategory}",
-      ));
-
-      if (imageSource != imagePickerSources.last) {
-        widgets.add(SizedBox(height: 16.0));
-      }
-    });
-
-    return widgets;
+        Navigator.push(context, MaterialPageRoute(
+          builder: (BuildContext context) {
+            return RoutePredictionsPage(image: imageFile, routeCategory: widget.routeCategory);
+          },
+        ));
+      },
+      tooltip: "Add a new route",
+      child: Icon(Icons.add_a_photo),
+      heroTag: "camera-new-route-${widget.routeCategory}",
+    );
   }
 
   Widget _buildLogbookGrid(RoutesWithLogs entries) {

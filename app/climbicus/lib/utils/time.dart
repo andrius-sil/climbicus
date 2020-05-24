@@ -8,3 +8,5 @@ String dateToString(DateTime dt) {
 String dateAndTimeToString(DateTime dt) {
   return DateFormat("yyyy-MM-dd HH:mm").format(dt.toLocal());
 }
+
+String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
