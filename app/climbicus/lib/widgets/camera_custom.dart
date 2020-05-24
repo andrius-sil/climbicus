@@ -22,7 +22,49 @@ class _CameraCustomState extends State<CameraCustom> {
   void initState() {
     super.initState();
 
+    // TODO: show first time only
+//    WidgetsBinding.instance.addPostFrameCallback((_) async {
+//      _showHelpOverlay();
+//    });
+
     initCamera();
+  }
+
+  void _showHelpOverlay() {
+    showGeneralDialog(
+      context: context,
+      barrierColor: Colors.black12.withOpacity(0.6),
+      barrierDismissible: false,
+      barrierLabel: "info",
+      transitionDuration: Duration(milliseconds: 400),
+      pageBuilder: (_, __, ___) {
+        return Container(
+          padding: const EdgeInsets.only(bottom: 100),
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.all(8),
+                  child: FractionallySizedBox(
+                    widthFactor: 0.7,
+                    child: Image.network("http://dev-cdn.climbicus.com/overlay_white.png"),
+                  ),
+                ),
+              ),
+              FlatButton(
+                textColor: Colors.blue,
+                child: Text(
+                  "OK, got it!",
+                  style: TextStyle(fontSize: 24),
+                ),
+                onPressed: () { Navigator.of(context).pop(); },
+              ),
+            ],
+          ),
+        );
+      }
+    );
   }
 
   Future<void> initCamera() async {
@@ -54,10 +96,10 @@ class _CameraCustomState extends State<CameraCustom> {
               children: <Widget>[
                 Expanded(
                   child: Container(
-                      padding: const EdgeInsets.all(1.0),
-                      child: Center(
-                        child: _buildCameraPreview(),
-                      )
+                    padding: const EdgeInsets.all(1.0),
+                    child: Center(
+                      child: _buildCameraPreview(),
+                    )
                   ),
                 ),
                 _buildCaptureRow(),
@@ -71,18 +113,20 @@ class _CameraCustomState extends State<CameraCustom> {
   }
 
   Widget _buildCameraPreview() {
-    return Stack(
-      children: <Widget>[
-        AspectRatio(
-          aspectRatio: _controller.value.aspectRatio,
-          child: CameraPreview(_controller),
-        ),
-        Container(
-          alignment: Alignment.center,
-          padding: const EdgeInsets.all(8),
-          child: Image.network("http://dev-cdn.climbicus.com/overlay_white.png"),
-        ),
-      ],
+    return AspectRatio(
+      aspectRatio: _controller.value.aspectRatio,
+      child: Stack(
+        children: <Widget>[
+          CameraPreview(_controller),
+          Container(
+            alignment: Alignment.bottomLeft,
+            child: IconButton(
+              icon: const Icon(Icons.info),
+              onPressed: _showHelpOverlay,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
