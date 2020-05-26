@@ -1,5 +1,5 @@
 import 'package:climbicus/blocs/login_bloc.dart';
-import 'package:climbicus/ui/register.dart';
+import 'package:climbicus/screens/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

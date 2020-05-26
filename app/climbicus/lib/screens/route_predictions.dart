@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:climbicus/blocs/route_predictions_bloc.dart';
 import 'package:climbicus/blocs/settings_bloc.dart';
-import 'package:climbicus/ui/route_match.dart';
+import 'package:climbicus/screens/route_match.dart';
 import 'package:climbicus/utils/time.dart';
 import 'package:climbicus/widgets/route_image.dart';
 import 'package:flutter/material.dart';

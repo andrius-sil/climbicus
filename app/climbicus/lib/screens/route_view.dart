@@ -2,8 +2,8 @@ import 'dart:collection';
 
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
-import 'package:climbicus/ui/route_detailed.dart';
-import 'package:climbicus/ui/route_predictions.dart';
+import 'package:climbicus/screens/route_detailed.dart';
+import 'package:climbicus/screens/route_predictions.dart';
 import 'package:climbicus/utils/time.dart';
 import 'package:climbicus/widgets/camera_custom.dart';
 import 'package:climbicus/widgets/route_image.dart';

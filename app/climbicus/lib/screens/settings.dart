@@ -3,7 +3,7 @@ import 'package:climbicus/blocs/gyms_bloc.dart';
 import 'package:climbicus/blocs/settings_bloc.dart';
 import 'package:climbicus/env.dart';
 import 'package:climbicus/repositories/user_repository.dart';
-import 'package:climbicus/ui/gyms.dart';
+import 'package:climbicus/screens/gyms.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
