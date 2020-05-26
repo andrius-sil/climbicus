@@ -142,8 +142,8 @@ class _CameraCustomState extends State<CameraCustom> {
           onPressed: () { Navigator.pop(context); },
         ),
         IconButton(
-          icon: const Icon(Icons.camera_alt),
-          iconSize: 48,
+          icon: const Icon(Icons.panorama_fish_eye),
+          iconSize: 64,
           tooltip: "take a picture",
           onPressed: _onTakePictureButtonPressed,
         ),
