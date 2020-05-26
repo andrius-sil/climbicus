@@ -70,7 +70,11 @@ class _CameraCustomState extends State<CameraCustom> {
   Future<void> initCamera() async {
     _cameras = await availableCameras();
 
-    _controller = CameraController(_cameras.first, ResolutionPreset.max);
+    _controller = CameraController(
+        _cameras.first,
+        ResolutionPreset.max,
+        enableAudio: false,
+    );
     _initializeControllerFuture = _controller.initialize();
 
     if (!mounted) {
