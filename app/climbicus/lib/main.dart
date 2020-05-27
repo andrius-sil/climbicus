@@ -9,6 +9,7 @@ import 'package:climbicus/repositories/user_repository.dart';
 import 'package:climbicus/screens/login.dart';
 import 'package:climbicus/screens/route_view.dart';
 import 'package:climbicus/screens/settings.dart';
+import 'package:climbicus/style.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -64,7 +65,7 @@ void mainDelegate(Environment env) {
         )),
       ],
       child: MaterialApp(
-        theme: ThemeData.dark(),
+        theme: appTheme(),
         home: HomePage(env: env),
       ),
     ),

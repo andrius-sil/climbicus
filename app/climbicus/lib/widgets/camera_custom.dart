@@ -53,7 +53,7 @@ class _CameraCustomState extends State<CameraCustom> {
                 ),
               ),
               FlatButton(
-                textColor: Colors.blue,
+                textColor: Theme.of(context).buttonColor,
                 child: Text(
                   "OK, got it!",
                   style: TextStyle(fontSize: 24),

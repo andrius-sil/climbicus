@@ -100,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
           children: <Widget>[
             Text("New user?"),
             FlatButton(
-              textColor: Colors.blue,
+              textColor: Theme.of(context).buttonColor,
               child: Text(
                 "Register",
                 style: TextStyle(fontSize: 18),
