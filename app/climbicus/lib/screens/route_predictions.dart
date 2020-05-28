@@ -4,12 +4,14 @@ import 'dart:math';
 import 'package:climbicus/blocs/route_predictions_bloc.dart';
 import 'package:climbicus/blocs/settings_bloc.dart';
 import 'package:climbicus/screens/route_match.dart';
-import 'package:climbicus/utils/time.dart';
+import 'package:climbicus/widgets/camera_custom.dart';
 import 'package:climbicus/widgets/route_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'add_route.dart';
+
+const COLUMN_PADDING = 10.0;
 
 class RoutePredictionsPage extends StatefulWidget {
 
@@ -51,43 +53,93 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
         ),
         body: Builder(
           builder: (BuildContext context) => Center(
-            child: Column(children: <Widget>[
-              Text("Your photo:"),
-              Container(
-                height: 200.0,
-                width: 200.0,
-                child: _takenImage,
-              ),
-              Text("Our predictions:"),
-              Expanded(
-                child: BlocBuilder<RoutePredictionBloc, RoutePredictionState>(
+            child: Column(
+              children: <Widget>[
+                SizedBox(height: COLUMN_PADDING),
+                Text("Your image:"),
+                SizedBox(height: COLUMN_PADDING),
+                Container(
+                  height: 200.0,
+                  width: 200.0,
+                  child: _takenImage,
+                ),
+                SizedBox(height: COLUMN_PADDING * 3),
+                Text("Matches:"),
+                SizedBox(height: COLUMN_PADDING),
+                Expanded(
+                  child: Center(
+                    child: BlocBuilder<RoutePredictionBloc, RoutePredictionState>(
+                      builder: (context, state) {
+                        if (state is RoutePredictionLoaded) {
+                          return _buildPredictionsGrid(context, state.imgPickerData);
+                        } else if (state is RoutePredictionError) {
+                          return ErrorWidget.builder(state.errorDetails);
+                        }
+
+                        return CircularProgressIndicator();
+                      },
+                    ),
+                  ),
+                ),
+                SizedBox(height: COLUMN_PADDING),
+                BlocBuilder<RoutePredictionBloc, RoutePredictionState>(
                   builder: (context, state) {
                     if (state is RoutePredictionLoaded) {
-                      return _buildPredictionsGrid(context, state.imgPickerData);
-                    } else if (state is RoutePredictionError) {
-                      return ErrorWidget.builder(state.errorDetails);
+                      _imgPickerData = state.imgPickerData;
+                    } else {
+                      _imgPickerData = null;
                     }
-
-                    return Center(child: CircularProgressIndicator());
-                  },
-                ),
-              ),
-              BlocBuilder<RoutePredictionBloc, RoutePredictionState>(
-                builder: (context, state) {
-                  if (state is RoutePredictionLoaded) {
-                    _imgPickerData = state.imgPickerData;
-                  } else {
-                    _imgPickerData = null;
+                    return _buildActionRow(context);
                   }
-                  return RaisedButton(
-                    child: Text('None of the above'),
-                    onPressed: _imgPickerData == null ? null : noMatch,
-                  );
-                }
-              ),
-            ]),
+                ),
+                SizedBox(height: COLUMN_PADDING),
+              ]
+            ),
           ),
         ),
+    );
+  }
+
+  Widget _buildActionRow(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        Column(
+          children: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.replay),
+              onPressed: () async {
+                final imageFile = await Navigator.push(context, MaterialPageRoute(
+                  builder: (BuildContext context) {
+                    return CameraCustom();
+                  },
+                ));
+                if (imageFile == null) {
+                  return;
+                }
+
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (BuildContext context) {
+                    return RoutePredictionsPage(image: imageFile, routeCategory: widget.routeCategory);
+                  },
+                ));
+              },
+              iconSize: 64,
+            ),
+            Text('Retake image'),
+          ],
+        ),
+        Column(
+          children: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.add_circle_outline),
+              onPressed: _imgPickerData == null ? null : noMatch,
+              iconSize: 64,
+            ),
+            Text('Add as a new route'),
+          ],
+        ),
+      ],
     );
   }
 
@@ -104,6 +156,11 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
 
     var displayPredictionsNum = min(imgPickerData.predictions.length,
         _settingsBloc.displayPredictionsNum);
+
+    if (displayPredictionsNum == 0) {
+      return Text("No matches found!");
+    }
+
     for (var i = 0; i < displayPredictionsNum; i++) {
       var prediction = imgPickerData.predictions[i];
       // Left side - image.
@@ -127,9 +184,9 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
             padding: const EdgeInsets.all(8),
             color: Colors.grey[800],
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                Text("grade: ${prediction.route.grade}"),
-                Text("${dateToString(prediction.route.createdAt)}"),
+                Text("${prediction.route.grade}"),
               ],
             )
         ),

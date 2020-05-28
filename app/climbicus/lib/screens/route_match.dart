@@ -55,7 +55,7 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
                 Expanded(
                     child: Column(
                   children: <Widget>[
-                    Text("Your photo:"),
+                    Text("Your image:"),
                     Container(
                       color: Colors.white,
                       height: columnSize,
@@ -67,7 +67,7 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
                 Expanded(
                   child: Column(
                     children: <Widget>[
-                      Text("Selected photo:"),
+                      Text("Selected image:"),
                       Container(
                         color: Colors.white,
                         height: columnSize,

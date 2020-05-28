@@ -49,7 +49,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
       ),
       body: Center(
         child: Column(children: <Widget>[
-          Text("Your photo:"),
+          Text("Your image:"),
           Container(
             height: 200.0,
             width: 200.0,
