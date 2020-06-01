@@ -62,7 +62,7 @@ class HeaderListItem extends StatelessWidget {
           " — ";
       ascentStatus = Center(
         child: (mostRecentLog.numAttempts == 1) ?
-            Icon(Icons.done_outline, color: Theme.of(context).textTheme.title.color) :
+            Icon(Icons.flash_on, color: Theme.of(context).textTheme.title.color) :
             Text(numAttemptsStr, style: TextStyle(fontSize: 18)),
       );
     }
