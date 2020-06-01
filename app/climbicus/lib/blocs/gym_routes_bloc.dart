@@ -14,6 +14,17 @@ class RouteWithLogs {
   Map<int, UserRouteLog> userRouteLogs;
 
   RouteWithLogs(this.route, this.userRouteLogs);
+
+  UserRouteLog mostRecentLog() {
+    if (userRouteLogs.isEmpty) {
+      return null;
+    }
+
+    var sortedKeys = userRouteLogs.keys.toList(growable: false)
+      ..sort((k1, k2) => userRouteLogs[k2].createdAt.compareTo(userRouteLogs[k1].createdAt));
+
+    return userRouteLogs[sortedKeys.first];
+  }
 }
 
 class RoutesWithLogs {

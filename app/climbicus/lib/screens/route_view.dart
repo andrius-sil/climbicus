@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
+import 'package:climbicus/models/user_route_log.dart';
 import 'package:climbicus/screens/route_detailed.dart';
 import 'package:climbicus/screens/route_predictions.dart';
 import 'package:climbicus/utils/time.dart';
@@ -39,6 +40,33 @@ class HeaderListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    UserRouteLog mostRecentLog = routeWithLogs.mostRecentLog();
+    var ascentDecoration;
+    var ascentStatus;
+    if (mostRecentLog != null) {
+      var boxColor = (mostRecentLog.completed) ?
+          Theme.of(context).accentColor :
+          null;
+
+      ascentDecoration = BoxDecoration(
+        border: Border.all(
+          color: Theme.of(context).accentColor,
+          width: 2,
+        ),
+        color: boxColor,
+        borderRadius: BorderRadius.circular(12),
+      );
+
+      var numAttemptsStr = mostRecentLog.numAttempts != null ?
+          mostRecentLog.numAttempts.toString() :
+          " — ";
+      ascentStatus = Center(
+        child: (mostRecentLog.numAttempts == 1) ?
+            Icon(Icons.done_outline, color: Theme.of(context).textTheme.title.color) :
+            Text(numAttemptsStr, style: TextStyle(fontSize: 18)),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.all(2),
       child: Row(
@@ -59,7 +87,13 @@ class HeaderListItem extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: Text(this.title),
+            child: Text(this.title, style: TextStyle(fontSize: 18)),
+          ),
+          Container(
+            height: 60,
+            width: 60,
+            decoration: ascentDecoration,
+            child: ascentStatus,
           ),
         ],
       ),
@@ -177,13 +211,10 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
           isExpandedPrevious[routeId] :
           false;
 
-      var logTitle = routeWithLogs.userRouteLogs.isEmpty ?
-          "" :
-          " - climbed";
       _items.add(RouteListItem(
           routeWithLogs: routeWithLogs,
           image: imageWidget,
-          headerTitle: routeWithLogs.route.grade + logTitle,
+          headerTitle: routeWithLogs.route.grade,
           bodyTitle: "${dateToString(routeWithLogs.route.createdAt)}",
           bodySubtitle: "added by user '${routeWithLogs.route.userId.toString()}'",
           isExpanded: isExpanded,
