@@ -5,9 +5,9 @@ import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/models/user_route_log.dart';
 import 'package:climbicus/screens/route_detailed.dart';
 import 'package:climbicus/screens/route_predictions.dart';
-import 'package:climbicus/utils/time.dart';
 import 'package:climbicus/widgets/camera_custom.dart';
 import 'package:climbicus/widgets/route_image.dart';
+import 'package:climbicus/widgets/route_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,15 +18,11 @@ class RouteListItem {
   RouteWithLogs routeWithLogs;
   Widget image;
   String headerTitle;
-  String bodyTitle;
-  String bodySubtitle;
   bool isExpanded;
   RouteListItem({
     this.routeWithLogs,
     this.image,
     this.headerTitle,
-    this.bodyTitle,
-    this.bodySubtitle,
     this.isExpanded: false
   });
 }
@@ -99,7 +95,48 @@ class HeaderListItem extends StatelessWidget {
       ),
     );
   }
+}
 
+
+class BodyListItem extends StatefulWidget {
+  final RouteWithLogs routeWithLogs;
+  final GymRoutesBloc gymRoutesBloc;
+
+  const BodyListItem({this.routeWithLogs, this.gymRoutesBloc});
+
+  @override
+  _BodyListItemState createState() => _BodyListItemState();
+}
+
+class _BodyListItemState extends State<BodyListItem> {
+  final checkboxSentKey = new GlobalKey<CheckboxSentState>();
+  final sliderAttemptsKey = new GlobalKey<SliderAttemptsState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Row(
+        children: <Widget>[
+          CheckboxSent(key: checkboxSentKey),
+          Expanded(
+            child: SliderAttempts(key: sliderAttemptsKey),
+          ),
+        ],
+      ),
+      trailing: RaisedButton(
+        child: Text("Add"),
+        onPressed: _onAddButtonPressed,
+      ),
+    );
+  }
+
+  void _onAddButtonPressed() {
+    widget.gymRoutesBloc.add(AddNewUserRouteLog(
+      routeId: widget.routeWithLogs.route.id,
+      completed: checkboxSentKey.currentState.value,
+      numAttempts: sliderAttemptsKey.currentState.value,
+    ));
+  }
 }
 
 class RouteViewPage extends StatefulWidget {
@@ -215,8 +252,6 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
           routeWithLogs: routeWithLogs,
           image: imageWidget,
           headerTitle: routeWithLogs.route.grade,
-          bodyTitle: "${dateToString(routeWithLogs.route.createdAt)}",
-          bodySubtitle: "added by user '${routeWithLogs.route.userId.toString()}'",
           isExpanded: isExpanded,
       ));
     });
@@ -239,10 +274,9 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
                   title: item.headerTitle,
                 );
               },
-              body: ListTile(
-                title: item.bodyTitle != null ? Text(item.bodyTitle): null,
-                subtitle: Text(item.bodySubtitle),
-  //              trailing: Icon(Icons.delete),
+              body: BodyListItem(
+                routeWithLogs: item.routeWithLogs,
+                gymRoutesBloc: _gymRoutesBloc
               ),
               isExpanded: item.isExpanded,
             );
