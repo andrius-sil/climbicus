@@ -6,12 +6,11 @@ import 'package:climbicus/blocs/settings_bloc.dart';
 import 'package:climbicus/screens/route_match.dart';
 import 'package:climbicus/widgets/camera_custom.dart';
 import 'package:climbicus/widgets/route_image.dart';
+import 'package:climbicus/style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'add_route.dart';
-
-const COLUMN_PADDING = 10.0;
 
 class RoutePredictionsPage extends StatefulWidget {
 
@@ -167,13 +166,14 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
       var routeImage = prediction.routeImage;
       var imageWidget = RouteImageWidget(routeImage);
       widgets.add(_buildRouteSelectWrapper(
+        // Recreating image to avoid alignment issues.
         Container(
           color: Colors.grey[800],
           alignment: Alignment.center,
           child: imageWidget,
         ),
         prediction.route.id,
-        imageWidget,
+        Image.network(imageWidget.routeImage.path),
         imgPickerData.routeImage.id,
       ));
 

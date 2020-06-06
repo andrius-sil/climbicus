@@ -1,5 +1,7 @@
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
+import 'package:climbicus/style.dart';
+import 'package:climbicus/widgets/route_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -23,11 +25,11 @@ class RouteMatchPage extends StatefulWidget {
 class _RouteMatchPageState extends State<RouteMatchPage> {
   static const double columnSize = 200.0;
 
+  final checkboxSentKey = new GlobalKey<CheckboxSentState>();
+  final sliderAttemptsKey = new GlobalKey<SliderAttemptsState>();
+
   RouteImagesBloc _routeImagesBloc;
   GymRoutesBloc _gymRoutesBloc;
-
-  bool _selectedCompleted = false;
-  double _selectedNumAttempts;
 
   @override
   void initState() {
@@ -49,78 +51,57 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
           title: const Text('Your ascent'),
         ),
         body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             Row(
               children: <Widget>[
                 Expanded(
-                    child: Column(
-                  children: <Widget>[
-                    Text("Your image:"),
-                    Container(
-                      color: Colors.white,
-                      height: columnSize,
-                      width: columnSize,
-                      child: widget.takenImage,
-                    ),
-                  ],
-                )),
+                  child: Column(
+                    children: <Widget>[
+                      Text("Your image:"),
+                      SizedBox(height: COLUMN_PADDING),
+                      Container(
+                        height: columnSize,
+                        width: columnSize,
+                        child: widget.takenImage,
+                      ),
+                    ],
+                  ),
+                ),
                 Expanded(
                   child: Column(
                     children: <Widget>[
                       Text("Selected image:"),
+                      SizedBox(height: COLUMN_PADDING),
                       Container(
-                        color: Colors.white,
                         height: columnSize,
                         width: columnSize,
                         child: widget.selectedImage,
                       ),
                     ],
-                ),
+                  ),
                 ),
               ],
             ),
-            Text("sent clean?"),
-            Checkbox(
-              value: _selectedCompleted,
-              onChanged: (bool value) {
-                setState(() {
-                  _selectedCompleted = value;
-                });
-              },
-            ),
-            Text("how many attempts?"),
-            Text("${_numAttemptsLabel()}"),
-            Slider(
-              value: (_selectedNumAttempts == null) ? 0.0 : _selectedNumAttempts,
-              min: 0.0,
-              max: 30.0,
-              divisions: 30,
-              label: _numAttemptsLabel(),
-              onChanged: (double value) => setState(() {
-                (value == 0.0) ?
-                    _selectedNumAttempts = null :
-                    _selectedNumAttempts = value;
-              }),
+            Column(
+              children: <Widget>[
+                CheckboxSent(key: checkboxSentKey),
+                SliderAttempts(key: sliderAttemptsKey),
+              ],
             ),
             RaisedButton(
-              child: Text('Log it'),
+              child: Text('Add'),
               onPressed: _logAndNavigateBack,
             ),
           ],
         ));
   }
 
-  String _numAttemptsLabel() {
-    return (_selectedNumAttempts == null) ?
-        "--" :
-        "${_selectedNumAttempts.toInt()}";
-  }
-
   void _logAndNavigateBack() {
     _gymRoutesBloc.add(AddNewUserRouteLog(
       routeId: widget.selectedRouteId,
-      completed: _selectedCompleted,
-      numAttempts: (_selectedNumAttempts == null) ? null : _selectedNumAttempts.toInt(),
+      completed: checkboxSentKey.currentState.value,
+      numAttempts: sliderAttemptsKey.currentState.value,
     ));
 
     Navigator.of(context).popUntil((route) => route.isFirst);
