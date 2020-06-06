@@ -28,6 +28,9 @@ class _GymsPageState extends State<GymsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Select your gym'),
+      ),
       body: BlocBuilder<GymsBloc, GymsState>(
         builder: (context, state) {
           if (state is GymsLoaded) {
@@ -57,8 +60,13 @@ class _GymsPageState extends State<GymsPage> {
       );
     });
 
-    return ListView(
-      children: gymTiles,
+    return ListView.separated(
+      padding: const EdgeInsets.all(8),
+      itemCount: gymTiles.length,
+      itemBuilder: (context, index) => gymTiles[index],
+      separatorBuilder: (context, index) => Divider(
+      ),
     );
   }
+
 }
