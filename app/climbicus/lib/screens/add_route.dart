@@ -1,7 +1,9 @@
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/blocs/route_predictions_bloc.dart';
+import 'package:climbicus/style.dart';
 import 'package:climbicus/utils/route_grades.dart';
+import 'package:climbicus/widgets/route_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -17,6 +19,9 @@ class AddRoutePage extends StatefulWidget {
 class _AddRoutePageState extends State<AddRoutePage> {
   static const NOT_SELECTED = "not selected";
 
+  final checkboxSentKey = new GlobalKey<CheckboxSentState>();
+  final sliderAttemptsKey = new GlobalKey<SliderAttemptsState>();
+
   Image _takenImage;
 
   GymRoutesBloc _gymRoutesBloc;
@@ -25,8 +30,6 @@ class _AddRoutePageState extends State<AddRoutePage> {
   String _selectedCategory = NOT_SELECTED;
   String _selectedGrade = NOT_SELECTED;
   String _selectedGradeSystem = NOT_SELECTED;
-  bool _selectedCompleted = false;
-  double _selectedNumAttempts;
 
   @override
   void initState() {
@@ -45,91 +48,92 @@ class _AddRoutePageState extends State<AddRoutePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add a route'),
+        title: const Text('Add new route'),
       ),
       body: Center(
-        child: Column(children: <Widget>[
-          Text("Your image:"),
-          Container(
-            height: 200.0,
-            width: 200.0,
-            child: _takenImage,
-          ),
-          Text("Select category"),
-          DropdownButton<String>(
-            value: _selectedCategory,
-            items: <String>[
-              NOT_SELECTED,
-              "sport",
-              "bouldering",
-            ].map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            onChanged: (String value) {
-              setState(() {
-                _selectedCategory = value;
-                _selectedGradeSystem = DEFAULT_GRADE_SYSTEM[value];
-              });
-            },
-          ),
-          Text("Select grade"),
-          DropdownButton<String>(
-            value: _selectedGrade,
-            items: ([NOT_SELECTED] + _gradeSystems())
-                .map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            onChanged: (String value) {
-              setState(() {
-                _selectedGrade = value;
-              });
-            },
-          ),
-          Text("sent clean?"),
-          Checkbox(
-            value: _selectedCompleted,
-            onChanged: (bool value) {
-              setState(() {
-                _selectedCompleted = value;
-              });
-            },
-          ),
-          Text("how many attempts?"),
-          Text("${_numAttemptsLabel()}"),
-          Slider(
-            value: (_selectedNumAttempts == null) ? 0.0 : _selectedNumAttempts,
-            min: 0.0,
-            max: 30.0,
-            divisions: 30,
-            label: _numAttemptsLabel(),
-            onChanged: (double value) => setState(() {
-              (value == 0.0) ?
-              _selectedNumAttempts = null :
-              _selectedNumAttempts = value;
-            }),
-          ),
-          RaisedButton(
-            child: Text('Add'),
-            onPressed: (_selectedCategory == NOT_SELECTED ||
-                        _selectedGrade == NOT_SELECTED) ?
-              null :
-              uploadAndNavigateBack,
-          ),
-        ]),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            Column(
+              children: <Widget>[
+                Text("Your image:"),
+                SizedBox(height: COLUMN_PADDING),
+                Container(
+                  height: 200.0,
+                  width: 200.0,
+                  child: _takenImage,
+                ),
+              ],
+            ),
+            Column(
+              children: <Widget>[
+                _buildSelectCategory(),
+                _buildSelectGrade(),
+                CheckboxSent(key: checkboxSentKey),
+                SliderAttempts(key: sliderAttemptsKey),
+              ],
+            ),
+            RaisedButton(
+              child: Text('Add'),
+              onPressed: (_selectedCategory == NOT_SELECTED ||
+                          _selectedGrade == NOT_SELECTED) ?
+                null :
+                uploadAndNavigateBack,
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  String _numAttemptsLabel() {
-    return (_selectedNumAttempts == null) ?
-    "--" :
-    "${_selectedNumAttempts.toInt()}";
+  Widget _buildSelectGrade() {
+    return Column(
+      children: <Widget>[
+        Text("Select grade"),
+        DropdownButton<String>(
+          value: _selectedGrade,
+          items: ([NOT_SELECTED] + _gradeSystems())
+              .map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+          onChanged: (String value) {
+            setState(() {
+              _selectedGrade = value;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSelectCategory() {
+    return Column(
+      children: <Widget>[
+        Text("Select category"),
+        DropdownButton<String>(
+          value: _selectedCategory,
+          items: <String>[
+            NOT_SELECTED,
+            "sport",
+            "bouldering",
+          ].map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+          onChanged: (String value) {
+            setState(() {
+              _selectedCategory = value;
+              _selectedGradeSystem = DEFAULT_GRADE_SYSTEM[value];
+            });
+          },
+        ),
+      ],
+    );
   }
 
   List<String> _gradeSystems() {
@@ -144,8 +148,8 @@ class _AddRoutePageState extends State<AddRoutePage> {
     _gymRoutesBloc.add(AddNewGymRouteWithUserLog(
       category: _selectedCategory,
       grade: "${_selectedGradeSystem}_$_selectedGrade",
-      completed: _selectedCompleted,
-      numAttempts: (_selectedNumAttempts == null) ? null : _selectedNumAttempts.toInt(),
+      completed: checkboxSentKey.currentState.value,
+      numAttempts: sliderAttemptsKey.currentState.value,
       routeImage: widget.imgPickerData.routeImage,
     ));
 
