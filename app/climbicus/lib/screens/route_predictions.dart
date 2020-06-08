@@ -145,7 +145,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
   Future<void> noMatch() async {
     Navigator.push(context, MaterialPageRoute(
       builder: (BuildContext context) {
-        return AddRoutePage(imgPickerData: _imgPickerData);
+        return AddRoutePage(imgPickerData: _imgPickerData, routeCategory: widget.routeCategory);
       },
     ));
   }

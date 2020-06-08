@@ -100,13 +100,13 @@ class AddNewGymRouteWithUserLog extends GymRoutesEvent {
   final String grade;
   final bool completed;
   final int numAttempts;
-  final RouteImage routeImage;
+  final List<RouteImage> routeImages;
   const AddNewGymRouteWithUserLog({
     @required this.category,
     @required this.grade,
     @required this.completed,
     @required this.numAttempts,
-    @required this.routeImage,
+    @required this.routeImages,
   });
 }
 
@@ -166,10 +166,12 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
 
       yield GymRoutesLoaded(entries: _entries);
 
-      routeImagesBloc.add(AddNewRouteImage(
-        routeId: newRoute.id,
-        routeImage: event.routeImage,
-      ));
+      for (var routeImage in event.routeImages) {
+        routeImagesBloc.add(AddNewRouteImage(
+          routeId: newRoute.id,
+          routeImage: routeImage,
+        ));
+      }
     }
 
     return;

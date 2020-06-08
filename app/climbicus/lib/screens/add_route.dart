@@ -1,16 +1,20 @@
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/blocs/route_predictions_bloc.dart';
+import 'package:climbicus/models/route_image.dart';
 import 'package:climbicus/style.dart';
 import 'package:climbicus/utils/route_grades.dart';
+import 'package:climbicus/widgets/camera_custom.dart';
+import 'package:climbicus/widgets/route_image_carousel.dart';
 import 'package:climbicus/widgets/route_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddRoutePage extends StatefulWidget {
   final ImagePickerData imgPickerData;
+  final String routeCategory;
 
-  AddRoutePage({this.imgPickerData});
+  AddRoutePage({this.imgPickerData, this.routeCategory});
 
   @override
   State<StatefulWidget> createState() => _AddRoutePageState();
@@ -22,10 +26,11 @@ class _AddRoutePageState extends State<AddRoutePage> {
   final checkboxSentKey = new GlobalKey<CheckboxSentState>();
   final sliderAttemptsKey = new GlobalKey<SliderAttemptsState>();
 
-  Image _takenImage;
+  Map<int, RouteImage> _takenImages = {};
 
   GymRoutesBloc _gymRoutesBloc;
   RouteImagesBloc _routeImagesBloc;
+  RoutePredictionBloc _routePredictionBloc;
 
   String _selectedCategory = NOT_SELECTED;
   String _selectedGrade = NOT_SELECTED;
@@ -35,9 +40,9 @@ class _AddRoutePageState extends State<AddRoutePage> {
   void initState() {
     super.initState();
 
-    _takenImage = Image.file(widget.imgPickerData.image);
     _gymRoutesBloc = BlocProvider.of<GymRoutesBloc>(context);
     _routeImagesBloc = BlocProvider.of<RouteImagesBloc>(context);
+    _routePredictionBloc = BlocProvider.of<RoutePredictionBloc>(context);
 
     _routeImagesBloc.add(UpdateRouteImage(
       routeImageId: widget.imgPickerData.routeImage.id,
@@ -58,10 +63,25 @@ class _AddRoutePageState extends State<AddRoutePage> {
               children: <Widget>[
                 Text("Your image:"),
                 SizedBox(height: COLUMN_PADDING),
-                Container(
-                  height: 200.0,
-                  width: 200.0,
-                  child: _takenImage,
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: BlocBuilder<RoutePredictionBloc, RoutePredictionState>(
+                        builder: (context, state) {
+                          if (state is RoutePredictionLoaded) {
+                            var routeImage = state.imgPickerData.routeImage;
+                            _takenImages[routeImage.id] = routeImage;
+                            return RouteImageCarousel(images: _takenImages);
+                          } else if (state is RoutePredictionError) {
+                            return ErrorWidget.builder(state.errorDetails);
+                          }
+
+                          return Center(child: CircularProgressIndicator());
+                        },
+                      ),
+                    ),
+                    _buildImagePicker(),
+                  ],
                 ),
               ],
             ),
@@ -136,6 +156,28 @@ class _AddRoutePageState extends State<AddRoutePage> {
     );
   }
 
+  Widget _buildImagePicker() {
+    return IconButton(
+      icon: const Icon(Icons.add_a_photo),
+      onPressed: () async {
+        final imageFile = await Navigator.push(context, MaterialPageRoute(
+          builder: (BuildContext context) {
+            return CameraCustom();
+          },
+        ));
+        if (imageFile == null) {
+          return;
+        }
+
+        _routePredictionBloc.add(FetchRoutePrediction(
+          image: imageFile,
+          routeCategory: widget.routeCategory,
+        ));
+      },
+      iconSize: 48,
+    );
+  }
+
   List<String> _gradeSystems() {
     if (_selectedCategory == NOT_SELECTED) {
       return [];
@@ -150,7 +192,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
       grade: "${_selectedGradeSystem}_$_selectedGrade",
       completed: checkboxSentKey.currentState.value,
       numAttempts: sliderAttemptsKey.currentState.value,
-      routeImage: widget.imgPickerData.routeImage,
+      routeImages: _takenImages.values.toList(),
     ));
 
     Navigator.of(context).popUntil((route) => route.isFirst);

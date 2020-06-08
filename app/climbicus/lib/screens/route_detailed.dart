@@ -1,8 +1,7 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/utils/time.dart';
-import 'package:climbicus/widgets/route_image.dart';
+import 'package:climbicus/widgets/route_image_carousel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -17,8 +16,6 @@ class RouteDetailedPage extends StatefulWidget {
 
 class _RouteDetailedPage extends State<RouteDetailedPage> {
   RouteImagesBloc _routeImagesBloc;
-
-  int _current = 0;
 
   @override
   void initState() {
@@ -39,7 +36,9 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
           BlocBuilder<RouteImagesBloc, RouteImagesState>(
             builder: (context, state) {
               if (state is RouteImagesLoaded) {
-                return _buildImageCarousel(state.images);
+                return RouteImageCarousel(
+                  images: state.images.allImages(widget.routeWithLogs.route.id),
+                );
               } else if (state is RouteImagesError) {
                 return ErrorWidget.builder(state.errorDetails);
               }
@@ -54,61 +53,6 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
         ],
       )
     );
-  }
-
-  Widget _buildImageCarousel(Images images) {
-    var allImages = images.allImages(widget.routeWithLogs.route.id);
-    if (allImages == null) {
-      return Container(
-        height: 200,
-        alignment: Alignment.center,
-        child: RouteImageWidget(null),
-      );
-    }
-
-    return Stack(children: [
-      CarouselSlider(
-        height: 200,
-        viewportFraction: 0.5,
-        enlargeCenterPage: true,
-        enableInfiniteScroll: false,
-        items: allImages.values.map((img) {
-          return Builder(
-            builder: (BuildContext context) {
-              return Container(
-                child: RouteImageWidget(img),
-              );
-            }
-          );
-        }).toList(),
-        onPageChanged: (index) {
-          setState(() {
-            _current = index;
-          });
-        },
-      ),
-      Positioned(
-        top: 0.0,
-        left: 0.0,
-        right: 0.0,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: allImages.values.toList().asMap().map((index, i) {
-            return MapEntry(index, Container(
-              width: 8.0,
-              height: 8.0,
-              margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: _current == index
-                      ? Color.fromRGBO(0, 0, 0, 0.9)
-                      : Color.fromRGBO(0, 0, 0, 0.4)
-              ),
-            ));
-          }).values.toList(),
-        ),
-      ),
-    ]);
   }
 
   Widget _buildRouteDetails() {
