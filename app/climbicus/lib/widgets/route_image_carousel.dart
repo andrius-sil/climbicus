@@ -66,8 +66,8 @@ class _RouteImageCarouselState extends State<RouteImageCarousel> {
               decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: _current == index
-                      ? Color.fromRGBO(0, 0, 0, 0.9)
-                      : Color.fromRGBO(0, 0, 0, 0.4)
+                      ? Theme.of(context).accentColor
+                      : Theme.of(context).unselectedWidgetColor
               ),
             ));
           }).values.toList(),
