@@ -64,8 +64,7 @@ class _GymsPageState extends State<GymsPage> {
       padding: const EdgeInsets.all(8),
       itemCount: gymTiles.length,
       itemBuilder: (context, index) => gymTiles[index],
-      separatorBuilder: (context, index) => Divider(
-      ),
+      separatorBuilder: (context, index) => Divider(),
     );
   }
 

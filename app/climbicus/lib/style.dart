@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 const COLUMN_PADDING = 10.0;
 
+const HEADING_SIZE_3 = 18.0;
+
 // Using 'primaryColor' for flat button text color explicitly,
 // until https://github.com/flutter/flutter/issues/54776 is fixed.
 

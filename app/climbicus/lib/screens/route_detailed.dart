@@ -5,6 +5,8 @@ import 'package:climbicus/widgets/route_image_carousel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../style.dart';
+
 class RouteDetailedPage extends StatefulWidget {
   final RouteWithLogs routeWithLogs;
 
@@ -33,46 +35,91 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
       ),
       body: Column(
         children: <Widget>[
-          BlocBuilder<RouteImagesBloc, RouteImagesState>(
-            builder: (context, state) {
-              if (state is RouteImagesLoaded) {
-                return RouteImageCarousel(
-                  images: state.images.allImages(widget.routeWithLogs.route.id),
-                );
-              } else if (state is RouteImagesError) {
-                return ErrorWidget.builder(state.errorDetails);
-              }
+          Container(
+            height: 300.0,
+            child: BlocBuilder<RouteImagesBloc, RouteImagesState>(
+              builder: (context, state) {
+                if (state is RouteImagesLoaded) {
+                  return RouteImageCarousel(
+                    images: state.images.allImages(widget.routeWithLogs.route.id),
+                    height: 300.0,
+                  );
+                } else if (state is RouteImagesError) {
+                  return ErrorWidget.builder(state.errorDetails);
+                }
 
-              return Center(child: CircularProgressIndicator());
-            },
+                return Center(child: CircularProgressIndicator());
+              },
+            ),
           ),
-          _buildRouteDetails(),
-          Text(widget.routeWithLogs.route.category),
-          Text("Your ascents:"),
-          _buildRouteAscents(),
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                _buildRouteDetails(),
+                Text(
+                  "Category: ${widget.routeWithLogs.route.category}",
+                  style: TextStyle(fontSize: HEADING_SIZE_3),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Text(
+                  "Your ascents:",
+                  style: TextStyle(fontSize: HEADING_SIZE_3),
+                ),
+                Container(
+                  height: 200,
+                  child: _buildRouteAscents(),
+                ),
+              ],
+            ),
+          ),
         ],
       )
     );
   }
 
   Widget _buildRouteDetails() {
-    return Text("added by 'user ${widget.routeWithLogs.route.userId.toString()}' (${dateToString(widget.routeWithLogs.route.createdAt)})");
+    return Text(
+        "Added by: user ${widget.routeWithLogs.route.userId.toString()} - ${dateToString(widget.routeWithLogs.route.createdAt)}",
+        style: TextStyle(fontSize: HEADING_SIZE_3),
+    );
   }
 
   Widget _buildRouteAscents() {
     List<Widget> ascents = [];
     for (var userRouteLog in widget.routeWithLogs.userRouteLogs.values) {
-      var status = (userRouteLog.completed) ? "sent" : "attempted";
+      var status = (userRouteLog.completed) ? "SENT!" : "Attempted";
       var tries = (userRouteLog.numAttempts == null) ? "" : "(${userRouteLog.numAttempts} tries)";
-      ascents.add(Text("$status $tries - ${dateToString(userRouteLog.createdAt)}"));
+      ascents.add(
+          ListTile(title: Text(
+            "$status $tries - ${dateToString(userRouteLog.createdAt)}",
+            style: TextStyle(fontSize: HEADING_SIZE_3),
+          ))
+      );
     }
 
     if (ascents.isEmpty) {
-      return Text("no ascents yet..");
+      ascents.add(
+          ListTile(title: Text(
+            "No ascents yet..",
+            style: TextStyle(fontSize: HEADING_SIZE_3),
+          ))
+      );
     }
 
-    return Column(
-      children: ascents,
+    return ListView.separated(
+      padding: const EdgeInsets.all(8),
+      itemCount: ascents.length,
+      itemBuilder: (context, index) => ascents[index],
+      separatorBuilder: (context, index) => Divider(),
     );
   }
 }
