@@ -3,6 +3,7 @@ import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/register_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/blocs/route_predictions_bloc.dart';
+import 'package:climbicus/constants.dart';
 import 'package:climbicus/repositories/api_repository.dart';
 import 'package:climbicus/repositories/settings_repository.dart';
 import 'package:climbicus/repositories/user_repository.dart';
@@ -134,11 +135,11 @@ class _HomePageState extends State<HomePage> {
     List<Tab> tabs = [];
     List<RouteViewPage> tabViews = [];
     if (gyms[gymId].hasSport) {
-      tabViews.add(RouteViewPage(routeCategory: "sport", gymId: gymId));
+      tabViews.add(RouteViewPage(routeCategory: SPORT_CATEGORY, gymId: gymId));
       tabs.add(Tab(text: "Sport"));
     }
     if (gyms[gymId].hasBouldering) {
-      tabViews.add(RouteViewPage(routeCategory: "bouldering", gymId: gymId));
+      tabViews.add(RouteViewPage(routeCategory: BOULDERING_CATEGORY, gymId: gymId));
       tabs.add(Tab(text: "Bouldering"));
     }
 

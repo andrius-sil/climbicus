@@ -109,8 +109,8 @@ class BodyListItem extends StatefulWidget {
 }
 
 class _BodyListItemState extends State<BodyListItem> {
-  final checkboxSentKey = new GlobalKey<CheckboxSentState>();
-  final sliderAttemptsKey = new GlobalKey<SliderAttemptsState>();
+  final checkboxSentKey = GlobalKey<CheckboxWithTitleState>();
+  final sliderAttemptsKey = GlobalKey<SliderAttemptsState>();
 
   @override
   Widget build(BuildContext context) {
@@ -151,6 +151,10 @@ class RouteViewPage extends StatefulWidget {
 }
 
 class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveClientMixin {
+  final checkboxHideSentKey = GlobalKey<CheckboxWithTitleState>();
+  final checkboxHideAttemptedKey = GlobalKey<CheckboxWithTitleState>();
+  final sliderRouteGradesKey = GlobalKey<SliderRouteGradesState>();
+
   RouteImagesBloc _routeImagesBloc;
   GymRoutesBloc _gymRoutesBloc;
 
@@ -170,16 +174,23 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      body: BlocBuilder<GymRoutesBloc, GymRoutesState>(
-        builder: (context, state) {
-          if (state is GymRoutesLoaded) {
-            return _buildLogbookGrid(state.entries);
-          } else if (state is GymRoutesError) {
-            return ErrorWidget.builder(state.errorDetails);
-          }
+      body: Column(
+        children: <Widget>[
+          _buildRouteFilterTile(),
+          Expanded(
+            child: BlocBuilder<GymRoutesBloc, GymRoutesState>(
+              builder: (context, state) {
+                if (state is GymRoutesLoaded) {
+                  return _buildLogbookGrid(state.entries);
+                } else if (state is GymRoutesError) {
+                  return ErrorWidget.builder(state.errorDetails);
+                }
 
-          return Center(child: CircularProgressIndicator());
-        },
+                return Center(child: CircularProgressIndicator());
+              },
+            ),
+          ),
+        ],
       ),
       floatingActionButton: _buildImagePicker(),
     );
@@ -206,6 +217,34 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
       tooltip: "Add a new route",
       child: Icon(Icons.add_a_photo),
       heroTag: "camera-new-route-${widget.routeCategory}",
+    );
+  }
+
+  Widget _buildRouteFilterTile() {
+    return ExpansionTile(
+      leading: const Icon(Icons.filter_list),
+      title: Text(""),
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: CheckboxWithTitle(
+                key: checkboxHideSentKey,
+                title: "Hide sent",
+                titleAbove: false,
+              ),
+            ),
+            Expanded(
+              child: CheckboxWithTitle(
+                key: checkboxHideAttemptedKey,
+                title: "Hide attempted",
+                titleAbove: false,
+              ),
+            ),
+          ],
+        ),
+        SliderRouteGrades(key: sliderRouteGradesKey, routeCategory: widget.routeCategory),
+      ],
     );
   }
 

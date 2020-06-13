@@ -1,6 +1,7 @@
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/blocs/route_predictions_bloc.dart';
+import 'package:climbicus/constants.dart';
 import 'package:climbicus/models/route_image.dart';
 import 'package:climbicus/style.dart';
 import 'package:climbicus/utils/route_grades.dart';
@@ -23,8 +24,8 @@ class AddRoutePage extends StatefulWidget {
 class _AddRoutePageState extends State<AddRoutePage> {
   static const NOT_SELECTED = "not selected";
 
-  final checkboxSentKey = new GlobalKey<CheckboxSentState>();
-  final sliderAttemptsKey = new GlobalKey<SliderAttemptsState>();
+  final checkboxSentKey = GlobalKey<CheckboxWithTitleState>();
+  final sliderAttemptsKey = GlobalKey<SliderAttemptsState>();
 
   Map<int, RouteImage> _takenImages = {};
 
@@ -137,8 +138,8 @@ class _AddRoutePageState extends State<AddRoutePage> {
           value: _selectedCategory,
           items: <String>[
             NOT_SELECTED,
-            "sport",
-            "bouldering",
+            SPORT_CATEGORY,
+            BOULDERING_CATEGORY,
           ].map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,

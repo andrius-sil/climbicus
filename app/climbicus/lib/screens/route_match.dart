@@ -25,8 +25,8 @@ class RouteMatchPage extends StatefulWidget {
 class _RouteMatchPageState extends State<RouteMatchPage> {
   static const double columnSize = 200.0;
 
-  final checkboxSentKey = new GlobalKey<CheckboxSentState>();
-  final sliderAttemptsKey = new GlobalKey<SliderAttemptsState>();
+  final checkboxSentKey = GlobalKey<CheckboxWithTitleState>();
+  final sliderAttemptsKey = GlobalKey<SliderAttemptsState>();
 
   RouteImagesBloc _routeImagesBloc;
   GymRoutesBloc _gymRoutesBloc;
