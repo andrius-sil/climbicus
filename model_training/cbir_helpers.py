@@ -41,17 +41,7 @@ def match_img(matcher, descriptors, img_name, des, nmatches):
     dists = {}
     for file_name, des_i in descriptors.items():
         if img_name!=file_name: # prevent matching on itself
-            # TO DO: FLann is buggy right now
-            if type(matcher)=="Flann":
-                all_matches = matcher.match(des, des_i)
-                matches = []
-                for m,n in all_matches:
-                    if m.distance < 0.85*n.distance:
-                        matches.append(m)
-            else:
-                if file_name=="47/white.png":
-                    import pdb; pdb.set_trace()
-                matches = matcher.match(des, des_i)
+            matches = matcher.match(des, des_i)
             matches = sorted(matches, key = lambda x: x.distance)
             dist = sum([x.distance for x in matches[:nmatches]])
             dists[file_name] = dist
@@ -68,10 +58,10 @@ def match_images(matcher_type, descriptors, nmatches=5):
         matcher = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
     elif matcher_type=="Flann":
         index_params = dict(algorithm=6,
-                            table_number=12,  # 12
-                            key_size=20,  # 20
-                            multi_probe_level=2)  # 2
-        search_params = {} # dict(checks=50)
+                            table_number=1,  # 12
+                            key_size=10,  # 20
+                            multi_probe_level=1)  # 2
+        search_params = dict(checks=50)
         matcher = cv2.FlannBasedMatcher(index_params, search_params)
     else: print("Incorrect matcher")
     for img_name, des in descriptors.items():
