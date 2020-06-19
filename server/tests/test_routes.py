@@ -10,7 +10,7 @@ from app import db
 from flask import json
 
 from app.utils.encoding import json_to_nparraybytes
-
+from app import cbir_predictor
 
 def test_routes(client, auth_headers_user1):
     data = {
@@ -132,6 +132,8 @@ def test_predict_with_corrupt_image(client, resource_dir, auth_headers_user1):
 @mock.patch("uuid.uuid4", lambda: UUID('12345678123456781234567812345678'))
 @mock.patch("predictor.cbir_predictor.MATCH_DISTANCE_THRESHOLD", 1000)
 def test_predict_with_unknown_image(client, resource_dir, auth_headers_user1):
+    cbir_predictor.init_matcher("bf")
+
     json_data = {
         "user_id": 1,
         "category": "bouldering",
@@ -184,6 +186,8 @@ def test_predict_with_unknown_image(client, resource_dir, auth_headers_user1):
 @mock.patch("uuid.uuid4", lambda: UUID('12345678123456781234567812345678'))
 @mock.patch("predictor.cbir_predictor.MATCH_DISTANCE_THRESHOLD", 1000)
 def test_cbir_predict_with_image(app, client, resource_dir, auth_headers_user1):
+    cbir_predictor.init_matcher("bf")
+
     json_data = {
         "user_id": 1,
         "category": "bouldering",
@@ -242,8 +246,32 @@ def test_cbir_predict_with_image(app, client, resource_dir, auth_headers_user1):
             assert stored_image.descriptors == json_to_nparraybytes(f.read())
 
 
+@mock.patch("predictor.cbir_predictor.MATCH_DISTANCE_THRESHOLD", 1000)
+def test_flann_cbir_predict_with_image(app, client, resource_dir, auth_headers_user1):
+    cbir_predictor.init_matcher("flann")
+
+    json_data = {
+        "user_id": 1,
+        "category": "bouldering",
+        "gym_id": 1,
+    }
+    data = {
+        "json": json.dumps(json_data),
+        "image": open(f"{resource_dir}/route_images/green_route.jpg", "rb"),
+    }
+
+    resp = client.post("/routes/predictions_cbir", data=data, headers=auth_headers_user1)
+
+    assert resp.status_code == 200
+    assert resp.is_json
+
+    assert len(resp.json["sorted_route_and_image_predictions"]) == 4
+
+
 @mock.patch("predictor.cbir_predictor.MATCH_DISTANCE_THRESHOLD", 200)
 def test_cbir_apply_threshold(app, client, resource_dir, auth_headers_user1):
+    cbir_predictor.init_matcher("bf")
+
     json_data = {
         "user_id": 1,
         "category": "bouldering",

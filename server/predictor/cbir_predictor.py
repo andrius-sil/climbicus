@@ -8,6 +8,7 @@ MODEL_VERSION = "cbir_v1"
 MAX_IMG_WIDTH = 512
 MAX_FEATURES = 450
 MATCH_DISTANCE_THRESHOLD = 137
+MATCHER = "flann"  # or "bf"
 
 
 class InvalidImageException(Exception):
@@ -22,8 +23,22 @@ class CBIRPredictor:
     3. Calculates distances from each image based on descriptors
     """
     def __init__(self):
-        self.matcher = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+        self.init_matcher(MATCHER)
         self.orb = cv2.ORB_create(MAX_FEATURES)
+
+    def init_matcher(self, matcher):
+        if matcher == "bf":
+            self.matcher = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+        elif matcher == "flann":
+            index_params = {
+                'algorithm': 6,
+                'table_number': 1,
+                'key_size': 10,
+                'multi_probe_level': 1
+            }
+            search_params = {'checks': 50}
+            self.matcher = cv2.FlannBasedMatcher(index_params, search_params)
+
 
     def get_model_version(self):
         return MODEL_VERSION
