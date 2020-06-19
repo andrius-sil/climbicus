@@ -132,6 +132,8 @@ def test_predict_with_corrupt_image(client, resource_dir, auth_headers_user1):
 @mock.patch("uuid.uuid4", lambda: UUID('12345678123456781234567812345678'))
 @mock.patch("predictor.cbir_predictor.MATCH_DISTANCE_THRESHOLD", 1000)
 def test_predict_with_unknown_image(client, resource_dir, auth_headers_user1):
+    cbir_predictor.init_matcher("bf")
+
     json_data = {
         "user_id": 1,
         "category": "bouldering",
@@ -151,8 +153,8 @@ def test_predict_with_unknown_image(client, resource_dir, auth_headers_user1):
         {
             'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 2,
                       'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1},
-            'route_image': {'path': "user1_route2.jpg", 'created_at':
-                '2019-03-04T10:10:10+00:00', 'id': 2, 'route_id': 2, 'user_id': 1},
+            'route_image': {'path': "user2_route2_1.jpg", 'created_at':
+                '2019-02-04T10:10:10+00:00', 'id': 3, 'route_id': 2, 'user_id': 2},
         },
         {
             'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 4,
@@ -184,6 +186,8 @@ def test_predict_with_unknown_image(client, resource_dir, auth_headers_user1):
 @mock.patch("uuid.uuid4", lambda: UUID('12345678123456781234567812345678'))
 @mock.patch("predictor.cbir_predictor.MATCH_DISTANCE_THRESHOLD", 1000)
 def test_cbir_predict_with_image(app, client, resource_dir, auth_headers_user1):
+    cbir_predictor.init_matcher("bf")
+
     json_data = {
         "user_id": 1,
         "category": "bouldering",
