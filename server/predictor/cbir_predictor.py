@@ -30,12 +30,13 @@ class CBIRPredictor:
         if matcher == "bf":
             self.matcher = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
         elif matcher == "flann":
-            index_params = dict(algorithm=6,
-                                table_number=1,
-                                key_size=10,
-                                multi_probe_level=1
-                                )
-            search_params = dict(checks=50)
+            index_params = {
+                'algorithm': 6,
+                'table_number': 1,
+                'key_size': 10,
+                'multi_probe_level': 1
+            }
+            search_params = {'checks': 50}
             self.matcher = cv2.FlannBasedMatcher(index_params, search_params)
 
 
