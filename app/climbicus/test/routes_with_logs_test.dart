@@ -51,7 +51,7 @@ void main() {
     expect(routesWithLogs.allRoutes()[1].mostRecentLog(), newLogbook[2]);
   });
 
-  test('routes with logs', () {
+  test('routes with logs - filters', () {
     var newRoutes = {
       1: jsonmdl.Route(1, 1, 1, "sport", "4+", "4+", DateTime.now()),
       2: jsonmdl.Route(2, 1, 1, "sport", "5+", "5+", DateTime.now()),
@@ -66,7 +66,7 @@ void main() {
       3: UserRouteLog(3, 1, 1, 1, true, 2, DateTime.now()),
       4: UserRouteLog(4, 2, 1, 1, false, 5, DateTime.now()),
       5: UserRouteLog(5, 2, 1, 1, false, 5, DateTime.now()),
-      6: UserRouteLog(6, 3, 1, 1, false, 5, DateTime.now()),
+      6: UserRouteLog(6, 3, 1, 1, true, 5, DateTime.now()),
       7: UserRouteLog(7, 4, 1, 1, false, 5, DateTime.now()),
     };
 
@@ -74,5 +74,13 @@ void main() {
 
     expect(routesWithLogs.isEmpty, false);
     expect(routesWithLogs.routeIds(), [1, 2, 3, 4, 5]);
+
+    var filteredSent = RoutesWithLogs.fromRoutesWithLogs(routesWithLogs)
+      ..filterSent("sport");
+    expect(filteredSent.routeIds(), [2, 4, 5]);
+
+    var filteredAttempted = RoutesWithLogs.fromRoutesWithLogs(routesWithLogs)
+      ..filterAttempted("sport");
+    expect(filteredAttempted.routeIds(), [1, 3]);
   });
 }

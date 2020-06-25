@@ -9,9 +9,10 @@ class CheckboxSent extends CheckboxWithTitle {
 
 class CheckboxWithTitle extends StatefulWidget {
   final String title;
+  final VoidCallback onTicked;
   final bool titleAbove;
 
-  const CheckboxWithTitle({Key key, this.title, this.titleAbove = true}) : super(key: key);
+  const CheckboxWithTitle({Key key, this.title, this.onTicked, this.titleAbove = true}) : super(key: key);
 
   @override
   CheckboxWithTitleState createState() => CheckboxWithTitleState();
@@ -29,6 +30,9 @@ class CheckboxWithTitleState extends State<CheckboxWithTitle> {
       onChanged: (bool value) {
         setState(() {
           _value = value;
+          if (widget.onTicked != null) {
+            widget.onTicked();
+          }
         });
       },
     );

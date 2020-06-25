@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
+import 'package:climbicus/constants.dart';
 import 'package:climbicus/models/route.dart' as jsonmdl;
 import 'package:climbicus/models/route_image.dart';
 import 'package:climbicus/models/user_route_log.dart';
@@ -25,6 +26,16 @@ class RouteWithLogs {
 
     return userRouteLogs[sortedKeys.first];
   }
+
+  bool isSent() {
+    for (var e in userRouteLogs.entries) {
+      if (e.value.completed) {
+        return true;
+      }
+    }
+
+    return false;
+  }
 }
 
 class RoutesWithLogs {
@@ -40,6 +51,10 @@ class RoutesWithLogs {
     });
   }
 
+  RoutesWithLogs.fromRoutesWithLogs(RoutesWithLogs routesWithLogs) {
+    _data = routesWithLogs._data;
+  }
+
   bool get isEmpty => _data.isEmpty;
 
   List<int> routeIds() => _data.keys.toList();
@@ -53,6 +68,14 @@ class RoutesWithLogs {
   }
 
   Map<int, RouteWithLogs> allRoutes() => _data;
+
+  void filterSent(String category) {
+    _data = Map.from(_data)..removeWhere((routeId, routeWithLogs) => (routeWithLogs.route.category == category) && (routeWithLogs.isSent()));
+  }
+
+  void filterAttempted(String category) {
+    _data = Map.from(_data)..removeWhere((routeId, routeWithLogs) => (routeWithLogs.route.category == category) && (!routeWithLogs.isSent()));
+  }
 }
 
 
@@ -66,7 +89,8 @@ class GymRoutesLoading extends GymRoutesState {}
 
 class GymRoutesLoaded extends GymRoutesState {
   final RoutesWithLogs entries;
-  const GymRoutesLoaded({@required this.entries});
+  final RoutesWithLogs entriesFiltered;
+  const GymRoutesLoaded({@required this.entries, @required this.entriesFiltered}) ;
 }
 
 class GymRoutesError extends GymRoutesState {
@@ -83,6 +107,18 @@ abstract class GymRoutesEvent {
 }
 
 class FetchGymRoutes extends GymRoutesEvent {}
+
+class FilterSentGymRoutes extends GymRoutesEvent {
+  final bool enabled;
+  final String category;
+  const FilterSentGymRoutes({@required this.enabled, @required this.category});
+}
+
+class FilterAttemptedGymRoutes extends GymRoutesEvent {
+  final bool enabled;
+  final String category;
+  const FilterAttemptedGymRoutes({@required this.enabled, @required this.category});
+}
 
 class AddNewUserRouteLog extends GymRoutesEvent {
   final int routeId;
@@ -116,8 +152,21 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
   final RouteImagesBloc routeImagesBloc;
 
   RoutesWithLogs _entries;
+  RoutesWithLogs get _entriesFiltered => filterEntries();
 
-  GymRoutesBloc({@required this.routeImagesBloc});
+  Map<String, bool> _sentFilterEnabled;
+  Map<String, bool> _attemptedFilterEnabled;
+
+  GymRoutesBloc({@required this.routeImagesBloc}) {
+    _sentFilterEnabled = Map.fromIterable(ROUTE_CATEGORIES,
+      key: (category) => category,
+      value: (_) => false,
+    );
+    _attemptedFilterEnabled = Map.fromIterable(ROUTE_CATEGORIES,
+      key: (category) => category,
+      value: (_) => false,
+    );
+  }
 
   @override
   GymRoutesState get initialState => GymRoutesUninitialized();
@@ -140,19 +189,27 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
 
         _entries = RoutesWithLogs(newRoutes, newLogbook);
 
-        yield GymRoutesLoaded(entries: _entries);
+        yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
 
         routeImagesBloc.add(FetchRouteImages(routeIds: _entries.routeIds()));
       } catch (e, st) {
         yield GymRoutesError(exception: e, stackTrace: st);
       }
+    } else if (event is FilterSentGymRoutes) {
+      _sentFilterEnabled[event.category] = event.enabled;
+
+      yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
+    } else if (event is FilterAttemptedGymRoutes) {
+      _attemptedFilterEnabled[event.category] = event.enabled;
+
+      yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
     } else if (event is AddNewUserRouteLog) {
       var results = await getIt<ApiRepository>().logbookAdd(event.routeId, event.completed, event.numAttempts);
       var newUserRouteLog = UserRouteLog.fromJson(results["user_route_log"]);
 
       _entries.addUserRouteLog(newUserRouteLog);
 
-      yield GymRoutesLoaded(entries: _entries);
+      yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
     } else if (event is AddNewGymRouteWithUserLog) {
       var results = await getIt<ApiRepository>().routeAdd(event.category, event.grade);
       var newRoute = jsonmdl.Route.fromJson(results["route"]);
@@ -164,7 +221,7 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
         numAttempts: event.numAttempts,
       ));
 
-      yield GymRoutesLoaded(entries: _entries);
+      yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
 
       for (var routeImage in event.routeImages) {
         routeImagesBloc.add(AddNewRouteImage(
@@ -175,5 +232,23 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
     }
 
     return;
+  }
+
+  RoutesWithLogs filterEntries() {
+    var entriesFiltered = RoutesWithLogs.fromRoutesWithLogs(_entries);
+
+    _sentFilterEnabled.forEach((category, enabled) {
+      if (enabled) {
+        entriesFiltered.filterSent(category);
+      }
+    });
+
+    _attemptedFilterEnabled.forEach((category, enabled) {
+      if (enabled) {
+        entriesFiltered.filterAttempted(category);
+      }
+    });
+
+    return entriesFiltered;
   }
 }

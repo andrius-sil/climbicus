@@ -181,7 +181,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
             child: BlocBuilder<GymRoutesBloc, GymRoutesState>(
               builder: (context, state) {
                 if (state is GymRoutesLoaded) {
-                  return _buildLogbookGrid(state.entries);
+                  return _buildLogbookGrid(state.entriesFiltered);
                 } else if (state is GymRoutesError) {
                   return ErrorWidget.builder(state.errorDetails);
                 }
@@ -232,6 +232,12 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
                 key: checkboxHideSentKey,
                 title: "Hide sent",
                 titleAbove: false,
+                onTicked: () => _gymRoutesBloc.add(
+                    FilterSentGymRoutes(
+                      enabled: checkboxHideSentKey.currentState.value,
+                      category: widget.routeCategory,
+                    )
+                ),
               ),
             ),
             Expanded(
@@ -239,6 +245,12 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
                 key: checkboxHideAttemptedKey,
                 title: "Hide attempted",
                 titleAbove: false,
+                onTicked: () => _gymRoutesBloc.add(
+                    FilterAttemptedGymRoutes(
+                      enabled: checkboxHideAttemptedKey.currentState.value,
+                      category: widget.routeCategory,
+                    )
+                ),
               ),
             ),
           ],
@@ -325,6 +337,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
     );
   }
 
+  // TODO: move elsewhere
   Map<int, RouteWithLogs> _sortEntriesByLogDate(Map<int, RouteWithLogs> entries) {
     var sortedKeys = entries.keys.toList(growable: false)
       ..sort((k1, k2) => entries[k2].route.createdAt.compareTo(entries[k1].route.createdAt));
