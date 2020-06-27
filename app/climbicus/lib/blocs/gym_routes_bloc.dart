@@ -7,6 +7,8 @@ import 'package:climbicus/models/route.dart' as jsonmdl;
 import 'package:climbicus/models/route_image.dart';
 import 'package:climbicus/models/user_route_log.dart';
 import 'package:climbicus/repositories/api_repository.dart';
+import 'package:climbicus/utils/route_grades.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 
@@ -70,11 +72,21 @@ class RoutesWithLogs {
   Map<int, RouteWithLogs> allRoutes() => _data;
 
   void filterSent(String category) {
-    _data = Map.from(_data)..removeWhere((routeId, routeWithLogs) => (routeWithLogs.route.category == category) && (routeWithLogs.isSent()));
+    _data = Map.from(_data)..removeWhere((routeId, routeWithLogs) =>
+      (routeWithLogs.route.category == category) && (routeWithLogs.isSent()));
   }
 
   void filterAttempted(String category) {
-    _data = Map.from(_data)..removeWhere((routeId, routeWithLogs) => (routeWithLogs.route.category == category) && (!routeWithLogs.isSent()));
+    _data = Map.from(_data)..removeWhere((routeId, routeWithLogs) =>
+      (routeWithLogs.route.category == category) && (!routeWithLogs.isSent()));
+  }
+
+  void filterGrades(String category, GradeValues gradeValues) {
+    _data = Map.from(_data)..removeWhere((routeId, routeWithLogs) =>
+      (routeWithLogs.route.category == category) && (
+      (routeWithLogs.route.upperGradeIndex() < gradeValues.start) ||
+      (routeWithLogs.route.lowerGradeIndex() > gradeValues.end))
+    );
   }
 }
 
@@ -120,6 +132,12 @@ class FilterAttemptedGymRoutes extends GymRoutesEvent {
   const FilterAttemptedGymRoutes({@required this.enabled, @required this.category});
 }
 
+class FilterGradesGymRoutes extends GymRoutesEvent {
+  final GradeValues gradeValues;
+  final String category;
+  const FilterGradesGymRoutes({@required this.gradeValues, @required this.category});
+}
+
 class AddNewUserRouteLog extends GymRoutesEvent {
   final int routeId;
   final bool completed;
@@ -156,6 +174,7 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
 
   Map<String, bool> _sentFilterEnabled;
   Map<String, bool> _attemptedFilterEnabled;
+  Map<String, GradeValues> _gradesFilter;
 
   GymRoutesBloc({@required this.routeImagesBloc}) {
     _sentFilterEnabled = Map.fromIterable(ROUTE_CATEGORIES,
@@ -165,6 +184,10 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
     _attemptedFilterEnabled = Map.fromIterable(ROUTE_CATEGORIES,
       key: (category) => category,
       value: (_) => false,
+    );
+    _gradesFilter = Map.fromIterable(ROUTE_CATEGORIES,
+      key: (category) => category,
+      value: (category) => GradeValues(0, (GRADE_SYSTEMS[DEFAULT_GRADE_SYSTEM[category]].length - 1)),
     );
   }
 
@@ -201,6 +224,10 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
       yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
     } else if (event is FilterAttemptedGymRoutes) {
       _attemptedFilterEnabled[event.category] = event.enabled;
+
+      yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
+    } else if (event is FilterGradesGymRoutes) {
+      _gradesFilter[event.category] = event.gradeValues;
 
       yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
     } else if (event is AddNewUserRouteLog) {
@@ -247,6 +274,10 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
       if (enabled) {
         entriesFiltered.filterAttempted(category);
       }
+    });
+
+    _gradesFilter.forEach((category, gradeValues) {
+      entriesFiltered.filterGrades(category, gradeValues);
     });
 
     return entriesFiltered;

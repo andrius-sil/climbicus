@@ -255,7 +255,16 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
             ),
           ],
         ),
-        SliderRouteGrades(key: sliderRouteGradesKey, routeCategory: widget.routeCategory),
+        SliderRouteGrades(
+          key: sliderRouteGradesKey,
+          routeCategory: widget.routeCategory,
+          onChangeEnd: () => _gymRoutesBloc.add(
+            FilterGradesGymRoutes(
+              gradeValues: sliderRouteGradesKey.currentState.values,
+              category: widget.routeCategory,
+            )
+          ),
+        ),
       ],
     );
   }

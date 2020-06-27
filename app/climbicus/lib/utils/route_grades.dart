@@ -11,3 +11,11 @@ const DEFAULT_GRADE_SYSTEM = {
   SPORT_CATEGORY: 'Font',
   BOULDERING_CATEGORY: 'V',
 };
+
+
+class GradeValues {
+  final int start;
+  final int end;
+
+  const GradeValues(this.start, this.end);
+}

@@ -1,3 +1,4 @@
+import 'package:climbicus/utils/route_grades.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'route.g.dart';
@@ -30,6 +31,22 @@ class Route {
     assert(splits.length == 2);
 
     return splits[1];
+  }
+
+  int _gradeIndex(String grade) {
+    var splits = grade.split("_");
+    assert(splits.length == 2);
+
+    var gradeSystem = GRADE_SYSTEMS[splits[0]];
+    return gradeSystem.indexOf(splits[1]);
+  }
+
+  int lowerGradeIndex() {
+    return _gradeIndex(lowerGrade);
+  }
+
+  int upperGradeIndex() {
+    return _gradeIndex(upperGrade);
   }
 
   factory Route.fromJson(Map<String, dynamic> json) =>
