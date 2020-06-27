@@ -273,7 +273,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
     if (entries.isEmpty(widget.routeCategory)) {
       return Center(
         child: Text(
-          "No routes in this gym yet..",
+          "No routes found..",
           textAlign: TextAlign.center,
         ),
       );
