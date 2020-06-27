@@ -41,48 +41,65 @@ class RouteWithLogs {
 }
 
 class RoutesWithLogs {
-  Map<int, RouteWithLogs> _data;
+  Map<String, Map<int, RouteWithLogs>> _data;
+  Map<int, jsonmdl.Route> _routes;
 
   RoutesWithLogs(
       Map<int, jsonmdl.Route> newRoutes,
       Map<int, UserRouteLog> newLogbook) {
-    
-    _data = newRoutes.map((routeId, route) => MapEntry(routeId, RouteWithLogs(route, {})));
+
+    _routes = newRoutes;
+    _data = Map.fromIterable(ROUTE_CATEGORIES,
+      key: (category) => category,
+      value: (_) => {},
+    );
+
+    newRoutes.forEach((routeId, route) {
+      _data[route.category][routeId] = RouteWithLogs(route, {});
+    });
+
     newLogbook.forEach((_, userRouteLog) {
       addUserRouteLog(userRouteLog);
     });
   }
 
   RoutesWithLogs.fromRoutesWithLogs(RoutesWithLogs routesWithLogs) {
-    _data = routesWithLogs._data;
+    _data = Map.fromIterable(ROUTE_CATEGORIES,
+      key: (category) => category,
+      value: (category) => routesWithLogs._data[category],
+    );
+    _routes = routesWithLogs._routes;
   }
 
-  bool get isEmpty => _data.isEmpty;
+  bool isEmpty(String category) => _data[category].isEmpty;
 
-  List<int> routeIds() => _data.keys.toList();
+  List<int> routeIdsAll() => _routes.keys.toList();
+  List<int> routeIds(String category) => _data[category].keys.toList();
 
   void addRoute(jsonmdl.Route route) {
-    _data[route.id] = RouteWithLogs(route, {});
+    _routes[route.id] = route;
+    _data[route.category][route.id] = RouteWithLogs(route, {});
   }
 
   void addUserRouteLog(UserRouteLog userRouteLog) {
-    _data[userRouteLog.routeId].userRouteLogs[userRouteLog.id] = userRouteLog;
+    String category = _routes[userRouteLog.routeId].category;
+    _data[category][userRouteLog.routeId].userRouteLogs[userRouteLog.id] = userRouteLog;
   }
 
-  Map<int, RouteWithLogs> allRoutes() => _data;
+  Map<int, RouteWithLogs> allRoutes(String category) => _data[category];
 
   void filterSent(String category) {
-    _data = Map.from(_data)..removeWhere((routeId, routeWithLogs) =>
-      (routeWithLogs.route.category == category) && (routeWithLogs.isSent()));
+    _data[category] = Map.from(_data[category])..removeWhere((routeId, routeWithLogs) =>
+      (routeWithLogs.isSent()));
   }
 
   void filterAttempted(String category) {
-    _data = Map.from(_data)..removeWhere((routeId, routeWithLogs) =>
-      (routeWithLogs.route.category == category) && (!routeWithLogs.isSent()));
+    _data[category] = Map.from(_data[category])..removeWhere((routeId, routeWithLogs) =>
+      (!routeWithLogs.isSent()));
   }
 
   void filterGrades(String category, GradeValues gradeValues) {
-    _data = Map.from(_data)..removeWhere((routeId, routeWithLogs) =>
+    _data[category] = Map.from(_data[category])..removeWhere((routeId, routeWithLogs) =>
       (routeWithLogs.route.category == category) && (
       (routeWithLogs.route.upperGradeIndex() < gradeValues.start) ||
       (routeWithLogs.route.lowerGradeIndex() > gradeValues.end))
@@ -214,7 +231,7 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
 
         yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
 
-        routeImagesBloc.add(FetchRouteImages(routeIds: _entries.routeIds()));
+        routeImagesBloc.add(FetchRouteImages(routeIds: _entries.routeIdsAll()));
       } catch (e, st) {
         yield GymRoutesError(exception: e, stackTrace: st);
       }

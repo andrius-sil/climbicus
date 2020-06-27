@@ -270,7 +270,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
   }
 
   Widget _buildLogbookGrid(RoutesWithLogs entries) {
-    if (entries.isEmpty) {
+    if (entries.isEmpty(widget.routeCategory)) {
       return Center(
         child: Text(
           "No routes in this gym yet..",
@@ -284,11 +284,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
     _items.clear();
 
     var i = 0;
-    (_sortEntriesByLogDate(entries.allRoutes())).forEach((routeId, routeWithLogs) {
-      if (routeWithLogs.route.category != widget.routeCategory) {
-        return;
-      }
-
+    (_sortEntriesByLogDate(entries.allRoutes(widget.routeCategory))).forEach((routeId, routeWithLogs) {
       if (++i > MAX_ROUTES_VISIBLE) {
         return;
       }
