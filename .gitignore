@@ -1,4 +1,3 @@
-*data/
 *.pdf
 *.idea/
 *.ipynb_checkpoints/
@@ -9,4 +8,6 @@ key.properties
 key.jks
 __pycache__
 server/predictor/model_files/
-model_training/callbacks/
+model_training_pre_release/callbacks/
+model_training_pre_release/data/
+model_training_pre_release/dummy_data/
