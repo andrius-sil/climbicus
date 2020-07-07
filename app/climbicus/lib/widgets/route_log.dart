@@ -9,9 +9,10 @@ class CheckboxSent extends CheckboxWithTitle {
 
 class CheckboxWithTitle extends StatefulWidget {
   final String title;
+  final VoidCallback onTicked;
   final bool titleAbove;
 
-  const CheckboxWithTitle({Key key, this.title, this.titleAbove = true}) : super(key: key);
+  const CheckboxWithTitle({Key key, this.title, this.onTicked, this.titleAbove = true}) : super(key: key);
 
   @override
   CheckboxWithTitleState createState() => CheckboxWithTitleState();
@@ -29,6 +30,9 @@ class CheckboxWithTitleState extends State<CheckboxWithTitle> {
       onChanged: (bool value) {
         setState(() {
           _value = value;
+          if (widget.onTicked != null) {
+            widget.onTicked();
+          }
         });
       },
     );
@@ -96,8 +100,9 @@ class SliderAttemptsState extends State<SliderAttempts> {
 class SliderRouteGrades extends StatefulWidget {
   final String routeCategory;
   final List<String> gradeSystem;
+  final VoidCallback onChangeEnd;
 
-  SliderRouteGrades({Key key, this.routeCategory}) :
+  SliderRouteGrades({Key key, this.routeCategory, this.onChangeEnd}) :
     gradeSystem = GRADE_SYSTEMS[DEFAULT_GRADE_SYSTEM[routeCategory]],
     super(key: key);
 
@@ -108,7 +113,7 @@ class SliderRouteGrades extends StatefulWidget {
 class SliderRouteGradesState extends State<SliderRouteGrades> {
   RangeValues _values;
 
-  RangeValues get values => _values;
+  GradeValues get values => GradeValues(_values.start.toInt(), _values.end.toInt());
 
   @override
   void initState() {
@@ -136,6 +141,7 @@ class SliderRouteGradesState extends State<SliderRouteGrades> {
             onChanged: (RangeValues values) => setState(() {
               _values = values;
             }),
+            onChangeEnd: (RangeValues values) => widget.onChangeEnd(),
           ),
         ),
         Container(

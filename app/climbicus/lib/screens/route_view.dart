@@ -181,7 +181,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
             child: BlocBuilder<GymRoutesBloc, GymRoutesState>(
               builder: (context, state) {
                 if (state is GymRoutesLoaded) {
-                  return _buildLogbookGrid(state.entries);
+                  return _buildLogbookGrid(state.entriesFiltered);
                 } else if (state is GymRoutesError) {
                   return ErrorWidget.builder(state.errorDetails);
                 }
@@ -232,6 +232,12 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
                 key: checkboxHideSentKey,
                 title: "Hide sent",
                 titleAbove: false,
+                onTicked: () => _gymRoutesBloc.add(
+                    FilterSentGymRoutes(
+                      enabled: checkboxHideSentKey.currentState.value,
+                      category: widget.routeCategory,
+                    )
+                ),
               ),
             ),
             Expanded(
@@ -239,20 +245,35 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
                 key: checkboxHideAttemptedKey,
                 title: "Hide attempted",
                 titleAbove: false,
+                onTicked: () => _gymRoutesBloc.add(
+                    FilterAttemptedGymRoutes(
+                      enabled: checkboxHideAttemptedKey.currentState.value,
+                      category: widget.routeCategory,
+                    )
+                ),
               ),
             ),
           ],
         ),
-        SliderRouteGrades(key: sliderRouteGradesKey, routeCategory: widget.routeCategory),
+        SliderRouteGrades(
+          key: sliderRouteGradesKey,
+          routeCategory: widget.routeCategory,
+          onChangeEnd: () => _gymRoutesBloc.add(
+            FilterGradesGymRoutes(
+              gradeValues: sliderRouteGradesKey.currentState.values,
+              category: widget.routeCategory,
+            )
+          ),
+        ),
       ],
     );
   }
 
   Widget _buildLogbookGrid(RoutesWithLogs entries) {
-    if (entries.isEmpty) {
+    if (entries.isEmpty(widget.routeCategory)) {
       return Center(
         child: Text(
-          "No routes in this gym yet..",
+          "No routes found..",
           textAlign: TextAlign.center,
         ),
       );
@@ -263,11 +284,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
     _items.clear();
 
     var i = 0;
-    (_sortEntriesByLogDate(entries.allRoutes())).forEach((routeId, routeWithLogs) {
-      if (routeWithLogs.route.category != widget.routeCategory) {
-        return;
-      }
-
+    (_sortEntriesByLogDate(entries.allRoutes(widget.routeCategory))).forEach((routeId, routeWithLogs) {
       if (++i > MAX_ROUTES_VISIBLE) {
         return;
       }
@@ -325,6 +342,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
     );
   }
 
+  // TODO: move elsewhere
   Map<int, RouteWithLogs> _sortEntriesByLogDate(Map<int, RouteWithLogs> entries) {
     var sortedKeys = entries.keys.toList(growable: false)
       ..sort((k1, k2) => entries[k2].route.createdAt.compareTo(entries[k1].route.createdAt));

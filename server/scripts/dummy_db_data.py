@@ -1,15 +1,17 @@
 import pandas as pd
 
-from app.models import Gyms, RouteImages, Routes, UserRouteLog, Users
 from app.utils.encoding import json_to_nparraybytes
 
 
-def preload_dummy_data(db):
-    load_table(db, Users)
-    load_table(db, Gyms)
-    load_table(db, Routes)
-    load_table(db, RouteImages)
-    load_table(db, UserRouteLog)
+def preload_dummy_data(db, tables):
+    for cls in db.Model._decl_class_registry.values():
+        if not isinstance(cls, type) or not issubclass(cls, db.Model):
+            continue
+
+        if tables is not None and cls.__tablename__ not in tables:
+            continue
+
+        load_table(db, cls)
 
     db.session.commit()
 
@@ -22,6 +24,7 @@ def load_table(db, ModelClass):
 
 
     table_name = ModelClass.__tablename__
+    print(f"\tloading '{table_name}' table")
 
     table_df = pd.read_csv(f"resources/{table_name}.csv")
     table_df = table_df.where(pd.notnull(table_df), None)
