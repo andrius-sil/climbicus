@@ -23,7 +23,8 @@ case "$1" in
         /usr/bin/supervisord
     ;;
     recreate-db)
-        flask recreate-db
+        shift;
+        flask recreate-db "$@"
     ;;
     routes)
         flask routes
