@@ -101,8 +101,9 @@ class HeaderListItem extends StatelessWidget {
 class BodyListItem extends StatefulWidget {
   final RouteWithLogs routeWithLogs;
   final GymRoutesBloc gymRoutesBloc;
+  final VoidCallback onAdd;
 
-  const BodyListItem({this.routeWithLogs, this.gymRoutesBloc});
+  const BodyListItem({this.routeWithLogs, this.gymRoutesBloc, this.onAdd});
 
   @override
   _BodyListItemState createState() => _BodyListItemState();
@@ -131,6 +132,8 @@ class _BodyListItemState extends State<BodyListItem> {
   }
 
   void _onAddButtonPressed() {
+    widget.onAdd();
+
     widget.gymRoutesBloc.add(AddNewUserRouteLog(
       routeId: widget.routeWithLogs.route.id,
       completed: checkboxSentKey.currentState.value,
@@ -321,7 +324,10 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
               _items[i].isExpanded = !isExpanded;
             });
           },
-          children: _items.map<ExpansionPanel>((RouteListItem item) {
+          children: _items.asMap().entries.map((entry) {
+            int idx = entry.key;
+            RouteListItem item = entry.value;
+
             return ExpansionPanel(
               headerBuilder: (BuildContext context, bool isExpanded) {
                 return HeaderListItem(
@@ -332,7 +338,8 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
               },
               body: BodyListItem(
                 routeWithLogs: item.routeWithLogs,
-                gymRoutesBloc: _gymRoutesBloc
+                gymRoutesBloc: _gymRoutesBloc,
+                onAdd: () => _items[idx].isExpanded = false,
               ),
               isExpanded: item.isExpanded,
             );
@@ -345,7 +352,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
   // TODO: move elsewhere
   Map<int, RouteWithLogs> _sortEntriesByLogDate(Map<int, RouteWithLogs> entries) {
     var sortedKeys = entries.keys.toList(growable: false)
-      ..sort((k1, k2) => entries[k2].route.createdAt.compareTo(entries[k1].route.createdAt));
+      ..sort((k1, k2) => entries[k2].mostRecentCreatedAt().compareTo(entries[k1].mostRecentCreatedAt()));
 
     return LinkedHashMap.fromIterable(sortedKeys,
         key: (k) => k, value: (k) => entries[k]);

@@ -29,6 +29,15 @@ class RouteWithLogs {
     return userRouteLogs[sortedKeys.first];
   }
 
+  DateTime mostRecentCreatedAt() {
+    var log = mostRecentLog();
+    if (log != null) {
+      return log.createdAt;
+    }
+
+    return route.createdAt;
+  }
+
   bool isSent() {
     for (var e in userRouteLogs.entries) {
       if (e.value.completed) {
