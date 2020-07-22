@@ -108,12 +108,18 @@ class _AddRoutePageState extends State<AddRoutePage> {
   }
 
   Widget _buildSelectGrade() {
+    var systemGrades = _systemGrades();
+    if (!systemGrades.contains(_selectedGrade)) {
+      // Reset selected grade in case category changed.
+      _selectedGrade = NOT_SELECTED;
+    }
+
     return Column(
       children: <Widget>[
         Text("Select grade"),
         DropdownButton<String>(
           value: _selectedGrade,
-          items: ([NOT_SELECTED] + _gradeSystems())
+          items: ([NOT_SELECTED] + _systemGrades())
               .map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
@@ -179,7 +185,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
     );
   }
 
-  List<String> _gradeSystems() {
+  List<String> _systemGrades() {
     if (_selectedCategory == NOT_SELECTED) {
       return [];
     }
