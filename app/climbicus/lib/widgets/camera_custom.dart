@@ -125,7 +125,8 @@ class _CameraCustomState extends State<CameraCustom> {
           Container(
             alignment: Alignment.bottomLeft,
             child: IconButton(
-              icon: const Icon(Icons.info),
+              icon: const Icon(Icons.help),
+              iconSize: 32,
               onPressed: _showHelpOverlay,
             ),
           ),
