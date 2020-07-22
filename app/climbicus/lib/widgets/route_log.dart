@@ -4,7 +4,7 @@ import 'package:climbicus/utils/route_grades.dart';
 import 'package:flutter/material.dart';
 
 class CheckboxSent extends CheckboxWithTitle {
-  const CheckboxSent({Key key}) : super(key: key, title: "SENT!");
+  const CheckboxSent({Key key}) : super(key: key, title: "Sent!");
 }
 
 class CheckboxWithTitle extends StatefulWidget {
