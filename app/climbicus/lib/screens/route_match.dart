@@ -58,7 +58,7 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
                 Expanded(
                   child: Column(
                     children: <Widget>[
-                      Text("Your image:"),
+                      Text("Your route:"),
                       SizedBox(height: COLUMN_PADDING),
                       Container(
                         height: columnSize,
@@ -71,7 +71,7 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
                 Expanded(
                   child: Column(
                     children: <Widget>[
-                      Text("Selected image:"),
+                      Text("Selected route:"),
                       SizedBox(height: COLUMN_PADDING),
                       Container(
                         height: columnSize,

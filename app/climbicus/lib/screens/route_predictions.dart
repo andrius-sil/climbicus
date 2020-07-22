@@ -55,7 +55,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
             child: Column(
               children: <Widget>[
                 SizedBox(height: COLUMN_PADDING),
-                Text("Your image:"),
+                Text("Your route:"),
                 SizedBox(height: COLUMN_PADDING),
                 Container(
                   height: 200.0,

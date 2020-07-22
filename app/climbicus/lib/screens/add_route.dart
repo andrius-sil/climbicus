@@ -62,7 +62,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
           children: <Widget>[
             Column(
               children: <Widget>[
-                Text("Your image:"),
+                Text("Your route:"),
                 SizedBox(height: COLUMN_PADDING),
                 Row(
                   children: <Widget>[
