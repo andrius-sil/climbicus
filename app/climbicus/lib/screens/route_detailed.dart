@@ -96,7 +96,7 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
   Widget _buildRouteAscents() {
     List<Widget> ascents = [];
     for (var userRouteLog in widget.routeWithLogs.userRouteLogs.values) {
-      var status = (userRouteLog.completed) ? "SENT!" : "Attempted";
+      var status = (userRouteLog.completed) ? "Sent!" : "Attempted";
       var tries = (userRouteLog.numAttempts == null) ? "" : "(${userRouteLog.numAttempts} tries)";
       ascents.add(
           ListTile(title: Text(
