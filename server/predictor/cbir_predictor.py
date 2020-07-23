@@ -6,6 +6,7 @@ from app.utils.encoding import nparraybytes_to_nparray, nparray_to_nparraybytes
 NMATCHES = 5
 MODEL_VERSION = "cbir_v1"
 MAX_IMG_WIDTH = 512
+CV_LOAD_IMAGE_GRAYSCALE = 0
 MAX_FEATURES = 450
 MATCH_DISTANCE_THRESHOLD = 137
 MATCHER = "flann"  # or "bf"
@@ -49,7 +50,7 @@ class CBIRPredictor:
         JPEG compression is left for the app
         """
         img_arr = np.frombuffer(fbytes_image, np.uint8)
-        img = cv2.imdecode(img_arr, cv2.COLOR_BGR2GRAY)
+        img = cv2.imdecode(img_arr, CV_LOAD_IMAGE_GRAYSCALE)
         if img is None:
             raise InvalidImageException()
 
