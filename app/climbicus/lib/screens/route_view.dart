@@ -315,38 +315,45 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
       ));
     });
 
-    return Scrollbar(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.only(bottom: 80),
-        child: ExpansionPanelList(
-          expansionCallback: (int i, bool isExpanded) {
-            setState(() {
-              _items[i].isExpanded = !isExpanded;
-            });
-          },
-          children: _items.asMap().entries.map((entry) {
-            int idx = entry.key;
-            RouteListItem item = entry.value;
+    return RefreshIndicator(
+      onRefresh: onRefreshView,
+      child: Scrollbar(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.only(bottom: 80),
+          child: ExpansionPanelList(
+            expansionCallback: (int i, bool isExpanded) {
+              setState(() {
+                _items[i].isExpanded = !isExpanded;
+              });
+            },
+            children: _items.asMap().entries.map((entry) {
+              int idx = entry.key;
+              RouteListItem item = entry.value;
 
-            return ExpansionPanel(
-              headerBuilder: (BuildContext context, bool isExpanded) {
-                return HeaderListItem(
+              return ExpansionPanel(
+                headerBuilder: (BuildContext context, bool isExpanded) {
+                  return HeaderListItem(
+                    routeWithLogs: item.routeWithLogs,
+                    image: item.image,
+                    title: item.headerTitle,
+                  );
+                },
+                body: BodyListItem(
                   routeWithLogs: item.routeWithLogs,
-                  image: item.image,
-                  title: item.headerTitle,
-                );
-              },
-              body: BodyListItem(
-                routeWithLogs: item.routeWithLogs,
-                gymRoutesBloc: _gymRoutesBloc,
-                onAdd: () => _items[idx].isExpanded = false,
-              ),
-              isExpanded: item.isExpanded,
-            );
-          }).toList(),
+                  gymRoutesBloc: _gymRoutesBloc,
+                  onAdd: () => _items[idx].isExpanded = false,
+                ),
+                isExpanded: item.isExpanded,
+              );
+            }).toList(),
+          ),
         ),
       ),
     );
+  }
+
+  Future<void> onRefreshView() async {
+    _gymRoutesBloc.add(FetchGymRoutes());
   }
 
   // TODO: move elsewhere
