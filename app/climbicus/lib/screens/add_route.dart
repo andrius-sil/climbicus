@@ -41,6 +41,9 @@ class _AddRoutePageState extends State<AddRoutePage> {
   void initState() {
     super.initState();
 
+    _selectedCategory = widget.routeCategory;
+    _selectedGradeSystem = DEFAULT_GRADE_SYSTEM[widget.routeCategory];
+
     _gymRoutesBloc = BlocProvider.of<GymRoutesBloc>(context);
     _routeImagesBloc = BlocProvider.of<RouteImagesBloc>(context);
     _routePredictionBloc = BlocProvider.of<RoutePredictionBloc>(context);
