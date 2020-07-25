@@ -121,6 +121,8 @@ class _HomePageState extends State<HomePage> {
             builder: (context, gymState) {
               if (gymState is GymsLoaded) {
                 return _buildRouteTabView(settingsState.gymId, gymState.gyms);
+              } else if (gymState is GymsError) {
+                return ErrorWidget.builder(gymState.errorDetails);
               }
 
               return _buildWaitingPage();
