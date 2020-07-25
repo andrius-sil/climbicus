@@ -12,6 +12,9 @@ flutter-appbundle-build: check-env
 flutter-code-gen:
 	cd ../app/climbicus/; flutter pub run build_runner build
 
+flutter-launcher-icons:
+	cd ../app/climbicus/; flutter pub run flutter_launcher_icons:main
+
 flutter-key-gen:
 	${JAVA_BIN}/keytool -genkey -v -keystore key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias key
 

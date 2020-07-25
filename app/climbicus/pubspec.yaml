@@ -35,12 +35,16 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  flutter_launcher_icons: "^0.7.3"
   build_runner: ^1.7.4
   json_serializable: ^3.2.5
 
+flutter_icons:
+  android: "launcher_icon"
+  ios: false
+  image_path: "images/logo.png"
 
 flutter:
-
   uses-material-design: true
 
   assets:
