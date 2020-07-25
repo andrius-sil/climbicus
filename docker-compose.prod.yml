@@ -1,5 +1,9 @@
 version: '2.1'
 services:
+  db:
+    restart: always
+  worker:
+    restart: always
   server:
     restart: always
     env_file:
