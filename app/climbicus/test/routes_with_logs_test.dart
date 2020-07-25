@@ -107,7 +107,7 @@ void main() {
 
     var filteredAttempted = RoutesWithLogs.fromRoutesWithLogs(routesWithLogs)
       ..filterAttempted("sport");
-    expect(filteredAttempted.routeIds("sport"), [1, 3]);
+    expect(filteredAttempted.routeIds("sport"), [5]);
 
     var filteredGrades = RoutesWithLogs.fromRoutesWithLogs(routesWithLogs)
       ..filterGrades("sport", GradeValues(GRADE_SYSTEMS["Font"].indexOf("6A"), GRADE_SYSTEMS["Font"].indexOf("6B")));

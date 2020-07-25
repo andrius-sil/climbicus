@@ -47,6 +47,8 @@ class RouteWithLogs {
 
     return false;
   }
+
+  bool isAttempted() => userRouteLogs.isNotEmpty;
 }
 
 class RoutesWithLogs {
@@ -104,7 +106,7 @@ class RoutesWithLogs {
 
   void filterAttempted(String category) {
     _data[category] = Map.from(_data[category])..removeWhere((routeId, routeWithLogs) =>
-      (!routeWithLogs.isSent()));
+      (routeWithLogs.isAttempted()));
   }
 
   void filterGrades(String category, GradeValues gradeValues) {
