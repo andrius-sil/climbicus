@@ -1,6 +1,7 @@
 .git/*
 /app/*
 model_training/*
+model_training_pre_release/*
 __pycache__/*
 .pytest_cache__/*
 .idea/*
