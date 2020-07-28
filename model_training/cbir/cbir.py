@@ -72,8 +72,8 @@ class CBIRPredictor:
         return kp, des
 
     def match_images(self, des_a, des_b):
-        """Completes matching for a given set of descriptors"""
-        matches = self.matcher.match(nparraybytes_to_nparray(des_a), nparraybytes_to_nparray(des_b))
+        """Completes matching for a given set of (array) descriptors"""
+        matches = self.matcher.match(des_a, des_b)
         matches = sorted(matches, key = lambda x: x.distance)
         dist = sum([x.distance for x in matches[:NMATCHES]])
         return matches, dist

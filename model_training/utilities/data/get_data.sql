@@ -5,7 +5,8 @@ SELECT a.*
      , b.created_at As db_created_at
      , b.path as db_path
      , b.descriptors as db_descriptors
-  FROM route_images AS a, route_images AS b
+  FROM route_images AS a
+     , route_images AS b
  WHERE b.created_at < a.created_at
    AND b.route_id IS NOT NULL
    AND CAST(a.created_at AS DATE) BETWEEN '{START_AT}' AND '{END_AT}'
