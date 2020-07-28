@@ -1,5 +1,10 @@
-import pandas as pd
+import datetime
 
+import pandas as pd
+from sqlalchemy.exc import IntegrityError
+from werkzeug.exceptions import abort
+
+from app.models import Users, Gyms
 from app.utils.encoding import json_to_nparraybytes
 
 
@@ -33,3 +38,22 @@ def load_table(db, ModelClass):
         for _, row in table_df.iterrows()
     ])
     db.session.flush()
+
+
+def create_user(db, email, password):
+    # TODO: move to a function
+    try:
+        user = Users(email=email, password=password, created_at=datetime.datetime.utcnow())
+
+        db.session.add(user)
+        db.session.commit()
+    except IntegrityError:
+        abort(409, "User already exists")
+
+
+def create_gym(db, name, has_bouldering, has_sport):
+    gym = Gyms(name=name, has_bouldering=has_bouldering, has_sport=has_sport,
+               created_at=datetime.datetime.utcnow())
+
+    db.session.add(gym)
+    db.session.commit()

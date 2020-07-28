@@ -66,7 +66,9 @@ def create_app(db_connection_uri, jwt_secret_key, io_provider, disable_auth=Fals
 
     init_celery(celery, app)
 
-    from app.commands import recreate_db_cmd
+    from app.commands import recreate_db_cmd, create_user_cmd, create_gym_cmd
     app.cli.add_command(recreate_db_cmd)
+    app.cli.add_command(create_user_cmd)
+    app.cli.add_command(create_gym_cmd)
 
     return app
