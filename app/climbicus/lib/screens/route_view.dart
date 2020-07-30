@@ -57,7 +57,7 @@ class HeaderListItem extends StatelessWidget {
           mostRecentLog.numAttempts.toString() :
           " — ";
       ascentStatus = Center(
-        child: (mostRecentLog.numAttempts == 1) ?
+        child: (mostRecentLog.completed && mostRecentLog.numAttempts == 1) ?
             Icon(Icons.flash_on, color: Theme.of(context).textTheme.title.color) :
             Text(numAttemptsStr, style: TextStyle(fontSize: 18)),
       );
