@@ -184,7 +184,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
             child: BlocBuilder<GymRoutesBloc, GymRoutesState>(
               builder: (context, state) {
                 if (state is GymRoutesLoaded) {
-                  return _buildLogbookGrid(state.entriesFiltered);
+                  return _buildLogbookGridWithRefresh(state.entriesFiltered);
                 } else if (state is GymRoutesError) {
                   return ErrorWidget.builder(state.errorDetails);
                 }
@@ -272,12 +272,22 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
     );
   }
 
+  Widget _buildLogbookGridWithRefresh(RoutesWithLogs entries) {
+    return RefreshIndicator(
+      onRefresh: onRefreshView,
+      child: _buildLogbookGrid(entries),
+    );
+  }
+
   Widget _buildLogbookGrid(RoutesWithLogs entries) {
     if (entries.isEmpty(widget.routeCategory)) {
-      return Center(
-        child: Text(
-          "No routes found..",
-          textAlign: TextAlign.center,
+      return SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Center(
+          child: Text(
+            "No routes found..",
+            textAlign: TextAlign.center,
+          ),
         ),
       );
     }
@@ -315,38 +325,38 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
       ));
     });
 
-    return RefreshIndicator(
-      onRefresh: onRefreshView,
-      child: Scrollbar(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.only(bottom: 80),
-          child: ExpansionPanelList(
-            expansionCallback: (int i, bool isExpanded) {
-              setState(() {
-                _items[i].isExpanded = !isExpanded;
-              });
-            },
-            children: _items.asMap().entries.map((entry) {
-              int idx = entry.key;
-              RouteListItem item = entry.value;
+    // Using AlwaysScrollableScrollPhysics to ensure that RefreshIndicator
+    // appears always.
+    return Scrollbar(
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.only(bottom: 80),
+        child: ExpansionPanelList(
+          expansionCallback: (int i, bool isExpanded) {
+            setState(() {
+              _items[i].isExpanded = !isExpanded;
+            });
+          },
+          children: _items.asMap().entries.map((entry) {
+            int idx = entry.key;
+            RouteListItem item = entry.value;
 
-              return ExpansionPanel(
-                headerBuilder: (BuildContext context, bool isExpanded) {
-                  return HeaderListItem(
-                    routeWithLogs: item.routeWithLogs,
-                    image: item.image,
-                    title: item.headerTitle,
-                  );
-                },
-                body: BodyListItem(
+            return ExpansionPanel(
+              headerBuilder: (BuildContext context, bool isExpanded) {
+                return HeaderListItem(
                   routeWithLogs: item.routeWithLogs,
-                  gymRoutesBloc: _gymRoutesBloc,
-                  onAdd: () => _items[idx].isExpanded = false,
-                ),
-                isExpanded: item.isExpanded,
-              );
-            }).toList(),
-          ),
+                  image: item.image,
+                  title: item.headerTitle,
+                );
+              },
+              body: BodyListItem(
+                routeWithLogs: item.routeWithLogs,
+                gymRoutesBloc: _gymRoutesBloc,
+                onAdd: () => _items[idx].isExpanded = false,
+              ),
+              isExpanded: item.isExpanded,
+            );
+          }).toList(),
         ),
       ),
     );
