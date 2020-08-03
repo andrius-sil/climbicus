@@ -1,10 +1,12 @@
 version: '2.1'
 services:
   redis:
+    restart: always
     image: redis:latest
     sysctls:
       - net.core.somaxconn=4096
   worker:
+    restart: always
     build:
       dockerfile: Dockerfile
       context: ./server
@@ -13,6 +15,7 @@ services:
     depends_on:
       - redis
   server:
+    restart: always
     depends_on:
       - worker
     build:

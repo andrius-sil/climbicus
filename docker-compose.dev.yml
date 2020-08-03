@@ -1,6 +1,9 @@
 version: '2.1'
 services:
+  redis:
+    restart: "no"
   db:
+    restart: "no"
     build:
       dockerfile: Dockerfile.dev
       context: ./db
@@ -11,12 +14,14 @@ services:
     command:
       postgres -c track_commit_timestamp=on
   worker:
+    restart: "no"
     env_file:
       - dev_secrets.env
     volumes:
       - ./server/:/app
       - $HOME/.aws/credentials:/root/.aws/credentials:ro
   server:
+    restart: "no"
     env_file:
       - dev_secrets.env
     depends_on:

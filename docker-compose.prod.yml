@@ -1,7 +1,6 @@
 version: '2.1'
 services:
   server:
-    restart: always
     env_file:
       - prod_secrets.env
     environment:
