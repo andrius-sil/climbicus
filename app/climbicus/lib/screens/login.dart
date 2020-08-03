@@ -1,7 +1,11 @@
 import 'package:climbicus/blocs/login_bloc.dart';
+import 'package:climbicus/env.dart';
+import 'package:climbicus/repositories/settings_repository.dart';
 import 'package:climbicus/screens/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:get_it/get_it.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -10,6 +14,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  final getIt = GetIt.instance;
 
   LoginBloc _loginBloc;
 
@@ -85,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   List<Widget> _buildSubmitButtons(LoginState state) {
-    return <Widget>[
+    List<Widget> widgets = [
       Builder(
         builder: (BuildContext context) => ListTile(
           title: RaisedButton(
@@ -94,24 +100,33 @@ class _LoginPageState extends State<LoginPage> {
             onPressed: state is LoginLoading ? null : () => validateAndLogin(context),
           ),
         ),
-      ),
-      ListTile(
-        title: Row(
-          children: <Widget>[
-            Text("New user?"),
-            FlatButton(
-              textColor: Theme.of(context).buttonColor,
-              child: Text(
-                "Register",
-                style: TextStyle(fontSize: 18),
-              ),
-              onPressed: navigateRegister,
-            ),
-          ],
-          mainAxisAlignment: MainAxisAlignment.center,
-        ),
-      ),
+      )
     ];
+
+    if (getIt<SettingsRepository>().env != Environment.stag) {
+      widgets.add(
+        ListTile(
+          title: Row(
+            children: <Widget>[
+              Text("New user?"),
+              FlatButton(
+                textColor: Theme
+                    .of(context)
+                    .buttonColor,
+                child: Text(
+                  "Register",
+                  style: TextStyle(fontSize: 18),
+                ),
+                onPressed: navigateRegister,
+              ),
+            ],
+            mainAxisAlignment: MainAxisAlignment.center,
+          ),
+        )
+      );
+    }
+
+    return widgets;
   }
 
   void validateAndLogin(BuildContext context) {
