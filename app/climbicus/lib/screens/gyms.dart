@@ -60,11 +60,13 @@ class _GymsPageState extends State<GymsPage> {
       );
     });
 
-    return ListView.separated(
-      padding: const EdgeInsets.all(8),
-      itemCount: gymTiles.length,
-      itemBuilder: (context, index) => gymTiles[index],
-      separatorBuilder: (context, index) => Divider(),
+    return Scrollbar(
+      child: ListView.separated(
+        padding: const EdgeInsets.all(8),
+        itemCount: gymTiles.length,
+        itemBuilder: (context, index) => gymTiles[index],
+        separatorBuilder: (context, index) => Divider(),
+      )
     );
   }
 
