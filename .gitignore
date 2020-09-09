@@ -7,6 +7,7 @@ prod_secrets.env
 key.properties
 key.jks
 __pycache__
+.DS_Store
 server/predictor/model_files/
 model_training_pre_release/callbacks/
 model_training_pre_release/data/
