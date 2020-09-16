@@ -1,5 +1,6 @@
 
 import 'package:bloc/bloc.dart';
+import 'package:climbicus/repositories/api_repository.dart';
 import 'package:climbicus/repositories/user_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
@@ -44,6 +45,15 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
   Stream<AuthenticationState> mapEventToState(AuthenticationEvent event) async* {
     if (event is AppStarted) {
       final hasAuthenticated = await getIt<UserRepository>().hasAuthenticated();
+
+      // Verify that auth token is still valid upon logging back in.
+      // If not, clear auth details and go back to log in page.
+      try {
+        var results = (await getIt<ApiRepository>().fetchGyms())["gyms"];
+      } on SignatureVerificationApiException {
+        add(LoggedOut());
+        return;
+      }
 
       if (hasAuthenticated) {
         yield AuthenticationAuthenticated();

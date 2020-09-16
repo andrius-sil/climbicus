@@ -31,6 +31,11 @@ class ConflictingResourceApiException extends ApiException {
       : super(response, responseJson);
 }
 
+class SignatureVerificationApiException extends ApiException {
+  SignatureVerificationApiException(http.StreamedResponse response, String responseJson)
+      : super(response, responseJson);
+}
+
 class ApiRepository {
   final getIt = GetIt.instance;
 
@@ -48,6 +53,8 @@ class ApiRepository {
         return UnauthorizedApiException(response, responseJson);
       case 409:
         return ConflictingResourceApiException(response, responseJson);
+      case 422:
+        return SignatureVerificationApiException(response, responseJson);
       default:
         return ApiException(response, responseJson);
     }
