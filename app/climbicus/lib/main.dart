@@ -7,6 +7,7 @@ import 'package:climbicus/constants.dart';
 import 'package:climbicus/repositories/api_repository.dart';
 import 'package:climbicus/repositories/settings_repository.dart';
 import 'package:climbicus/repositories/user_repository.dart';
+import 'package:climbicus/screens/gyms.dart';
 import 'package:climbicus/screens/login.dart';
 import 'package:climbicus/screens/route_view.dart';
 import 'package:climbicus/screens/settings.dart';
@@ -115,6 +116,11 @@ class _HomePageState extends State<HomePage> {
         builder: (context, settingsState) {
           if (settingsState is SettingsUninitialized) {
             return _buildWaitingPage();
+          }
+
+          // Ask user to select their gym if app is installed for the first time.
+          if (settingsState.gymId == PLACEHOLDER_GYM_ID) {
+            return GymsPage();
           }
 
           return BlocBuilder<GymsBloc, GymsState>(

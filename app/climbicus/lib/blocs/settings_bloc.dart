@@ -7,6 +7,8 @@ import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
+const PLACEHOLDER_GYM_ID = -1;
+
 
 class SettingsState {
   final int displayPredictionsNum;
@@ -40,7 +42,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   // Initialise settings with default values.
   String _imagePicker = "both";
   int _displayPredictionsNum = 3;
-  int _gymId = 1;
+  int _gymId = PLACEHOLDER_GYM_ID;
   PackageInfo _packageInfo;
 
   int get gymId => _gymId;
