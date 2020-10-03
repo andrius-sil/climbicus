@@ -22,6 +22,7 @@ import 'blocs/gyms_bloc.dart';
 import 'blocs/login_bloc.dart';
 import 'blocs/settings_bloc.dart';
 import 'blocs/simple_bloc_delegate.dart';
+import 'blocs/users_bloc.dart';
 import 'env.dart';
 import 'models/gym.dart';
 
@@ -60,6 +61,7 @@ void mainDelegate(Environment env) {
         )),
         BlocProvider<SettingsBloc>(create: (context) => SettingsBloc()),
         BlocProvider<GymsBloc>(create: (context) => GymsBloc()),
+        BlocProvider<UsersBloc>(create: (context) => UsersBloc()),
         BlocProvider<RouteImagesBloc>(create: (context) => RouteImagesBloc()),
         BlocProvider<RoutePredictionBloc>(create: (context) => RoutePredictionBloc()),
         BlocProvider<GymRoutesBloc>(create: (context) => GymRoutesBloc(

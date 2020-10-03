@@ -20,12 +20,13 @@ def recreate_db_cmd(tables):
 
 
 @click.command("create-user")
+@click.option("--name", type=str)
 @click.option("--email", type=str)
 @click.option("--password", type=str)
 @with_appcontext
-def create_user_cmd(email, password):
-    create_user(db, email, password)
-    print(f"Created new user '{email}'")
+def create_user_cmd(name, email, password):
+    create_user(db, name, email, password)
+    print(f"Created new user '{name}' ({email})")
 
 
 @click.command("create-gym")

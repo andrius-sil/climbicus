@@ -20,12 +20,22 @@ def model_repr(name, **kwargs):
 
 class Users(db.Model):
     id = db.Column(db.Integer, db.Sequence('user_id_seq'), primary_key=True)
+    name = db.Column(db.String, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
     _password = db.Column(db.String, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
+    @property
+    def api_model(self):
+        # Do not put private user information here!
+        return {
+            "id": self.id,
+            "name": self.name,
+            "created_at": self.created_at.isoformat(),
+        }
+
     def __repr__(self):
-        return model_repr("User", id=self.id, email=self.email)
+        return model_repr("User", id=self.id, name=self.name, email=self.email)
 
     @hybrid_property
     def password(self):

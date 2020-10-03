@@ -128,8 +128,9 @@ class ApiRepository {
     return _requestJson("POST", "login", data, auth: false);
   }
 
-  Future<Map> register(String email, String password) async {
+  Future<Map> register(String name, String email, String password) async {
     Map data = {
+      "name": name,
       "email": email,
       "password": password,
     };
@@ -220,5 +221,9 @@ class ApiRepository {
 
   Future<Map> fetchGyms() async {
     return _requestJson("GET", "gyms/", {});
+  }
+
+  Future<Map> fetchUsers() async {
+    return _requestJson("GET", "users/", {});
   }
 }

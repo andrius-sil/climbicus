@@ -1,4 +1,4 @@
-email,password,created_at
-t,t,2019-10-10 00:00:00+0
-silas04@gmail.com,chorrera,2019-10-10 00:00:00+0
-keksainis@gmail.com,masterbates,2019-10-10 00:00:00+0
+name,email,password,created_at
+Tester,t,t,2019-10-10 00:00:00+0
+Andrius S.,silas04@gmail.com,chorrera,2019-10-10 00:00:00+0
+Liucija L.,keksainis@gmail.com,masterbates,2019-10-10 00:00:00+0

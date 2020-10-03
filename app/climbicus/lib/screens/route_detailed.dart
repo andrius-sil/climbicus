@@ -1,5 +1,6 @@
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
+import 'package:climbicus/blocs/users_bloc.dart';
 import 'package:climbicus/utils/time.dart';
 import 'package:climbicus/widgets/route_image_carousel.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class RouteDetailedPage extends StatefulWidget {
 
 class _RouteDetailedPage extends State<RouteDetailedPage> {
   RouteImagesBloc _routeImagesBloc;
+  UsersBloc _usersBloc;
 
   @override
   void initState() {
@@ -25,6 +27,8 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
 
     _routeImagesBloc = BlocProvider.of<RouteImagesBloc>(context);
     _routeImagesBloc.add(FetchRouteImagesAll(routeId: widget.routeWithLogs.route.id));
+
+    _usersBloc = BlocProvider.of<UsersBloc>(context);
   }
 
   @override
@@ -87,9 +91,20 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
   }
 
   Widget _buildRouteDetails() {
-    return Text(
-        "Added by: user ${widget.routeWithLogs.route.userId.toString()} - ${dateToString(widget.routeWithLogs.route.createdAt)}",
-        style: TextStyle(fontSize: HEADING_SIZE_3),
+    return BlocBuilder<UsersBloc, UsersState>(
+      builder: (context, state) {
+        if (state is UsersLoaded) {
+          var userName = state.users[widget.routeWithLogs.route.userId].name;
+          return Text(
+              "Added by: $userName - ${dateToString(widget.routeWithLogs.route.createdAt)}",
+              style: TextStyle(fontSize: HEADING_SIZE_3),
+          );
+        } else if (state is UsersError) {
+          return ErrorWidget.builder(state.errorDetails);
+        }
+
+        return Center(child: CircularProgressIndicator());
+      },
     );
   }
 
