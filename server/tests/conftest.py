@@ -52,6 +52,7 @@ def app(resource_dir):
 
         db.session.add(
             Users(
+                name="Tester One",
                 email="test1@testing.com",
                 password="testing1",
                 created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
@@ -59,6 +60,7 @@ def app(resource_dir):
         )
         db.session.add(
             Users(
+                name="Tester Two",
                 email="test2@testing.com",
                 password="testing2",
                 created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),

@@ -40,10 +40,10 @@ def load_table(db, ModelClass):
     db.session.flush()
 
 
-def create_user(db, email, password):
+def create_user(db, name, email, password):
     # TODO: move to a function
     try:
-        user = Users(email=email, password=password, created_at=datetime.datetime.utcnow())
+        user = Users(name=name, email=email, password=password, created_at=datetime.datetime.utcnow())
 
         db.session.add(user)
         db.session.commit()

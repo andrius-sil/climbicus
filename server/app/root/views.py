@@ -44,11 +44,12 @@ def register():
     if not request.is_json:
         abort(400, "Request data should be in JSON format")
 
+    name = request.json.get("name", None)
     email = request.json.get("email", None)
     password = request.json.get("password", None)
 
     try:
-        user = Users(email=email, password=password, created_at = datetime.datetime.utcnow())
+        user = Users(name=name, email=email, password=password, created_at=datetime.datetime.utcnow())
 
         db.session.add(user)
         db.session.commit()

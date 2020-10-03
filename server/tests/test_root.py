@@ -42,6 +42,7 @@ def test_login_with_invalid_password(client):
 
 def test_register(client, app):
     data = {
+        "name": "New Tester",
         "email": "new@tester.com",
         "password": "newpass",
     }
@@ -53,12 +54,14 @@ def test_register(client, app):
 
     with app.app_context():
         user = Users.query.filter_by(id=3).one()
+        assert user.name == "New Tester"
         assert user.email == "new@tester.com"
         assert user.check_password("newpass")
 
 
 def test_register_email_already_taken(client, app):
     data = {
+        "name": "Existing User",
         "email": "test1@testing.com",
         "password": "newpass",
     }
