@@ -7,6 +7,7 @@ from flask_jwt_extended import create_access_token
 from app import db
 from app.app_handlers import no_jwt_required
 from app.models import Users
+from app.utils.query import create_db_user
 
 blueprint = Blueprint("root_blueprint", __name__)
 
@@ -48,13 +49,7 @@ def register():
     email = request.json.get("email", None)
     password = request.json.get("password", None)
 
-    try:
-        user = Users(name=name, email=email, password=password, created_at=datetime.datetime.utcnow())
-
-        db.session.add(user)
-        db.session.commit()
-    except IntegrityError:
-        abort(409, "User already exists")
+    create_db_user(db, name=name, email=email, password=password)
 
     return jsonify({
         "msg": "New user created",

@@ -6,6 +6,7 @@ from werkzeug.exceptions import abort
 
 from app.models import Users, Gyms
 from app.utils.encoding import json_to_nparraybytes
+from app.utils.query import create_db_user
 
 
 def preload_dummy_data(db, tables):
@@ -41,14 +42,7 @@ def load_table(db, ModelClass):
 
 
 def create_user(db, name, email, password):
-    # TODO: move to a function
-    try:
-        user = Users(name=name, email=email, password=password, created_at=datetime.datetime.utcnow())
-
-        db.session.add(user)
-        db.session.commit()
-    except IntegrityError:
-        abort(409, "User already exists")
+    create_db_user(db, name=name, email=email, password=password)
 
 
 def create_gym(db, name, has_bouldering, has_sport):
