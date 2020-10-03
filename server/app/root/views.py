@@ -1,6 +1,3 @@
-import datetime
-
-from sqlalchemy.exc import IntegrityError
 from flask import Blueprint, request, abort, jsonify, current_app
 from flask_jwt_extended import create_access_token
 

@@ -1,10 +1,8 @@
 import datetime
 
 import pandas as pd
-from sqlalchemy.exc import IntegrityError
-from werkzeug.exceptions import abort
 
-from app.models import Users, Gyms
+from app.models import Gyms
 from app.utils.encoding import json_to_nparraybytes
 from app.utils.query import create_db_user
 
