@@ -11,10 +11,15 @@ abstract class RegisterEvent {
 }
 
 class RegisterButtonPressed extends RegisterEvent {
+  final String name;
   final String email;
   final String password;
 
-  const RegisterButtonPressed({@required this.email, @required this.password});
+  const RegisterButtonPressed({
+    @required this.name,
+    @required this.email,
+    @required this.password,
+  });
 }
 
 
@@ -55,6 +60,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
       try {
         await getIt<UserRepository>().register(
+          name: event.name,
           email: event.email,
           password: event.password,
         );

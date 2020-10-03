@@ -13,6 +13,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   RegisterBloc _registerBloc;
 
+  String _name;
   String _email;
   String _password;
 
@@ -61,6 +62,15 @@ class _RegisterPageState extends State<RegisterPage> {
     return <Widget>[
       ListTile(
         title: TextFormField(
+          key: Key('name'),
+          keyboardType: TextInputType.text,
+          decoration: InputDecoration(labelText: 'Name / Nickname'),
+          validator: (value) => value.isEmpty ? "Name / Nickname can't be empty" : null,
+          onSaved: (value) => _name = value,
+        ),
+      ),
+      ListTile(
+        title: TextFormField(
           key: Key('email'),
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(labelText: 'Email'),
@@ -102,6 +112,7 @@ class _RegisterPageState extends State<RegisterPage> {
     form.save();
 
     _registerBloc.add(RegisterButtonPressed(
+      name: _name,
       email: _email,
       password: _password,
     ));

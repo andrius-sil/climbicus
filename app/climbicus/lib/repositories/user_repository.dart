@@ -17,10 +17,11 @@ class UserRepository {
   int get userId => _userId;
 
   Future<void> register({
+    @required String name,
     @required String email,
     @required String password,
   }) async {
-    await getIt<ApiRepository>().register(email, password);
+    await getIt<ApiRepository>().register(name, email, password);
   }
 
   Future<Map> authenticate({
