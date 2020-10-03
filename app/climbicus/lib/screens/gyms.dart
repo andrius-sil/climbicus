@@ -1,4 +1,6 @@
 
+import 'dart:collection';
+
 import 'package:climbicus/blocs/gyms_bloc.dart';
 import 'package:climbicus/blocs/settings_bloc.dart';
 import 'package:climbicus/models/gym.dart';
@@ -47,7 +49,7 @@ class _GymsPageState extends State<GymsPage> {
 
   Widget _buildGymsList(Map<int, Gym> gyms) {
     List<Widget> gymTiles = [];
-    gyms.forEach((int gymId, Gym gym) {
+    _sortGymsByName(gyms).forEach((int gymId, Gym gym) {
       gymTiles.add(
         GestureDetector(
           child: ListTile(title: Text(gym.name)),
@@ -70,4 +72,11 @@ class _GymsPageState extends State<GymsPage> {
     );
   }
 
+  Map<int, Gym> _sortGymsByName(Map<int, Gym> gyms) {
+    var sortedKeys = gyms.keys.toList(growable: false)
+      ..sort((k1, k2) => gyms[k1].name.compareTo(gyms[k2].name));
+
+    return LinkedHashMap.fromIterable(sortedKeys,
+        key: (k) => k, value: (k) => gyms[k]);
+  }
 }
