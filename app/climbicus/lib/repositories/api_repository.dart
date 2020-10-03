@@ -222,4 +222,8 @@ class ApiRepository {
   Future<Map> fetchGyms() async {
     return _requestJson("GET", "gyms/", {});
   }
+
+  Future<Map> fetchUsers() async {
+    return _requestJson("GET", "users/", {});
+  }
 }
