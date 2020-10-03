@@ -25,6 +25,15 @@ class Users(db.Model):
     _password = db.Column(db.String, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
+    @property
+    def api_model(self):
+        # Do not put private user information here!
+        return {
+            "id": self.id,
+            "name": self.name,
+            "created_at": self.created_at.isoformat(),
+        }
+
     def __repr__(self):
         return model_repr("User", id=self.id, name=self.name, email=self.email)
 

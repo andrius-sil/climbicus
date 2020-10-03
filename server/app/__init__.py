@@ -47,12 +47,13 @@ def create_app(db_connection_uri, jwt_secret_key, io_provider, disable_auth=Fals
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = False
     _ = JWTManager(app)
 
-    from app import root, gyms, routes, route_images, user_route_log
+    from app import root, gyms, routes, route_images, user_route_log, users
     app.register_blueprint(root.blueprint)
     app.register_blueprint(gyms.blueprint)
     app.register_blueprint(routes.blueprint)
     app.register_blueprint(route_images.blueprint)
     app.register_blueprint(user_route_log.blueprint)
+    app.register_blueprint(users.blueprint)
 
     app.config["DISABLE_AUTH"] = disable_auth
 
