@@ -111,7 +111,7 @@ class BodyListItem extends StatefulWidget {
 
 class _BodyListItemState extends State<BodyListItem> {
   final checkboxSentKey = GlobalKey<CheckboxWithTitleState>();
-  final sliderAttemptsKey = GlobalKey<SliderAttemptsState>();
+  final numberAttemptsKey = GlobalKey<NumberAttemptsState>();
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +120,7 @@ class _BodyListItemState extends State<BodyListItem> {
         children: <Widget>[
           CheckboxSent(key: checkboxSentKey),
           Expanded(
-            child: SliderAttempts(key: sliderAttemptsKey),
+            child: NumberAttempts(key: numberAttemptsKey),
           ),
         ],
       ),
@@ -137,7 +137,7 @@ class _BodyListItemState extends State<BodyListItem> {
     widget.gymRoutesBloc.add(AddNewUserRouteLog(
       routeId: widget.routeWithLogs.route.id,
       completed: checkboxSentKey.currentState.value,
-      numAttempts: sliderAttemptsKey.currentState.value,
+      numAttempts: numberAttemptsKey.currentState.value,
     ));
   }
 }

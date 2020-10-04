@@ -26,7 +26,7 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
   static const double columnSize = 200.0;
 
   final checkboxSentKey = GlobalKey<CheckboxWithTitleState>();
-  final sliderAttemptsKey = GlobalKey<SliderAttemptsState>();
+  final numberAttemptsKey = GlobalKey<NumberAttemptsState>();
 
   RouteImagesBloc _routeImagesBloc;
   GymRoutesBloc _gymRoutesBloc;
@@ -86,7 +86,7 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
             Column(
               children: <Widget>[
                 CheckboxSent(key: checkboxSentKey),
-                SliderAttempts(key: sliderAttemptsKey),
+                NumberAttempts(key: numberAttemptsKey),
               ],
             ),
             RaisedButton(
@@ -101,7 +101,7 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
     _gymRoutesBloc.add(AddNewUserRouteLog(
       routeId: widget.selectedRouteId,
       completed: checkboxSentKey.currentState.value,
-      numAttempts: sliderAttemptsKey.currentState.value,
+      numAttempts: numberAttemptsKey.currentState.value,
     ));
 
     Navigator.of(context).popUntil((route) => route.isFirst);

@@ -25,7 +25,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
   static const NOT_SELECTED = "not selected";
 
   final checkboxSentKey = GlobalKey<CheckboxWithTitleState>();
-  final sliderAttemptsKey = GlobalKey<SliderAttemptsState>();
+  final numberAttemptsKey = GlobalKey<NumberAttemptsState>();
 
   Map<int, RouteImage> _takenImages = {};
 
@@ -94,7 +94,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
                 _buildSelectCategory(),
                 _buildSelectGrade(),
                 CheckboxSent(key: checkboxSentKey),
-                SliderAttempts(key: sliderAttemptsKey),
+                NumberAttempts(key: numberAttemptsKey),
               ],
             ),
             RaisedButton(
@@ -201,7 +201,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
       category: _selectedCategory,
       grade: "${_selectedGradeSystem}_$_selectedGrade",
       completed: checkboxSentKey.currentState.value,
-      numAttempts: sliderAttemptsKey.currentState.value,
+      numAttempts: numberAttemptsKey.currentState.value,
       routeImages: _takenImages.values.toList(),
     ));
 

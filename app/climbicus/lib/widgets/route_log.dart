@@ -2,6 +2,7 @@
 import 'package:climbicus/style.dart';
 import 'package:climbicus/utils/route_grades.dart';
 import 'package:flutter/material.dart';
+import 'package:numberpicker/numberpicker.dart';
 
 class CheckboxSent extends CheckboxWithTitle {
   const CheckboxSent({Key key}) : super(key: key, title: "Sent!");
@@ -52,6 +53,43 @@ class CheckboxWithTitleState extends State<CheckboxWithTitle> {
         Text(widget.title),
       ],
     );
+  }
+}
+
+
+class NumberAttempts extends StatefulWidget {
+  const NumberAttempts({Key key}) : super(key: key);
+
+  @override
+  NumberAttemptsState createState() => NumberAttemptsState();
+}
+
+class NumberAttemptsState extends State<NumberAttempts> {
+  int _value = 0;
+
+  int get value => (_value == 0) ? null : _value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Text("How many attempts?\t${_numAttemptsLabel()}"),
+        NumberPicker.integer(
+          initialValue: _value,
+          minValue: 0,
+          maxValue: 30,
+          itemExtent: 25.0,
+          textMapper: (String text) => ((text == "0") ? "--" : "$text"),
+          onChanged: (num value) => setState(() {
+            _value = value.toInt();
+          }),
+        ),
+      ],
+    );
+  }
+
+  String _numAttemptsLabel() {
+    return (_value == 0) ? "--" : "$value";
   }
 }
 
