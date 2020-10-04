@@ -101,6 +101,7 @@ class Routes(db.Model):
     id = db.Column(db.Integer, db.Sequence('route_id_seq'), primary_key=True)
     gym_id = db.Column(db.Integer, db.ForeignKey('gyms.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    name = db.Column(db.String)
     category = db.Column(db.Enum(RouteCategory), nullable=False)
     lower_grade = db.Column(db.Enum(*grade_enum_values, name='lowergrade'), nullable=False)
     upper_grade = db.Column(db.Enum(*grade_enum_values, name='uppergrade'), nullable=False)
@@ -112,6 +113,7 @@ class Routes(db.Model):
             "id": self.id,
             "gym_id": self.gym_id,
             "user_id": self.user_id,
+            "name": self.name,
             "category": self.category.name,
             "lower_grade": self.lower_grade,
             "upper_grade": self.upper_grade,
@@ -119,7 +121,7 @@ class Routes(db.Model):
         }
 
     def __repr__(self):
-        return model_repr("Route", id=self.id, gym_id=self.gym_id, category=self.category.name,
+        return model_repr("Route", id=self.id, gym_id=self.gym_id, category=self.category.name, name=self.name,
                           lower_grade=self.lower_grade, upper_grade=self.upper_grade)
 
 

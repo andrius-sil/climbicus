@@ -11,6 +11,7 @@ class Route {
   int gymId;
   int userId;
   String category;
+  String name;
   String lowerGrade;
   String upperGrade;
   DateTime createdAt;
