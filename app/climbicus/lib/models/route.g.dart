@@ -17,7 +17,7 @@ Route _$RouteFromJson(Map<String, dynamic> json) {
     json['created_at'] == null
         ? null
         : DateTime.parse(json['created_at'] as String),
-  );
+  )..name = json['name'] as String;
 }
 
 Map<String, dynamic> _$RouteToJson(Route instance) => <String, dynamic>{
@@ -25,6 +25,7 @@ Map<String, dynamic> _$RouteToJson(Route instance) => <String, dynamic>{
       'gym_id': instance.gymId,
       'user_id': instance.userId,
       'category': instance.category,
+      'name': instance.name,
       'lower_grade': instance.lowerGrade,
       'upper_grade': instance.upperGrade,
       'created_at': instance.createdAt?.toIso8601String(),
