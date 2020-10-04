@@ -212,6 +212,7 @@ class ApiRepository {
     Map data = {
       "gym_id": _gymId,
       "category": category,
+      "name": null,
       "lower_grade": grade,
       "upper_grade": grade,
     };
