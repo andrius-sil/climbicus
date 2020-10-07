@@ -2,7 +2,9 @@
 import 'package:climbicus/style.dart';
 import 'package:climbicus/utils/route_grades.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:numberpicker/numberpicker.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 
 class CheckboxSent extends CheckboxWithTitle {
   const CheckboxSent({Key key}) : super(key: key, title: "Sent!");
@@ -195,3 +197,86 @@ class SliderRouteGradesState extends State<SliderRouteGrades> {
 
   String _endLabel() => widget.gradeSystem[_values.end.toInt()];
 }
+
+
+class RouteDifficultyRating extends StatefulWidget {
+  const RouteDifficultyRating({Key key}) : super(key: key);
+
+  @override
+  RouteDifficultyRatingState createState() => RouteDifficultyRatingState();
+}
+
+class RouteDifficultyRatingState extends State<RouteDifficultyRating> {
+  int _value;
+
+  int get value => _value;
+
+  @override
+  Widget build(BuildContext context) {
+    return ToggleSwitch(
+      initialLabelIndex: -1,
+      labels: ['Soft', 'Fair', 'Hard'],
+      onToggle: (index) => _value = index,
+    );
+  }
+}
+
+
+class RouteQualityRating extends StatefulWidget {
+  const RouteQualityRating({Key key}) : super(key: key);
+
+  @override
+  RouteQualityRatingState createState() => RouteQualityRatingState();
+}
+
+class RouteQualityRatingState extends State<RouteQualityRating> {
+  int _value;
+
+  int get value => (_value == 0) ? null : _value;
+
+  @override
+  Widget build(BuildContext context) {
+    return RatingBar(
+      initialRating: 0,
+      minRating: 0,
+      itemCount: 3,
+      ratingWidget: RatingWidget(
+        full: const Icon(Icons.star),
+        half: const Icon(Icons.star_half),
+        empty: const Icon(Icons.star_border),
+      ),
+      onRatingUpdate: (double value) => setState(() {
+        _value = value.toInt();
+      }),
+    );
+  }
+}
+
+
+class RouteName extends StatefulWidget {
+  const RouteName({Key key}) : super(key: key);
+
+  @override
+  RouteNameState createState() => RouteNameState();
+}
+
+class RouteNameState extends State<RouteName> {
+  String _value;
+
+  String get value => (_value == "") ? null : _value;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      decoration: InputDecoration(
+        labelText: "Route name",
+      ),
+      onChanged: (String value) {
+        setState(() {
+          _value = value;
+        });
+      },
+    );
+  }
+}
+
