@@ -1,6 +1,7 @@
 from enum import Enum, auto
 
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy import CheckConstraint, UniqueConstraint
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app import db
@@ -186,3 +187,40 @@ class UserRouteLog(db.Model):
         return model_repr("UserRouteLog", id=self.id, route_id=self.route_id, user_id=self.user_id,
                           gym_id=self.gym_id, completed=self.completed,
                           num_attempts=self.num_attempts, created_at=self.created_at)
+
+class RouteDifficulty(Enum):
+    soft = -1.0
+    fair = 0.0
+    hard = 1.0
+
+
+class UserRouteVotes(db.Model):
+    id = db.Column(db.Integer, db.Sequence('user_route_votes_id_seq'), primary_key=True)
+    route_id = db.Column(db.Integer, db.ForeignKey('routes.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    gym_id = db.Column(db.Integer, db.ForeignKey('gyms.id'), nullable=False)
+    quality = db.Column(db.Float)
+    difficulty = db.Column(db.Enum(RouteDifficulty))
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False)
+    __table_args__ = (
+        CheckConstraint('quality >= 1.0'),
+        CheckConstraint('quality <= 3.0'),
+        UniqueConstraint('user_id', 'route_id'),
+    )
+
+    @property
+    def api_model(self):
+        return {
+            "id": self.id,
+            "route_id": self.route_id,
+            "user_id": self.user_id,
+            "gym_id": self.gym_id,
+            "quality": self.quality,
+            "difficulty": self.difficulty.name if self.difficulty else None,
+            "created_at": self.created_at.isoformat(),
+        }
+
+    def __repr__(self):
+        return model_repr("UserRouteLog", id=self.id, route_id=self.route_id, user_id=self.user_id,
+                          gym_id=self.gym_id, quality=self.quality,
+                          difficulty=self.difficulty, created_at=self.created_at)
