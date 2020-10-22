@@ -5,7 +5,7 @@ from flask_jwt_extended import create_access_token
 from sqlalchemy_utils import create_database, database_exists
 
 from app import create_app, db
-from app.models import Gyms, RouteImages, Routes, UserRouteLog, Users
+from app.models import Gyms, RouteImages, Routes, UserRouteLog, Users, UserRouteVotes
 from datetime import datetime
 import pytz
 
@@ -144,6 +144,26 @@ def app(resource_dir):
                     gym_id=1,
                     completed=True,
                     num_attempts=10,
+                    created_at=datetime(2012, 3, 2, 10, 10, 10, tzinfo=pytz.UTC),
+                ),
+            ]
+        )
+        db.session.add_all(
+            [
+                UserRouteVotes(
+                    route_id=1,
+                    user_id=1,
+                    gym_id=1,
+                    quality=1.0,
+                    difficulty="soft",
+                    created_at=datetime(2012, 3, 2, 10, 10, 10, tzinfo=pytz.UTC),
+                ),
+                UserRouteVotes(
+                    route_id=2,
+                    user_id=1,
+                    gym_id=1,
+                    quality=3.0,
+                    difficulty="hard",
                     created_at=datetime(2012, 3, 2, 10, 10, 10, tzinfo=pytz.UTC),
                 ),
             ]
