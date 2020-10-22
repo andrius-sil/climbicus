@@ -52,7 +52,7 @@ def view(route_id=None):
     return jsonify(votes)
 
 
-@blueprint.route("/<int:user_route_votes_id>", methods=["PUT"])
+@blueprint.route("/<int:user_route_votes_id>", methods=["PATCH"])
 def update(user_route_votes_id=None):
     quality = request.json["quality"]
     difficulty = request.json["difficulty"]

@@ -72,7 +72,7 @@ def test_update_votes(client, app, auth_headers_user1):
         "quality": 3.0,
         "difficulty": None,
     }
-    resp = client.put("/user_route_votes/1", data=json.dumps(data), content_type="application/json",
+    resp = client.patch("/user_route_votes/1", data=json.dumps(data), content_type="application/json",
                       headers=auth_headers_user1)
 
     assert resp.status_code == 200
@@ -188,7 +188,7 @@ def test_update_votes_check_constraint(client, app, auth_headers_user1):
         "quality": 4.0,
         "difficulty": "soft",
     }
-    resp = client.put("/user_route_votes/1", data=json.dumps(data), content_type="application/json",
+    resp = client.patch("/user_route_votes/1", data=json.dumps(data), content_type="application/json",
                        headers=auth_headers_user1)
 
     assert resp.status_code == 409
@@ -203,7 +203,7 @@ def test_update_votes_invalid_value(client, app, auth_headers_user1):
         "quality": 3.0,
         "difficulty": "invalid_value",
     }
-    resp = client.put("/user_route_votes/1", data=json.dumps(data), content_type="application/json",
+    resp = client.patch("/user_route_votes/1", data=json.dumps(data), content_type="application/json",
                        headers=auth_headers_user1)
 
     assert resp.status_code == 400
@@ -218,7 +218,7 @@ def test_update_votes_invalid_id(client, app, auth_headers_user1):
         "quality": 3.0,
         "difficulty": "soft",
     }
-    resp = client.put("/user_route_votes/100", data=json.dumps(data), content_type="application/json",
+    resp = client.patch("/user_route_votes/100", data=json.dumps(data), content_type="application/json",
                        headers=auth_headers_user1)
 
     assert resp.status_code == 400
