@@ -23,12 +23,15 @@ def test_routes(client, auth_headers_user1):
     assert resp.is_json
 
     expected_routes = {
-        "100": {"category": "sport", "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 100,
-                "lower_grade": "Font_7A", "upper_grade": "Font_7A", "user_id": 2, "name": "Crimpinator 100"},
-        "101": {"category": "sport", "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 101,
-                "lower_grade": "Font_7A", "upper_grade": "Font_7A", "user_id": 2, "name": "Crimpinator 101"},
-        "102": {"category": "sport", "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 102,
-                "lower_grade": "Font_7A", "upper_grade": "Font_7A", "user_id": 2, "name": "Crimpinator 102"},
+        "100": {"avg_difficulty": None, "avg_quality": None, "category": "sport",
+                "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 100, "lower_grade": "Font_7A",
+                "upper_grade": "Font_7A", "user_id": 2, "name": "Crimpinator 100"},
+        "101": {"avg_difficulty": None, "avg_quality": None, "category": "sport",
+                "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 101, "lower_grade": "Font_7A",
+                "upper_grade": "Font_7A", "user_id": 2, "name": "Crimpinator 101"},
+        "102": {"avg_difficulty": None, "avg_quality": None, "category": "sport",
+                "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 102, "lower_grade": "Font_7A",
+                "upper_grade": "Font_7A", "user_id": 2, "name": "Crimpinator 102"},
     }
 
     assert expected_routes == resp.json["routes"]
@@ -45,8 +48,9 @@ def test_single_route(client, auth_headers_user1):
     assert resp.is_json
 
     expected_routes = {
-        "101": {"category": "sport", "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 101,
-                "lower_grade": "Font_7A", "upper_grade": "Font_7A", "user_id": 2, "name": "Crimpinator 101"},
+        "101": {"avg_difficulty": None, "avg_quality": None, "category": "sport",
+                "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 101, "lower_grade": "Font_7A",
+                "upper_grade": "Font_7A", "user_id": 2, "name": "Crimpinator 101"},
     }
 
     assert expected_routes == resp.json["routes"]
@@ -67,8 +71,9 @@ def test_add_route(client, app, auth_headers_user1):
     assert resp.status_code == 200
     assert resp.is_json
     assert resp.json["msg"] == "Route added"
-    assert resp.json["route"] == {"category": "sport", "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 1,
-                                  "id": 103, "lower_grade": "Font_7A", "upper_grade": "Font_7A", "user_id": 1,
+    assert resp.json["route"] == {"avg_difficulty": None, "avg_quality": None, "category": "sport",
+                                  "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 1, "id": 103,
+                                  "lower_grade": "Font_7A", "upper_grade": "Font_7A", "user_id": 1,
                                   "name": "No Hands Slab"}
 
     with app.app_context():
@@ -154,25 +159,29 @@ def test_predict_with_unknown_image(client, resource_dir, auth_headers_user1):
 
     assert resp.json["sorted_route_and_image_predictions"] == [
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 2,
+            'route': {'avg_difficulty': None, 'avg_quality': None, 'category': 'bouldering',
+                      'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 2,
                       'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1, 'name': 'Jug Fest 2'},
             'route_image': {'path': "user2_route2_1.jpg", 'created_at':
                 '2019-02-04T10:10:10+00:00', 'id': 3, 'route_id': 2, 'user_id': 2},
         },
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 4,
+            'route': {'avg_difficulty': None, 'avg_quality': None, 'category': 'bouldering',
+                      'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 4,
                       'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1, 'name': 'Jug Fest 4'},
             'route_image': {'path': "user2_route4_1.jpg", 'created_at':
                 '2019-02-04T10:10:10+00:00', 'id': 7, 'route_id': 4, 'user_id': 2},
         },
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 1,
+            'route': {'avg_difficulty': None, 'avg_quality': None, 'category': 'bouldering',
+                      'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 1,
                       'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1, 'name': 'Jug Fest 1'},
             'route_image': {'path': "user1_route1.jpg", 'created_at':
                 '2019-03-04T10:10:10+00:00', 'id': 1, 'route_id': 1, 'user_id': 1},
         },
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 3,
+            'route': {'avg_difficulty': None, 'avg_quality': None, 'category': 'bouldering',
+                      'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 3,
                       'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1, 'name': 'Jug Fest 3'},
             'route_image': {'path': "user1_route3.jpg", 'created_at':
                 '2019-03-04T10:10:10+00:00', 'id': 5, 'route_id': 3, 'user_id': 1},
@@ -208,24 +217,28 @@ def test_cbir_predict_with_image(app, client, resource_dir, auth_headers_user1):
 
     assert resp.json["sorted_route_and_image_predictions"] == [
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 2,
+            'route': {'avg_difficulty': None, 'avg_quality': None, 'category': 'bouldering',
+                      'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 2,
                       'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1, 'name': 'Jug Fest 2'},
             'route_image': {'path': "user2_route2_2.jpg", 'created_at':
                 '2019-02-04T10:10:10+00:00', 'id': 4, 'route_id': 2, 'user_id': 2},
         },
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 4,
+            'route': {'avg_difficulty': None, 'avg_quality': None, 'category': 'bouldering',
+                      'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 4,
                       'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1, 'name': 'Jug Fest 4'},
             'route_image': {'path': "user2_route4_2.jpg", 'created_at':
                 '2019-02-04T10:10:10+00:00', 'id': 8, 'route_id': 4, 'user_id': 2},
         },
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 1,
+            'route': {'avg_difficulty': None, 'avg_quality': None, 'category': 'bouldering',
+                      'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 1,
                       'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1, 'name': 'Jug Fest 1'},
             'route_image': {'path': "user1_route1.jpg", 'created_at': '2019-03-04T10:10:10+00:00', 'id': 1, 'route_id': 1, 'user_id': 1},
         },
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 3,
+            'route': {'avg_difficulty': None, 'avg_quality': None, 'category': 'bouldering',
+                      'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 3,
                       'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1, 'name': 'Jug Fest 3'},
             'route_image': {'path': "user1_route3.jpg", 'created_at': '2019-03-04T10:10:10+00:00', 'id': 5, 'route_id': 3, 'user_id': 1},
         },
@@ -292,13 +305,15 @@ def test_cbir_apply_threshold(app, client, resource_dir, auth_headers_user1):
 
     assert resp.json["sorted_route_and_image_predictions"] == [
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 2,
+            'route': {'avg_difficulty': None, 'avg_quality': None, 'category': 'bouldering',
+                      'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 2,
                       'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1, 'name': 'Jug Fest 2'},
             'route_image': {'path': "user2_route2_2.jpg", 'created_at':
                 '2019-02-04T10:10:10+00:00', 'id': 4, 'route_id': 2, 'user_id': 2},
         },
         {
-            'route': {'category': 'bouldering', 'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 4,
+            'route': {'avg_difficulty': None, 'avg_quality': None, 'category': 'bouldering',
+                      'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 4,
                       'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1, 'name': 'Jug Fest 4'},
             'route_image': {'path': "user2_route4_2.jpg", 'created_at': '2019-02-04T10:10:10+00:00', 'id': 8,
                             'route_id': 4, 'user_id': 2},
