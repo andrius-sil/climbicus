@@ -1,7 +1,8 @@
 import datetime
+import statistics
 
 from app import db
-from app.models import UserRouteVotes
+from app.models import Routes, UserRouteVotes, RouteDifficulty
 
 from flask import request, Blueprint, jsonify, abort
 from sqlalchemy.exc import DataError, IntegrityError
@@ -9,6 +10,22 @@ from sqlalchemy.orm.exc import NoResultFound
 
 
 blueprint = Blueprint("user_route_votes_blueprint", __name__, url_prefix="/user_route_votes")
+
+
+def update_avg_route_votes(route_id, quality, difficulty):
+    votes = db.session.query(UserRouteVotes).filter_by(route_id=route_id).all()
+    route_entry = db.session.query(Routes).filter_by(id=route_id).one()
+
+    if difficulty:
+        difficulty_votes = [v.difficulty.value for v in votes]
+        avg_difficulty = round(statistics.mean(difficulty_votes), 0)
+        route_entry.avg_difficulty = RouteDifficulty(avg_difficulty)
+
+    if quality:
+        quality_votes = [v.quality for v in votes]
+        avg_quality = round(statistics.mean(quality_votes), 0)
+        route_entry.avg_quality = avg_quality
+    db.session.commit()
 
 
 @blueprint.route("/", methods=["POST"])
@@ -29,6 +46,8 @@ def add():
         abort(409, "the request does not pass database constraints")
     except DataError:
         abort(400, "the request contains invalid input value")
+
+    update_avg_route_votes(route_id, quality, difficulty)
 
     return jsonify({
         "msg": "Route votes entry added",
@@ -71,6 +90,8 @@ def update(user_route_votes_id=None):
         abort(409, "the request does not pass database constraints")
     except DataError:
         abort(400, "the request contains invalid input value")
+
+    update_avg_route_votes(votes_entry.route_id, quality, difficulty)
 
     return jsonify({
         "msg": "Route votes entry updated",
