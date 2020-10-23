@@ -98,6 +98,12 @@ class GradeSystems:
 grade_enum_values = GradeSystems.enum_list()
 
 
+class RouteDifficulty(Enum):
+    soft = -1.0
+    fair = 0.0
+    hard = 1.0
+
+
 class Routes(db.Model):
     id = db.Column(db.Integer, db.Sequence('route_id_seq'), primary_key=True)
     gym_id = db.Column(db.Integer, db.ForeignKey('gyms.id'), nullable=False)
@@ -106,6 +112,8 @@ class Routes(db.Model):
     category = db.Column(db.Enum(RouteCategory), nullable=False)
     lower_grade = db.Column(db.Enum(*grade_enum_values, name='lowergrade'), nullable=False)
     upper_grade = db.Column(db.Enum(*grade_enum_values, name='uppergrade'), nullable=False)
+    avg_difficulty = db.Column(db.Enum(RouteDifficulty))
+    avg_quality = db.Column(db.Float)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     @property
@@ -118,12 +126,16 @@ class Routes(db.Model):
             "category": self.category.name,
             "lower_grade": self.lower_grade,
             "upper_grade": self.upper_grade,
+            "avg_difficulty": self.avg_difficulty.name if self.avg_difficulty else None,
+            "avg_quality": self.avg_quality,
             "created_at": self.created_at.isoformat(),
         }
 
     def __repr__(self):
         return model_repr("Route", id=self.id, gym_id=self.gym_id, category=self.category.name, name=self.name,
-                          lower_grade=self.lower_grade, upper_grade=self.upper_grade)
+                          lower_grade=self.lower_grade, upper_grade=self.upper_grade,
+                          avg_difficulty=self.avg_difficulty.name if self.avg_difficulty else None,
+                          avg_quality=self.avg_quality)
 
 
 class RouteImages(db.Model):
@@ -188,11 +200,6 @@ class UserRouteLog(db.Model):
                           gym_id=self.gym_id, completed=self.completed,
                           num_attempts=self.num_attempts, created_at=self.created_at)
 
-class RouteDifficulty(Enum):
-    soft = -1.0
-    fair = 0.0
-    hard = 1.0
-
 
 class UserRouteVotes(db.Model):
     id = db.Column(db.Integer, db.Sequence('user_route_votes_id_seq'), primary_key=True)
@@ -223,4 +230,4 @@ class UserRouteVotes(db.Model):
     def __repr__(self):
         return model_repr("UserRouteLog", id=self.id, route_id=self.route_id, user_id=self.user_id,
                           gym_id=self.gym_id, quality=self.quality,
-                          difficulty=self.difficulty, created_at=self.created_at)
+                          difficulty=self.difficulty.name if self.difficulty else None, created_at=self.created_at)
