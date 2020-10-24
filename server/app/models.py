@@ -130,16 +130,19 @@ class Routes(db.Model):
             "category": self.category.name,
             "lower_grade": self.lower_grade,
             "upper_grade": self.upper_grade,
-            "avg_difficulty": self.avg_difficulty.name if self.avg_difficulty else None,
+            "avg_difficulty": self.avg_difficulty_name,
             "avg_quality": self.avg_quality,
             "created_at": self.created_at.isoformat(),
         }
 
+    @property
+    def avg_difficulty_name(self):
+        return self.avg_difficulty.name if self.avg_difficulty else None
+
     def __repr__(self):
         return model_repr("Route", id=self.id, gym_id=self.gym_id, category=self.category.name, name=self.name,
                           lower_grade=self.lower_grade, upper_grade=self.upper_grade,
-                          avg_difficulty=self.avg_difficulty.name if self.avg_difficulty else None,
-                          avg_quality=self.avg_quality)
+                          avg_difficulty=self.avg_difficulty_name, avg_quality=self.avg_quality)
 
 
 class RouteImages(db.Model):
@@ -227,11 +230,15 @@ class UserRouteVotes(db.Model):
             "user_id": self.user_id,
             "gym_id": self.gym_id,
             "quality": self.quality,
-            "difficulty": self.difficulty.name if self.difficulty else None,
+            "difficulty": self.difficulty_name,
             "created_at": self.created_at.isoformat(),
         }
 
+    @property
+    def difficulty_name(self):
+        return self.difficulty.name if self.difficulty else None
+
     def __repr__(self):
         return model_repr("UserRouteLog", id=self.id, route_id=self.route_id, user_id=self.user_id,
-                          gym_id=self.gym_id, quality=self.quality,
-                          difficulty=self.difficulty.name if self.difficulty else None, created_at=self.created_at)
+                          gym_id=self.gym_id, quality=self.quality, difficulty=self.difficulty_name,
+                          created_at=self.created_at)
