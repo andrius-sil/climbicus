@@ -14,9 +14,9 @@ CDNS = {
 }
 
 
-def model_repr(name, **kwargs):
+def model_repr(_name, **kwargs):
     fields = ", ".join([f"{field}={value}" for field, value in kwargs.items()])
-    return f"<{name}({fields})>"
+    return f"<{_name}({fields})>"
 
 
 class Users(db.Model):
@@ -115,6 +115,10 @@ class Routes(db.Model):
     avg_difficulty = db.Column(db.Enum(RouteDifficulty))
     avg_quality = db.Column(db.Float)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
+    __table_args__ = (
+        CheckConstraint('avg_quality >= 1.0'),
+        CheckConstraint('avg_quality <= 3.0'),
+    )
 
     @property
     def api_model(self):
