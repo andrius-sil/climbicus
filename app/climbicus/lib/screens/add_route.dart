@@ -26,6 +26,9 @@ class _AddRoutePageState extends State<AddRoutePage> {
 
   final checkboxSentKey = GlobalKey<CheckboxWithTitleState>();
   final numberAttemptsKey = GlobalKey<NumberAttemptsState>();
+  final routeDifficultyKey = GlobalKey<RouteDifficultyRatingState>();
+  final routeQualityKey = GlobalKey<RouteQualityRatingState>();
+  final routeNameKey = GlobalKey<RouteNameState>();
 
   Map<int, RouteImage> _takenImages = {};
 
@@ -60,51 +63,71 @@ class _AddRoutePageState extends State<AddRoutePage> {
         title: const Text('Add new route'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            Column(
-              children: <Widget>[
-                Text("Your route:"),
-                SizedBox(height: COLUMN_PADDING),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: BlocBuilder<RoutePredictionBloc, RoutePredictionState>(
-                        builder: (context, state) {
-                          if (state is RoutePredictionLoaded) {
-                            var routeImage = state.imgPickerData.routeImage;
-                            _takenImages[routeImage.id] = routeImage;
-                            return RouteImageCarousel(images: _takenImages, height: 200.0);
-                          } else if (state is RoutePredictionError) {
-                            return ErrorWidget.builder(state.errorDetails);
-                          }
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Column(
+                children: <Widget>[
+                  Text("Your route:"),
+                  SizedBox(height: COLUMN_PADDING),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: BlocBuilder<RoutePredictionBloc, RoutePredictionState>(
+                          builder: (context, state) {
+                            if (state is RoutePredictionLoaded) {
+                              var routeImage = state.imgPickerData.routeImage;
+                              _takenImages[routeImage.id] = routeImage;
+                              return RouteImageCarousel(images: _takenImages, height: 200.0);
+                            } else if (state is RoutePredictionError) {
+                              return ErrorWidget.builder(state.errorDetails);
+                            }
 
-                          return Center(child: CircularProgressIndicator());
-                        },
+                            return Center(child: CircularProgressIndicator());
+                          },
+                        ),
                       ),
-                    ),
-                    _buildImagePicker(),
-                  ],
-                ),
-              ],
-            ),
-            Column(
-              children: <Widget>[
-                _buildSelectCategory(),
-                _buildSelectGrade(),
-                CheckboxSent(key: checkboxSentKey),
-                NumberAttempts(key: numberAttemptsKey),
-              ],
-            ),
-            RaisedButton(
-              child: Text('Add'),
-              onPressed: (_selectedCategory == NOT_SELECTED ||
-                          _selectedGrade == NOT_SELECTED) ?
-                null :
-                uploadAndNavigateBack,
-            ),
-          ],
+                      _buildImagePicker(),
+                    ],
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildSelectCategory(),
+                  ),
+                  Expanded(
+                    child: _buildSelectGrade(),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: CheckboxSent(key: checkboxSentKey),
+                  ),
+                  Expanded(
+                    child: NumberAttempts(key: numberAttemptsKey),
+                  ),
+                ],
+              ),
+              RouteDifficultyRating(key: routeDifficultyKey),
+              RouteQualityRating(key: routeQualityKey),
+              Container(
+                width: 200.0,
+                child: RouteName(key: routeNameKey),
+              ),
+              RaisedButton(
+                child: Text('Add'),
+                onPressed: (_selectedCategory == NOT_SELECTED ||
+                            _selectedGrade == NOT_SELECTED) ?
+                  null :
+                  uploadAndNavigateBack,
+              ),
+            ],
+          ),
         ),
       ),
     );

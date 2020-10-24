@@ -6,6 +6,8 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
+const SENT_ATTEMPTS_HEIGHT = 100.0;
+
 class CheckboxSent extends CheckboxWithTitle {
   const CheckboxSent({Key key}) : super(key: key, title: "Sent!");
 }
@@ -44,7 +46,10 @@ class CheckboxWithTitleState extends State<CheckboxWithTitle> {
       return Column(
         children: <Widget>[
           Text(widget.title),
-          checkbox,
+          Container(
+            height: SENT_ATTEMPTS_HEIGHT,
+            child: checkbox,
+          ),
         ],
       );
     }
@@ -76,22 +81,25 @@ class NumberAttemptsState extends State<NumberAttempts> {
     return Column(
       children: <Widget>[
         Text("How many attempts?\t${_numAttemptsLabel()}"),
-        NumberPicker.integer(
-          initialValue: _value,
-          minValue: 0,
-          maxValue: 30,
-          itemExtent: 25.0,
-          textMapper: (String text) => ((text == "0") ? "--" : "$text"),
-          onChanged: (num value) => setState(() {
-            _value = value.toInt();
-          }),
+        Container(
+          height: SENT_ATTEMPTS_HEIGHT,
+          child: NumberPicker.integer(
+            initialValue: _value,
+            minValue: 0,
+            maxValue: 30,
+            itemExtent: 25.0,
+            textMapper: (String text) => ((text == "0") ? "-" : "$text"),
+            onChanged: (num value) => setState(() {
+              _value = value.toInt();
+            }),
+          ),
         ),
       ],
     );
   }
 
   String _numAttemptsLabel() {
-    return (_value == 0) ? "--" : "$value";
+    return (_value == 0) ? "-" : "$value";
   }
 }
 
@@ -131,7 +139,7 @@ class SliderAttemptsState extends State<SliderAttempts> {
 
   String _numAttemptsLabel() {
     return (_value == null) ?
-    "--" :
+    "-" :
     "${_value.toInt()}";
   }
 }
@@ -214,6 +222,7 @@ class RouteDifficultyRatingState extends State<RouteDifficultyRating> {
   @override
   Widget build(BuildContext context) {
     return ToggleSwitch(
+      activeBgColor: Theme.of(context).accentColor,
       initialLabelIndex: -1,
       labels: ['Soft', 'Fair', 'Hard'],
       onToggle: (index) => _value = index,

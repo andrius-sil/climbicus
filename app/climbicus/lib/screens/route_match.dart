@@ -3,6 +3,7 @@ import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/style.dart';
 import 'package:climbicus/widgets/route_log.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RouteMatchPage extends StatefulWidget {
@@ -27,6 +28,8 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
 
   final checkboxSentKey = GlobalKey<CheckboxWithTitleState>();
   final numberAttemptsKey = GlobalKey<NumberAttemptsState>();
+  final routeQualityKey = GlobalKey<RouteQualityRatingState>();
+  final routeDifficultyKey = GlobalKey<RouteDifficultyRatingState>();
 
   RouteImagesBloc _routeImagesBloc;
   GymRoutesBloc _gymRoutesBloc;
@@ -46,55 +49,64 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
 
   @override
   Widget build(BuildContext context) {
+    var tiles = [
+      Row(
+        children: <Widget>[
+          Expanded(
+            child: Column(
+              children: <Widget>[
+                Text("Your route:"),
+                SizedBox(height: COLUMN_PADDING),
+                Container(
+                  height: columnSize,
+                  width: columnSize,
+                  child: widget.takenImage,
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Column(
+              children: <Widget>[
+                Text("Selected route:"),
+                SizedBox(height: COLUMN_PADDING),
+                Container(
+                  height: columnSize,
+                  width: columnSize,
+                  child: widget.selectedImage,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      Row(
+        children: [
+          Expanded(
+            child: CheckboxSent(key: checkboxSentKey),
+          ),
+          Expanded(
+            child: NumberAttempts(key: numberAttemptsKey),
+          ),
+        ],
+      ),
+      RouteDifficultyRating(key: routeDifficultyKey),
+      RouteQualityRating(key: routeQualityKey),
+      RaisedButton(
+        child: Text('Add'),
+        onPressed: _logAndNavigateBack,
+      ),
+    ];
+
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Your ascent'),
-        ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Column(
-                    children: <Widget>[
-                      Text("Your route:"),
-                      SizedBox(height: COLUMN_PADDING),
-                      Container(
-                        height: columnSize,
-                        width: columnSize,
-                        child: widget.takenImage,
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Column(
-                    children: <Widget>[
-                      Text("Selected route:"),
-                      SizedBox(height: COLUMN_PADDING),
-                      Container(
-                        height: columnSize,
-                        width: columnSize,
-                        child: widget.selectedImage,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Column(
-              children: <Widget>[
-                CheckboxSent(key: checkboxSentKey),
-                NumberAttempts(key: numberAttemptsKey),
-              ],
-            ),
-            RaisedButton(
-              child: Text('Add'),
-              onPressed: _logAndNavigateBack,
-            ),
-          ],
-        ));
+      appBar: AppBar(
+        title: const Text('Your ascent'),
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: tiles,
+      ),
+    );
   }
 
   void _logAndNavigateBack() {

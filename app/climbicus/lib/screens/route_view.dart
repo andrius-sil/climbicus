@@ -112,21 +112,32 @@ class BodyListItem extends StatefulWidget {
 class _BodyListItemState extends State<BodyListItem> {
   final checkboxSentKey = GlobalKey<CheckboxWithTitleState>();
   final numberAttemptsKey = GlobalKey<NumberAttemptsState>();
+  final routeDifficultyKey = GlobalKey<RouteDifficultyRatingState>();
+  final routeQualityKey = GlobalKey<RouteQualityRatingState>();
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Row(
-        children: <Widget>[
-          CheckboxSent(key: checkboxSentKey),
-          Expanded(
-            child: NumberAttempts(key: numberAttemptsKey),
+      title: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: CheckboxSent(key: checkboxSentKey),
+              ),
+              Expanded(
+                child: NumberAttempts(key: numberAttemptsKey),
+              ),
+            ],
+          ),
+          RouteDifficultyRating(key: routeDifficultyKey),
+          RouteQualityRating(key: routeQualityKey),
+          RaisedButton(
+            child: Text("Add"),
+            onPressed: _onAddButtonPressed,
           ),
         ],
-      ),
-      trailing: RaisedButton(
-        child: Text("Add"),
-        onPressed: _onAddButtonPressed,
       ),
     );
   }
