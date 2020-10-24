@@ -25,7 +25,6 @@ def update_avg_route_votes(route_id, quality, difficulty):
         quality_votes = [v.quality for v in votes]
         avg_quality = round(statistics.mean(quality_votes), 0)
         route_entry.avg_quality = avg_quality
-    db.session.commit()
 
 
 @blueprint.route("/", methods=["POST"])
@@ -48,6 +47,7 @@ def add():
         abort(400, "the request contains invalid input value")
 
     update_avg_route_votes(route_id, quality, difficulty)
+    db.session.commit()
 
     return jsonify({
         "msg": "Route votes entry added",
@@ -92,6 +92,7 @@ def update(user_route_votes_id=None):
         abort(400, "the request contains invalid input value")
 
     update_avg_route_votes(votes_entry.route_id, quality, difficulty)
+    db.session.commit()
 
     return jsonify({
         "msg": "Route votes entry updated",
