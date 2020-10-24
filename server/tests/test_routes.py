@@ -23,13 +23,13 @@ def test_routes(client, auth_headers_user1):
     assert resp.is_json
 
     expected_routes = {
-        "100": {"avg_difficulty": None, "avg_quality": None, "category": "sport",
+        "100": {"avg_difficulty": "fair", "avg_quality": 2.0, "category": "sport",
                 "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 100, "lower_grade": "Font_7A",
                 "upper_grade": "Font_7A", "user_id": 2, "name": "Crimpinator 100"},
-        "101": {"avg_difficulty": None, "avg_quality": None, "category": "sport",
+        "101": {"avg_difficulty": "fair", "avg_quality": 2.0, "category": "sport",
                 "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 101, "lower_grade": "Font_7A",
                 "upper_grade": "Font_7A", "user_id": 2, "name": "Crimpinator 101"},
-        "102": {"avg_difficulty": None, "avg_quality": None, "category": "sport",
+        "102": {"avg_difficulty": "fair", "avg_quality": 2.0, "category": "sport",
                 "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 102, "lower_grade": "Font_7A",
                 "upper_grade": "Font_7A", "user_id": 2, "name": "Crimpinator 102"},
     }
@@ -48,7 +48,7 @@ def test_single_route(client, auth_headers_user1):
     assert resp.is_json
 
     expected_routes = {
-        "101": {"avg_difficulty": None, "avg_quality": None, "category": "sport",
+        "101": {"avg_difficulty": "fair", "avg_quality": 2.0, "category": "sport",
                 "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 101, "lower_grade": "Font_7A",
                 "upper_grade": "Font_7A", "user_id": 2, "name": "Crimpinator 101"},
     }

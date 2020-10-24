@@ -85,7 +85,7 @@ def app(resource_dir):
             db.session.add(
                 Routes(
                     gym_id=2, user_id=2, category="sport", lower_grade="Font_7A", upper_grade="Font_7A",
-                    name=f"Crimpinator {i}", avg_difficulty=None, avg_quality=None,
+                    name=f"Crimpinator {i}", avg_difficulty="fair", avg_quality=2.0,
                     created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
                 )
             )
