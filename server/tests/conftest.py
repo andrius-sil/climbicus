@@ -77,14 +77,16 @@ def app(resource_dir):
             db.session.add(
                 Routes(
                     gym_id=1, user_id=1, category="bouldering", lower_grade="V_V1", upper_grade="V_V1",
-                    name=f"Jug Fest {i}", created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
+                    name=f"Jug Fest {i}", avg_difficulty=None, avg_quality=None,
+                    created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
                 )
             )
         for i in range(100, 103):
             db.session.add(
                 Routes(
                     gym_id=2, user_id=2, category="sport", lower_grade="Font_7A", upper_grade="Font_7A",
-                    name=f"Crimpinator {i}", created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
+                    name=f"Crimpinator {i}", avg_difficulty="fair", avg_quality=2.0,
+                    created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
                 )
             )
         db.session.flush()
