@@ -90,7 +90,7 @@ def test_update_votes(client, app, auth_headers_user1):
 
     with app.app_context():
         user_route_log = UserRouteVotes.query.filter_by(id=1).one()
-        assert user_route_log.difficulty is None
+        assert user_route_log.difficulty_name is None
         assert user_route_log.quality == 3.0
         assert user_route_log.user_id == 1
         assert user_route_log.gym_id == 1
@@ -126,7 +126,7 @@ def test_add_to_votes(client, app, auth_headers_user2):
 
     with app.app_context():
         user_route_log = UserRouteVotes.query.filter_by(id=3).one()
-        assert user_route_log.difficulty.name == "soft"
+        assert user_route_log.difficulty_name == "soft"
         assert user_route_log.quality is None
         assert user_route_log.user_id == 2
         assert user_route_log.gym_id == 1
@@ -234,6 +234,16 @@ def test_calc_avg_votes(client, app, auth_headers_user2):
         "route_id": 1,
         "gym_id": 1,
     }
+
+    # verify 'before' state of averages
+    with app.app_context():
+        route_entry = Routes.query.filter_by(id=1).one()
+        assert route_entry.avg_difficulty_name is None
+        assert route_entry.avg_quality is None
+        assert route_entry.user_id == 1
+        assert route_entry.gym_id == 1
+        assert route_entry.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
+
     resp = client.post("/user_route_votes/", data=json.dumps(data), content_type="application/json",
                        headers=auth_headers_user2)
 
@@ -242,7 +252,7 @@ def test_calc_avg_votes(client, app, auth_headers_user2):
 
     with app.app_context():
         route_entry = Routes.query.filter_by(id=1).one()
-        assert route_entry.avg_difficulty.name == "fair"
+        assert route_entry.avg_difficulty_name == "fair"
         assert route_entry.avg_quality == 2.0
         assert route_entry.user_id == 1
         assert route_entry.gym_id == 1
