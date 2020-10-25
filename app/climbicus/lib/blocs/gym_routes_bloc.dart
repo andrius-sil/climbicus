@@ -49,6 +49,8 @@ class RouteWithLogs {
   }
 
   bool isAttempted() => userRouteLogs.isNotEmpty;
+
+  int numAttempts() => userRouteLogs.length;
 }
 
 class RoutesWithLogs {

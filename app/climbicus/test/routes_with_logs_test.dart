@@ -8,10 +8,10 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('routes with logs - adding new routes and logs', () {
     var newRoutes = {
-      1: jsonmdl.Route(1, 1, 1, "sport", "Font_4+", "Font_4+", DateTime.now()),
-      2: jsonmdl.Route(2, 1, 1, "sport", "Font_5+", "Font_5+", DateTime.now()),
-      3: jsonmdl.Route(3, 1, 1, "bouldering", "V_V1", "V_V1", DateTime.now()),
-      4: jsonmdl.Route(4, 1, 1, "bouldering", "V_V2", "V_V2", DateTime.now()),
+      1: jsonmdl.Route(1, 1, 1, "sport", "Font_4+", "Font_4+", null, null, DateTime.now()),
+      2: jsonmdl.Route(2, 1, 1, "sport", "Font_5+", "Font_5+", null, null, DateTime.now()),
+      3: jsonmdl.Route(3, 1, 1, "bouldering", "V_V1", "V_V1", null, null, DateTime.now()),
+      4: jsonmdl.Route(4, 1, 1, "bouldering", "V_V2", "V_V2", null, null, DateTime.now()),
     };
 
     var newLogbook1 = {
@@ -63,7 +63,7 @@ void main() {
     expect(routesWithLogs.allRoutes("bouldering")[4].userRouteLogs, allRoutes[4].userRouteLogs);
 
     // addRoute
-    var fifthRoute = jsonmdl.Route(5, 1, 1, "sport", "Font_6A", "Font_6A", DateTime.now());
+    var fifthRoute = jsonmdl.Route(5, 1, 1, "sport", "Font_6A", "Font_6A", null, null, DateTime.now());
     routesWithLogs.addRoute(fifthRoute);
     expect(routesWithLogs.routeIdsAll(), [1, 2, 3, 4, 5]);
     expect(routesWithLogs.allRoutes("sport")[5].route, fifthRoute);
@@ -75,15 +75,22 @@ void main() {
     expect(routesWithLogs.allRoutes("sport")[5].userRouteLogs, {5: fifthLog});
 
     expect(routesWithLogs.allRoutes("sport")[1].mostRecentLog(), newLogbook1[2]);
+
+    // numAttempts
+    expect(routesWithLogs.allRoutes("sport")[1].numAttempts(), 2);
+    expect(routesWithLogs.allRoutes("sport")[2].numAttempts(), 0);
+    expect(routesWithLogs.allRoutes("bouldering")[3].numAttempts(), 2);
+    expect(routesWithLogs.allRoutes("bouldering")[4].numAttempts(), 0);
+    expect(routesWithLogs.allRoutes("sport")[5].numAttempts(), 1);
   });
 
   test('routes with logs - filters', () {
     var newRoutes = {
-      1: jsonmdl.Route(1, 1, 1, "sport", "Font_4+", "Font_4+", DateTime.now()),
-      2: jsonmdl.Route(2, 1, 1, "sport", "Font_5+", "Font_5+", DateTime.now()),
-      3: jsonmdl.Route(3, 1, 1, "sport", "Font_6A", "Font_6A", DateTime.now()),
-      4: jsonmdl.Route(4, 1, 1, "sport", "Font_6B", "Font_6B", DateTime.now()),
-      5: jsonmdl.Route(5, 1, 1, "sport", "Font_6C", "Font_6C", DateTime.now()),
+      1: jsonmdl.Route(1, 1, 1, "sport", "Font_4+", "Font_4+", null, null, DateTime.now()),
+      2: jsonmdl.Route(2, 1, 1, "sport", "Font_5+", "Font_5+", null, null, DateTime.now()),
+      3: jsonmdl.Route(3, 1, 1, "sport", "Font_6A", "Font_6A", null, null, DateTime.now()),
+      4: jsonmdl.Route(4, 1, 1, "sport", "Font_6B", "Font_6B", null, null, DateTime.now()),
+      5: jsonmdl.Route(5, 1, 1, "sport", "Font_6C", "Font_6C", null, null, DateTime.now()),
     };
 
     var newLogbook = {
@@ -116,13 +123,13 @@ void main() {
 
   test('routes with logs - grade filters', () {
     var newRoutes = {
-      1: jsonmdl.Route(1, 1, 1, "bouldering", "V_V1", "V_V1", DateTime.now()),
-      2: jsonmdl.Route(2, 1, 1, "bouldering", "V_V2", "V_V3", DateTime.now()),
-      3: jsonmdl.Route(3, 1, 1, "bouldering", "V_V4", "V_V4", DateTime.now()),
-      4: jsonmdl.Route(4, 1, 1, "bouldering", "V_V4", "V_V5", DateTime.now()),
-      5: jsonmdl.Route(5, 1, 1, "bouldering", "V_V5", "V_V5", DateTime.now()),
-      6: jsonmdl.Route(6, 1, 1, "bouldering", "V_V6", "V_V7", DateTime.now()),
-      7: jsonmdl.Route(7, 1, 1, "bouldering", "V_V7", "V_V7", DateTime.now()),
+      1: jsonmdl.Route(1, 1, 1, "bouldering", "V_V1", "V_V1", null, null, DateTime.now()),
+      2: jsonmdl.Route(2, 1, 1, "bouldering", "V_V2", "V_V3", null, null, DateTime.now()),
+      3: jsonmdl.Route(3, 1, 1, "bouldering", "V_V4", "V_V4", null, null, DateTime.now()),
+      4: jsonmdl.Route(4, 1, 1, "bouldering", "V_V4", "V_V5", null, null, DateTime.now()),
+      5: jsonmdl.Route(5, 1, 1, "bouldering", "V_V5", "V_V5", null, null, DateTime.now()),
+      6: jsonmdl.Route(6, 1, 1, "bouldering", "V_V6", "V_V7", null, null, DateTime.now()),
+      7: jsonmdl.Route(7, 1, 1, "bouldering", "V_V7", "V_V7", null, null, DateTime.now()),
     };
 
     var routesWithLogs = RoutesWithLogs(newRoutes, {});
