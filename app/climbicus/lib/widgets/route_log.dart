@@ -1,6 +1,7 @@
 
 import 'package:climbicus/style.dart';
 import 'package:climbicus/utils/route_grades.dart';
+import 'package:climbicus/widgets/rating_star.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:numberpicker/numberpicker.dart';
@@ -249,11 +250,7 @@ class RouteQualityRatingState extends State<RouteQualityRating> {
       initialRating: 0,
       minRating: 0,
       itemCount: 3,
-      ratingWidget: RatingWidget(
-        full: const Icon(Icons.star),
-        half: const Icon(Icons.star_half),
-        empty: const Icon(Icons.star_border),
-      ),
+      ratingWidget: ratingStar(),
       onRatingUpdate: (double value) => setState(() {
         _value = value.toInt();
       }),

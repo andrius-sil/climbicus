@@ -6,23 +6,24 @@ import 'package:climbicus/models/user_route_log.dart';
 import 'package:climbicus/screens/route_detailed.dart';
 import 'package:climbicus/screens/route_predictions.dart';
 import 'package:climbicus/widgets/camera_custom.dart';
+import 'package:climbicus/widgets/rating_star.dart';
 import 'package:climbicus/widgets/route_image.dart';
 import 'package:climbicus/widgets/route_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 const MAX_ROUTES_VISIBLE = 100;
+const ROUTE_LIST_ITEM_HEIGHT = 80.0;
 
 class RouteListItem {
   RouteWithLogs routeWithLogs;
   Widget image;
-  String headerTitle;
   bool isExpanded;
   RouteListItem({
     this.routeWithLogs,
     this.image,
-    this.headerTitle,
     this.isExpanded: false
   });
 }
@@ -30,9 +31,8 @@ class RouteListItem {
 class HeaderListItem extends StatelessWidget {
   final RouteWithLogs routeWithLogs;
   final Widget image;
-  final String title;
 
-  const HeaderListItem({this.routeWithLogs, this.image, this.title});
+  const HeaderListItem({this.routeWithLogs, this.image});
 
   @override
   Widget build(BuildContext context) {
@@ -58,8 +58,19 @@ class HeaderListItem extends StatelessWidget {
           " — ";
       ascentStatus = Center(
         child: (mostRecentLog.completed && mostRecentLog.numAttempts == 1) ?
-            Icon(Icons.flash_on, color: Theme.of(context).textTheme.title.color) :
+            Icon(Icons.flash_on, color: Theme.of(context).textTheme.headline6.color) :
             Text(numAttemptsStr, style: TextStyle(fontSize: 18)),
+      );
+    }
+
+    Widget ratingBarIndicator = Container();
+    if (this.routeWithLogs.route.avgQuality != null) {
+      ratingBarIndicator = RatingBar(
+        itemSize: 20.0,
+        initialRating: this.routeWithLogs.route.avgQuality,
+        itemCount: 3,
+        ratingWidget: ratingStar(),
+        onRatingUpdate: (_) => {},
       );
     }
 
@@ -67,6 +78,13 @@ class HeaderListItem extends StatelessWidget {
       padding: const EdgeInsets.all(2),
       child: Row(
         children: <Widget>[
+          Container(
+            height: 60,
+            width: 60,
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            decoration: ascentDecoration,
+            child: ascentStatus,
+          ),
           Expanded(
             child: GestureDetector(
               onTap: () {
@@ -77,19 +95,41 @@ class HeaderListItem extends StatelessWidget {
                 ));
               },
               child: Container(
-                height: 80,
+                height: ROUTE_LIST_ITEM_HEIGHT,
                 child: this.image,
               ),
             ),
           ),
           Expanded(
-            child: Text(this.title, style: TextStyle(fontSize: 18)),
+            child: Container(
+              height: ROUTE_LIST_ITEM_HEIGHT,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text(this.routeWithLogs.route.grade, style: TextStyle(fontSize: 18)),
+                  Text(
+                    this.routeWithLogs.route.avgDifficulty == null ?
+                      "" : this.routeWithLogs.route.avgDifficulty,
+                    style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+                  ),
+                ],
+              ),
+            ),
           ),
-          Container(
-            height: 60,
-            width: 60,
-            decoration: ascentDecoration,
-            child: ascentStatus,
+          Expanded(
+            child: Container(
+              height: ROUTE_LIST_ITEM_HEIGHT,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ratingBarIndicator,
+                  Text(
+                    "${this.routeWithLogs.numAttempts().toString()} ascents",
+                    style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
@@ -331,7 +371,6 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
       _items.add(RouteListItem(
           routeWithLogs: routeWithLogs,
           image: imageWidget,
-          headerTitle: routeWithLogs.route.grade,
           isExpanded: isExpanded,
       ));
     });
@@ -341,7 +380,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
     return Scrollbar(
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.only(bottom: 80),
+        padding: const EdgeInsets.only(bottom: ROUTE_LIST_ITEM_HEIGHT),
         child: ExpansionPanelList(
           expansionCallback: (int i, bool isExpanded) {
             setState(() {
@@ -357,7 +396,6 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
                 return HeaderListItem(
                   routeWithLogs: item.routeWithLogs,
                   image: item.image,
-                  title: item.headerTitle,
                 );
               },
               body: BodyListItem(
