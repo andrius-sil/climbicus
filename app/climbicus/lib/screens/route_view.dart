@@ -74,62 +74,77 @@ class HeaderListItem extends StatelessWidget {
       );
     }
 
+    Widget routeNameText;
+    if (this.routeWithLogs.route.name != null) {
+      routeNameText = Text(this.routeWithLogs.route.name, style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic));
+    }
+    Widget routeName = Container(
+      padding: const EdgeInsets.only(left: 8.0),
+      child: routeNameText,
+    );
+
     return Padding(
       padding: const EdgeInsets.all(2),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Container(
-            height: 60,
-            width: 60,
-            margin: const EdgeInsets.symmetric(horizontal: 8),
-            decoration: ascentDecoration,
-            child: ascentStatus,
-          ),
-          Expanded(
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (BuildContext context) {
-                    return RouteDetailedPage(routeWithLogs: this.routeWithLogs);
+          routeName,
+          Row(
+            children: <Widget>[
+              Container(
+                height: 60,
+                width: 60,
+                margin: const EdgeInsets.symmetric(horizontal: 8),
+                decoration: ascentDecoration,
+                child: ascentStatus,
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return RouteDetailedPage(routeWithLogs: this.routeWithLogs);
+                      },
+                    ));
                   },
-                ));
-              },
-              child: Container(
-                height: ROUTE_LIST_ITEM_HEIGHT,
-                child: this.image,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              height: ROUTE_LIST_ITEM_HEIGHT,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Text(this.routeWithLogs.route.grade, style: TextStyle(fontSize: 18)),
-                  Text(
-                    this.routeWithLogs.route.avgDifficulty == null ?
-                      "" : this.routeWithLogs.route.avgDifficulty,
-                    style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+                  child: Container(
+                    height: ROUTE_LIST_ITEM_HEIGHT,
+                    child: this.image,
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              height: ROUTE_LIST_ITEM_HEIGHT,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ratingBarIndicator,
-                  Text(
-                    "${this.routeWithLogs.numAttempts().toString()} ascents",
-                    style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+              Expanded(
+                child: Container(
+                  height: ROUTE_LIST_ITEM_HEIGHT,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text(this.routeWithLogs.route.grade, style: TextStyle(fontSize: 18)),
+                      Text(
+                        this.routeWithLogs.route.avgDifficulty == null ?
+                          "" : this.routeWithLogs.route.avgDifficulty,
+                        style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+              Expanded(
+                child: Container(
+                  height: ROUTE_LIST_ITEM_HEIGHT,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ratingBarIndicator,
+                      Text(
+                        "${this.routeWithLogs.numAttempts().toString()} ascents",
+                        style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
