@@ -223,6 +223,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
     _gymRoutesBloc.add(AddNewGymRouteWithUserLog(
       category: _selectedCategory,
       grade: "${_selectedGradeSystem}_$_selectedGrade",
+      name: routeNameKey.currentState.value,
       completed: checkboxSentKey.currentState.value,
       numAttempts: numberAttemptsKey.currentState.value,
       routeImages: _takenImages.values.toList(),

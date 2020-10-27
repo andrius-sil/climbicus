@@ -208,11 +208,11 @@ class ApiRepository {
     return _requestJson("GET", "routes/$routeId", data);
   }
 
-  Future<Map> routeAdd(String category, String grade) async {
+  Future<Map> routeAdd(String category, String grade, String name) async {
     Map data = {
       "gym_id": _gymId,
       "category": category,
-      "name": null,
+      "name": name,
       "lower_grade": grade,
       "upper_grade": grade,
     };

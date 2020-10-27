@@ -182,12 +182,14 @@ class AddNewUserRouteLog extends GymRoutesEvent {
 class AddNewGymRouteWithUserLog extends GymRoutesEvent {
   final String category;
   final String grade;
+  final String name;
   final bool completed;
   final int numAttempts;
   final List<RouteImage> routeImages;
   const AddNewGymRouteWithUserLog({
     @required this.category,
     @required this.grade,
+    @required this.name,
     @required this.completed,
     @required this.numAttempts,
     @required this.routeImages,
@@ -268,7 +270,7 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
 
       yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
     } else if (event is AddNewGymRouteWithUserLog) {
-      var results = await getIt<ApiRepository>().routeAdd(event.category, event.grade);
+      var results = await getIt<ApiRepository>().routeAdd(event.category, event.grade, event.name);
       var newRoute = jsonmdl.Route.fromJson(results["route"]);
       _entries.addRoute(newRoute);
 
