@@ -1,4 +1,5 @@
 
+import 'package:climbicus/constants.dart';
 import 'package:climbicus/style.dart';
 import 'package:climbicus/utils/route_grades.dart';
 import 'package:climbicus/widgets/rating_star.dart';
@@ -209,50 +210,71 @@ class SliderRouteGradesState extends State<SliderRouteGrades> {
 
 
 class RouteDifficultyRating extends StatefulWidget {
-  const RouteDifficultyRating({Key key}) : super(key: key);
+  final String initialValue;
+
+  const RouteDifficultyRating({Key key, this.initialValue}) : super(key: key);
 
   @override
   RouteDifficultyRatingState createState() => RouteDifficultyRatingState();
 }
 
 class RouteDifficultyRatingState extends State<RouteDifficultyRating> {
-  int _value;
+  final _labels = [DIFFICULTY_NAME_SOFT, DIFFICULTY_NAME_FAIR, DIFFICULTY_NAME_HARD];
+  final _values = [DIFFICULTY_SOFT, DIFFICULTY_FAIR, DIFFICULTY_HARD];
 
-  int get value => _value;
+  int _index;
+
+  String get value => (_index == -1) ? null : _values[_index];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _index = (widget.initialValue == null) ? -1 : _values.indexOf(widget.initialValue);
+  }
 
   @override
   Widget build(BuildContext context) {
     return ToggleSwitch(
       activeBgColor: Theme.of(context).accentColor,
-      initialLabelIndex: -1,
-      labels: ['Soft', 'Fair', 'Hard'],
-      onToggle: (index) => _value = index,
+      initialLabelIndex: _index,
+      labels: _labels,
+      onToggle: (index) => _index = index,
     );
   }
 }
 
 
 class RouteQualityRating extends StatefulWidget {
-  const RouteQualityRating({Key key}) : super(key: key);
+  final double initialValue;
+
+  const RouteQualityRating({Key key, this.initialValue}): super(key: key);
 
   @override
   RouteQualityRatingState createState() => RouteQualityRatingState();
 }
 
 class RouteQualityRatingState extends State<RouteQualityRating> {
-  int _value;
+  double _value;
 
-  int get value => (_value == 0) ? null : _value;
+  double get value => (_value == 0) ? null : _value;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _value = (widget.initialValue == null) ? 0 : widget.initialValue;
+  }
 
   @override
   Widget build(BuildContext context) {
     return RatingBar(
-      initialRating: 0,
+      initialRating: _value,
       minRating: 0,
       itemCount: 3,
       ratingWidget: ratingStar(),
       onRatingUpdate: (double value) => setState(() {
-        _value = value.toInt();
+        _value = value;
       }),
     );
   }

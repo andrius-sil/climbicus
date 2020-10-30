@@ -227,6 +227,10 @@ class _AddRoutePageState extends State<AddRoutePage> {
       completed: checkboxSentKey.currentState.value,
       numAttempts: numberAttemptsKey.currentState.value,
       routeImages: _takenImages.values.toList(),
+      userRouteVotesData: UserRouteVotesData(
+        routeQualityKey.currentState.value,
+        routeDifficultyKey.currentState.value,
+      ),
     ));
 
     Navigator.of(context).popUntil((route) => route.isFirst);

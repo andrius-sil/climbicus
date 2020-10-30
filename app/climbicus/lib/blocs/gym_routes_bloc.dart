@@ -6,17 +6,26 @@ import 'package:climbicus/constants.dart';
 import 'package:climbicus/models/route.dart' as jsonmdl;
 import 'package:climbicus/models/route_image.dart';
 import 'package:climbicus/models/user_route_log.dart';
+import 'package:climbicus/models/user_route_votes.dart';
 import 'package:climbicus/repositories/api_repository.dart';
 import 'package:climbicus/utils/route_grades.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 
-class RouteWithLogs {
+
+class UserRouteVotesData {
+  final double quality;
+  final String difficulty;
+  const UserRouteVotesData(this.quality, this.difficulty);
+}
+
+class RouteWithUserMeta {
   jsonmdl.Route route;
   Map<int, UserRouteLog> userRouteLogs;
+  UserRouteVotes userRouteVotes;
 
-  RouteWithLogs(this.route, this.userRouteLogs);
+  RouteWithUserMeta(this.route, this.userRouteLogs, this.userRouteVotes);
 
   UserRouteLog mostRecentLog() {
     if (userRouteLogs.isEmpty) {
@@ -51,15 +60,33 @@ class RouteWithLogs {
   bool isAttempted() => userRouteLogs.isNotEmpty;
 
   int numAttempts() => userRouteLogs.length;
+
+  double qualityVote() {
+    if (userRouteVotes == null) {
+      return null;
+    }
+
+    return userRouteVotes.quality;
+  }
+
+  String difficultyVote() {
+    if (userRouteVotes == null) {
+      return null;
+    }
+
+    return userRouteVotes.difficulty;
+  }
 }
 
-class RoutesWithLogs {
-  Map<String, Map<int, RouteWithLogs>> _data;
+class RoutesWithUserMeta {
+  Map<String, Map<int, RouteWithUserMeta>> _data;
   Map<int, jsonmdl.Route> _routes;
 
-  RoutesWithLogs(
+  RoutesWithUserMeta(
       Map<int, jsonmdl.Route> newRoutes,
-      Map<int, UserRouteLog> newLogbook) {
+      Map<int, UserRouteLog> newLogbook,
+      Map<int, UserRouteVotes> newVotes,
+  ) {
 
     _routes = newRoutes;
     _data = Map.fromIterable(ROUTE_CATEGORIES,
@@ -68,20 +95,29 @@ class RoutesWithLogs {
     );
 
     newRoutes.forEach((routeId, route) {
-      _data[route.category][routeId] = RouteWithLogs(route, {});
+      _data[route.category][routeId] = RouteWithUserMeta(route, {}, null);
     });
 
     newLogbook.forEach((_, userRouteLog) {
       addUserRouteLog(userRouteLog);
     });
+
+    newVotes.forEach((_, userRouteVotes) {
+      addUserRouteVotes(userRouteVotes);
+    });
   }
 
-  RoutesWithLogs.fromRoutesWithLogs(RoutesWithLogs routesWithLogs) {
+  RouteWithUserMeta getRouteWithUserMeta(int routeId) {
+    String category = _routes[routeId].category;
+    return _data[category][routeId];
+  }
+
+  RoutesWithUserMeta.fromRoutesWithUserMeta(RoutesWithUserMeta routesWithUserMeta) {
     _data = Map.fromIterable(ROUTE_CATEGORIES,
       key: (category) => category,
-      value: (category) => routesWithLogs._data[category],
+      value: (category) => routesWithUserMeta._data[category],
     );
-    _routes = routesWithLogs._routes;
+    _routes = routesWithUserMeta._routes;
   }
 
   bool isEmpty(String category) => _data[category].isEmpty;
@@ -89,9 +125,15 @@ class RoutesWithLogs {
   List<int> routeIdsAll() => _routes.keys.toList();
   List<int> routeIds(String category) => _data[category].keys.toList();
 
-  void addRoute(jsonmdl.Route route) {
+  void addRoute(jsonmdl.Route route, UserRouteVotes userRouteVotes) {
     _routes[route.id] = route;
-    _data[route.category][route.id] = RouteWithLogs(route, {});
+    _data[route.category][route.id] = RouteWithUserMeta(route, {}, userRouteVotes);
+  }
+
+  void updateRoute(jsonmdl.Route route, UserRouteVotes userRouteVotes) {
+    _routes[route.id] = route;
+    _data[route.category][route.id].route = route;
+    _data[route.category][route.id].userRouteVotes = userRouteVotes;
   }
 
   void addUserRouteLog(UserRouteLog userRouteLog) {
@@ -99,23 +141,33 @@ class RoutesWithLogs {
     _data[category][userRouteLog.routeId].userRouteLogs[userRouteLog.id] = userRouteLog;
   }
 
-  Map<int, RouteWithLogs> allRoutes(String category) => _data[category];
+  void addUserRouteVotes(UserRouteVotes userRouteVotes) {
+    String category = _routes[userRouteVotes.routeId].category;
+    _data[category][userRouteVotes.routeId].userRouteVotes = userRouteVotes;
+  }
+
+  UserRouteVotes getUserRouteVotes(int routeId) {
+    String category = _routes[routeId].category;
+    return _data[category][routeId].userRouteVotes;
+  }
+
+  Map<int, RouteWithUserMeta> allRoutes(String category) => _data[category];
 
   void filterSent(String category) {
-    _data[category] = Map.from(_data[category])..removeWhere((routeId, routeWithLogs) =>
-      (routeWithLogs.isSent()));
+    _data[category] = Map.from(_data[category])..removeWhere((routeId, routeWithUserMeta) =>
+      (routeWithUserMeta.isSent()));
   }
 
   void filterAttempted(String category) {
-    _data[category] = Map.from(_data[category])..removeWhere((routeId, routeWithLogs) =>
-      (routeWithLogs.isAttempted()));
+    _data[category] = Map.from(_data[category])..removeWhere((routeId, routeWithUserMeta) =>
+      (routeWithUserMeta.isAttempted()));
   }
 
   void filterGrades(String category, GradeValues gradeValues) {
-    _data[category] = Map.from(_data[category])..removeWhere((routeId, routeWithLogs) =>
-      (routeWithLogs.route.category == category) && (
-      (routeWithLogs.route.upperGradeIndex() < gradeValues.start) ||
-      (routeWithLogs.route.lowerGradeIndex() > gradeValues.end))
+    _data[category] = Map.from(_data[category])..removeWhere((routeId, routeWithUserMeta) =>
+      (routeWithUserMeta.route.category == category) && (
+      (routeWithUserMeta.route.upperGradeIndex() < gradeValues.start) ||
+      (routeWithUserMeta.route.lowerGradeIndex() > gradeValues.end))
     );
   }
 }
@@ -130,8 +182,8 @@ class GymRoutesUninitialized extends GymRoutesState {}
 class GymRoutesLoading extends GymRoutesState {}
 
 class GymRoutesLoaded extends GymRoutesState {
-  final RoutesWithLogs entries;
-  final RoutesWithLogs entriesFiltered;
+  final RoutesWithUserMeta entries;
+  final RoutesWithUserMeta entriesFiltered;
   const GymRoutesLoaded({@required this.entries, @required this.entriesFiltered}) ;
 }
 
@@ -179,6 +231,15 @@ class AddNewUserRouteLog extends GymRoutesEvent {
   });
 }
 
+class AddOrUpdateUserRouteVotes extends GymRoutesEvent {
+  final int routeId;
+  final UserRouteVotesData userRouteVotesData;
+  const AddOrUpdateUserRouteVotes({
+    @required this.routeId,
+    @required this.userRouteVotesData,
+  });
+}
+
 class AddNewGymRouteWithUserLog extends GymRoutesEvent {
   final String category;
   final String grade;
@@ -186,6 +247,7 @@ class AddNewGymRouteWithUserLog extends GymRoutesEvent {
   final bool completed;
   final int numAttempts;
   final List<RouteImage> routeImages;
+  final UserRouteVotesData userRouteVotesData;
   const AddNewGymRouteWithUserLog({
     @required this.category,
     @required this.grade,
@@ -193,6 +255,7 @@ class AddNewGymRouteWithUserLog extends GymRoutesEvent {
     @required this.completed,
     @required this.numAttempts,
     @required this.routeImages,
+    @required this.userRouteVotesData,
   });
 }
 
@@ -201,12 +264,16 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
 
   final RouteImagesBloc routeImagesBloc;
 
-  RoutesWithLogs _entries;
-  RoutesWithLogs get _entriesFiltered => filterEntries();
+  RoutesWithUserMeta _entries;
+  RoutesWithUserMeta get _entriesFiltered => filterEntries();
 
   Map<String, bool> _sentFilterEnabled;
   Map<String, bool> _attemptedFilterEnabled;
   Map<String, GradeValues> _gradesFilter;
+  
+  RouteWithUserMeta getGymRoute(int routeId) {
+    return _entries.getRouteWithUserMeta(routeId);
+  }
 
   GymRoutesBloc({@required this.routeImagesBloc}) {
     _sentFilterEnabled = Map.fromIterable(ROUTE_CATEGORIES,
@@ -234,15 +301,17 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
       try {
         var dataLogbook = getIt<ApiRepository>().fetchLogbook();
         var dataRoutes = getIt<ApiRepository>().fetchRoutes();
+        var dataVotes = getIt<ApiRepository>().fetchVotes();
 
         var newLogbook = (await dataLogbook).map((userRouteLogId, model) =>
-            MapEntry(int.parse(userRouteLogId),
-                UserRouteLog.fromJson(model)));
+            MapEntry(int.parse(userRouteLogId), UserRouteLog.fromJson(model)));
         Map<String, dynamic> resultsRoutes = (await dataRoutes)["routes"];
         var newRoutes = resultsRoutes.map((routeId, model) =>
             MapEntry(int.parse(routeId), jsonmdl.Route.fromJson(model)));
+        var newVotes = (await dataVotes).map((userRouteVotesId, model) =>
+            MapEntry(int.parse(userRouteVotesId), UserRouteVotes.fromJson(model)));
 
-        _entries = RoutesWithLogs(newRoutes, newLogbook);
+        _entries = RoutesWithUserMeta(newRoutes, newLogbook, newVotes);
 
         yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
 
@@ -269,10 +338,40 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
       _entries.addUserRouteLog(newUserRouteLog);
 
       yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
+    } else if (event is AddOrUpdateUserRouteVotes) {
+      // TODO: do not add if no real vote
+      var results;
+      var userRouteVotes = _entries.getUserRouteVotes(event.routeId);
+      if (userRouteVotes != null) {
+        results = await getIt<ApiRepository>().userRouteVotesUpdate(
+          userRouteVotes.id,
+          event.userRouteVotesData.quality,
+          event.userRouteVotesData.difficulty,
+        );
+      } else {
+        results = await getIt<ApiRepository>().userRouteVotesAdd(
+          event.routeId,
+          event.userRouteVotesData.quality,
+          event.userRouteVotesData.difficulty,
+        );
+      }
+
+      _entries.updateRoute(
+        jsonmdl.Route.fromJson(results["route"]),
+        UserRouteVotes.fromJson(results["user_route_votes"]),
+      );
+
+      yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
     } else if (event is AddNewGymRouteWithUserLog) {
       var results = await getIt<ApiRepository>().routeAdd(event.category, event.grade, event.name);
       var newRoute = jsonmdl.Route.fromJson(results["route"]);
-      _entries.addRoute(newRoute);
+
+      _entries.addRoute(newRoute, null);
+
+      this.add(AddOrUpdateUserRouteVotes(
+        routeId: newRoute.id,
+        userRouteVotesData: event.userRouteVotesData,
+      ));
 
       this.add(AddNewUserRouteLog(
         routeId: newRoute.id,
@@ -293,8 +392,8 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
     return;
   }
 
-  RoutesWithLogs filterEntries() {
-    var entriesFiltered = RoutesWithLogs.fromRoutesWithLogs(_entries);
+  RoutesWithUserMeta filterEntries() {
+    var entriesFiltered = RoutesWithUserMeta.fromRoutesWithUserMeta(_entries);
 
     _sentFilterEnabled.forEach((category, enabled) {
       if (enabled) {

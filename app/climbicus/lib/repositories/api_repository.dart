@@ -227,4 +227,38 @@ class ApiRepository {
   Future<Map> fetchUsers() async {
     return _requestJson("GET", "users/", {});
   }
+
+  Future<Map> fetchVotes() async {
+    Map data = {
+      "gym_id": _gymId,
+    };
+    return _requestJson("GET", "user_route_votes/", data);
+  }
+
+  Future<Map> fetchOneUserRouteVotes(int routeId) async {
+    Map data = {
+      "gym_id": _gymId,
+    };
+    return _requestJson("GET", "user_route_votes/$routeId", data);
+  }
+
+  Future<Map> userRouteVotesAdd(int routeId, double quality, String difficulty) async {
+    Map data = {
+      "gym_id": _gymId,
+      "route_id": routeId,
+      "quality": quality,
+      "difficulty": difficulty,
+    };
+
+    return _requestJson("POST", "user_route_votes/", data);
+  }
+
+  Future<Map> userRouteVotesUpdate(int userRouteVotesId, double quality, String difficulty) async {
+    Map data = {
+      "quality": quality,
+      "difficulty": difficulty,
+    };
+
+    return _requestJson("PATCH", "user_route_votes/$userRouteVotesId", data);
+  }
 }
