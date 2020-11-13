@@ -116,8 +116,6 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
       numAttempts: numberAttemptsKey.currentState.value,
     ));
 
-    // TODO: user route votes add/update
-
     Navigator.of(context).popUntil((route) => route.isFirst);
   }
 }

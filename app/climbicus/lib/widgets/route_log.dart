@@ -216,17 +216,20 @@ class RouteDifficultyRating extends StatefulWidget {
 }
 
 class RouteDifficultyRatingState extends State<RouteDifficultyRating> {
-  int _value;
+  final _labels = ['Soft', 'Fair', 'Hard'];
+  final _values = ['soft', 'fair', 'hard'];
 
-  int get value => _value;
+  String _value;
+
+  String get value => _value;
 
   @override
   Widget build(BuildContext context) {
     return ToggleSwitch(
       activeBgColor: Theme.of(context).accentColor,
       initialLabelIndex: -1,
-      labels: ['Soft', 'Fair', 'Hard'],
-      onToggle: (index) => _value = index,
+      labels: _labels,
+      onToggle: (index) => _value = _values[index],
     );
   }
 }
@@ -240,9 +243,9 @@ class RouteQualityRating extends StatefulWidget {
 }
 
 class RouteQualityRatingState extends State<RouteQualityRating> {
-  int _value;
+  double _value;
 
-  int get value => (_value == 0) ? null : _value;
+  double get value => (_value == 0) ? null : _value;
 
   @override
   Widget build(BuildContext context) {
@@ -252,7 +255,7 @@ class RouteQualityRatingState extends State<RouteQualityRating> {
       itemCount: 3,
       ratingWidget: ratingStar(),
       onRatingUpdate: (double value) => setState(() {
-        _value = value.toInt();
+        _value = value;
       }),
     );
   }

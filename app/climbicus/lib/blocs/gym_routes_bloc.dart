@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
+import 'package:climbicus/blocs/user_route_votes_bloc.dart';
 import 'package:climbicus/constants.dart';
 import 'package:climbicus/models/route.dart' as jsonmdl;
 import 'package:climbicus/models/route_image.dart';
@@ -186,6 +187,7 @@ class AddNewGymRouteWithUserLog extends GymRoutesEvent {
   final bool completed;
   final int numAttempts;
   final List<RouteImage> routeImages;
+  final UserRouteVotesData userRouteVotesData;
   const AddNewGymRouteWithUserLog({
     @required this.category,
     @required this.grade,
@@ -193,6 +195,7 @@ class AddNewGymRouteWithUserLog extends GymRoutesEvent {
     @required this.completed,
     @required this.numAttempts,
     @required this.routeImages,
+    @required this.userRouteVotesData,
   });
 }
 
@@ -266,6 +269,8 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
       var results = await getIt<ApiRepository>().logbookAdd(event.routeId, event.completed, event.numAttempts);
       var newUserRouteLog = UserRouteLog.fromJson(results["user_route_log"]);
 
+      // TODO: add or update new user vote
+
       _entries.addUserRouteLog(newUserRouteLog);
 
       yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
@@ -273,6 +278,10 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
       var results = await getIt<ApiRepository>().routeAdd(event.category, event.grade, event.name);
       var newRoute = jsonmdl.Route.fromJson(results["route"]);
       _entries.addRoute(newRoute);
+
+      // TODO: votes can only be added after route is already in the db:
+      // 1. add vote in a consecutive api call - return update route model?
+      // 2. add vote in the same api call
 
       this.add(AddNewUserRouteLog(
         routeId: newRoute.id,

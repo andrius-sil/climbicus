@@ -1,6 +1,7 @@
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/blocs/route_predictions_bloc.dart';
+import 'package:climbicus/blocs/user_route_votes_bloc.dart';
 import 'package:climbicus/constants.dart';
 import 'package:climbicus/models/route_image.dart';
 import 'package:climbicus/style.dart';
@@ -227,9 +228,11 @@ class _AddRoutePageState extends State<AddRoutePage> {
       completed: checkboxSentKey.currentState.value,
       numAttempts: numberAttemptsKey.currentState.value,
       routeImages: _takenImages.values.toList(),
+      userRouteVotesData: UserRouteVotesData(
+        routeQualityKey.currentState.value,
+        routeDifficultyKey.currentState.value,
+      ),
     ));
-
-    // TODO: user route votes add
 
     Navigator.of(context).popUntil((route) => route.isFirst);
   }

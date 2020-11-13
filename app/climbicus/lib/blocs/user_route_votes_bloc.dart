@@ -1,10 +1,19 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:climbicus/repositories/api_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:climbicus/models/user_route_votes.dart';
+import 'package:get_it/get_it.dart';
+
+
+class UserRouteVotesData {
+  final double quality;
+  final String difficulty;
+  const UserRouteVotesData(this.quality, this.difficulty);
+}
 
 
 abstract class UserRouteVotesState {
@@ -33,7 +42,6 @@ abstract class UserRouteVotesEvent {
   const UserRouteVotesEvent();
 }
 
-// TODO: fetch all, if needed, add optional routeId to fetch just one
 class FetchUserRouteVotes extends UserRouteVotesEvent {}
 
 class AddNewUserRouteVotes extends UserRouteVotesEvent {
@@ -60,6 +68,8 @@ class UpdateUserRouteVotes extends UserRouteVotesEvent {
 
 
 class UserRouteVotesBloc extends Bloc<UserRouteVotesEvent, UserRouteVotesState> {
+  final getIt = GetIt.instance;
+
   Map<int, UserRouteVotes> _entries = {};
 
   @override
@@ -69,11 +79,28 @@ class UserRouteVotesBloc extends Bloc<UserRouteVotesEvent, UserRouteVotesState> 
   Stream<UserRouteVotesState> mapEventToState(UserRouteVotesEvent event) async* {
     if (event is FetchUserRouteVotes) {
       yield UserRouteVotesLoading();
-      // TODO
+
+      try {
+        _entries = await getIt<ApiRepository>().fetchUserRouteVotes();
+        // TODO: parse entries?
+        yield UserRouteVotesLoaded(entries: _entries);
+      } catch (e, st) {
+        yield UserRouteVotesError(exception: e, stackTrace: st);
+      }
     } else if (event is AddNewUserRouteVotes) {
-      // TODO
+      var results = await getIt<ApiRepository>().userRouteVotesAdd(event.routeId, event.quality, event.difficulty);
+      var newUserRouteVotes = UserRouteVotes.fromJson(results["user_route_votes"]);
+
+      _entries[newUserRouteVotes.id] = newUserRouteVotes;
+
+      yield UserRouteVotesLoaded(entries: _entries);
     } else if (event is UpdateUserRouteVotes) {
-      // TODO
+      var results = await getIt<ApiRepository>().userRouteVotesUpdate(event.userRouteVotesId, event.quality, event.difficulty);
+      var updatedUserRouteVotes = UserRouteVotes.fromJson(results["user_route_votes"]);
+
+      _entries[updatedUserRouteVotes.id] = updatedUserRouteVotes;
+
+      yield UserRouteVotesLoaded(entries: _entries);
     }
 
     return;
