@@ -87,6 +87,18 @@ def test_update_votes(client, app, auth_headers_user1):
         "route_id": 1,
         "user_id": 1,
     }
+    assert resp.json["route"] == {
+        "id": 1,
+        "gym_id": 1,
+        "user_id": 1,
+        "name": "Jug Fest 1",
+        "category": "bouldering",
+        "lower_grade": "V_V1",
+        "upper_grade": "V_V1",
+        "avg_difficulty": None,
+        "avg_quality": 3.0,
+        "created_at": "2019-03-04T10:10:10+00:00",
+    }
 
     with app.app_context():
         user_route_log = UserRouteVotes.query.filter_by(id=1).one()
@@ -122,6 +134,18 @@ def test_add_to_votes(client, app, auth_headers_user2):
         "quality": None,
         "route_id": 1,
         "user_id": 2,
+    }
+    assert resp.json["route"] == {
+        "id": 1,
+        "gym_id": 1,
+        "user_id": 1,
+        "name": "Jug Fest 1",
+        "category": "bouldering",
+        "lower_grade": "V_V1",
+        "upper_grade": "V_V1",
+        "avg_difficulty": "soft",
+        "avg_quality": None,
+        "created_at": "2019-03-04T10:10:10+00:00",
     }
 
     with app.app_context():
@@ -164,6 +188,7 @@ def test_add_votes_db_check_constraint(client, app, auth_headers_user1):
     assert resp.status_code == 409
     assert resp.is_json
     assert resp.json["msg"] == "the request does not pass database constraints"
+
 
 def test_add_votes_invalid_value(client, app, auth_headers_user1):
     data = {

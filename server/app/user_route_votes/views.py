@@ -26,6 +26,8 @@ def update_avg_route_votes(route_id, quality, difficulty):
         avg_quality = round(statistics.mean(quality_votes), 0)
         route_entry.avg_quality = avg_quality
 
+    return route_entry
+
 
 @blueprint.route("/", methods=["POST"])
 def add():
@@ -46,12 +48,13 @@ def add():
     except DataError:
         abort(400, "the request contains invalid input value")
 
-    update_avg_route_votes(route_id, quality, difficulty)
+    updated_route = update_avg_route_votes(route_id, quality, difficulty)
     db.session.commit()
 
     return jsonify({
         "msg": "Route votes entry added",
         "user_route_votes": votes_entry.api_model,
+        "route": updated_route.api_model,
     })
 
 @blueprint.route("/", methods=["GET"])
@@ -91,10 +94,11 @@ def update(user_route_votes_id=None):
     except DataError:
         abort(400, "the request contains invalid input value")
 
-    update_avg_route_votes(votes_entry.route_id, quality, difficulty)
+    updated_route = update_avg_route_votes(votes_entry.route_id, quality, difficulty)
     db.session.commit()
 
     return jsonify({
         "msg": "Route votes entry updated",
         "user_route_votes": votes_entry.api_model,
+        "route": updated_route.api_model,
     })
