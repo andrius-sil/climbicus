@@ -46,12 +46,10 @@ class FetchUserRouteVotes extends UserRouteVotesEvent {}
 
 class AddNewUserRouteVotes extends UserRouteVotesEvent {
   final int routeId;
-  final double quality;
-  final String difficulty;
+  final UserRouteVotesData userRouteVotesData;
   const AddNewUserRouteVotes({
     @required this.routeId,
-    @required this.quality,
-    @required this.difficulty,
+    @required this.userRouteVotesData,
   });
 }
 
@@ -88,7 +86,11 @@ class UserRouteVotesBloc extends Bloc<UserRouteVotesEvent, UserRouteVotesState> 
         yield UserRouteVotesError(exception: e, stackTrace: st);
       }
     } else if (event is AddNewUserRouteVotes) {
-      var results = await getIt<ApiRepository>().userRouteVotesAdd(event.routeId, event.quality, event.difficulty);
+      var results = await getIt<ApiRepository>().userRouteVotesAdd(
+          event.routeId,
+          event.userRouteVotesData.quality,
+          event.userRouteVotesData.difficulty,
+      );
       var newUserRouteVotes = UserRouteVotes.fromJson(results["user_route_votes"]);
 
       _entries[newUserRouteVotes.id] = newUserRouteVotes;

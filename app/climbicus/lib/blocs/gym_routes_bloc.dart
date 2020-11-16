@@ -203,6 +203,7 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
   final getIt = GetIt.instance;
 
   final RouteImagesBloc routeImagesBloc;
+  final UserRouteVotesBloc userRouteVotesBloc;
 
   RoutesWithLogs _entries;
   RoutesWithLogs get _entriesFiltered => filterEntries();
@@ -211,7 +212,7 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
   Map<String, bool> _attemptedFilterEnabled;
   Map<String, GradeValues> _gradesFilter;
 
-  GymRoutesBloc({@required this.routeImagesBloc}) {
+  GymRoutesBloc({@required this.routeImagesBloc, @required this.userRouteVotesBloc}) {
     _sentFilterEnabled = Map.fromIterable(ROUTE_CATEGORIES,
       key: (category) => category,
       value: (_) => false,
@@ -279,9 +280,11 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
       var newRoute = jsonmdl.Route.fromJson(results["route"]);
       _entries.addRoute(newRoute);
 
-      // TODO: votes can only be added after route is already in the db:
       // 1. add vote in a consecutive api call - return update route model?
-      // 2. add vote in the same api call
+      userRouteVotesBloc.add(AddNewUserRouteVotes(
+        routeId: newRoute.id,
+        userRouteVotesData: event.userRouteVotesData,
+      ));
 
       this.add(AddNewUserRouteLog(
         routeId: newRoute.id,
