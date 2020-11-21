@@ -20,13 +20,12 @@ class UserRouteVotesData {
   const UserRouteVotesData(this.quality, this.difficulty);
 }
 
-// TODO: rename to RouteWithUserMetadata
-class RouteWithLogs {
+class RouteWithUserMeta {
   jsonmdl.Route route;
   Map<int, UserRouteLog> userRouteLogs;
   UserRouteVotes userRouteVotes;
 
-  RouteWithLogs(this.route, this.userRouteLogs, this.userRouteVotes);
+  RouteWithUserMeta(this.route, this.userRouteLogs, this.userRouteVotes);
 
   UserRouteLog mostRecentLog() {
     if (userRouteLogs.isEmpty) {
@@ -79,11 +78,11 @@ class RouteWithLogs {
   }
 }
 
-class RoutesWithLogs {
-  Map<String, Map<int, RouteWithLogs>> _data;
+class RoutesWithUserMeta {
+  Map<String, Map<int, RouteWithUserMeta>> _data;
   Map<int, jsonmdl.Route> _routes;
 
-  RoutesWithLogs(
+  RoutesWithUserMeta(
       Map<int, jsonmdl.Route> newRoutes,
       Map<int, UserRouteLog> newLogbook,
       Map<int, UserRouteVotes> newVotes,
@@ -96,7 +95,7 @@ class RoutesWithLogs {
     );
 
     newRoutes.forEach((routeId, route) {
-      _data[route.category][routeId] = RouteWithLogs(route, {}, null);
+      _data[route.category][routeId] = RouteWithUserMeta(route, {}, null);
     });
 
     newLogbook.forEach((_, userRouteLog) {
@@ -108,12 +107,12 @@ class RoutesWithLogs {
     });
   }
 
-  RoutesWithLogs.fromRoutesWithLogs(RoutesWithLogs routesWithLogs) {
+  RoutesWithUserMeta.fromroutesWithUserMeta(RoutesWithUserMeta routesWithUserMeta) {
     _data = Map.fromIterable(ROUTE_CATEGORIES,
       key: (category) => category,
-      value: (category) => routesWithLogs._data[category],
+      value: (category) => routesWithUserMeta._data[category],
     );
-    _routes = routesWithLogs._routes;
+    _routes = routesWithUserMeta._routes;
   }
 
   bool isEmpty(String category) => _data[category].isEmpty;
@@ -123,7 +122,7 @@ class RoutesWithLogs {
 
   void addRoute(jsonmdl.Route route, UserRouteVotes userRouteVotes) {
     _routes[route.id] = route;
-    _data[route.category][route.id] = RouteWithLogs(route, {}, userRouteVotes);
+    _data[route.category][route.id] = RouteWithUserMeta(route, {}, userRouteVotes);
   }
 
   void updateRoute(jsonmdl.Route route, UserRouteVotes userRouteVotes) {
@@ -146,23 +145,23 @@ class RoutesWithLogs {
     return _data[category][routeId].userRouteVotes;
   }
 
-  Map<int, RouteWithLogs> allRoutes(String category) => _data[category];
+  Map<int, RouteWithUserMeta> allRoutes(String category) => _data[category];
 
   void filterSent(String category) {
-    _data[category] = Map.from(_data[category])..removeWhere((routeId, routeWithLogs) =>
-      (routeWithLogs.isSent()));
+    _data[category] = Map.from(_data[category])..removeWhere((routeId, routeWithUserMeta) =>
+      (routeWithUserMeta.isSent()));
   }
 
   void filterAttempted(String category) {
-    _data[category] = Map.from(_data[category])..removeWhere((routeId, routeWithLogs) =>
-      (routeWithLogs.isAttempted()));
+    _data[category] = Map.from(_data[category])..removeWhere((routeId, routeWithUserMeta) =>
+      (routeWithUserMeta.isAttempted()));
   }
 
   void filterGrades(String category, GradeValues gradeValues) {
-    _data[category] = Map.from(_data[category])..removeWhere((routeId, routeWithLogs) =>
-      (routeWithLogs.route.category == category) && (
-      (routeWithLogs.route.upperGradeIndex() < gradeValues.start) ||
-      (routeWithLogs.route.lowerGradeIndex() > gradeValues.end))
+    _data[category] = Map.from(_data[category])..removeWhere((routeId, routeWithUserMeta) =>
+      (routeWithUserMeta.route.category == category) && (
+      (routeWithUserMeta.route.upperGradeIndex() < gradeValues.start) ||
+      (routeWithUserMeta.route.lowerGradeIndex() > gradeValues.end))
     );
   }
 }
@@ -177,8 +176,8 @@ class GymRoutesUninitialized extends GymRoutesState {}
 class GymRoutesLoading extends GymRoutesState {}
 
 class GymRoutesLoaded extends GymRoutesState {
-  final RoutesWithLogs entries;
-  final RoutesWithLogs entriesFiltered;
+  final RoutesWithUserMeta entries;
+  final RoutesWithUserMeta entriesFiltered;
   const GymRoutesLoaded({@required this.entries, @required this.entriesFiltered}) ;
 }
 
@@ -259,8 +258,8 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
 
   final RouteImagesBloc routeImagesBloc;
 
-  RoutesWithLogs _entries;
-  RoutesWithLogs get _entriesFiltered => filterEntries();
+  RoutesWithUserMeta _entries;
+  RoutesWithUserMeta get _entriesFiltered => filterEntries();
 
   Map<String, bool> _sentFilterEnabled;
   Map<String, bool> _attemptedFilterEnabled;
@@ -302,7 +301,7 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
         var newVotes = (await dataVotes).map((userRouteVotesId, model) =>
             MapEntry(int.parse(userRouteVotesId), UserRouteVotes.fromJson(model)));
 
-        _entries = RoutesWithLogs(newRoutes, newLogbook, newVotes);
+        _entries = RoutesWithUserMeta(newRoutes, newLogbook, newVotes);
 
         yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
 
@@ -383,8 +382,8 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
     return;
   }
 
-  RoutesWithLogs filterEntries() {
-    var entriesFiltered = RoutesWithLogs.fromRoutesWithLogs(_entries);
+  RoutesWithUserMeta filterEntries() {
+    var entriesFiltered = RoutesWithUserMeta.fromroutesWithUserMeta(_entries);
 
     _sentFilterEnabled.forEach((category, enabled) {
       if (enabled) {

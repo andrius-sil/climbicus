@@ -18,25 +18,25 @@ const MAX_ROUTES_VISIBLE = 100;
 const ROUTE_LIST_ITEM_HEIGHT = 80.0;
 
 class RouteListItem {
-  RouteWithLogs routeWithLogs;
+  RouteWithUserMeta routeWithUserMeta;
   Widget image;
   bool isExpanded;
   RouteListItem({
-    this.routeWithLogs,
+    this.routeWithUserMeta,
     this.image,
     this.isExpanded: false
   });
 }
 
 class HeaderListItem extends StatelessWidget {
-  final RouteWithLogs routeWithLogs;
+  final RouteWithUserMeta routeWithUserMeta;
   final Widget image;
 
-  const HeaderListItem({this.routeWithLogs, this.image});
+  const HeaderListItem({this.routeWithUserMeta, this.image});
 
   @override
   Widget build(BuildContext context) {
-    UserRouteLog mostRecentLog = routeWithLogs.mostRecentLog();
+    UserRouteLog mostRecentLog = routeWithUserMeta.mostRecentLog();
     var ascentDecoration;
     var ascentStatus;
     if (mostRecentLog != null) {
@@ -64,10 +64,10 @@ class HeaderListItem extends StatelessWidget {
     }
 
     Widget ratingBarIndicator = Container();
-    if (this.routeWithLogs.route.avgQuality != null) {
+    if (this.routeWithUserMeta.route.avgQuality != null) {
       ratingBarIndicator = RatingBar(
         itemSize: 20.0,
-        initialRating: this.routeWithLogs.route.avgQuality,
+        initialRating: this.routeWithUserMeta.route.avgQuality,
         itemCount: 3,
         ratingWidget: ratingStar(),
         onRatingUpdate: (_) => {},
@@ -75,8 +75,8 @@ class HeaderListItem extends StatelessWidget {
     }
 
     Widget routeNameText;
-    if (this.routeWithLogs.route.name != null) {
-      routeNameText = Text(this.routeWithLogs.route.name, style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic));
+    if (this.routeWithUserMeta.route.name != null) {
+      routeNameText = Text(this.routeWithUserMeta.route.name, style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic));
     }
     Widget routeName = Container(
       padding: const EdgeInsets.only(left: 8.0),
@@ -103,7 +103,7 @@ class HeaderListItem extends StatelessWidget {
                   onTap: () {
                     Navigator.push(context, MaterialPageRoute(
                       builder: (BuildContext context) {
-                        return RouteDetailedPage(routeWithLogs: this.routeWithLogs);
+                        return RouteDetailedPage(routeWithUserMeta: this.routeWithUserMeta);
                       },
                     ));
                   },
@@ -119,10 +119,10 @@ class HeaderListItem extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Text(this.routeWithLogs.route.grade, style: TextStyle(fontSize: 18)),
+                      Text(this.routeWithUserMeta.route.grade, style: TextStyle(fontSize: 18)),
                       Text(
-                        this.routeWithLogs.route.avgDifficulty == null ?
-                          "" : this.routeWithLogs.route.avgDifficulty,
+                        this.routeWithUserMeta.route.avgDifficulty == null ?
+                          "" : this.routeWithUserMeta.route.avgDifficulty,
                         style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
                       ),
                     ],
@@ -137,7 +137,7 @@ class HeaderListItem extends StatelessWidget {
                     children: [
                       ratingBarIndicator,
                       Text(
-                        "${this.routeWithLogs.numAttempts().toString()} ascents",
+                        "${this.routeWithUserMeta.numAttempts().toString()} ascents",
                         style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
                       ),
                     ],
@@ -154,11 +154,11 @@ class HeaderListItem extends StatelessWidget {
 
 
 class BodyListItem extends StatefulWidget {
-  final RouteWithLogs routeWithLogs;
+  final RouteWithUserMeta routeWithUserMeta;
   final GymRoutesBloc gymRoutesBloc;
   final VoidCallback onAdd;
 
-  const BodyListItem({this.routeWithLogs, this.gymRoutesBloc, this.onAdd});
+  const BodyListItem({this.routeWithUserMeta, this.gymRoutesBloc, this.onAdd});
 
   @override
   _BodyListItemState createState() => _BodyListItemState();
@@ -186,8 +186,8 @@ class _BodyListItemState extends State<BodyListItem> {
               ),
             ],
           ),
-          RouteDifficultyRating(key: routeDifficultyKey, initialValue: widget.routeWithLogs.difficultyVote()),
-          RouteQualityRating(key: routeQualityKey, initialValue: widget.routeWithLogs.qualityVote()),
+          RouteDifficultyRating(key: routeDifficultyKey, initialValue: widget.routeWithUserMeta.difficultyVote()),
+          RouteQualityRating(key: routeQualityKey, initialValue: widget.routeWithUserMeta.qualityVote()),
           RaisedButton(
             child: Text("Add"),
             onPressed: _onAddButtonPressed,
@@ -201,13 +201,13 @@ class _BodyListItemState extends State<BodyListItem> {
     widget.onAdd();
 
     widget.gymRoutesBloc.add(AddNewUserRouteLog(
-      routeId: widget.routeWithLogs.route.id,
+      routeId: widget.routeWithUserMeta.route.id,
       completed: checkboxSentKey.currentState.value,
       numAttempts: numberAttemptsKey.currentState.value,
     ));
 
     widget.gymRoutesBloc.add(AddOrUpdateUserRouteVotes(
-      routeId: widget.routeWithLogs.route.id,
+      routeId: widget.routeWithUserMeta.route.id,
       userRouteVotesData: UserRouteVotesData(
         routeQualityKey.currentState.value,
         routeDifficultyKey.currentState.value,
@@ -346,14 +346,14 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
     );
   }
 
-  Widget _buildLogbookGridWithRefresh(RoutesWithLogs entries) {
+  Widget _buildLogbookGridWithRefresh(RoutesWithUserMeta entries) {
     return RefreshIndicator(
       onRefresh: onRefreshView,
       child: _buildLogbookGrid(entries),
     );
   }
 
-  Widget _buildLogbookGrid(RoutesWithLogs entries) {
+  Widget _buildLogbookGrid(RoutesWithUserMeta entries) {
     if (entries.isEmpty(widget.routeCategory)) {
       return SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -367,11 +367,11 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
     }
 
     Map<int, bool> isExpandedPrevious = {};
-    _items.forEach((item) => isExpandedPrevious[item.routeWithLogs.route.id] = item.isExpanded);
+    _items.forEach((item) => isExpandedPrevious[item.routeWithUserMeta.route.id] = item.isExpanded);
     _items.clear();
 
     var i = 0;
-    (_sortEntriesByLogDate(entries.allRoutes(widget.routeCategory))).forEach((routeId, routeWithLogs) {
+    (_sortEntriesByLogDate(entries.allRoutes(widget.routeCategory))).forEach((routeId, routeWithUserMeta) {
       if (++i > MAX_ROUTES_VISIBLE) {
         return;
       }
@@ -392,7 +392,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
           false;
 
       _items.add(RouteListItem(
-          routeWithLogs: routeWithLogs,
+          routeWithUserMeta: routeWithUserMeta,
           image: imageWidget,
           isExpanded: isExpanded,
       ));
@@ -417,12 +417,12 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
             return ExpansionPanel(
               headerBuilder: (BuildContext context, bool isExpanded) {
                 return HeaderListItem(
-                  routeWithLogs: item.routeWithLogs,
+                  routeWithUserMeta: item.routeWithUserMeta,
                   image: item.image,
                 );
               },
               body: BodyListItem(
-                routeWithLogs: item.routeWithLogs,
+                routeWithUserMeta: item.routeWithUserMeta,
                 gymRoutesBloc: _gymRoutesBloc,
                 onAdd: () => _items[idx].isExpanded = false,
               ),
@@ -439,7 +439,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
   }
 
   // TODO: move elsewhere
-  Map<int, RouteWithLogs> _sortEntriesByLogDate(Map<int, RouteWithLogs> entries) {
+  Map<int, RouteWithUserMeta> _sortEntriesByLogDate(Map<int, RouteWithUserMeta> entries) {
     var sortedKeys = entries.keys.toList(growable: false)
       ..sort((k1, k2) => entries[k2].mostRecentCreatedAt().compareTo(entries[k1].mostRecentCreatedAt()));
 

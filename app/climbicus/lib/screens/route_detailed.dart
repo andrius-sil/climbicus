@@ -9,9 +9,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../style.dart';
 
 class RouteDetailedPage extends StatefulWidget {
-  final RouteWithLogs routeWithLogs;
+  final RouteWithUserMeta routeWithUserMeta;
 
-  const RouteDetailedPage({@required this.routeWithLogs});
+  const RouteDetailedPage({@required this.routeWithUserMeta});
 
   @override
   State<StatefulWidget> createState() => _RouteDetailedPage();
@@ -26,7 +26,7 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
     super.initState();
 
     _routeImagesBloc = BlocProvider.of<RouteImagesBloc>(context);
-    _routeImagesBloc.add(FetchRouteImagesAll(routeId: widget.routeWithLogs.route.id));
+    _routeImagesBloc.add(FetchRouteImagesAll(routeId: widget.routeWithUserMeta.route.id));
 
     _usersBloc = BlocProvider.of<UsersBloc>(context);
   }
@@ -35,7 +35,7 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.routeWithLogs.route.grade} route'),
+        title: Text('${widget.routeWithUserMeta.route.grade} route'),
       ),
       body: Column(
         children: <Widget>[
@@ -45,7 +45,7 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
               builder: (context, state) {
                 if (state is RouteImagesLoaded) {
                   return RouteImageCarousel(
-                    images: state.images.allImages(widget.routeWithLogs.route.id),
+                    images: state.images.allImages(widget.routeWithUserMeta.route.id),
                     height: 300.0,
                   );
                 } else if (state is RouteImagesError) {
@@ -63,7 +63,7 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
               children: <Widget>[
                 _buildRouteDetails(),
                 Text(
-                  "Category: ${widget.routeWithLogs.route.category}",
+                  "Category: ${widget.routeWithUserMeta.route.category}",
                   style: TextStyle(fontSize: HEADING_SIZE_3),
                 ),
               ],
@@ -94,9 +94,9 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
     return BlocBuilder<UsersBloc, UsersState>(
       builder: (context, state) {
         if (state is UsersLoaded) {
-          var userName = state.users[widget.routeWithLogs.route.userId].name;
+          var userName = state.users[widget.routeWithUserMeta.route.userId].name;
           return Text(
-              "Added by: $userName - ${dateToString(widget.routeWithLogs.route.createdAt)}",
+              "Added by: $userName - ${dateToString(widget.routeWithUserMeta.route.createdAt)}",
               style: TextStyle(fontSize: HEADING_SIZE_3),
           );
         } else if (state is UsersError) {
@@ -110,7 +110,7 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
 
   Widget _buildRouteAscents() {
     List<Widget> ascents = [];
-    for (var userRouteLog in widget.routeWithLogs.userRouteLogs.values) {
+    for (var userRouteLog in widget.routeWithUserMeta.userRouteLogs.values) {
       var status = (userRouteLog.completed) ? "Sent!" : "Attempted";
       var tries = (userRouteLog.numAttempts == null) ? "" : "(${userRouteLog.numAttempts} tries)";
       ascents.add(
