@@ -7,6 +7,7 @@ import 'package:climbicus/constants.dart';
 import 'package:climbicus/models/route.dart' as jsonmdl;
 import 'package:climbicus/models/route_image.dart';
 import 'package:climbicus/models/user_route_log.dart';
+import 'package:climbicus/models/user_route_votes.dart';
 import 'package:climbicus/repositories/api_repository.dart';
 import 'package:climbicus/utils/route_grades.dart';
 import 'package:flutter/material.dart';
@@ -16,8 +17,9 @@ import 'package:get_it/get_it.dart';
 class RouteWithLogs {
   jsonmdl.Route route;
   Map<int, UserRouteLog> userRouteLogs;
+  UserRouteVotes userRouteVotes;
 
-  RouteWithLogs(this.route, this.userRouteLogs);
+  RouteWithLogs(this.route, this.userRouteLogs, this.userRouteVotes);
 
   UserRouteLog mostRecentLog() {
     if (userRouteLogs.isEmpty) {
@@ -60,7 +62,9 @@ class RoutesWithLogs {
 
   RoutesWithLogs(
       Map<int, jsonmdl.Route> newRoutes,
-      Map<int, UserRouteLog> newLogbook) {
+      Map<int, UserRouteLog> newLogbook,
+      Map<int, UserRouteVotes> newVotes,
+  ) {
 
     _routes = newRoutes;
     _data = Map.fromIterable(ROUTE_CATEGORIES,
@@ -69,11 +73,15 @@ class RoutesWithLogs {
     );
 
     newRoutes.forEach((routeId, route) {
-      _data[route.category][routeId] = RouteWithLogs(route, {});
+      _data[route.category][routeId] = RouteWithLogs(route, {}, null);
     });
 
     newLogbook.forEach((_, userRouteLog) {
       addUserRouteLog(userRouteLog);
+    });
+
+    newVotes.forEach((_, userRouteVotes) {
+      addUserRouteVotes(userRouteVotes);
     });
   }
 
@@ -92,12 +100,17 @@ class RoutesWithLogs {
 
   void addRoute(jsonmdl.Route route) {
     _routes[route.id] = route;
-    _data[route.category][route.id] = RouteWithLogs(route, {});
+    _data[route.category][route.id] = RouteWithLogs(route, {}, null);
   }
 
   void addUserRouteLog(UserRouteLog userRouteLog) {
     String category = _routes[userRouteLog.routeId].category;
     _data[category][userRouteLog.routeId].userRouteLogs[userRouteLog.id] = userRouteLog;
+  }
+
+  void addUserRouteVotes(UserRouteVotes userRouteVotes) {
+    String category = _routes[userRouteVotes.routeId].category;
+    _data[category][userRouteVotes.routeId].userRouteVotes = userRouteVotes;
   }
 
   Map<int, RouteWithLogs> allRoutes(String category) => _data[category];

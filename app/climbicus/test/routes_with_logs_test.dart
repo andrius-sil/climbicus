@@ -1,6 +1,8 @@
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
+import 'package:climbicus/constants.dart';
 import 'package:climbicus/models/route.dart' as jsonmdl;
 import 'package:climbicus/models/user_route_log.dart';
+import 'package:climbicus/models/user_route_votes.dart';
 import 'package:climbicus/utils/route_grades.dart';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -24,24 +26,37 @@ void main() {
       4: UserRouteLog(4, 3, 1, 1, false, 1, DateTime.utc(2020, 01, 01)),
     };
 
-    var routesWithLogs = RoutesWithLogs(newRoutes, {}..addAll(newLogbook1)..addAll(newLogbook2));
+    var newVotes = {
+      1: UserRouteVotes(1, 1, 1, 1, 2.0, DIFFICULTY_SOFT, DateTime.utc(2020, 02, 01)),
+      2: UserRouteVotes(2, 3, 1, 1, 1.0, DIFFICULTY_FAIR, DateTime.utc(2020, 03, 01)),
+    };
+
+    var routesWithLogs = RoutesWithLogs(
+      newRoutes,
+      {}..addAll(newLogbook1)..addAll(newLogbook2),
+      newVotes,
+    );
 
     var allRoutes = {
       1: RouteWithLogs(
         newRoutes[1],
         newLogbook1,
+        newVotes[1],
       ),
       2: RouteWithLogs(
         newRoutes[2],
         {},
+        null,
       ),
       3: RouteWithLogs(
         newRoutes[3],
         newLogbook2,
+        newVotes[2],
       ),
       4: RouteWithLogs(
         newRoutes[4],
         {},
+        null,
       ),
     };
 
@@ -52,15 +67,19 @@ void main() {
     expect(routesWithLogs.allRoutes("sport").length, 2);
     expect(routesWithLogs.allRoutes("sport")[1].route, allRoutes[1].route);
     expect(routesWithLogs.allRoutes("sport")[1].userRouteLogs, allRoutes[1].userRouteLogs);
+    expect(routesWithLogs.allRoutes("sport")[1].userRouteVotes, allRoutes[1].userRouteVotes);
     expect(routesWithLogs.allRoutes("sport")[2].route, allRoutes[2].route);
     expect(routesWithLogs.allRoutes("sport")[2].userRouteLogs, allRoutes[2].userRouteLogs);
+    expect(routesWithLogs.allRoutes("sport")[2].userRouteVotes, allRoutes[2].userRouteVotes);
 
     expect(routesWithLogs.routeIds("bouldering"), [3, 4]);
     expect(routesWithLogs.allRoutes("bouldering").length, 2);
     expect(routesWithLogs.allRoutes("bouldering")[3].route, allRoutes[3].route);
     expect(routesWithLogs.allRoutes("bouldering")[3].userRouteLogs, allRoutes[3].userRouteLogs);
+    expect(routesWithLogs.allRoutes("bouldering")[3].userRouteVotes, allRoutes[3].userRouteVotes);
     expect(routesWithLogs.allRoutes("bouldering")[4].route, allRoutes[4].route);
     expect(routesWithLogs.allRoutes("bouldering")[4].userRouteLogs, allRoutes[4].userRouteLogs);
+    expect(routesWithLogs.allRoutes("bouldering")[4].userRouteVotes, allRoutes[4].userRouteVotes);
 
     // addRoute
     var fifthRoute = jsonmdl.Route(5, 1, 1, "sport", "Font_6A", "Font_6A", null, null, DateTime.now());
@@ -73,6 +92,11 @@ void main() {
     var fifthLog = UserRouteLog(5, 5, 1, 1, false, 5, DateTime.now());
     routesWithLogs.addUserRouteLog(fifthLog);
     expect(routesWithLogs.allRoutes("sport")[5].userRouteLogs, {5: fifthLog});
+
+    // addUserRouteVotes
+    var thirdVote = UserRouteVotes(3, 2, 1, 1, 3.0, DIFFICULTY_HARD, DateTime.utc(2020, 02, 01));
+    routesWithLogs.addUserRouteVotes(thirdVote);
+    expect(routesWithLogs.allRoutes("sport")[2].userRouteVotes, thirdVote);
 
     expect(routesWithLogs.allRoutes("sport")[1].mostRecentLog(), newLogbook1[2]);
 
@@ -103,7 +127,7 @@ void main() {
       7: UserRouteLog(7, 4, 1, 1, false, 5, DateTime.now()),
     };
 
-    var routesWithLogs = RoutesWithLogs(newRoutes, newLogbook);
+    var routesWithLogs = RoutesWithLogs(newRoutes, newLogbook, {});
 
     expect(routesWithLogs.isEmpty("sport"), false);
     expect(routesWithLogs.routeIds("sport"), [1, 2, 3, 4, 5]);
@@ -132,7 +156,7 @@ void main() {
       7: jsonmdl.Route(7, 1, 1, "bouldering", "V_V7", "V_V7", null, null, DateTime.now()),
     };
 
-    var routesWithLogs = RoutesWithLogs(newRoutes, {});
+    var routesWithLogs = RoutesWithLogs(newRoutes, {}, {});
 
     expect(routesWithLogs.isEmpty("bouldering"), false);
     expect(routesWithLogs.routeIds("bouldering"), [1, 2, 3, 4, 5, 6, 7]);
