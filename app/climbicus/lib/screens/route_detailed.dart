@@ -19,7 +19,6 @@ class RouteDetailedPage extends StatefulWidget {
 
 class _RouteDetailedPage extends State<RouteDetailedPage> {
   RouteImagesBloc _routeImagesBloc;
-  UsersBloc _usersBloc;
 
   @override
   void initState() {
@@ -27,8 +26,6 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
 
     _routeImagesBloc = BlocProvider.of<RouteImagesBloc>(context);
     _routeImagesBloc.add(FetchRouteImagesAll(routeId: widget.routeWithUserMeta.route.id));
-
-    _usersBloc = BlocProvider.of<UsersBloc>(context);
   }
 
   @override
