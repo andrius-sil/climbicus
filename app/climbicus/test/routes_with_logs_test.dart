@@ -106,6 +106,20 @@ void main() {
     expect(routesWithLogs.allRoutes("bouldering")[3].numAttempts(), 2);
     expect(routesWithLogs.allRoutes("bouldering")[4].numAttempts(), 0);
     expect(routesWithLogs.allRoutes("sport")[5].numAttempts(), 1);
+
+    // qualityVote
+    expect(routesWithLogs.allRoutes("sport")[1].qualityVote(), 2.0);
+    expect(routesWithLogs.allRoutes("sport")[2].qualityVote(), 3.0);
+    expect(routesWithLogs.allRoutes("bouldering")[3].qualityVote(), 1.0);
+    expect(routesWithLogs.allRoutes("bouldering")[4].qualityVote(), null);
+    expect(routesWithLogs.allRoutes("sport")[5].qualityVote(), null);
+
+    // difficultyVote
+    expect(routesWithLogs.allRoutes("sport")[1].difficultyVote(), DIFFICULTY_SOFT);
+    expect(routesWithLogs.allRoutes("sport")[2].difficultyVote(), DIFFICULTY_HARD);
+    expect(routesWithLogs.allRoutes("bouldering")[3].difficultyVote(), DIFFICULTY_FAIR);
+    expect(routesWithLogs.allRoutes("bouldering")[4].difficultyVote(), null);
+    expect(routesWithLogs.allRoutes("sport")[5].difficultyVote(), null);
   });
 
   test('routes with logs - filters', () {

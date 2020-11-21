@@ -54,6 +54,22 @@ class RouteWithLogs {
   bool isAttempted() => userRouteLogs.isNotEmpty;
 
   int numAttempts() => userRouteLogs.length;
+
+  double qualityVote() {
+    if (userRouteVotes == null) {
+      return null;
+    }
+
+    return userRouteVotes.quality;
+  }
+
+  String difficultyVote() {
+    if (userRouteVotes == null) {
+      return null;
+    }
+
+    return userRouteVotes.difficulty;
+  }
 }
 
 class RoutesWithLogs {
