@@ -116,6 +116,14 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
       numAttempts: numberAttemptsKey.currentState.value,
     ));
 
+    _gymRoutesBloc.add(AddOrUpdateUserRouteVotes(
+      routeId: widget.selectedRouteId,
+      userRouteVotesData: UserRouteVotesData(
+        routeQualityKey.currentState.value,
+        routeDifficultyKey.currentState.value,
+      ),
+    ));
+
     Navigator.of(context).popUntil((route) => route.isFirst);
   }
 }

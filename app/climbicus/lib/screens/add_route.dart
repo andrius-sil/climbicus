@@ -1,7 +1,6 @@
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/blocs/route_predictions_bloc.dart';
-import 'package:climbicus/blocs/user_route_votes_bloc.dart';
 import 'package:climbicus/constants.dart';
 import 'package:climbicus/models/route_image.dart';
 import 'package:climbicus/style.dart';

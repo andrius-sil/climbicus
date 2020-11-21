@@ -22,7 +22,6 @@ import 'blocs/gyms_bloc.dart';
 import 'blocs/login_bloc.dart';
 import 'blocs/settings_bloc.dart';
 import 'blocs/simple_bloc_delegate.dart';
-import 'blocs/user_route_votes_bloc.dart';
 import 'blocs/users_bloc.dart';
 import 'env.dart';
 import 'models/gym.dart';
@@ -65,11 +64,9 @@ void mainDelegate(Environment env) {
         BlocProvider<GymsBloc>(create: (context) => GymsBloc()),
         BlocProvider<UsersBloc>(create: (context) => UsersBloc()),
         BlocProvider<RouteImagesBloc>(create: (context) => RouteImagesBloc()),
-        BlocProvider<UserRouteVotesBloc>(create: (context) => UserRouteVotesBloc()),
         BlocProvider<RoutePredictionBloc>(create: (context) => RoutePredictionBloc()),
         BlocProvider<GymRoutesBloc>(create: (context) => GymRoutesBloc(
           routeImagesBloc: BlocProvider.of<RouteImagesBloc>(context),
-          userRouteVotesBloc: BlocProvider.of<UserRouteVotesBloc>(context),
         )),
       ],
       child: MaterialApp(

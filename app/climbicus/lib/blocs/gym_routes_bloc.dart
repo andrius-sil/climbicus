@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
-import 'package:climbicus/blocs/user_route_votes_bloc.dart';
 import 'package:climbicus/constants.dart';
 import 'package:climbicus/models/route.dart' as jsonmdl;
 import 'package:climbicus/models/route_image.dart';
@@ -14,6 +13,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 
+
+class UserRouteVotesData {
+  final double quality;
+  final String difficulty;
+  const UserRouteVotesData(this.quality, this.difficulty);
+}
+
+// TODO: rename to RouteWithUserMetadata
 class RouteWithLogs {
   jsonmdl.Route route;
   Map<int, UserRouteLog> userRouteLogs;
@@ -114,9 +121,14 @@ class RoutesWithLogs {
   List<int> routeIdsAll() => _routes.keys.toList();
   List<int> routeIds(String category) => _data[category].keys.toList();
 
-  void addRoute(jsonmdl.Route route) {
+  void addRoute(jsonmdl.Route route, UserRouteVotes userRouteVotes) {
     _routes[route.id] = route;
-    _data[route.category][route.id] = RouteWithLogs(route, {}, null);
+    _data[route.category][route.id] = RouteWithLogs(route, {}, userRouteVotes);
+  }
+
+  void updateRoute(jsonmdl.Route route, UserRouteVotes userRouteVotes) {
+    _routes[route.id] = route;
+    _data[route.category][route.id].userRouteVotes = userRouteVotes;
   }
 
   void addUserRouteLog(UserRouteLog userRouteLog) {
@@ -127,6 +139,11 @@ class RoutesWithLogs {
   void addUserRouteVotes(UserRouteVotes userRouteVotes) {
     String category = _routes[userRouteVotes.routeId].category;
     _data[category][userRouteVotes.routeId].userRouteVotes = userRouteVotes;
+  }
+
+  UserRouteVotes getUserRouteVotes(int routeId) {
+    String category = _routes[routeId].category;
+    return _data[category][routeId].userRouteVotes;
   }
 
   Map<int, RouteWithLogs> allRoutes(String category) => _data[category];
@@ -209,6 +226,15 @@ class AddNewUserRouteLog extends GymRoutesEvent {
   });
 }
 
+class AddOrUpdateUserRouteVotes extends GymRoutesEvent {
+  final int routeId;
+  final UserRouteVotesData userRouteVotesData;
+  const AddOrUpdateUserRouteVotes({
+    @required this.routeId,
+    @required this.userRouteVotesData,
+  });
+}
+
 class AddNewGymRouteWithUserLog extends GymRoutesEvent {
   final String category;
   final String grade;
@@ -232,7 +258,6 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
   final getIt = GetIt.instance;
 
   final RouteImagesBloc routeImagesBloc;
-  final UserRouteVotesBloc userRouteVotesBloc;
 
   RoutesWithLogs _entries;
   RoutesWithLogs get _entriesFiltered => filterEntries();
@@ -241,7 +266,7 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
   Map<String, bool> _attemptedFilterEnabled;
   Map<String, GradeValues> _gradesFilter;
 
-  GymRoutesBloc({@required this.routeImagesBloc, @required this.userRouteVotesBloc}) {
+  GymRoutesBloc({@required this.routeImagesBloc}) {
     _sentFilterEnabled = Map.fromIterable(ROUTE_CATEGORIES,
       key: (category) => category,
       value: (_) => false,
@@ -267,15 +292,17 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
       try {
         var dataLogbook = getIt<ApiRepository>().fetchLogbook();
         var dataRoutes = getIt<ApiRepository>().fetchRoutes();
+        var dataVotes = getIt<ApiRepository>().fetchVotes();
 
         var newLogbook = (await dataLogbook).map((userRouteLogId, model) =>
-            MapEntry(int.parse(userRouteLogId),
-                UserRouteLog.fromJson(model)));
+            MapEntry(int.parse(userRouteLogId), UserRouteLog.fromJson(model)));
         Map<String, dynamic> resultsRoutes = (await dataRoutes)["routes"];
         var newRoutes = resultsRoutes.map((routeId, model) =>
             MapEntry(int.parse(routeId), jsonmdl.Route.fromJson(model)));
+        var newVotes = (await dataVotes).map((userRouteVotesId, model) =>
+            MapEntry(int.parse(userRouteVotesId), UserRouteVotes.fromJson(model)));
 
-        _entries = RoutesWithLogs(newRoutes, newLogbook);
+        _entries = RoutesWithLogs(newRoutes, newLogbook, newVotes);
 
         yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
 
@@ -299,18 +326,40 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
       var results = await getIt<ApiRepository>().logbookAdd(event.routeId, event.completed, event.numAttempts);
       var newUserRouteLog = UserRouteLog.fromJson(results["user_route_log"]);
 
-      // TODO: add or update new user vote
-
       _entries.addUserRouteLog(newUserRouteLog);
+
+      yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
+    } else if (event is AddOrUpdateUserRouteVotes) {
+      // TODO: do not add if no real vote
+      var results;
+      var userRouteVotes = _entries.getUserRouteVotes(event.routeId);
+      if (userRouteVotes != null) {
+        results = await getIt<ApiRepository>().userRouteVotesUpdate(
+          userRouteVotes.id,
+          event.userRouteVotesData.quality,
+          event.userRouteVotesData.difficulty,
+        );
+      } else {
+        results = await getIt<ApiRepository>().userRouteVotesAdd(
+          event.routeId,
+          event.userRouteVotesData.quality,
+          event.userRouteVotesData.difficulty,
+        );
+      }
+
+      _entries.updateRoute(
+        jsonmdl.Route.fromJson(results["route"]),
+        UserRouteVotes.fromJson(results["user_route_votes"]),
+      );
 
       yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
     } else if (event is AddNewGymRouteWithUserLog) {
       var results = await getIt<ApiRepository>().routeAdd(event.category, event.grade, event.name);
       var newRoute = jsonmdl.Route.fromJson(results["route"]);
-      _entries.addRoute(newRoute);
 
-      // 1. add vote in a consecutive api call - return update route model?
-      userRouteVotesBloc.add(AddNewUserRouteVotes(
+      _entries.addRoute(newRoute, null);
+
+      this.add(AddOrUpdateUserRouteVotes(
         routeId: newRoute.id,
         userRouteVotesData: event.userRouteVotesData,
       ));

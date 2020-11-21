@@ -205,6 +205,14 @@ class _BodyListItemState extends State<BodyListItem> {
       completed: checkboxSentKey.currentState.value,
       numAttempts: numberAttemptsKey.currentState.value,
     ));
+
+    widget.gymRoutesBloc.add(AddOrUpdateUserRouteVotes(
+      routeId: widget.routeWithLogs.route.id,
+      userRouteVotesData: UserRouteVotesData(
+        routeQualityKey.currentState.value,
+        routeDifficultyKey.currentState.value,
+      ),
+    ));
   }
 }
 

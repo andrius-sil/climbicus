@@ -83,10 +83,12 @@ void main() {
 
     // addRoute
     var fifthRoute = jsonmdl.Route(5, 1, 1, "sport", "Font_6A", "Font_6A", null, null, DateTime.now());
-    routesWithLogs.addRoute(fifthRoute);
+    var thirdVote = UserRouteVotes(3, 5, 1, 1, 3.0, DIFFICULTY_FAIR, DateTime.utc(2020, 02, 01));
+    routesWithLogs.addRoute(fifthRoute, thirdVote);
     expect(routesWithLogs.routeIdsAll(), [1, 2, 3, 4, 5]);
     expect(routesWithLogs.allRoutes("sport")[5].route, fifthRoute);
     expect(routesWithLogs.allRoutes("sport")[5].userRouteLogs, {});
+    expect(routesWithLogs.allRoutes("sport")[5].userRouteVotes, thirdVote);
 
     // addUserRouteLog
     var fifthLog = UserRouteLog(5, 5, 1, 1, false, 5, DateTime.now());
@@ -94,9 +96,9 @@ void main() {
     expect(routesWithLogs.allRoutes("sport")[5].userRouteLogs, {5: fifthLog});
 
     // addUserRouteVotes
-    var thirdVote = UserRouteVotes(3, 2, 1, 1, 3.0, DIFFICULTY_HARD, DateTime.utc(2020, 02, 01));
-    routesWithLogs.addUserRouteVotes(thirdVote);
-    expect(routesWithLogs.allRoutes("sport")[2].userRouteVotes, thirdVote);
+    var fourthVote = UserRouteVotes(4, 2, 1, 1, 3.0, DIFFICULTY_HARD, DateTime.utc(2020, 02, 01));
+    routesWithLogs.addUserRouteVotes(fourthVote);
+    expect(routesWithLogs.allRoutes("sport")[2].userRouteVotes, fourthVote);
 
     expect(routesWithLogs.allRoutes("sport")[1].mostRecentLog(), newLogbook1[2]);
 
@@ -112,14 +114,14 @@ void main() {
     expect(routesWithLogs.allRoutes("sport")[2].qualityVote(), 3.0);
     expect(routesWithLogs.allRoutes("bouldering")[3].qualityVote(), 1.0);
     expect(routesWithLogs.allRoutes("bouldering")[4].qualityVote(), null);
-    expect(routesWithLogs.allRoutes("sport")[5].qualityVote(), null);
+    expect(routesWithLogs.allRoutes("sport")[5].qualityVote(), 3.0);
 
     // difficultyVote
     expect(routesWithLogs.allRoutes("sport")[1].difficultyVote(), DIFFICULTY_SOFT);
     expect(routesWithLogs.allRoutes("sport")[2].difficultyVote(), DIFFICULTY_HARD);
     expect(routesWithLogs.allRoutes("bouldering")[3].difficultyVote(), DIFFICULTY_FAIR);
     expect(routesWithLogs.allRoutes("bouldering")[4].difficultyVote(), null);
-    expect(routesWithLogs.allRoutes("sport")[5].difficultyVote(), null);
+    expect(routesWithLogs.allRoutes("sport")[5].difficultyVote(), DIFFICULTY_FAIR);
   });
 
   test('routes with logs - filters', () {

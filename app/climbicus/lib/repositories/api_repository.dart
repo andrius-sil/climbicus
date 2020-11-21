@@ -228,7 +228,7 @@ class ApiRepository {
     return _requestJson("GET", "users/", {});
   }
 
-  Future<Map> fetchUserRouteVotes() async {
+  Future<Map> fetchVotes() async {
     Map data = {
       "gym_id": _gymId,
     };
