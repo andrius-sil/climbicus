@@ -186,8 +186,8 @@ class _BodyListItemState extends State<BodyListItem> {
               ),
             ],
           ),
-          RouteDifficultyRating(key: routeDifficultyKey),
-          RouteQualityRating(key: routeQualityKey),
+          RouteDifficultyRating(key: routeDifficultyKey, initialValue: widget.routeWithLogs.difficultyVote()),
+          RouteQualityRating(key: routeQualityKey, initialValue: widget.routeWithLogs.qualityVote()),
           RaisedButton(
             child: Text("Add"),
             onPressed: _onAddButtonPressed,
