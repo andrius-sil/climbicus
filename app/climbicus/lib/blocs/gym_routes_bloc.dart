@@ -339,7 +339,6 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
 
       yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
     } else if (event is AddOrUpdateUserRouteVotes) {
-      // TODO: do not add if no real vote
       var results;
       var userRouteVotes = _entries.getUserRouteVotes(event.routeId);
       if (userRouteVotes != null) {
