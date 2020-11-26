@@ -84,8 +84,8 @@ class HeaderListItem extends StatelessWidget {
     );
 
     return Padding(
-      padding: const EdgeInsets.all(2),
-      child: Column(
+    padding: const EdgeInsets.all(2),
+    child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           routeName,
@@ -137,7 +137,9 @@ class HeaderListItem extends StatelessWidget {
                     children: [
                       ratingBarIndicator,
                       Text(
-                        "${this.routeWithUserMeta.numAttempts().toString()} ascents",
+                        (this.routeWithUserMeta.numAttempts() == 1) ?
+                          "${this.routeWithUserMeta.numAttempts().toString()} ascent" :
+                          "${this.routeWithUserMeta.numAttempts().toString()} ascents",
                         style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
                       ),
                     ],
