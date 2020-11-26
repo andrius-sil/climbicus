@@ -3,3 +3,12 @@ const SPORT_CATEGORY = "sport";
 const BOULDERING_CATEGORY = "bouldering";
 
 const ROUTE_CATEGORIES = [SPORT_CATEGORY, BOULDERING_CATEGORY];
+
+
+const DIFFICULTY_SOFT = "soft";
+const DIFFICULTY_FAIR = "fair";
+const DIFFICULTY_HARD = "hard";
+
+const DIFFICULTY_NAME_SOFT = "Soft";
+const DIFFICULTY_NAME_FAIR = "Fair";
+const DIFFICULTY_NAME_HARD = "Hard";

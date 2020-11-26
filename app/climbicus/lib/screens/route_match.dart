@@ -34,6 +34,8 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
   RouteImagesBloc _routeImagesBloc;
   GymRoutesBloc _gymRoutesBloc;
 
+  RouteWithUserMeta _routeWithUserMeta;
+
   @override
   void initState() {
     super.initState();
@@ -45,6 +47,8 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
       routeId: widget.selectedRouteId,
       routeImageId: widget.takenRouteImageId,
     ));
+
+    _routeWithUserMeta = _gymRoutesBloc.getGymRoute(widget.selectedRouteId);
   }
 
   @override
@@ -90,8 +94,8 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
           ),
         ],
       ),
-      RouteDifficultyRating(key: routeDifficultyKey),
-      RouteQualityRating(key: routeQualityKey),
+      RouteDifficultyRating(key: routeDifficultyKey, initialValue: _routeWithUserMeta.difficultyVote()),
+      RouteQualityRating(key: routeQualityKey, initialValue: _routeWithUserMeta.qualityVote()),
       RaisedButton(
         child: Text('Add'),
         onPressed: _logAndNavigateBack,
@@ -114,6 +118,14 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
       routeId: widget.selectedRouteId,
       completed: checkboxSentKey.currentState.value,
       numAttempts: numberAttemptsKey.currentState.value,
+    ));
+
+    _gymRoutesBloc.add(AddOrUpdateUserRouteVotes(
+      routeId: widget.selectedRouteId,
+      userRouteVotesData: UserRouteVotesData(
+        routeQualityKey.currentState.value,
+        routeDifficultyKey.currentState.value,
+      ),
     ));
 
     Navigator.of(context).popUntil((route) => route.isFirst);
