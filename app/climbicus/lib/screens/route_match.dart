@@ -94,8 +94,8 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
           ),
         ],
       ),
-      RouteDifficultyRating(key: routeDifficultyKey, initialValue: _routeWithUserMeta.difficultyVote()),
-      RouteQualityRating(key: routeQualityKey, initialValue: _routeWithUserMeta.qualityVote()),
+      RouteDifficultyRating(key: routeDifficultyKey),
+      RouteQualityRating(key: routeQualityKey),
       RaisedButton(
         child: Text('Add'),
         onPressed: _logAndNavigateBack,
