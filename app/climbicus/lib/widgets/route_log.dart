@@ -299,6 +299,8 @@ class RouteNameState extends State<RouteName> {
       decoration: InputDecoration(
         labelText: "Route name",
       ),
+      maxLength: 64,
+      textCapitalization: TextCapitalization.words,
       onChanged: (String value) {
         setState(() {
           _value = value;
