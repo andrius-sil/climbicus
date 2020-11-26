@@ -293,7 +293,7 @@ class RouteNameState extends State<RouteName> {
   Widget build(BuildContext context) {
     return TextField(
       decoration: InputDecoration(
-        labelText: "Route name",
+        labelText: "Give this route a witty name",
       ),
       maxLength: 64,
       textCapitalization: TextCapitalization.words,
