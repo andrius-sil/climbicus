@@ -82,7 +82,7 @@ class NumberAttemptsState extends State<NumberAttempts> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        Text("How many attempts?\t${_numAttemptsLabel()}"),
+        Text("How many attempts?"),
         Container(
           height: SENT_ATTEMPTS_HEIGHT,
           child: NumberPicker.integer(
@@ -98,10 +98,6 @@ class NumberAttemptsState extends State<NumberAttempts> {
         ),
       ],
     );
-  }
-
-  String _numAttemptsLabel() {
-    return (_value == 0) ? "-" : "$value";
   }
 }
 
