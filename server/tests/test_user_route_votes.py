@@ -282,3 +282,51 @@ def test_calc_avg_votes(client, app, auth_headers_user2):
         assert route_entry.user_id == 1
         assert route_entry.gym_id == 1
         assert route_entry.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
+
+
+def test_calc_avg_votes_with_nulls(client, app, auth_headers_user1, auth_headers_user2):
+    # verify 'before' state of averages
+    with app.app_context():
+        route_entry = Routes.query.filter_by(id=3).one()
+        assert route_entry.avg_difficulty_name is None
+        assert route_entry.avg_quality is None
+        assert route_entry.user_id == 1
+        assert route_entry.gym_id == 1
+        assert route_entry.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
+
+    # add a vote entry with nulls
+    data = {
+        "user_id": 1,
+        "quality": None,
+        "difficulty": None,
+        "route_id": 3,
+        "gym_id": 1,
+    }
+
+    resp = client.post("/user_route_votes/", data=json.dumps(data), content_type="application/json",
+                       headers=auth_headers_user1)
+
+    assert resp.is_json
+    assert resp.status_code == 200
+
+    data2 = {
+        "user_id": 2,
+        "quality": 3.0,
+        "difficulty": "soft",
+        "route_id": 3,
+        "gym_id": 1,
+    }
+
+    resp = client.post("/user_route_votes/", data=json.dumps(data2), content_type="application/json",
+                       headers=auth_headers_user2)
+
+    assert resp.status_code == 200
+    assert resp.is_json
+
+    with app.app_context():
+        route_entry = Routes.query.filter_by(id=3).one()
+        assert route_entry.avg_difficulty_name == "soft"
+        assert route_entry.avg_quality == 3.0
+        assert route_entry.user_id == 1
+        assert route_entry.gym_id == 1
+        assert route_entry.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)

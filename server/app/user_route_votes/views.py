@@ -17,12 +17,12 @@ def update_avg_route_votes(route_id, quality, difficulty):
     route_entry = db.session.query(Routes).filter_by(id=route_id).one()
 
     if difficulty:
-        difficulty_votes = [v.difficulty.value for v in votes]
+        difficulty_votes = [v.difficulty.value for v in votes if v.difficulty is not None]
         avg_difficulty = round(statistics.mean(difficulty_votes), 0)
         route_entry.avg_difficulty = RouteDifficulty(avg_difficulty)
 
     if quality:
-        quality_votes = [v.quality for v in votes]
+        quality_votes = [v.quality for v in votes if v.quality is not None]
         avg_quality = round(statistics.mean(quality_votes), 0)
         route_entry.avg_quality = avg_quality
 
