@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
           }
           if (errorMsg != null) {
             final snackBar = SnackBar(
-              backgroundColor: Colors.deepOrange,
+              backgroundColor: Theme.of(context).accentColor,
               content: Text(errorMsg),
             );
             Scaffold.of(context).showSnackBar(snackBar);

@@ -19,7 +19,7 @@ Widget decorateLogWidget(BuildContext context, Widget logWidget) {
     height: 100.0,
     alignment: Alignment.center,
     decoration: BoxDecoration(
-      color: Colors.grey[700],
+      color: primaryColorLight,
       borderRadius: BorderRadius.circular(6),
     ),
     child: logWidget,
@@ -255,7 +255,7 @@ class RouteDifficultyRatingState extends State<RouteDifficultyRating> {
   Widget build(BuildContext context) {
     return decorateLogWidget(context, ToggleSwitch(
       activeBgColor: Theme.of(context).accentColor,
-      inactiveBgColor: Colors.grey[700],
+      inactiveBgColor: primaryColorLight,
       cornerRadius: 0.0,
       initialLabelIndex: _index,
       labels: _labels,

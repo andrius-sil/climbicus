@@ -168,7 +168,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
       widgets.add(_buildRouteSelectWrapper(
         // Recreating image to avoid alignment issues.
         Container(
-          color: Colors.grey[800],
+          color: primaryColorLight,
           alignment: Alignment.center,
           child: imageWidget,
         ),
@@ -182,7 +182,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
         Container(
             alignment: Alignment.center,
             padding: const EdgeInsets.all(8),
-            color: Colors.grey[800],
+            color: primaryColorLight,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[

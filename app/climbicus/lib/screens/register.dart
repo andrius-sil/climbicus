@@ -36,7 +36,7 @@ class _RegisterPageState extends State<RegisterPage> {
             Navigator.pop(context);
           } else if (state is RegisterUserAlreadyExists) {
             final snackBar = SnackBar(
-              backgroundColor: Colors.deepOrange,
+              backgroundColor: Theme.of(context).accentColor,
               content: Text("Email already exists. Try again."),
             );
             Scaffold.of(context).showSnackBar(snackBar);
