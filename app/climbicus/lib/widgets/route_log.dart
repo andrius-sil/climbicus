@@ -5,7 +5,7 @@ import 'package:climbicus/utils/route_grades.dart';
 import 'package:climbicus/widgets/rating_star.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:numberpicker/numberpicker.dart';
+import 'package:flutter_touch_spin/flutter_touch_spin.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 
@@ -104,14 +104,13 @@ class NumberAttemptsState extends State<NumberAttempts> {
       context,
       Column(
         children: <Widget>[
-          Text("How many attempts?"),
+          Text("Attempts?"),
           Container(
-            child: NumberPicker.integer(
-              initialValue: _value,
-              minValue: 0,
-              maxValue: 30,
-              itemExtent: 25.0,
-              textMapper: (String text) => ((text == "0") ? "-" : "$text"),
+            child: TouchSpin(
+              value: _value,
+              min: 0,
+              max: 30,
+              step: 1,
               onChanged: (num value) => setState(() {
                 _value = value.toInt();
               }),

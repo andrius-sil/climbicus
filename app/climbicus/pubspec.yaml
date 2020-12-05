@@ -19,7 +19,7 @@ dependencies:
   flutter_image_compress: ^0.6.8
   flutter_image: ^3.0.0
   carousel_slider: ^1.4.1
-  numberpicker: ^1.2.1
+  flutter_touch_spin: ^1.0.1
   flutter_rating_bar: ^3.0.1+1
   toggle_switch: ^0.1.8
   json_annotation: ^3.0.1
