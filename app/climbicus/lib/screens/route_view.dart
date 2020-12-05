@@ -63,16 +63,16 @@ class HeaderListItem extends StatelessWidget {
       );
     }
 
-    Widget ratingBarIndicator = Container();
-    if (this.routeWithUserMeta.route.avgQuality != null) {
-      ratingBarIndicator = RatingBar(
-        itemSize: 20.0,
-        initialRating: this.routeWithUserMeta.route.avgQuality,
-        itemCount: 3,
-        ratingWidget: ratingStar(),
-        onRatingUpdate: (_) => {},
-      );
-    }
+    Widget ratingBarIndicator = RatingBar(
+      itemSize: 20.0,
+      initialRating: this.routeWithUserMeta.route.avgQuality ?? 0.0,
+      itemCount: 3,
+      ratingWidget: ratingStar(
+        context,
+        disabled: this.routeWithUserMeta.route.avgQuality == null,
+      ),
+      onRatingUpdate: (_) => {},
+    );
 
     Widget routeNameText;
     if (this.routeWithUserMeta.route.name != null) {
@@ -84,8 +84,8 @@ class HeaderListItem extends StatelessWidget {
     );
 
     return Padding(
-    padding: const EdgeInsets.all(2),
-    child: Column(
+      padding: const EdgeInsets.all(2),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           routeName,
@@ -174,28 +174,25 @@ class _BodyListItemState extends State<BodyListItem> {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: CheckboxSent(key: checkboxSentKey),
-              ),
-              Expanded(
-                child: NumberAttempts(key: numberAttemptsKey),
-              ),
-            ],
-          ),
-          RouteDifficultyRating(key: routeDifficultyKey),
-          RouteQualityRating(key: routeQualityKey),
-          RaisedButton(
-            child: Text("Add"),
-            onPressed: _onAddButtonPressed,
-          ),
-        ],
-      ),
+    return Column(
+      children: [
+        Row(
+          children: <Widget>[
+            Expanded(child: CheckboxSent(key: checkboxSentKey)),
+            Expanded(child: NumberAttempts(key: numberAttemptsKey)),
+          ],
+        ),
+        Row(
+          children: <Widget>[
+            Expanded(child: RouteDifficultyRating(key: routeDifficultyKey)),
+            Expanded(child: RouteQualityRating(key: routeQualityKey)),
+          ],
+        ),
+        RaisedButton(
+          child: Text("Add"),
+          onPressed: _onAddButtonPressed,
+        ),
+      ],
     );
   }
 

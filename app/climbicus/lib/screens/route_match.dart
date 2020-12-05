@@ -85,17 +85,17 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
         ],
       ),
       Row(
-        children: [
-          Expanded(
-            child: CheckboxSent(key: checkboxSentKey),
-          ),
-          Expanded(
-            child: NumberAttempts(key: numberAttemptsKey),
-          ),
+        children: <Widget>[
+          Expanded(child: CheckboxSent(key: checkboxSentKey)),
+          Expanded(child: NumberAttempts(key: numberAttemptsKey)),
         ],
       ),
-      RouteDifficultyRating(key: routeDifficultyKey),
-      RouteQualityRating(key: routeQualityKey),
+      Row(
+        children: <Widget>[
+          Expanded(child: RouteDifficultyRating(key: routeDifficultyKey)),
+          Expanded(child: RouteQualityRating(key: routeQualityKey)),
+        ],
+      ),
       RaisedButton(
         child: Text('Add'),
         onPressed: _logAndNavigateBack,

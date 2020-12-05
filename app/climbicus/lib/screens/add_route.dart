@@ -95,26 +95,22 @@ class _AddRoutePageState extends State<AddRoutePage> {
               ),
               Row(
                 children: [
-                  Expanded(
-                    child: _buildSelectCategory(),
-                  ),
-                  Expanded(
-                    child: _buildSelectGrade(),
-                  ),
+                  Expanded(child:  _buildSelectCategory()),
+                  Expanded(child: _buildSelectGrade()),
                 ],
               ),
               Row(
                 children: [
-                  Expanded(
-                    child: CheckboxSent(key: checkboxSentKey),
-                  ),
-                  Expanded(
-                    child: NumberAttempts(key: numberAttemptsKey),
-                  ),
+                  Expanded(child: CheckboxSent(key: checkboxSentKey)),
+                  Expanded(child: NumberAttempts(key: numberAttemptsKey)),
                 ],
               ),
-              RouteDifficultyRating(key: routeDifficultyKey),
-              RouteQualityRating(key: routeQualityKey),
+              Row(
+                children: [
+                  Expanded(child: RouteDifficultyRating(key: routeDifficultyKey)),
+                  Expanded(child: RouteQualityRating(key: routeQualityKey)),
+                ],
+              ),
               Container(
                 width: 200.0,
                 child: RouteName(key: routeNameKey),
@@ -140,7 +136,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
       _selectedGrade = NOT_SELECTED;
     }
 
-    return Column(
+    return decorateLogWidget(context, Column(
       children: <Widget>[
         Text("Select grade"),
         DropdownButton<String>(
@@ -159,11 +155,11 @@ class _AddRoutePageState extends State<AddRoutePage> {
           },
         ),
       ],
-    );
+    ));
   }
 
   Widget _buildSelectCategory() {
-    return Column(
+    return decorateLogWidget(context, Column(
       children: <Widget>[
         Text("Select category"),
         DropdownButton<String>(
@@ -186,7 +182,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
           },
         ),
       ],
-    );
+    ));
   }
 
   Widget _buildImagePicker() {

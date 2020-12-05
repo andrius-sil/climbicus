@@ -8,10 +8,26 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
-const SENT_ATTEMPTS_HEIGHT = 100.0;
+
+const NOT_SELECTED = "not selected";
+
+
+Widget decorateLogWidget(BuildContext context, Widget logWidget) {
+  return Container(
+    padding: const EdgeInsets.all(4),
+    margin: const EdgeInsets.all(4),
+    height: 100.0,
+    alignment: Alignment.center,
+    decoration: BoxDecoration(
+      color: Colors.grey[700],
+      borderRadius: BorderRadius.circular(6),
+    ),
+    child: logWidget,
+  );
+}
 
 class CheckboxSent extends CheckboxWithTitle {
-  const CheckboxSent({Key key}) : super(key: key, title: "Sent!");
+  const CheckboxSent({Key key}) : super(key: key, title: "Sent?");
 }
 
 class CheckboxWithTitle extends StatefulWidget {
@@ -32,36 +48,40 @@ class CheckboxWithTitleState extends State<CheckboxWithTitle> {
 
   @override
   Widget build(BuildContext context) {
-    var checkbox = Checkbox(
-      value: _value,
-      onChanged: (bool value) {
-        setState(() {
-          _value = value;
-          if (widget.onTicked != null) {
-            widget.onTicked();
-          }
-        });
-      },
+    var checkbox = Transform.scale(
+      scale: 1.0,
+      child: Checkbox(
+        value: _value,
+        onChanged: (bool value) {
+          setState(() {
+            _value = value;
+            if (widget.onTicked != null) {
+              widget.onTicked();
+            }
+          });
+        },
+      ),
     );
 
+    var titledCheckbox;
     if (widget.titleAbove) {
-      return Column(
+      titledCheckbox = Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(widget.title),
-          Container(
-            height: SENT_ATTEMPTS_HEIGHT,
-            child: checkbox,
-          ),
+          checkbox,
+        ],
+      );
+    } else {
+      titledCheckbox = Row(
+        children: <Widget>[
+          checkbox,
+          Text(widget.title),
         ],
       );
     }
 
-    return Row(
-      children: <Widget>[
-        checkbox,
-        Text(widget.title),
-      ],
-    );
+    return decorateLogWidget(context, titledCheckbox);
   }
 }
 
@@ -80,23 +100,25 @@ class NumberAttemptsState extends State<NumberAttempts> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Text("How many attempts?"),
-        Container(
-          height: SENT_ATTEMPTS_HEIGHT,
-          child: NumberPicker.integer(
-            initialValue: _value,
-            minValue: 0,
-            maxValue: 30,
-            itemExtent: 25.0,
-            textMapper: (String text) => ((text == "0") ? "-" : "$text"),
-            onChanged: (num value) => setState(() {
-              _value = value.toInt();
-            }),
+    return decorateLogWidget(
+      context,
+      Column(
+        children: <Widget>[
+          Text("How many attempts?"),
+          Container(
+            child: NumberPicker.integer(
+              initialValue: _value,
+              minValue: 0,
+              maxValue: 30,
+              itemExtent: 25.0,
+              textMapper: (String text) => ((text == "0") ? "-" : "$text"),
+              onChanged: (num value) => setState(() {
+                _value = value.toInt();
+              }),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -231,12 +253,15 @@ class RouteDifficultyRatingState extends State<RouteDifficultyRating> {
 
   @override
   Widget build(BuildContext context) {
-    return ToggleSwitch(
+    return decorateLogWidget(context, ToggleSwitch(
       activeBgColor: Theme.of(context).accentColor,
+      inactiveBgColor: Colors.grey[700],
+      cornerRadius: 0.0,
       initialLabelIndex: _index,
       labels: _labels,
       onToggle: (index) => _index = index,
-    );
+      minWidth: 48.0,
+    ));
   }
 }
 
@@ -264,15 +289,15 @@ class RouteQualityRatingState extends State<RouteQualityRating> {
 
   @override
   Widget build(BuildContext context) {
-    return RatingBar(
+    return decorateLogWidget(context, RatingBar(
       initialRating: _value,
       minRating: 0,
       itemCount: 3,
-      ratingWidget: ratingStar(),
+      ratingWidget: ratingStar(context),
       onRatingUpdate: (double value) => setState(() {
         _value = value;
       }),
-    );
+    ));
   }
 }
 
@@ -291,7 +316,7 @@ class RouteNameState extends State<RouteName> {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return decorateLogWidget(context, TextField(
       decoration: InputDecoration(
         labelText: "Give this route a witty name",
       ),
@@ -302,7 +327,6 @@ class RouteNameState extends State<RouteName> {
           _value = value;
         });
       },
-    );
+    ));
   }
 }
-
