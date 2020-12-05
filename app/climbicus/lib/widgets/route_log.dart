@@ -16,7 +16,7 @@ Widget decorateLogWidget(BuildContext context, Widget logWidget) {
   return Container(
     padding: const EdgeInsets.all(4),
     margin: const EdgeInsets.all(4),
-    height: 100.0,
+    height: 70.0,
     alignment: Alignment.center,
     decoration: BoxDecoration(
       color: primaryColorLight,
