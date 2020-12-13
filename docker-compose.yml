@@ -25,3 +25,11 @@ services:
       - "5000:5000"
     entrypoint:
       - /app/entrypoint.sh
+#  elk:
+#    build:
+#      dockerfile: Dockerfile
+#      context: ./elk
+#    ports:
+#      - "5601:5601"
+#      - "9200:9200"
+#      - "5044:5044"
