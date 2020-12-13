@@ -109,7 +109,7 @@ class _SettingsPageState extends State<SettingsPage> {
       return version;
     }
 
-    return "$version (${packageInfo.buildNumber}) ${widget.env}";
+    return "$version (${packageInfo.buildNumber}) ${ENVIRONMENT_NAMES[widget.env]}";
   }
 
   List<Widget> _buildDisplayPredictionsNumSelection() {

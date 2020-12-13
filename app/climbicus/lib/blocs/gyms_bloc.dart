@@ -24,7 +24,7 @@ class GymsError extends GymsState {
 
   GymsError({Object exception, StackTrace stackTrace}):
         errorDetails = FlutterErrorDetails(exception: exception, stack: stackTrace) {
-    FlutterError.dumpErrorToConsole(errorDetails);
+    FlutterError.reportError(errorDetails);
   }
 }
 

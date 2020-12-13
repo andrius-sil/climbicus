@@ -31,7 +31,7 @@ class LoginError extends LoginState {
 
   LoginError({Object exception, StackTrace stackTrace}):
         errorDetails = FlutterErrorDetails(exception: exception, stack: stackTrace) {
-    FlutterError.dumpErrorToConsole(errorDetails);
+    FlutterError.reportError(errorDetails);
   }
 }
 

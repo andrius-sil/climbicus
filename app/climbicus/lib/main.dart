@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/register_bloc.dart';
@@ -16,6 +18,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'blocs/authentication_bloc.dart';
 import 'blocs/gyms_bloc.dart';
@@ -35,9 +38,10 @@ const Map<Environment, String> SERVER_URLS = {
 };
 
 
-void mainDelegate(Environment env) {
+Future<void> mainDelegate(Environment env) async {
   ErrorWidget.builder = _buildErrorWidget;
   debugPrint = _debugPrintWrapper;
+  FlutterError.onError = _onError;
 
   BlocSupervisor.delegate = SimpleBlocDelegate();
 
@@ -50,30 +54,58 @@ void mainDelegate(Environment env) {
       env: env,
   ));
 
-  runApp(
-    MultiBlocProvider(
-      providers: [
-        BlocProvider<AuthenticationBloc>(create: (context) => AuthenticationBloc()),
-        BlocProvider<LoginBloc>(create: (context) => LoginBloc(
-          authenticationBloc: BlocProvider.of<AuthenticationBloc>(context),
-        )),
-        BlocProvider<RegisterBloc>(create: (context) => RegisterBloc(
-          authenticationBloc: BlocProvider.of<AuthenticationBloc>(context),
-        )),
-        BlocProvider<SettingsBloc>(create: (context) => SettingsBloc()),
-        BlocProvider<GymsBloc>(create: (context) => GymsBloc()),
-        BlocProvider<UsersBloc>(create: (context) => UsersBloc()),
-        BlocProvider<RouteImagesBloc>(create: (context) => RouteImagesBloc()),
-        BlocProvider<RoutePredictionBloc>(create: (context) => RoutePredictionBloc()),
-        BlocProvider<GymRoutesBloc>(create: (context) => GymRoutesBloc(
-          routeImagesBloc: BlocProvider.of<RouteImagesBloc>(context),
-        )),
-      ],
-      child: MaterialApp(
-        theme: appTheme(),
-        home: HomePage(env: env),
-      ),
+  await _sentryInit(env);
+
+  var app = MultiBlocProvider(
+    providers: [
+      BlocProvider<AuthenticationBloc>(create: (context) => AuthenticationBloc()),
+      BlocProvider<LoginBloc>(create: (context) => LoginBloc(
+        authenticationBloc: BlocProvider.of<AuthenticationBloc>(context),
+      )),
+      BlocProvider<RegisterBloc>(create: (context) => RegisterBloc(
+        authenticationBloc: BlocProvider.of<AuthenticationBloc>(context),
+      )),
+      BlocProvider<SettingsBloc>(create: (context) => SettingsBloc()),
+      BlocProvider<GymsBloc>(create: (context) => GymsBloc()),
+      BlocProvider<UsersBloc>(create: (context) => UsersBloc()),
+      BlocProvider<RouteImagesBloc>(create: (context) => RouteImagesBloc()),
+      BlocProvider<RoutePredictionBloc>(create: (context) => RoutePredictionBloc()),
+      BlocProvider<GymRoutesBloc>(create: (context) => GymRoutesBloc(
+        routeImagesBloc: BlocProvider.of<RouteImagesBloc>(context),
+      )),
+    ],
+    child: MaterialApp(
+      theme: appTheme(),
+      home: HomePage(env: env),
     ),
+  );
+
+  runZonedGuarded<Future<void>>(() async {
+    runApp(app);
+  }, (Object error, StackTrace stackTrace) {
+    var exception = error is FlutterErrorDetails ? error.exception : error;
+
+    print(exception);
+    print(stackTrace);
+    Sentry.captureException(exception, stackTrace: stackTrace);
+  });
+}
+
+void _onError(FlutterErrorDetails details) {
+  FlutterError.dumpErrorToConsole(details);
+  Sentry.captureException(details.exception, stackTrace: details.stack);
+}
+
+SentryEvent _sentryBeforeSend(SentryEvent event, {dynamic hint}) {
+  return isInDebugMode ? null : event;
+}
+
+Future _sentryInit(Environment env) async {
+  await SentryFlutter.init(
+    (options) => options
+        ..dsn = SENTRY_DSN
+        ..environment = ENVIRONMENT_NAMES[env]
+        ..beforeSend = _sentryBeforeSend
   );
 }
 
@@ -83,11 +115,24 @@ void _debugPrintWrapper(String message, {int wrapWidth}) {
   debugPrintThrottled(message, wrapWidth: wrapWidth);
 }
 
+
 Widget _buildErrorWidget(FlutterErrorDetails details) {
   return Center(
     child: Text("Ooops.. an error has occured"),
   );
 }
+
+bool get isInDebugMode {
+  bool inDebugMode = false;
+
+  // Assert expressions are only evaluated during development. They are ignored
+  // in production. Therefore, this code only sets `inDebugMode` to true
+  // in a development environment.
+  assert(inDebugMode = true);
+
+  return inDebugMode;
+}
+
 
 class HomePage extends StatefulWidget {
   final Environment env;
@@ -99,13 +144,23 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final getIt = GetIt.instance;
+
   @override
   Widget build(BuildContext context) {
+
     return BlocBuilder<AuthenticationBloc, AuthenticationState>(
       builder: (context, state) {
         if (state is AuthenticationAuthenticated) {
+          Sentry.configureScope((scope) => scope.user = User(
+            id: "${getIt<UserRepository>().userId}",
+            email: getIt<UserRepository>().email,
+          ));
+
           return _buildHomePage();
         } else if (state is AuthenticationUnauthenticated) {
+          Sentry.configureScope((scope) => scope.user = null);
+
           return LoginPage();
         }
 
