@@ -7,15 +7,16 @@ from scripts.dummy_db_data import preload_dummy_data, create_user, create_gym
 
 @click.command("recreate-db")
 @click.option("--tables", type=str)
+@click.option("--data-source", type=str, default="testing")
 @with_appcontext
-def recreate_db_cmd(tables):
+def recreate_db_cmd(tables, data_source):
     db.drop_all()
     db.create_all()
     print("Initialised the database")
 
     if tables is not None:
         tables = tables.split(",")
-    preload_dummy_data(db, tables)
+    preload_dummy_data(db, tables, data_source)
     print("Preloaded dummy data in the database")
 
 
