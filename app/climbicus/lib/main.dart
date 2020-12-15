@@ -32,6 +32,7 @@ import 'models/gym.dart';
 
 const Map<Environment, String> SERVER_URLS = {
   Environment.dev: "http://x1carbon:5000",
+  // Environment.dev: "http://10.0.2.2:5000",
   // Environment.dev: "http://andriusilinskas:5000",
   Environment.stag: "http://stag.climbicus.com:5000",
   Environment.prod: "http://prod.climbicus.com:5000",
@@ -148,7 +149,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-
     return BlocBuilder<AuthenticationBloc, AuthenticationState>(
       builder: (context, state) {
         if (state is AuthenticationAuthenticated) {
