@@ -75,12 +75,16 @@ def test_add_to_logbook(client, app, auth_headers_user1):
 
 
 def test_delete_entry(client, app, auth_headers_user1):
-    # check the entry exists first
+    data = {
+        "user_id": 1,
+        "user_route_log_id": 1,
+    }
+    # check it exists first
     with app.app_context():
         user_route_log = UserRouteLog.query.filter_by(id=1).one_or_none()
     assert user_route_log is not None
 
-    resp = client.delete("/user_route_log/1", content_type="application/json",
+    resp = client.delete("/user_route_log/1", data=json.dumps(data), content_type="application/json",
                          headers=auth_headers_user1)
 
     assert resp.status_code == 200
@@ -93,7 +97,11 @@ def test_delete_entry(client, app, auth_headers_user1):
 
 
 def test_delete_entry_with_invalid_id(client, app, auth_headers_user1):
-    resp = client.delete("/user_route_log/1000", content_type="application/json",
+    data = {
+        "user_id": 1,
+        "user_route_log_id": 1000,
+    }
+    resp = client.delete("/user_route_log/1000", data=json.dumps(data), content_type="application/json",
                          headers=auth_headers_user1)
 
     assert resp.status_code == 400

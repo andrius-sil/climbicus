@@ -54,7 +54,7 @@ def delete(user_route_log_id=None):
     except NoResultFound:
         abort(400, "invalid user_route_log_id")
 
-    log_entry.delete()
+    db.session.delete(log_entry)
     db.session.commit()
     return jsonify({
         "msg": "user_route_log entry was successfully deleted",
