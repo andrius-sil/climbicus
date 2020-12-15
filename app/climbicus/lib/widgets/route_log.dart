@@ -16,7 +16,7 @@ Widget decorateLogWidget(BuildContext context, Widget logWidget) {
   return Container(
     padding: const EdgeInsets.all(4),
     margin: const EdgeInsets.all(4),
-    height: 70.0,
+    height: 72.0,
     alignment: Alignment.center,
     decoration: BoxDecoration(
       color: primaryColorLight,
@@ -68,7 +68,7 @@ class CheckboxWithTitleState extends State<CheckboxWithTitle> {
       titledCheckbox = Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text(widget.title),
+          Text(widget.title, style: TextStyle(fontSize: headingSize5or6(context))),
           checkbox,
         ],
       );
@@ -76,7 +76,7 @@ class CheckboxWithTitleState extends State<CheckboxWithTitle> {
       titledCheckbox = Row(
         children: <Widget>[
           checkbox,
-          Text(widget.title),
+          Text(widget.title, style: TextStyle(fontSize: headingSize5or6(context))),
         ],
       );
     }
@@ -104,7 +104,7 @@ class NumberAttemptsState extends State<NumberAttempts> {
       context,
       Column(
         children: <Widget>[
-          Text("Attempts?"),
+          Text("Attempts?", style: TextStyle(fontSize: headingSize5or6(context))),
           Container(
             child: TouchSpin(
               value: _value,
@@ -259,7 +259,8 @@ class RouteDifficultyRatingState extends State<RouteDifficultyRating> {
       initialLabelIndex: _index,
       labels: _labels,
       onToggle: (index) => _index = index,
-      minWidth: 48.0,
+      minWidth: screenSmallOrLarge(context, 46.0, 60.0),
+      fontSize: headingSize5or6(context),
     ));
   }
 }

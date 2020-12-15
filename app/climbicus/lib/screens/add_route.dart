@@ -112,7 +112,6 @@ class _AddRoutePageState extends State<AddRoutePage> {
                 ],
               ),
               Container(
-                width: 200.0,
                 child: RouteName(key: routeNameKey),
               ),
               RaisedButton(
@@ -138,14 +137,14 @@ class _AddRoutePageState extends State<AddRoutePage> {
 
     return decorateLogWidget(context, Column(
       children: <Widget>[
-        Text("Select grade"),
+        Text("Select grade", style: TextStyle(fontSize: headingSize5or6(context))),
         DropdownButton<String>(
           value: _selectedGrade,
           items: ([NOT_SELECTED] + _systemGrades())
               .map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
-              child: Text(value),
+              child: Text(value, style: TextStyle(fontSize: headingSize5or6(context))),
             );
           }).toList(),
           onChanged: (String value) {
@@ -161,7 +160,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
   Widget _buildSelectCategory() {
     return decorateLogWidget(context, Column(
       children: <Widget>[
-        Text("Select category"),
+        Text("Select category", style: TextStyle(fontSize: headingSize5or6(context))),
         DropdownButton<String>(
           value: _selectedCategory,
           items: <String>[
@@ -171,7 +170,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
           ].map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
-              child: Text(value),
+              child: Text(value, style: TextStyle(fontSize: headingSize5or6(context))),
             );
           }).toList(),
           onChanged: (String value) {

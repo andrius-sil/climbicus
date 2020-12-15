@@ -52,21 +52,22 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
         ),
         body: Builder(
           builder: (BuildContext context) => Center(
-            child: Column(
-              children: <Widget>[
-                SizedBox(height: COLUMN_PADDING),
-                Text("Your route:"),
-                SizedBox(height: COLUMN_PADDING),
-                Container(
-                  height: 200.0,
-                  width: 200.0,
-                  child: _takenImage,
-                ),
-                SizedBox(height: COLUMN_PADDING * 3),
-                Text("Matches:"),
-                SizedBox(height: COLUMN_PADDING),
-                Expanded(
-                  child: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  SizedBox(height: COLUMN_PADDING),
+                  Text("Your route:"),
+                  SizedBox(height: COLUMN_PADDING),
+                  Container(
+                    height: 200.0,
+                    width: 200.0,
+                    child: _takenImage,
+                  ),
+                  SizedBox(height: COLUMN_PADDING * 3),
+                  Text("Matches:"),
+                  SizedBox(height: COLUMN_PADDING),
+                  Center(
                     child: BlocBuilder<RoutePredictionBloc, RoutePredictionState>(
                       builder: (context, state) {
                         if (state is RoutePredictionLoaded) {
@@ -79,20 +80,20 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
                       },
                     ),
                   ),
-                ),
-                SizedBox(height: COLUMN_PADDING),
-                BlocBuilder<RoutePredictionBloc, RoutePredictionState>(
-                  builder: (context, state) {
-                    if (state is RoutePredictionLoaded) {
-                      _imgPickerData = state.imgPickerData;
-                    } else {
-                      _imgPickerData = null;
+                  SizedBox(height: COLUMN_PADDING),
+                  BlocBuilder<RoutePredictionBloc, RoutePredictionState>(
+                    builder: (context, state) {
+                      if (state is RoutePredictionLoaded) {
+                        _imgPickerData = state.imgPickerData;
+                      } else {
+                        _imgPickerData = null;
+                      }
+                      return _buildActionRow(context);
                     }
-                    return _buildActionRow(context);
-                  }
-                ),
-                SizedBox(height: COLUMN_PADDING),
-              ]
+                  ),
+                  SizedBox(height: COLUMN_PADDING),
+                ]
+              ),
             ),
           ),
         ),
@@ -198,6 +199,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
 
     return GridView.count(
       primary: false,
+      shrinkWrap: true,
       padding: const EdgeInsets.all(20),
       mainAxisSpacing: 10,
       crossAxisCount: 2,
