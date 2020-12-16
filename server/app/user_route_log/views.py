@@ -48,13 +48,10 @@ def view(route_id=None):
 
 @blueprint.route("/<int:user_route_log_id>", methods=["DELETE"])
 def delete(user_route_log_id=None):
-    query = db.session.query(UserRouteLog).filter_by(id=user_route_log_id)
-    try:
-        log_entry = query.one()
-    except NoResultFound:
+    num_deleted = db.session.query(UserRouteLog).filter_by(id=user_route_log_id).delete()
+    if num_deleted == 0:
         abort(400, "invalid user_route_log_id")
 
-    db.session.delete(log_entry)
     db.session.commit()
     return jsonify({
         "msg": "user_route_log entry was successfully deleted",
