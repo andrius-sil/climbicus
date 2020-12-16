@@ -30,13 +30,6 @@ import 'env.dart';
 import 'models/gym.dart';
 
 
-const Map<Environment, String> SERVER_URLS = {
-  Environment.dev: "http://x1carbon:5000",
-  // Environment.dev: "http://10.0.2.2:5000",
-  // Environment.dev: "http://andriusilinskas:5000",
-  Environment.stag: "http://stag.climbicus.com:5000",
-  Environment.prod: "http://prod.climbicus.com:5000",
-};
 
 
 Future<void> mainDelegate(Environment env) async {
@@ -44,11 +37,13 @@ Future<void> mainDelegate(Environment env) async {
   debugPrint = _debugPrintWrapper;
   FlutterError.onError = _onError;
 
+  WidgetsFlutterBinding.ensureInitialized();
+
   BlocSupervisor.delegate = SimpleBlocDelegate();
 
   final getIt = GetIt.instance;
   getIt.registerSingleton<ApiRepository>(ApiRepository(
-    serverUrl: SERVER_URLS[env],
+    serverUrl: await getServerUrl(env),
   ));
   getIt.registerSingleton<UserRepository>(UserRepository());
   getIt.registerSingleton<SettingsRepository>(SettingsRepository(
