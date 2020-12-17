@@ -72,3 +72,39 @@ def test_add_to_logbook(client, app, auth_headers_user1):
         assert user_route_log.gym_id == 1
         assert user_route_log.route_id == 1
         assert user_route_log.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
+
+
+def test_delete_entry(client, app, auth_headers_user1):
+    data = {
+        "user_id": 1,
+        "user_route_log_id": 1,
+    }
+    # check it exists first
+    with app.app_context():
+        user_route_log = UserRouteLog.query.filter_by(id=1).one_or_none()
+    assert user_route_log is not None
+
+    resp = client.delete("/user_route_log/1", data=json.dumps(data), content_type="application/json",
+                         headers=auth_headers_user1)
+
+    assert resp.status_code == 200
+    assert resp.is_json
+    assert resp.json["msg"] == "user_route_log entry was successfully deleted"
+
+    with app.app_context():
+        user_route_log = UserRouteLog.query.filter_by(id=1).one_or_none()
+    assert user_route_log is None
+
+
+def test_delete_entry_with_invalid_id(client, app, auth_headers_user1):
+    data = {
+        "user_id": 1,
+        "user_route_log_id": 1000,
+    }
+    resp = client.delete("/user_route_log/1000", data=json.dumps(data), content_type="application/json",
+                         headers=auth_headers_user1)
+
+    assert resp.status_code == 400
+    assert resp.is_json
+    assert resp.json["msg"] == "invalid user_route_log_id"
+

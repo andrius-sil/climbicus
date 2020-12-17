@@ -3,7 +3,8 @@ import datetime
 from app import db
 from app.models import UserRouteLog
 
-from flask import request, Blueprint, jsonify
+from flask import request, Blueprint, jsonify, abort
+from sqlalchemy.orm.exc import NoResultFound
 
 blueprint = Blueprint("user_route_log_blueprint", __name__, url_prefix="/user_route_log")
 
@@ -43,3 +44,15 @@ def view(route_id=None):
     for user_route_log in query.all():
         logbook[user_route_log.id] = user_route_log.api_model
     return jsonify(logbook)
+
+
+@blueprint.route("/<int:user_route_log_id>", methods=["DELETE"])
+def delete(user_route_log_id=None):
+    num_deleted = db.session.query(UserRouteLog).filter_by(id=user_route_log_id).delete()
+    if num_deleted == 0:
+        abort(400, "invalid user_route_log_id")
+
+    db.session.commit()
+    return jsonify({
+        "msg": "user_route_log entry was successfully deleted",
+    })
