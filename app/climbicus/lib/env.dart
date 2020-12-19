@@ -11,19 +11,28 @@ const ENVIRONMENT_NAMES = {
   Environment.prod: "prod",
 };
 
-Future<bool> _isPhysicalDevice() async {
-  var isPhysicalDevice = true;
+Future<bool> _isAndroidEmulator() async {
+  var isEmulator = false;
 
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
   if (Platform.isAndroid) {
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-    isPhysicalDevice = androidInfo.isPhysicalDevice;
-  } else if (Platform.isIOS) {
-    IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-    isPhysicalDevice = iosInfo.isPhysicalDevice;
+    isEmulator = !androidInfo.isPhysicalDevice;
   }
 
-  return isPhysicalDevice;
+  return isEmulator;
+}
+
+Future<bool> _isIOSEmulator() async {
+  var isEmulator = false;
+
+  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  if (Platform.isIOS) {
+    IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+    isEmulator = !iosInfo.isPhysicalDevice;
+  }
+
+  return isEmulator;
 }
 
 const Map<Environment, String> SERVER_URLS = {
@@ -33,9 +42,10 @@ const Map<Environment, String> SERVER_URLS = {
 
 Future<String> getServerUrl(Environment env) async {
   if (env == Environment.dev) {
-    if (!await _isPhysicalDevice()) {
-      // If running simulator on dev, then return Android Emulator's IP.
+    if (await _isAndroidEmulator()) {
       return "http://10.0.2.2:5000";
+    } else if (await _isIOSEmulator()) {
+      return "http://127.0.0.1:5000";
     } else {
       const String hostIp = String.fromEnvironment("HOST_IP");
       return hostIp;
