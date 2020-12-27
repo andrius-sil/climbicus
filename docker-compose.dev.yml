@@ -19,7 +19,7 @@ services:
       - dev_secrets.env
     volumes:
       - ./server/:/app
-      - $HOME/.aws/credentials:/root/.aws/credentials:ro
+      - $CLIMBICUS_AWS:/root/.aws/credentials:ro
   server:
     restart: "no"
     env_file:
@@ -33,6 +33,6 @@ services:
       - FLASK_ENV=development
     volumes:
       - ./server/:/app
-      - $HOME/.aws/credentials:/root/.aws/credentials:ro
+      - $CLIMBICUS_AWS:/root/.aws/credentials:ro
     command:
       "dev-server"
