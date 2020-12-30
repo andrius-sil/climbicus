@@ -14,11 +14,13 @@ class SettingsState {
   final int displayPredictionsNum;
   final int gymId;
   final PackageInfo packageInfo;
+  final bool seenCameraHelpOverlay;
 
   SettingsState({
     @required this.displayPredictionsNum,
     @required this.gymId,
     @required this.packageInfo,
+    @required this.seenCameraHelpOverlay,
   });
 }
 
@@ -44,6 +46,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   int _displayPredictionsNum = 3;
   int _gymId = PLACEHOLDER_GYM_ID;
   PackageInfo _packageInfo;
+  bool _seenCameraHelpOverlay = false;
 
   int get gymId => _gymId;
 
@@ -51,6 +54,12 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   set displayPredictionsNum(int i) {
     _displayPredictionsNum = i;
     storeSetting("display_predictions_num", _displayPredictionsNum.toString());
+  }
+
+  bool get seenCameraHelpOverlay => _seenCameraHelpOverlay;
+  set seenCameraHelpOverlay(bool v) {
+    _seenCameraHelpOverlay = v;
+    storeSetting("seen_camera_help_overlay", _seenCameraHelpOverlay.toString());
   }
 
   SettingsBloc() {
@@ -61,6 +70,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     displayPredictionsNum: _displayPredictionsNum,
     gymId: _gymId,
     packageInfo: _packageInfo,
+    seenCameraHelpOverlay: _seenCameraHelpOverlay,
   );
 
   @override
@@ -73,6 +83,9 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     _gymId = int.parse(await retrieveSetting("gym_id", _gymId.toString()));
 
     _packageInfo = await PackageInfo.fromPlatform();
+
+    _seenCameraHelpOverlay = (await retrieveSetting("seen_camera_help_overlay",
+      _seenCameraHelpOverlay.toString())) == "true";
 
     getIt<ApiRepository>().gymId = _gymId;
 

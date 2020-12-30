@@ -1,9 +1,11 @@
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:climbicus/blocs/settings_bloc.dart';
 import 'package:climbicus/utils/io.dart';
 import 'package:climbicus/utils/time.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CameraCustom extends StatefulWidget {
@@ -18,14 +20,21 @@ class _CameraCustomState extends State<CameraCustom> {
   CameraController _controller;
   Future<void> _initializeControllerFuture;
 
+  SettingsBloc _settingsBloc;
+
   @override
   void initState() {
     super.initState();
 
-    // TODO: show first time only
-//    WidgetsBinding.instance.addPostFrameCallback((_) async {
-//      _showHelpOverlay();
-//    });
+    _settingsBloc = BlocProvider.of<SettingsBloc>(context);
+
+    if (!_settingsBloc.seenCameraHelpOverlay) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        _showHelpOverlay();
+      });
+
+      _settingsBloc.seenCameraHelpOverlay = true;
+    }
 
     initCamera();
   }
