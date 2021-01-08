@@ -26,6 +26,7 @@ jobs:
       run: make args=recreate-db docker-run
       env:
         ENV: dev
+        CLIMBICUS_AWS: ${{ env.GITHUB_WORKSPACE }}/dummy-creds
     - name: Clean up
       run: make docker-down
       env:
