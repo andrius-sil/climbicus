@@ -17,7 +17,7 @@ jobs:
       run: make args=-d docker-up
       env:
         ENV: dev
-        CLIMBICUS_AWS: ${{ env.GITHUB_WORKSPACE }}
+        CLIMBICUS_AWS: ${{ env.GITHUB_WORKSPACE }}/dummy-creds
     - name: Tests
       run: make tests
       env:
