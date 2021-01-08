@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:device_preview/device_preview.dart';
 
 import 'blocs/authentication_bloc.dart';
 import 'blocs/gyms_bloc.dart';
@@ -70,14 +71,16 @@ Future<void> mainDelegate(Environment env) async {
         routeImagesBloc: BlocProvider.of<RouteImagesBloc>(context),
       )),
     ],
-    child: MaterialApp(
-      theme: appTheme(),
-      home: HomePage(env: env),
-    ),
+    child: ClimbicusApp(env: env),
+  );
+
+  var devicePreviewApp = DevicePreview(
+    enabled: !kReleaseMode,
+    builder: (context) => app,
   );
 
   runZonedGuarded<Future<void>>(() async {
-    runApp(app);
+    runApp(devicePreviewApp);
   }, (Object error, StackTrace stackTrace) {
     var exception = error is FlutterErrorDetails ? error.exception : error;
 
@@ -127,6 +130,23 @@ bool get isInDebugMode {
   assert(inDebugMode = true);
 
   return inDebugMode;
+}
+
+
+class ClimbicusApp extends StatelessWidget {
+  final Environment env;
+
+  const ClimbicusApp({this.env});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: appTheme(),
+      locale: DevicePreview.locale(context),
+      builder: DevicePreview.appBuilder,
+      home: HomePage(env: env),
+    );
+  }
 }
 
 
