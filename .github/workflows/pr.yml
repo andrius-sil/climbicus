@@ -17,7 +17,7 @@ jobs:
       run: make args=-d docker-up
       env:
         ENV: dev
-        CLIMBICUS_AWS: GITHUB_WORKSPACE
+        CLIMBICUS_AWS: $GITHUB_WORKSPACE
     - name: Tests
       run: make tests
       env:
