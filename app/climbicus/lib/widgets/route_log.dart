@@ -259,10 +259,16 @@ class RouteDifficultyRatingState extends State<RouteDifficultyRating> {
       initialLabelIndex: _index,
       labels: _labels,
       onToggle: (index) => _index = index,
-      minWidth: screenSmallOrLarge(context, 46.0, 60.0),
+      minWidth: _minWidth(context),
       fontSize: headingSize5or6(context),
     ));
   }
+
+  double _minWidth(BuildContext context) {
+    double halfScreenWidth = MediaQuery.of(context).size.width / 2;
+    return halfScreenWidth / _labels.length * 0.88;
+  }
+
 }
 
 
