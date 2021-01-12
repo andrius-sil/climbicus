@@ -24,6 +24,7 @@ final primaryColorLight = Colors.grey[700];
 // until https://github.com/flutter/flutter/issues/54776 is fixed.
 
 final accentColor = Colors.orangeAccent[700];
+final textColor = Colors.white;
 
 final appTheme = () =>  ThemeData(
   brightness: Brightness.dark,

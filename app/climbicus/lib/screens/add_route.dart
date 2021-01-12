@@ -128,6 +128,14 @@ class _AddRoutePageState extends State<AddRoutePage> {
     );
   }
 
+  TextStyle _dropdownValueStyle(String value) {
+    return TextStyle(
+      fontSize: headingSize5or6(context),
+      color: (value == NOT_SELECTED) ? Theme.of(context).accentColor : textColor,
+      fontStyle: (value == NOT_SELECTED) ? FontStyle.italic : FontStyle.normal,
+    );
+  }
+
   Widget _buildSelectGrade() {
     var systemGrades = _systemGrades();
     if (!systemGrades.contains(_selectedGrade)) {
@@ -144,7 +152,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
               .map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
-              child: Text(value, style: TextStyle(fontSize: headingSize5or6(context))),
+              child: Text(value, style: _dropdownValueStyle(value)),
             );
           }).toList(),
           onChanged: (String value) {
@@ -170,7 +178,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
           ].map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
-              child: Text(value, style: TextStyle(fontSize: headingSize5or6(context))),
+              child: Text(value, style: _dropdownValueStyle(value)),
             );
           }).toList(),
           onChanged: (String value) {
