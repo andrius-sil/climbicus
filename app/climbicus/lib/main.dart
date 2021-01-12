@@ -75,7 +75,7 @@ Future<void> mainDelegate(Environment env) async {
   );
 
   var devicePreviewApp = DevicePreview(
-    enabled: !kReleaseMode,
+    enabled: false,
     builder: (context) => app,
   );
 
