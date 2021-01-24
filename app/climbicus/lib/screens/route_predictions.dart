@@ -51,36 +51,24 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
           title: const Text('Select your route'),
         ),
         body: Builder(
-          builder: (BuildContext context) => Center(
-            child: SingleChildScrollView(
+          builder: (BuildContext context) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 8, bottom: 8),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  SizedBox(height: COLUMN_PADDING),
-                  Text("Your route:"),
-                  SizedBox(height: COLUMN_PADDING),
-                  Container(
-                    height: 200.0,
-                    width: 200.0,
-                    child: _takenImage,
-                  ),
-                  SizedBox(height: COLUMN_PADDING * 3),
-                  Text("Matches:"),
-                  SizedBox(height: COLUMN_PADDING),
-                  Center(
-                    child: BlocBuilder<RoutePredictionBloc, RoutePredictionState>(
-                      builder: (context, state) {
-                        if (state is RoutePredictionLoaded) {
-                          return _buildPredictionsGrid(context, state.imgPickerData);
-                        } else if (state is RoutePredictionError) {
-                          return ErrorWidget.builder(state.errorDetails);
-                        }
-
-                        return CircularProgressIndicator();
-                      },
-                    ),
+                  Column(
+                    children: [
+                      Text("Your route:"),
+                      Container(
+                        height: 200.0,
+                        width: 200.0,
+                        child: _takenImage,
+                      ),
+                    ],
                   ),
                   SizedBox(height: COLUMN_PADDING),
+                  Expanded(child: _buildPredictionsComponent(context)),
                   BlocBuilder<RoutePredictionBloc, RoutePredictionState>(
                     builder: (context, state) {
                       if (state is RoutePredictionLoaded) {
@@ -91,11 +79,10 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
                       return _buildActionRow(context);
                     }
                   ),
-                  SizedBox(height: COLUMN_PADDING),
-                ]
-              ),
-            ),
-          ),
+                ],
+              )
+            );
+          }
         ),
     );
   }
@@ -124,7 +111,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
                   },
                 ));
               },
-              iconSize: 64,
+              iconSize: 48,
             ),
             Text('Retake image'),
           ],
@@ -134,7 +121,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
             IconButton(
               icon: const Icon(Icons.add_circle_outline),
               onPressed: _imgPickerData == null ? null : noMatch,
-              iconSize: 64,
+              iconSize: 48,
             ),
             Text('Add as a new route'),
           ],
@@ -149,6 +136,27 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
         return AddRoutePage(imgPickerData: _imgPickerData, routeCategory: widget.routeCategory);
       },
     ));
+  }
+
+  Widget _buildPredictionsComponent(BuildContext context) {
+    return Column(
+      children: [
+        Text("Matches:", style: TextStyle(fontSize: headingSize5or6(context))),
+        Expanded(
+          child: BlocBuilder<RoutePredictionBloc, RoutePredictionState>(
+            builder: (context, state) {
+              if (state is RoutePredictionLoaded) {
+                return _buildPredictionsGrid(context, state.imgPickerData);
+              } else if (state is RoutePredictionError) {
+                return ErrorWidget.builder(state.errorDetails);
+              }
+
+              return CircularProgressIndicator();
+            },
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildPredictionsGrid(BuildContext context, ImagePickerData imgPickerData) {
@@ -197,14 +205,20 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
       ));
     }
 
-    return GridView.count(
-      primary: false,
-      shrinkWrap: true,
-      padding: const EdgeInsets.all(20),
-      mainAxisSpacing: 10,
-      crossAxisCount: 2,
-      childAspectRatio: 1.5,
-      children: widgets,
+    var scrollController = ScrollController();
+    return Scrollbar(
+      isAlwaysShown: true,
+      controller: scrollController,
+      child: GridView.count(
+        controller: scrollController,
+        primary: false,
+        shrinkWrap: true,
+        padding: const EdgeInsets.all(20),
+        mainAxisSpacing: 10,
+        crossAxisCount: 2,
+        childAspectRatio: 1.5,
+        children: widgets,
+      ),
     );
   }
 
