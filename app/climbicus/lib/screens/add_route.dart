@@ -58,14 +58,18 @@ class _AddRoutePageState extends State<AddRoutePage> {
 
   @override
   Widget build(BuildContext context) {
+    var appBar = AppBar(
+      title: const Text('Add new route'),
+    );
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Add new route'),
-      ),
-      body: Center(
-        child: SingleChildScrollView(
+      appBar: appBar,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.only(top: 8, bottom: 8),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: availableHeight(context, appBar)),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Column(
                 children: <Widget>[

@@ -60,6 +60,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
                   Column(
                     children: [
                       Text("Your route:"),
+                      SizedBox(height: COLUMN_PADDING),
                       Container(
                         height: 200.0,
                         width: 200.0,
@@ -67,7 +68,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: COLUMN_PADDING),
+                  SizedBox(height: COLUMN_PADDING * 2),
                   Expanded(child: _buildPredictionsComponent(context)),
                   BlocBuilder<RoutePredictionBloc, RoutePredictionState>(
                     builder: (context, state) {

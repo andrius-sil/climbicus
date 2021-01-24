@@ -102,15 +102,20 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
       ),
     ];
 
+    var appBar = AppBar(
+      title: const Text('Your ascent'),
+    );
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Your ascent'),
-      ),
-      body: Padding(
+      appBar: appBar,
+      body: SingleChildScrollView(
         padding: const EdgeInsets.only(top: 8, bottom: 8),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: tiles,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: availableHeight(context, appBar)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: tiles,
+          ),
         ),
       ),
     );

@@ -18,6 +18,15 @@ double headingSize5or6(BuildContext context) {
   return screenSmallOrLarge(context, HEADING_SIZE_6, HEADING_SIZE_5);
 }
 
+double availableHeight(BuildContext context, AppBar appBar) {
+  return
+    MediaQuery.of(context).size.height -
+    MediaQuery.of(context).padding.top -
+    MediaQuery.of(context).padding.bottom -
+    appBar.preferredSize.height;
+}
+
+
 final primaryColorLight = Colors.grey[700];
 
 // Using 'primaryColor' for flat button text color explicitly,
