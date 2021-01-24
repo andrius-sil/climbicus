@@ -106,9 +106,10 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
       appBar: AppBar(
         title: const Text('Your ascent'),
       ),
-      body: SingleChildScrollView(
+      body: Padding(
+        padding: const EdgeInsets.only(top: 8, bottom: 8),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: tiles,
         ),
       ),
