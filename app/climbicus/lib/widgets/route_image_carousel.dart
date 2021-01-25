@@ -6,9 +6,8 @@ import 'package:flutter/material.dart';
 
 class RouteImageCarousel extends StatefulWidget {
   final Map<int, RouteImage> images;
-  final double height;
 
-  const RouteImageCarousel({this.images, this.height});
+  const RouteImageCarousel({this.images});
 
   @override
   _RouteImageCarouselState createState() => _RouteImageCarouselState();
@@ -26,7 +25,6 @@ class _RouteImageCarouselState extends State<RouteImageCarousel> {
   Widget build(BuildContext context) {
     if (widget.images == null) {
       return Container(
-        height: widget.height,
         alignment: Alignment.center,
         child: RouteImageWidget(null),
       );
@@ -34,16 +32,13 @@ class _RouteImageCarouselState extends State<RouteImageCarousel> {
 
     return Stack(children: [
       CarouselSlider(
-        height: widget.height,
         viewportFraction: 0.5,
         enlargeCenterPage: true,
         enableInfiniteScroll: false,
         items: widget.images.values.map((img) {
           return Builder(
               builder: (BuildContext context) {
-                return Container(
-                  child: RouteImageWidget(img),
-                );
+                return RouteImageWidget(img);
               }
           );
         }).toList(),

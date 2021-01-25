@@ -1,6 +1,7 @@
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/style.dart';
+import 'package:climbicus/widgets/route_image.dart';
 import 'package:climbicus/widgets/route_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -10,7 +11,7 @@ class RouteMatchPage extends StatefulWidget {
   final int selectedRouteId;
   final Widget selectedImage;
   final int takenRouteImageId;
-  final Image takenImage;
+  final ScaledImage takenImage;
 
   RouteMatchPage({
     this.selectedRouteId,

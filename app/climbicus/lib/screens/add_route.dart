@@ -83,7 +83,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
                             if (state is RoutePredictionLoaded) {
                               var routeImage = state.imgPickerData.routeImage;
                               _takenImages[routeImage.id] = routeImage;
-                              return RouteImageCarousel(images: _takenImages, height: 200.0);
+                              return RouteImageCarousel(images: _takenImages);
                             } else if (state is RoutePredictionError) {
                               return ErrorWidget.builder(state.errorDetails);
                             }

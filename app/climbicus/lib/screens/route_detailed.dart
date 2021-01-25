@@ -43,7 +43,6 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
                 if (state is RouteImagesLoaded) {
                   return RouteImageCarousel(
                     images: state.images.allImages(widget.routeWithUserMeta.route.id),
-                    height: 300.0,
                   );
                 } else if (state is RouteImagesError) {
                   return ErrorWidget.builder(state.errorDetails);

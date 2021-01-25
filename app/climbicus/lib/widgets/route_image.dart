@@ -15,11 +15,15 @@ class RouteImageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var imageWidget = (routeImage != null)
-        ? Image(image: NetworkImageWithRetry(routeImage.path, fetchStrategy: _fetchStrategy))
+        ? Image(
+            image: NetworkImageWithRetry(routeImage.path, fetchStrategy: _fetchStrategy),
+            fit: BoxFit.cover,
+          )
         : Image.asset("images/no_image.png");
+    var scaledImageWidget = ScaledImage(imageWidget);
 
     if (getIt<SettingsRepository>().env != Environment.dev) {
-      return imageWidget;
+      return scaledImageWidget;
     }
 
     var routeId = 0;
@@ -30,7 +34,7 @@ class RouteImageWidget extends StatelessWidget {
     }
     return Stack(
       children: <Widget>[
-        imageWidget,
+        scaledImageWidget,
         Align(
           alignment: Alignment.bottomLeft,
           child: Text(
@@ -59,4 +63,19 @@ class RouteImageWidget extends StatelessWidget {
     503, // Service unavailable
     504 // Gateway timeout
   ];
+}
+
+
+class ScaledImage extends StatelessWidget {
+  final Image image;
+
+  ScaledImage(this.image);
+
+  @override
+  Widget build(BuildContext context) {
+    return AspectRatio(
+      child: image,
+      aspectRatio: 1,
+    );
+  }
 }

@@ -24,7 +24,7 @@ class RoutePredictionsPage extends StatefulWidget {
 }
 
 class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
-  Image _takenImage;
+  ScaledImage _takenImage;
   ImagePickerData _imgPickerData;
 
   SettingsBloc _settingsBloc;
@@ -41,7 +41,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
         routeCategory: widget.routeCategory,
     ));
 
-    _takenImage = Image.file(widget.image);
+    _takenImage = ScaledImage(Image.file(widget.image, fit: BoxFit.cover));
   }
 
   @override
@@ -183,7 +183,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
           child: imageWidget,
         ),
         prediction.route.id,
-        Image.network(imageWidget.routeImage.path),
+        imageWidget,
         imgPickerData.routeImage.id,
       ));
 
