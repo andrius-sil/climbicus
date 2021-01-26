@@ -75,24 +75,26 @@ class _AddRoutePageState extends State<AddRoutePage> {
                 children: <Widget>[
                   Text("Your route:"),
                   SizedBox(height: COLUMN_PADDING),
-                  Row(
+                  Stack(
+                    alignment: Alignment.center,
                     children: <Widget>[
-                      Expanded(
-                        child: BlocBuilder<RoutePredictionBloc, RoutePredictionState>(
-                          builder: (context, state) {
-                            if (state is RoutePredictionLoaded) {
-                              var routeImage = state.imgPickerData.routeImage;
-                              _takenImages[routeImage.id] = routeImage;
-                              return RouteImageCarousel(images: _takenImages);
-                            } else if (state is RoutePredictionError) {
-                              return ErrorWidget.builder(state.errorDetails);
-                            }
+                      BlocBuilder<RoutePredictionBloc, RoutePredictionState>(
+                        builder: (context, state) {
+                          if (state is RoutePredictionLoaded) {
+                            var routeImage = state.imgPickerData.routeImage;
+                            _takenImages[routeImage.id] = routeImage;
+                            return RouteImageCarousel(images: _takenImages);
+                          } else if (state is RoutePredictionError) {
+                            return ErrorWidget.builder(state.errorDetails);
+                          }
 
-                            return Center(child: CircularProgressIndicator());
-                          },
-                        ),
+                          return Center(child: CircularProgressIndicator());
+                        },
                       ),
-                      _buildImagePicker(),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: _buildImagePicker(),
+                      ),
                     ],
                   ),
                 ],
@@ -198,7 +200,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
 
   Widget _buildImagePicker() {
     return IconButton(
-      icon: const Icon(Icons.add_a_photo),
+      icon: const Icon(Icons.add_a_photo_outlined),
       onPressed: () async {
         final imageFile = await Navigator.push(context, MaterialPageRoute(
           builder: (BuildContext context) {
