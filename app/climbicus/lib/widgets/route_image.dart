@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:climbicus/env.dart';
 import 'package:climbicus/models/route_image.dart';
 import 'package:climbicus/repositories/settings_repository.dart';
@@ -7,19 +9,29 @@ import 'package:flutter_image/network.dart';
 import 'package:get_it/get_it.dart';
 
 class RouteImageWidget extends StatelessWidget {
+  // Determines how to display scaled image.
+  static const boxFit = BoxFit.cover;
+
   final getIt = GetIt.instance;
   final RouteImage routeImage;
+  final File imageFile;
 
-  RouteImageWidget(this.routeImage);
+  RouteImageWidget(this.routeImage) : imageFile = null;
+  RouteImageWidget.fromFile(this.imageFile) : routeImage = null;
 
   @override
   Widget build(BuildContext context) {
-    var imageWidget = (routeImage != null)
-        ? Image(
-            image: NetworkImageWithRetry(routeImage.path, fetchStrategy: _fetchStrategy),
-            fit: BoxFit.cover,
-          )
-        : Image.asset("images/no_image.png");
+    var imageWidget;
+    if (imageFile != null) {
+      imageWidget = Image.file(imageFile, fit: boxFit);
+    } else if (routeImage != null) {
+      imageWidget = Image(
+        image: NetworkImageWithRetry(routeImage.path, fetchStrategy: _fetchStrategy),
+        fit: BoxFit.cover,
+      );
+    } else {
+      imageWidget = Image.asset("images/no_image.png");
+    }
     var scaledImageWidget = ScaledImage(imageWidget);
 
     if (getIt<SettingsRepository>().env != Environment.dev) {

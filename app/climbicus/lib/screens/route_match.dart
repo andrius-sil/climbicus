@@ -11,7 +11,7 @@ class RouteMatchPage extends StatefulWidget {
   final int selectedRouteId;
   final Widget selectedImage;
   final int takenRouteImageId;
-  final ScaledImage takenImage;
+  final RouteImageWidget takenImage;
 
   RouteMatchPage({
     this.selectedRouteId,
