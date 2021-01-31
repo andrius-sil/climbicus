@@ -34,7 +34,10 @@ class RouteImageWidget extends StatelessWidget {
     }
     var scaledImageWidget = ScaledImage(imageWidget);
 
-    if (getIt<SettingsRepository>().env != Environment.dev) {
+    // TODO: use env var
+    // var debug = getIt<SettingsRepository>().env == Environment.dev;
+    var debug = false;
+    if (!debug) {
       return scaledImageWidget;
     }
 

@@ -75,6 +75,7 @@ Future<void> mainDelegate(Environment env) async {
   );
 
   var devicePreviewApp = DevicePreview(
+    // TODO: use env var
     enabled: false,
     builder: (context) => app,
   );
