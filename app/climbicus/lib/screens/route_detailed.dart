@@ -30,9 +30,12 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
 
   @override
   Widget build(BuildContext context) {
+    var routeTitleName = widget.routeWithUserMeta.route.name ??
+        '${widget.routeWithUserMeta.route.grade} route';
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.routeWithUserMeta.route.grade} route'),
+        title: Text(routeTitleName),
       ),
       body: Column(
         children: <Widget>[
