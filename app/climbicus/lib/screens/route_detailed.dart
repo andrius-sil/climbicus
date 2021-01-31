@@ -2,6 +2,7 @@ import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/blocs/users_bloc.dart';
 import 'package:climbicus/utils/time.dart';
+import 'package:climbicus/widgets/rating_star.dart';
 import 'package:climbicus/widgets/route_image_carousel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -54,6 +55,19 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
                 return Center(child: CircularProgressIndicator());
               },
             ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: gradeAndDifficulty(widget.routeWithUserMeta, 80.0)
+                ),
+                Expanded(
+                  child: qualityAndAscents(context, widget.routeWithUserMeta, 80.0)
+                ),
+              ],
+            )
           ),
           Padding(
             padding: const EdgeInsets.all(8),

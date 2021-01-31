@@ -12,7 +12,6 @@ import 'package:climbicus/widgets/route_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 const MAX_ROUTES_VISIBLE = 100;
 const ROUTE_LIST_ITEM_HEIGHT = 80.0;
@@ -63,17 +62,6 @@ class HeaderListItem extends StatelessWidget {
       );
     }
 
-    Widget ratingBarIndicator = RatingBar(
-      itemSize: 20.0,
-      initialRating: this.routeWithUserMeta.route.avgQuality ?? 0.0,
-      itemCount: 3,
-      ratingWidget: ratingStar(
-        context,
-        disabled: this.routeWithUserMeta.route.avgQuality == null,
-      ),
-      onRatingUpdate: (_) => {},
-    );
-
     Widget routeNameText;
     if (this.routeWithUserMeta.route.name != null) {
       routeNameText = Text(this.routeWithUserMeta.route.name, style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic));
@@ -114,37 +102,12 @@ class HeaderListItem extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: Container(
-                  height: ROUTE_LIST_ITEM_HEIGHT,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text(this.routeWithUserMeta.route.grade, style: TextStyle(fontSize: 18)),
-                      Text(
-                        this.routeWithUserMeta.route.avgDifficulty == null ?
-                          "" : this.routeWithUserMeta.route.avgDifficulty,
-                        style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
-                      ),
-                    ],
-                  ),
-                ),
+                child: gradeAndDifficulty(this.routeWithUserMeta,
+                    ROUTE_LIST_ITEM_HEIGHT),
               ),
               Expanded(
-                child: Container(
-                  height: ROUTE_LIST_ITEM_HEIGHT,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ratingBarIndicator,
-                      Text(
-                        (this.routeWithUserMeta.numAttempts() == 1) ?
-                          "${this.routeWithUserMeta.numAttempts().toString()} ascent" :
-                          "${this.routeWithUserMeta.numAttempts().toString()} ascents",
-                        style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
-                      ),
-                    ],
-                  ),
-                ),
+                child: qualityAndAscents(context, this.routeWithUserMeta,
+                    ROUTE_LIST_ITEM_HEIGHT),
               ),
             ],
           ),
