@@ -82,20 +82,21 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Text(
-                  "Your ascents:",
-                  style: TextStyle(fontSize: HEADING_SIZE_3),
-                ),
-                Container(
-                  height: 200,
-                  child: _buildRouteAscents(),
-                ),
-              ],
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Text(
+                    "Activity:",
+                    style: TextStyle(fontSize: HEADING_SIZE_3),
+                  ),
+                  Expanded(
+                    child: _buildRouteAscents(),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -143,11 +144,17 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
       );
     }
 
-    return ListView.separated(
-      padding: const EdgeInsets.all(8),
-      itemCount: ascents.length,
-      itemBuilder: (context, index) => ascents[index],
-      separatorBuilder: (context, index) => Divider(),
+    var scrollController = ScrollController();
+    return Scrollbar(
+      isAlwaysShown: true,
+      controller: scrollController,
+      child: ListView.separated(
+        controller: scrollController,
+        padding: const EdgeInsets.all(8),
+        itemCount: ascents.length,
+        itemBuilder: (context, index) => ascents[index],
+        separatorBuilder: (context, index) => Divider(),
+      ),
     );
   }
 }
