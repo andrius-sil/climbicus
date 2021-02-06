@@ -1,5 +1,6 @@
 
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
+import 'package:climbicus/models/user_route_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -62,4 +63,48 @@ Widget qualityAndAscents(BuildContext context,
       ],
     ),
   );
+}
+
+class AscentWidget extends StatelessWidget {
+  final UserRouteLog userRouteLog;
+
+  AscentWidget(this.userRouteLog);
+
+  @override
+  Widget build(BuildContext context) {
+    var ascentDecoration;
+    var ascentStatus;
+
+    if (userRouteLog != null) {
+      var boxColor = (userRouteLog.completed) ?
+        Theme.of(context).accentColor :
+        null;
+
+      ascentDecoration = BoxDecoration(
+        border: Border.all(
+          color: Theme.of(context).accentColor,
+          width: 2,
+        ),
+        color: boxColor,
+        borderRadius: BorderRadius.circular(12),
+      );
+
+      var numAttemptsStr = userRouteLog.numAttempts != null ?
+        userRouteLog.numAttempts.toString() :
+        " — ";
+      ascentStatus = Center(
+        child: (userRouteLog.completed && userRouteLog.numAttempts == 1) ?
+        Icon(Icons.flash_on, color: Theme.of(context).textTheme.headline6.color) :
+        Text(numAttemptsStr, style: TextStyle(fontSize: 18)),
+      );
+    }
+
+    return Container(
+      height: 60,
+      width: 60,
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      decoration: ascentDecoration,
+      child: ascentStatus,
+    );
+  }
 }

@@ -1,18 +1,24 @@
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/blocs/users_bloc.dart';
+import 'package:climbicus/models/user.dart';
+import 'package:climbicus/models/user_route_log.dart';
+import 'package:climbicus/repositories/user_repository.dart';
 import 'package:climbicus/utils/time.dart';
 import 'package:climbicus/widgets/rating_star.dart';
 import 'package:climbicus/widgets/route_image_carousel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 
 import '../style.dart';
 
 class RouteDetailedPage extends StatefulWidget {
+  final getIt = GetIt.instance;
+
   final RouteWithUserMeta routeWithUserMeta;
 
-  const RouteDetailedPage({@required this.routeWithUserMeta});
+  RouteDetailedPage({@required this.routeWithUserMeta});
 
   @override
   State<StatefulWidget> createState() => _RouteDetailedPage();
@@ -123,15 +129,43 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
   }
 
   Widget _buildRouteAscents() {
+    return BlocBuilder<UsersBloc, UsersState>(
+      builder: (context, state) {
+        if (state is UsersLoaded) {
+          return _buildRouteAscentsWithUsers(state.users);
+        } else if (state is UsersError) {
+          return ErrorWidget.builder(state.errorDetails);
+        }
+
+        return Center(child: CircularProgressIndicator());
+      },
+    );
+  }
+
+  Widget _buildDeleteButton(UserRouteLog userRouteLog) {
+    if (widget.getIt<UserRepository>().userId != userRouteLog.userId) {
+      return null;
+    }
+
+    return IconButton(
+      icon: const Icon(Icons.delete_outline),
+      onPressed: () async {
+        // TODO:
+      },
+    );
+  }
+
+  Widget _buildRouteAscentsWithUsers(Map<int, User> users) {
     List<Widget> ascents = [];
     for (var userRouteLog in widget.routeWithUserMeta.userRouteLogs.values) {
-      var status = (userRouteLog.completed) ? "Sent!" : "Attempted";
-      var tries = (userRouteLog.numAttempts == null) ? "" : "(${userRouteLog.numAttempts} tries)";
+      var user = users[userRouteLog.userId].name;
       ascents.add(
-          ListTile(title: Text(
-            "$status $tries - ${dateToString(userRouteLog.createdAt)}",
-            style: TextStyle(fontSize: HEADING_SIZE_3),
-          ))
+        ListTile(
+          leading: AscentWidget(userRouteLog),
+          title: Text(user),
+          subtitle: Text(dateToString(userRouteLog.createdAt)),
+          trailing: _buildDeleteButton(userRouteLog),
+        )
       );
     }
 

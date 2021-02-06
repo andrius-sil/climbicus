@@ -36,31 +36,6 @@ class HeaderListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     UserRouteLog mostRecentLog = routeWithUserMeta.mostRecentLog();
-    var ascentDecoration;
-    var ascentStatus;
-    if (mostRecentLog != null) {
-      var boxColor = (mostRecentLog.completed) ?
-          Theme.of(context).accentColor :
-          null;
-
-      ascentDecoration = BoxDecoration(
-        border: Border.all(
-          color: Theme.of(context).accentColor,
-          width: 2,
-        ),
-        color: boxColor,
-        borderRadius: BorderRadius.circular(12),
-      );
-
-      var numAttemptsStr = mostRecentLog.numAttempts != null ?
-          mostRecentLog.numAttempts.toString() :
-          " — ";
-      ascentStatus = Center(
-        child: (mostRecentLog.completed && mostRecentLog.numAttempts == 1) ?
-            Icon(Icons.flash_on, color: Theme.of(context).textTheme.headline6.color) :
-            Text(numAttemptsStr, style: TextStyle(fontSize: 18)),
-      );
-    }
 
     Widget routeNameText;
     if (this.routeWithUserMeta.route.name != null) {
@@ -79,13 +54,7 @@ class HeaderListItem extends StatelessWidget {
           routeName,
           Row(
             children: <Widget>[
-              Container(
-                height: 60,
-                width: 60,
-                margin: const EdgeInsets.symmetric(horizontal: 8),
-                decoration: ascentDecoration,
-                child: ascentStatus,
-              ),
+              AscentWidget(mostRecentLog),
               Expanded(
                 child: GestureDetector(
                   onTap: () {
