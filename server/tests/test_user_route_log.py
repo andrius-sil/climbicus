@@ -41,6 +41,8 @@ def test_view_logbook_one_route(client, auth_headers_user1):
               "route_id": 1, "user_id": 1},
         "3": {"completed": True, "created_at": "2012-03-02T10:10:10+00:00", "gym_id": 1, "id": 3, "num_attempts": 10,
               "route_id": 1, "user_id": 1},
+        "4": {"completed": True, "created_at": "2012-03-02T10:10:10+00:00", "gym_id": 1, "id": 4, "num_attempts": 10,
+              "route_id": 1, "user_id": 2},
     }
 
     assert expected_logbook == resp.json
@@ -61,11 +63,11 @@ def test_add_to_logbook(client, app, auth_headers_user1):
     assert resp.is_json
     assert resp.json["msg"] == "Route status added to log"
     assert resp.json["user_route_log"] == {"completed": True, "created_at": "2019-03-04T10:10:10+00:00",
-                                           "gym_id": 1, "id": 4, "num_attempts": None, "route_id": 1,
+                                           "gym_id": 1, "id": 5, "num_attempts": None, "route_id": 1,
                                            "user_id": 1}
 
     with app.app_context():
-        user_route_log = UserRouteLog.query.filter_by(id=4).one()
+        user_route_log = UserRouteLog.query.filter_by(id=5).one()
         assert user_route_log.completed == True
         assert user_route_log.num_attempts is None
         assert user_route_log.user_id == 1

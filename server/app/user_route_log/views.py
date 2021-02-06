@@ -4,7 +4,6 @@ from app import db
 from app.models import UserRouteLog
 
 from flask import request, Blueprint, jsonify, abort
-from sqlalchemy.orm.exc import NoResultFound
 
 blueprint = Blueprint("user_route_log_blueprint", __name__, url_prefix="/user_route_log")
 
@@ -35,10 +34,11 @@ def view(route_id=None):
     user_id = request.json["user_id"]
     gym_id = request.json["gym_id"]
 
-    query = db.session.query(UserRouteLog) \
-        .filter_by(user_id=user_id, gym_id=gym_id)
+    query = db.session.query(UserRouteLog).filter_by(gym_id=gym_id)
     if route_id:
         query = query.filter_by(route_id=route_id)
+    else:
+        query = query.filter_by(user_id=user_id)
 
     logbook = {}
     for user_route_log in query.all():

@@ -148,6 +148,14 @@ def app(resource_dir):
                     num_attempts=10,
                     created_at=datetime(2012, 3, 2, 10, 10, 10, tzinfo=pytz.UTC),
                 ),
+                UserRouteLog(
+                    route_id=1,
+                    user_id=2,
+                    gym_id=1,
+                    completed=True,
+                    num_attempts=10,
+                    created_at=datetime(2012, 3, 2, 10, 10, 10, tzinfo=pytz.UTC),
+                ),
             ]
         )
         db.session.add_all(
