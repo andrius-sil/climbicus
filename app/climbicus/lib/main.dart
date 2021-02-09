@@ -26,6 +26,7 @@ import 'blocs/gyms_bloc.dart';
 import 'blocs/login_bloc.dart';
 import 'blocs/settings_bloc.dart';
 import 'blocs/simple_bloc_delegate.dart';
+import 'blocs/user_route_log_bloc.dart';
 import 'blocs/users_bloc.dart';
 import 'env.dart';
 import 'models/gym.dart';
@@ -67,6 +68,7 @@ Future<void> mainDelegate(Environment env) async {
       BlocProvider<UsersBloc>(create: (context) => UsersBloc()),
       BlocProvider<RouteImagesBloc>(create: (context) => RouteImagesBloc()),
       BlocProvider<RoutePredictionBloc>(create: (context) => RoutePredictionBloc()),
+      BlocProvider<UserRouteLogBloc>(create: (context) => UserRouteLogBloc()),
       BlocProvider<GymRoutesBloc>(create: (context) => GymRoutesBloc(
         routeImagesBloc: BlocProvider.of<RouteImagesBloc>(context),
       )),

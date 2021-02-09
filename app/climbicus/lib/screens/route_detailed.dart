@@ -1,5 +1,6 @@
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
+import 'package:climbicus/blocs/user_route_log_bloc.dart';
 import 'package:climbicus/blocs/users_bloc.dart';
 import 'package:climbicus/models/user.dart';
 import 'package:climbicus/models/user_route_log.dart';
@@ -26,6 +27,7 @@ class RouteDetailedPage extends StatefulWidget {
 
 class _RouteDetailedPage extends State<RouteDetailedPage> {
   RouteImagesBloc _routeImagesBloc;
+  UserRouteLogBloc _userRouteLogBloc;
 
   @override
   void initState() {
@@ -33,6 +35,9 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
 
     _routeImagesBloc = BlocProvider.of<RouteImagesBloc>(context);
     _routeImagesBloc.add(FetchRouteImagesAll(routeId: widget.routeWithUserMeta.route.id));
+
+    _userRouteLogBloc = BlocProvider.of<UserRouteLogBloc>(context);
+    _userRouteLogBloc.add(FetchUserRouteLog(routeId: widget.routeWithUserMeta.route.id));
   }
 
   @override
@@ -130,11 +135,24 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
 
   Widget _buildRouteAscents() {
     return BlocBuilder<UsersBloc, UsersState>(
-      builder: (context, state) {
-        if (state is UsersLoaded) {
-          return _buildRouteAscentsWithUsers(state.users);
-        } else if (state is UsersError) {
-          return ErrorWidget.builder(state.errorDetails);
+      builder: (context, usersState) {
+        if (usersState is UsersLoaded) {
+          return BlocBuilder<UserRouteLogBloc, UserRouteLogState>(
+            builder: (context, userRouteLogState) {
+              if (userRouteLogState is UserRouteLogLoaded) {
+                return _buildRouteAscentsWithUsers(
+                  usersState.users,
+                  userRouteLogState.userRouteLogs[widget.routeWithUserMeta.route.id],
+                );
+              } else if (userRouteLogState is UserRouteLogError) {
+                return ErrorWidget.builder(userRouteLogState.errorDetails);
+              }
+
+              return Center(child: CircularProgressIndicator());
+            },
+          );
+        } else if (usersState is UsersError) {
+          return ErrorWidget.builder(usersState.errorDetails);
         }
 
         return Center(child: CircularProgressIndicator());
@@ -155,9 +173,10 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
     );
   }
 
-  Widget _buildRouteAscentsWithUsers(Map<int, User> users) {
+  Widget _buildRouteAscentsWithUsers(Map<int, User> users,
+      Map<int, UserRouteLog> userRouteLogs) {
     List<Widget> ascents = [];
-    for (var userRouteLog in widget.routeWithUserMeta.userRouteLogs.values) {
+    for (var userRouteLog in userRouteLogs.values) {
       var user = users[userRouteLog.userId].name;
       ascents.add(
         ListTile(
