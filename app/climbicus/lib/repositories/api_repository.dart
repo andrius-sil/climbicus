@@ -186,6 +186,14 @@ class ApiRepository {
     return _requestJson("GET", "user_route_log/$routeId", data);
   }
 
+  Future<Map> deleteUserRouteLog(int userRouteLogId) async {
+    Map data = {
+      "gym_id": _gymId,
+    };
+
+    return _requestJson("DELETE", "user_route_log/$userRouteLogId", data);
+  }
+
   Future<Map> routePredictions(File image, String category) async {
     Map data = {
       "gym_id": _gymId,

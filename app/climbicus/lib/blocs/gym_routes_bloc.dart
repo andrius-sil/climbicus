@@ -141,6 +141,11 @@ class RoutesWithUserMeta {
     _data[category][userRouteLog.routeId].userRouteLogs[userRouteLog.id] = userRouteLog;
   }
 
+  void deleteUserRouteLog(UserRouteLog userRouteLog) {
+    String category = _routes[userRouteLog.routeId].category;
+    _data[category][userRouteLog.routeId].userRouteLogs.remove(userRouteLog.id);
+  }
+
   void addUserRouteVotes(UserRouteVotes userRouteVotes) {
     String category = _routes[userRouteVotes.routeId].category;
     _data[category][userRouteVotes.routeId].userRouteVotes = userRouteVotes;
@@ -257,6 +262,12 @@ class AddNewGymRouteWithUserLog extends GymRoutesEvent {
     @required this.routeImages,
     @required this.userRouteVotesData,
   });
+}
+
+class DeleteUserLog extends GymRoutesEvent {
+  final UserRouteLog userRouteLog;
+
+  const DeleteUserLog({@required this.userRouteLog});
 }
 
 class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
@@ -386,6 +397,10 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
           routeImage: routeImage,
         ));
       }
+    } else if (event is DeleteUserLog) {
+      _entries.deleteUserRouteLog(event.userRouteLog);
+
+      yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
     }
 
     return;

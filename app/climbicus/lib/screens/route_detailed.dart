@@ -28,6 +28,7 @@ class RouteDetailedPage extends StatefulWidget {
 class _RouteDetailedPage extends State<RouteDetailedPage> {
   RouteImagesBloc _routeImagesBloc;
   UserRouteLogBloc _userRouteLogBloc;
+  GymRoutesBloc _gymRoutesBloc;
 
   @override
   void initState() {
@@ -38,6 +39,8 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
 
     _userRouteLogBloc = BlocProvider.of<UserRouteLogBloc>(context);
     _userRouteLogBloc.add(FetchUserRouteLog(routeId: widget.routeWithUserMeta.route.id));
+
+    _gymRoutesBloc = BlocProvider.of<GymRoutesBloc>(context);
   }
 
   @override
@@ -168,7 +171,8 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
     return IconButton(
       icon: const Icon(Icons.delete_outline),
       onPressed: () async {
-        // TODO:
+        _userRouteLogBloc.add(DeleteUserRouteLog(userRouteLog: userRouteLog));
+        _gymRoutesBloc.add(DeleteUserLog(userRouteLog: userRouteLog));
       },
     );
   }

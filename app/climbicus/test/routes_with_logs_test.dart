@@ -122,6 +122,16 @@ void main() {
     expect(routesWithUserMeta.allRoutes("bouldering")[3].difficultyVote(), DIFFICULTY_FAIR);
     expect(routesWithUserMeta.allRoutes("bouldering")[4].difficultyVote(), null);
     expect(routesWithUserMeta.allRoutes("sport")[5].difficultyVote(), DIFFICULTY_FAIR);
+
+    // deleteUserRouteLog
+    expect(routesWithUserMeta.allRoutes("sport")[1].userRouteLogs, newLogbook1);
+    expect(routesWithUserMeta.allRoutes("sport")[1].mostRecentLog(), newLogbook1[2]);
+    routesWithUserMeta.deleteUserRouteLog(newLogbook1[2]);
+    expect(routesWithUserMeta.allRoutes("sport")[1].userRouteLogs, {1: newLogbook1[1]});
+    expect(routesWithUserMeta.allRoutes("sport")[1].mostRecentLog(), newLogbook1[1]);
+    routesWithUserMeta.deleteUserRouteLog(newLogbook1[1]);
+    expect(routesWithUserMeta.allRoutes("sport")[1].userRouteLogs, {});
+    expect(routesWithUserMeta.allRoutes("sport")[1].mostRecentLog(), null);
   });
 
   test('routes with logs - filters', () {

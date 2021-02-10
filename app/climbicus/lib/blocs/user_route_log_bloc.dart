@@ -36,6 +36,12 @@ class FetchUserRouteLog extends UserRouteLogEvent {
   const FetchUserRouteLog({@required this.routeId});
 }
 
+class DeleteUserRouteLog extends UserRouteLogEvent {
+  final UserRouteLog userRouteLog;
+
+  const DeleteUserRouteLog({@required this.userRouteLog});
+}
+
 class UserRouteLogBloc extends Bloc<UserRouteLogEvent, UserRouteLogState> {
   final getIt = GetIt.instance;
 
@@ -59,6 +65,11 @@ class UserRouteLogBloc extends Bloc<UserRouteLogEvent, UserRouteLogState> {
       } catch (e, st) {
         yield UserRouteLogError(exception: e, stackTrace: st);
       }
+    } else if (event is DeleteUserRouteLog) {
+      getIt<ApiRepository>().deleteUserRouteLog(event.userRouteLog.id);
+
+      userRouteLogs[event.userRouteLog.routeId].remove(event.userRouteLog.id);
+      yield UserRouteLogLoaded(userRouteLogs: userRouteLogs);
     }
   }
 }
