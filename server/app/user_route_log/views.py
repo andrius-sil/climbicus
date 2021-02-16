@@ -27,7 +27,6 @@ def add():
                              num_attempts=num_attempts, created_at=datetime.datetime.utcnow())
 
     db.session.add(log_entry)
-    db.session.commit()
 
     updated_route = update_count_ascents(route_id, num_attempts or 1)
     db.session.commit()
@@ -68,8 +67,6 @@ def delete(user_route_log_id=None):
 
     change_in_count = user_route_log.num_attempts or 1
     updated_route = update_count_ascents(user_route_log.route_id, -change_in_count)
-    db.session.commit()
-
     _ = query.delete()
     db.session.commit()
 
