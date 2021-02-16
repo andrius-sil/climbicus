@@ -114,6 +114,7 @@ class Routes(db.Model):
     upper_grade = db.Column(db.Enum(*grade_enum_values, name='uppergrade'), nullable=False)
     avg_difficulty = db.Column(db.Enum(RouteDifficulty))
     avg_quality = db.Column(db.Float)
+    count_ascents = db.Column(db.Integer, nullable=False, default=0)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
     __table_args__ = (
         CheckConstraint('avg_quality >= 1.0'),
@@ -132,6 +133,7 @@ class Routes(db.Model):
             "upper_grade": self.upper_grade,
             "avg_difficulty": self.avg_difficulty_name,
             "avg_quality": self.avg_quality,
+            "count_ascents": self.count_ascents,
             "created_at": self.created_at.isoformat(),
         }
 
@@ -142,7 +144,8 @@ class Routes(db.Model):
     def __repr__(self):
         return model_repr("Route", id=self.id, gym_id=self.gym_id, category=self.category.name, name=self.name,
                           lower_grade=self.lower_grade, upper_grade=self.upper_grade,
-                          avg_difficulty=self.avg_difficulty_name, avg_quality=self.avg_quality)
+                          avg_difficulty=self.avg_difficulty_name, avg_quality=self.avg_quality,
+                          count_ascents=self.count_ascents)
 
 
 class RouteImages(db.Model):

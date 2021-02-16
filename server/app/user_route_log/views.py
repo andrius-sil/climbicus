@@ -1,11 +1,18 @@
 import datetime
 
 from app import db
-from app.models import UserRouteLog
+from app.models import Routes, UserRouteLog
 
 from flask import request, Blueprint, jsonify, abort
+from sqlalchemy.orm.exc import NoResultFound
 
 blueprint = Blueprint("user_route_log_blueprint", __name__, url_prefix="/user_route_log")
+
+
+def update_count_ascents(route_id, change_in_count):
+    route_entry = db.session.query(Routes).filter_by(id=route_id).one()
+    route_entry.count_ascents += change_in_count
+    return route_entry
 
 
 @blueprint.route("/", methods=["POST"])
@@ -20,11 +27,14 @@ def add():
                              num_attempts=num_attempts, created_at=datetime.datetime.utcnow())
 
     db.session.add(log_entry)
+
+    updated_route = update_count_ascents(route_id, num_attempts or 1)
     db.session.commit()
 
     return jsonify({
         "msg": "Route status added to log",
         "user_route_log": log_entry.api_model,
+        "route": updated_route.api_model,
     })
 
 
@@ -48,11 +58,19 @@ def view(route_id=None):
 
 @blueprint.route("/<int:user_route_log_id>", methods=["DELETE"])
 def delete(user_route_log_id=None):
-    num_deleted = db.session.query(UserRouteLog).filter_by(id=user_route_log_id).delete()
-    if num_deleted == 0:
+
+    query = db.session.query(UserRouteLog).filter_by(id=user_route_log_id)
+    try:
+        user_route_log = query.one()
+    except NoResultFound:
         abort(400, "invalid user_route_log_id")
 
+    change_in_count = user_route_log.num_attempts or 1
+    updated_route = update_count_ascents(user_route_log.route_id, -change_in_count)
+    _ = query.delete()
     db.session.commit()
+
     return jsonify({
         "msg": "user_route_log entry was successfully deleted",
+        "route": updated_route.api_model,
     })

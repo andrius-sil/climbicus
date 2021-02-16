@@ -88,7 +88,7 @@ def update(user_route_votes_id=None):
     votes_entry.quality = quality
     votes_entry.difficulty = difficulty
     try:
-        db.session.commit()
+        db.session.flush()
     except IntegrityError:
         abort(409, "the request does not pass database constraints")
     except DataError:
