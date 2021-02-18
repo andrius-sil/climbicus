@@ -5,7 +5,7 @@ part 'route.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Route {
-  Route(this.id, this.gymId, this.userId, this.category, this.lowerGrade, this.upperGrade, this.avgDifficulty, this.avgQuality, this.createdAt);
+  Route(this.id, this.gymId, this.userId, this.category, this.lowerGrade, this.upperGrade, this.avgDifficulty, this.avgQuality, this.countAscents, this.createdAt);
 
   int id;
   int gymId;
@@ -16,6 +16,7 @@ class Route {
   String upperGrade;
   String avgDifficulty;
   double avgQuality;
+  int countAscents;
   DateTime createdAt;
 
   String get grade {
