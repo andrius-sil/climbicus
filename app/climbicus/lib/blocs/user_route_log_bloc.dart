@@ -66,8 +66,6 @@ class UserRouteLogBloc extends Bloc<UserRouteLogEvent, UserRouteLogState> {
         yield UserRouteLogError(exception: e, stackTrace: st);
       }
     } else if (event is DeleteUserRouteLog) {
-      getIt<ApiRepository>().deleteUserRouteLog(event.userRouteLog.id);
-
       userRouteLogs[event.userRouteLog.routeId].remove(event.userRouteLog.id);
       yield UserRouteLogLoaded(userRouteLogs: userRouteLogs);
     }

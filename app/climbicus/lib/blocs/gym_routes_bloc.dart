@@ -59,7 +59,7 @@ class RouteWithUserMeta {
 
   bool isAttempted() => userRouteLogs.isNotEmpty;
 
-  int numAttempts() => userRouteLogs.length;
+  int numAttempts() => route.countAscents;
 
   double qualityVote() {
     if (userRouteVotes == null) {
@@ -130,10 +130,16 @@ class RoutesWithUserMeta {
     _data[route.category][route.id] = RouteWithUserMeta(route, {}, userRouteVotes);
   }
 
-  void updateRoute(jsonmdl.Route route, UserRouteVotes userRouteVotes) {
+  void updateRoute(jsonmdl.Route route,
+      {UserRouteVotes userRouteVotes, UserRouteLog userRouteLog}) {
     _routes[route.id] = route;
     _data[route.category][route.id].route = route;
-    _data[route.category][route.id].userRouteVotes = userRouteVotes;
+    if (userRouteVotes != null) {
+      _data[route.category][route.id].userRouteVotes = userRouteVotes;
+    }
+    if (userRouteLog != null) {
+      _data[route.category][route.id].userRouteLogs[userRouteLog.id] = userRouteLog;
+    }
   }
 
   void addUserRouteLog(UserRouteLog userRouteLog) {
@@ -344,9 +350,11 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
       yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
     } else if (event is AddNewUserRouteLog) {
       var results = await getIt<ApiRepository>().logbookAdd(event.routeId, event.completed, event.numAttempts);
-      var newUserRouteLog = UserRouteLog.fromJson(results["user_route_log"]);
 
-      _entries.addUserRouteLog(newUserRouteLog);
+      _entries.updateRoute(
+        jsonmdl.Route.fromJson(results["route"]),
+        userRouteLog: UserRouteLog.fromJson(results["user_route_log"]),
+      );
 
       yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
     } else if (event is AddOrUpdateUserRouteVotes) {
@@ -368,7 +376,7 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
 
       _entries.updateRoute(
         jsonmdl.Route.fromJson(results["route"]),
-        UserRouteVotes.fromJson(results["user_route_votes"]),
+        userRouteVotes: UserRouteVotes.fromJson(results["user_route_votes"]),
       );
 
       yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
@@ -398,7 +406,12 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
         ));
       }
     } else if (event is DeleteUserLog) {
+      var results = await getIt<ApiRepository>().deleteUserRouteLog(event.userRouteLog.id);
+
       _entries.deleteUserRouteLog(event.userRouteLog);
+      _entries.updateRoute(
+        jsonmdl.Route.fromJson(results["route"]),
+      );
 
       yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
     }

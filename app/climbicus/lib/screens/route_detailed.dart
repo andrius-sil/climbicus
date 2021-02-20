@@ -72,16 +72,7 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
           ),
           Container(
             padding: const EdgeInsets.all(8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: gradeAndDifficulty(widget.routeWithUserMeta, 80.0)
-                ),
-                Expanded(
-                  child: qualityAndAscents(context, widget.routeWithUserMeta, 80.0)
-                ),
-              ],
-            )
+            child: _buildRouteVotes(),
           ),
           Padding(
             padding: const EdgeInsets.all(8),
@@ -115,6 +106,29 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
           ),
         ],
       )
+    );
+  }
+
+  Widget _buildRouteVotes() {
+    return BlocBuilder<GymRoutesBloc, GymRoutesState>(
+      builder: (context, state) {
+        if (state is GymRoutesLoaded) {
+          return Row(
+            children: [
+              Expanded(
+                  child: gradeAndDifficulty(widget.routeWithUserMeta, 80.0)
+              ),
+              Expanded(
+                  child: qualityAndAscents(context, widget.routeWithUserMeta, 80.0)
+              ),
+            ],
+          );
+        } else if (state is GymRoutesError) {
+          return ErrorWidget.builder(state.errorDetails);
+        }
+
+        return Center(child: CircularProgressIndicator());
+      },
     );
   }
 
