@@ -143,10 +143,14 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
           return BlocBuilder<UserRouteLogBloc, UserRouteLogState>(
             builder: (context, userRouteLogState) {
               if (userRouteLogState is UserRouteLogLoaded) {
-                return _buildRouteAscentsWithUsers(
-                  usersState.users,
-                  userRouteLogState.userRouteLogs[widget.routeWithUserMeta.route.id],
-                );
+                // Keep waiting if this route's logs haven't been fetched yet.
+                var userRouteLogs = userRouteLogState.userRouteLogs[widget.routeWithUserMeta.route.id];
+                if (userRouteLogs != null) {
+                  return _buildRouteAscentsWithUsers(
+                    usersState.users,
+                    userRouteLogs,
+                  );
+                }
               } else if (userRouteLogState is UserRouteLogError) {
                 return ErrorWidget.builder(userRouteLogState.errorDetails);
               }
