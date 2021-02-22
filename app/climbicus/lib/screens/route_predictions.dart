@@ -167,7 +167,12 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
         _settingsBloc.displayPredictionsNum);
 
     if (displayPredictionsNum == 0) {
-      return Text("No matches found!");
+      return Center(
+        child: Text(
+          "No matches found!",
+          style: TextStyle(fontSize: HEADING_SIZE_3)
+        ),
+      );
     }
 
     for (var i = 0; i < displayPredictionsNum; i++) {
