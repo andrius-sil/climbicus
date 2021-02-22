@@ -8,6 +8,7 @@ import 'package:climbicus/repositories/user_repository.dart';
 import 'package:climbicus/utils/time.dart';
 import 'package:climbicus/widgets/rating_star.dart';
 import 'package:climbicus/widgets/route_image_carousel.dart';
+import 'package:climbicus/widgets/route_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -70,23 +71,8 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
               },
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            child: _buildRouteVotes(),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                _buildRouteDetails(),
-                Text(
-                  "Category: ${widget.routeWithUserMeta.route.category}",
-                  style: TextStyle(fontSize: HEADING_SIZE_3),
-                ),
-              ],
-            ),
-          ),
+          decorateLogWidget(context, _buildRouteVotes()),
+          decorateLogWidget(context, _buildRouteDetails(), height: null, padding: 10),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(8),
@@ -137,9 +123,18 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
       builder: (context, state) {
         if (state is UsersLoaded) {
           var userName = state.users[widget.routeWithUserMeta.route.userId].name;
-          return Text(
-              "Added by: $userName - ${dateToString(widget.routeWithUserMeta.route.createdAt)}",
-              style: TextStyle(fontSize: HEADING_SIZE_3),
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Text(
+                "Added by: $userName - ${dateToString(widget.routeWithUserMeta.route.createdAt)}",
+                style: TextStyle(fontSize: HEADING_SIZE_3),
+              ),
+              Text(
+                "Category: ${widget.routeWithUserMeta.route.category}",
+                style: TextStyle(fontSize: HEADING_SIZE_3),
+              ),
+            ],
           );
         } else if (state is UsersError) {
           return ErrorWidget.builder(state.errorDetails);

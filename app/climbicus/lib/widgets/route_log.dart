@@ -12,11 +12,12 @@ import 'package:toggle_switch/toggle_switch.dart';
 const NOT_SELECTED = "not selected";
 
 
-Widget decorateLogWidget(BuildContext context, Widget logWidget) {
+Widget decorateLogWidget(BuildContext context, Widget logWidget,
+    {double height = 80.0, double padding = 4.0}) {
   return Container(
-    padding: const EdgeInsets.all(4),
+    padding: EdgeInsets.all(padding),
     margin: const EdgeInsets.all(4),
-    height: 80.0,
+    height: height,
     alignment: Alignment.center,
     decoration: BoxDecoration(
       color: primaryColorLight,

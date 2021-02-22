@@ -2,7 +2,7 @@
 import 'package:intl/intl.dart';
 
 String dateToString(DateTime dt) {
-  return DateFormat("yyyy-MM-dd").format(dt.toLocal());
+  return DateFormat("dd LLL yyyy").format(dt.toLocal());
 }
 
 String dateAndTimeToString(DateTime dt) {
