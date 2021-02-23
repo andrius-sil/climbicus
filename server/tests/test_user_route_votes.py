@@ -70,7 +70,7 @@ def test_update_votes(client, app, auth_headers_user1):
         "user_id": 1,
         "user_route_votes_id": 1,
         "quality": 3.0,
-        "difficulty": None,
+        "difficulty": "soft",
     }
     resp = client.patch("/user_route_votes/1", data=json.dumps(data), content_type="application/json",
                       headers=auth_headers_user1)
@@ -80,7 +80,7 @@ def test_update_votes(client, app, auth_headers_user1):
     assert resp.json["msg"] == "Route votes entry updated"
     assert resp.json["user_route_votes"] == {
         "created_at": "2012-03-02T10:10:10+00:00",
-        "difficulty": None,
+        "difficulty": "soft",
         "gym_id": 1,
         "id": 1,
         "quality": 3.0,
@@ -96,14 +96,14 @@ def test_update_votes(client, app, auth_headers_user1):
         "count_ascents": 0,
         "lower_grade": "V_V1",
         "upper_grade": "V_V1",
-        "avg_difficulty": None,
+        "avg_difficulty": "soft",
         "avg_quality": 3.0,
         "created_at": "2019-03-04T10:10:10+00:00",
     }
 
     with app.app_context():
         user_route_log = UserRouteVotes.query.filter_by(id=1).one()
-        assert user_route_log.difficulty_name is None
+        assert user_route_log.difficulty_name == "soft"
         assert user_route_log.quality == 3.0
         assert user_route_log.user_id == 1
         assert user_route_log.gym_id == 1
