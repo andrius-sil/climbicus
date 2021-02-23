@@ -77,7 +77,7 @@ def app(resource_dir):
             db.session.add(
                 Routes(
                     gym_id=1, user_id=1, category="bouldering", lower_grade="V_V1", upper_grade="V_V1",
-                    name=f"Jug Fest {i}", avg_difficulty=None, avg_quality=None,
+                    name=f"Jug Fest {i}", avg_difficulty=None, avg_quality=None, count_ascents=0,
                     created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
                 )
             )

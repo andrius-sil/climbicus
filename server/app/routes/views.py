@@ -45,7 +45,7 @@ def add():
     name = request.json["name"]
 
     route = Routes(gym_id=gym_id, user_id=user_id, lower_grade=lower_grade, upper_grade=upper_grade, category=category,
-                   name=name, created_at=datetime.datetime.utcnow())
+                   name=name, created_at=datetime.datetime.utcnow(), count_ascents=0)
 
     db.session.add(route)
     db.session.commit()
