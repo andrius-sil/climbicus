@@ -217,7 +217,7 @@ class UserRouteVotes(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     gym_id = db.Column(db.Integer, db.ForeignKey('gyms.id'), nullable=False)
     quality = db.Column(db.Float)
-    difficulty = db.Column(db.Enum(RouteDifficulty))
+    _difficulty = db.Column(db.Enum(RouteDifficulty))
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
     __table_args__ = (
         CheckConstraint('quality >= 1.0'),
@@ -236,6 +236,24 @@ class UserRouteVotes(db.Model):
             "difficulty": self.difficulty_name,
             "created_at": self.created_at.isoformat(),
         }
+
+    @hybrid_property
+    def difficulty(self):
+        return self._difficulty
+
+    @difficulty.setter
+    def difficulty(self, value):
+        """
+        Explicitly converting to enumerated type,
+        so that ORM code has the right types without running COMMIT.
+        """
+        try:
+            final_value = RouteDifficulty[value]
+        except KeyError:
+            # Let DB constraints deal with invalid values.
+            final_value = value
+
+        self._difficulty = final_value
 
     @property
     def difficulty_name(self):
