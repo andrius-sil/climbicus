@@ -37,15 +37,19 @@ Widget gradeAndDifficulty(RouteWithUserMeta routeWithUserMeta, double height) {
 
 Widget qualityAndAscents(BuildContext context,
     RouteWithUserMeta routeWithUserMeta, double height) {
-  Widget ratingBarIndicator = RatingBar(
+  var avgQuality = routeWithUserMeta.route.avgQuality ?? 0.0;
+  Widget ratingBarIndicator = RatingBarIndicator(
     itemSize: 20.0,
-    initialRating: routeWithUserMeta.route.avgQuality ?? 0.0,
+    rating: avgQuality,
     itemCount: 3,
-    ratingWidget: ratingStar(
-      context,
-      disabled: routeWithUserMeta.route.avgQuality == null,
-    ),
-    onRatingUpdate: (_) => {},
+    itemBuilder: (context, index) {
+      // Use border stars icons for "unfilled" rating part.
+      if (avgQuality < index + 1) {
+        return Icon(Icons.star_border);
+      } else {
+        return Icon(Icons.star);
+      }
+    },
   );
 
   return Container(
