@@ -127,7 +127,11 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Text(
-                "Added by: $userName - ${dateToString(widget.routeWithUserMeta.route.createdAt)}",
+                "Added by: $userName",
+                style: TextStyle(fontSize: HEADING_SIZE_3),
+              ),
+              Text(
+                "Added at: ${dateToString(widget.routeWithUserMeta.route.createdAt)}",
                 style: TextStyle(fontSize: HEADING_SIZE_3),
               ),
               Text(
