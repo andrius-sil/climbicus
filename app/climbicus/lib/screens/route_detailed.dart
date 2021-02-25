@@ -56,7 +56,7 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
       body: Column(
         children: <Widget>[
           Container(
-            height: 300.0,
+            height: 200.0,
             child: BlocBuilder<RouteImagesBloc, RouteImagesState>(
               builder: (context, state) {
                 if (state is RouteImagesLoaded) {
