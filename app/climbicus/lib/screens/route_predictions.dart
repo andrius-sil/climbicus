@@ -152,7 +152,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
                 return ErrorWidget.builder(state.errorDetails);
               }
 
-              return CircularProgressIndicator();
+              return Center(child: CircularProgressIndicator());
             },
           ),
         ),
