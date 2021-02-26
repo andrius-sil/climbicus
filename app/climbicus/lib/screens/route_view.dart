@@ -331,8 +331,11 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
 
     // Using AlwaysScrollableScrollPhysics to ensure that RefreshIndicator
     // appears always.
+    var scrollController = ScrollController();
     return Scrollbar(
+      controller: scrollController,
       child: SingleChildScrollView(
+        controller: scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.only(bottom: ROUTE_LIST_ITEM_HEIGHT),
         child: ExpansionPanelList(
@@ -355,7 +358,16 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
               body: BodyListItem(
                 routeWithUserMeta: item.routeWithUserMeta,
                 gymRoutesBloc: _gymRoutesBloc,
-                onAdd: () => _items[idx].isExpanded = false,
+                onAdd: () {
+                  _items[idx].isExpanded = false;
+
+                  // using 0.5 as per https://github.com/flutter/flutter/issues/26833
+                  scrollController.animateTo(
+                    0.5,
+                    curve: Curves.easeOut,
+                    duration: const Duration(milliseconds: 100),
+                  );
+                }
               ),
               isExpanded: item.isExpanded,
             );
