@@ -144,6 +144,12 @@ class _BodyListItemState extends State<BodyListItem> {
         routeDifficultyKey.currentState.value,
       ),
     ));
+
+    // Clear the fields.
+    checkboxSentKey.currentState.resetState();
+    numberAttemptsKey.currentState.resetState();
+    routeQualityKey.currentState.resetState();
+    routeDifficultyKey.currentState.resetState();
   }
 }
 

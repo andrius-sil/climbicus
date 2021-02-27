@@ -43,9 +43,23 @@ class CheckboxWithTitle extends StatefulWidget {
 }
 
 class CheckboxWithTitleState extends State<CheckboxWithTitle> {
-  bool _value = false;
+  bool _value;
 
   bool get value => _value;
+
+  bool _initialValue() => false;
+
+  void resetState() {
+    setState(() {
+      _value = _initialValue();
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _value = _initialValue();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,9 +109,26 @@ class NumberAttempts extends StatefulWidget {
 }
 
 class NumberAttemptsState extends State<NumberAttempts> {
-  int _value = 0;
+  var _touchSpinKey = UniqueKey();
+
+  int _value;
 
   int get value => (_value == 0) ? null : _value;
+
+  int _initialValue() => 0;
+
+  void resetState() {
+    setState(() {
+      _value = _initialValue();
+      _touchSpinKey = UniqueKey();
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _value = _initialValue();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,6 +139,7 @@ class NumberAttemptsState extends State<NumberAttempts> {
           Text("Attempts?", style: TextStyle(fontSize: headingSize5or6(context))),
           Container(
             child: TouchSpin(
+              key: _touchSpinKey,
               value: _value,
               min: 0,
               max: 30,
@@ -244,11 +276,19 @@ class RouteDifficultyRatingState extends State<RouteDifficultyRating> {
 
   String get value => (_index == -1) ? null : _values[_index];
 
+  int _initialValue() => (widget.initialValue == null) ? -1 : _values.indexOf(widget.initialValue);
+
+  void resetState() {
+    setState(() {
+      _index = _initialValue();
+    });
+  }
+
   @override
   void initState() {
     super.initState();
 
-    _index = (widget.initialValue == null) ? -1 : _values.indexOf(widget.initialValue);
+    _index = _initialValue();
   }
 
   @override
@@ -287,11 +327,19 @@ class RouteQualityRatingState extends State<RouteQualityRating> {
 
   double get value => (_value == 0) ? null : _value;
 
+  double _initialValue() => (widget.initialValue == null) ? 0 : widget.initialValue;
+
+  void resetState() {
+    setState(() {
+      _value = _initialValue();
+    });
+  }
+
   @override
   void initState() {
     super.initState();
 
-    _value = (widget.initialValue == null) ? 0 : widget.initialValue;
+    _value = _initialValue();
   }
 
   @override
