@@ -6,9 +6,9 @@ from sqlalchemy.exc import IntegrityError
 from app.models import Users
 
 
-def create_db_user(db, name, email, password):
+def create_db_user(db, name, email, password, verified):
     try:
-        user = Users(name=name, email=email, password=password, created_at=datetime.datetime.utcnow())
+        user = Users(name=name, email=email, password=password, verified=verified, created_at=datetime.datetime.utcnow())
 
         db.session.add(user)
         db.session.commit()

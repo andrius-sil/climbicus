@@ -40,7 +40,10 @@ def load_table(db, ModelClass, data_source):
 
 
 def create_user(db, name, email, password):
-    create_db_user(db, name=name, email=email, password=password)
+    """
+    Manually created users will always be 'verified'.
+    """
+    create_db_user(db, name=name, email=email, password=password, verified=True)
 
 
 def create_gym(db, name, has_bouldering, has_sport):

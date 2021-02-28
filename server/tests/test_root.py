@@ -57,6 +57,7 @@ def test_register(client, app):
         assert user.name == "New Tester"
         assert user.email == "new@tester.com"
         assert user.check_password("newpass")
+        assert user.verified == True
 
 
 def test_register_email_already_taken(client, app):
