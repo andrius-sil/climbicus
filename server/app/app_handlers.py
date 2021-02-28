@@ -60,4 +60,5 @@ def verify_user_identity():
         abort(400, "'user_id' is missing from the request data")
 
     if get_jwt_identity() != int(user_id):
-        abort(401, "user is not authorized to access the resource")
+        abort(403, "user is not authorized to access the resource")
+

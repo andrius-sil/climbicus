@@ -138,7 +138,7 @@ def test_index_auth_header_and_user_id_mismatch(client, auth_headers_user1):
     }
     resp = client.get("/", data=json.dumps(data), content_type="application/json", headers=auth_headers_user1)
 
-    assert resp.status_code == 401
+    assert resp.status_code == 403
     assert resp.is_json
     assert resp.json["msg"] == "user is not authorized to access the resource"
 
@@ -152,7 +152,7 @@ def test_index_auth_header_and_user_id_mismatch_form_data(client, auth_headers_u
     }
     resp = client.get("/", data=data, headers=auth_headers_user1)
 
-    assert resp.status_code == 401
+    assert resp.status_code == 403
     assert resp.is_json
     assert resp.json["msg"] == "user is not authorized to access the resource"
 
