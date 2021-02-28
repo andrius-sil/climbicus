@@ -46,7 +46,7 @@ def register():
     email = request.json.get("email", None)
     password = request.json.get("password", None)
 
-    create_db_user(db, name=name, email=email, password=password, verified=True)
+    create_db_user(db, name=name, email=email, password=password, verified=not current_app.config["ENABLE_USER_VERIFICATION"])
 
     return jsonify({
         "msg": "New user created",

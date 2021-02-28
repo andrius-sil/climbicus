@@ -40,7 +40,7 @@ def init_celery(celery, app):
 
 
 
-def create_app(db_connection_uri, jwt_secret_key, io_provider, disable_auth=False):
+def create_app(db_connection_uri, jwt_secret_key, io_provider, disable_auth=False, enable_user_verification=False):
     app = Flask(__name__)
 
     app.config["JWT_SECRET_KEY"] = jwt_secret_key
@@ -57,6 +57,7 @@ def create_app(db_connection_uri, jwt_secret_key, io_provider, disable_auth=Fals
     app.register_blueprint(user_route_votes.blueprint)
 
     app.config["DISABLE_AUTH"] = disable_auth
+    app.config["ENABLE_USER_VERIFICATION"] = enable_user_verification
 
     register_handlers(app)
 

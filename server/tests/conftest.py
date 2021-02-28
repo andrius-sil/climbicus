@@ -34,6 +34,15 @@ class TestInputOutputProvider(InputOutputProvider):
 
 @pytest.fixture(scope="function")
 def app(resource_dir):
+    yield from _app(resource_dir, enable_user_verification=False)
+
+
+@pytest.fixture(scope="function")
+def app_with_user_verification(resource_dir):
+    yield from _app(resource_dir, enable_user_verification=True)
+
+
+def _app(resource_dir, enable_user_verification):
     """Create and configure a new app instance for each test."""
     if not database_exists(DATABASE_CONNECTION_URI):
         create_database(DATABASE_CONNECTION_URI)
@@ -42,6 +51,7 @@ def app(resource_dir):
         db_connection_uri=DATABASE_CONNECTION_URI,
         jwt_secret_key=JWT_SECRET_KEY,
         io_provider=TestInputOutputProvider(resource_dir),
+        enable_user_verification=enable_user_verification,
     )
 
     app.testing = True
@@ -208,6 +218,11 @@ def app(resource_dir):
 def client(app):
     """A test client for the app."""
     return app.test_client()
+
+
+@pytest.fixture
+def client_with_user_verification(app_with_user_verification):
+    return app_with_user_verification.test_client()
 
 
 @pytest.fixture(scope="session")

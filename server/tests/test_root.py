@@ -40,6 +40,26 @@ def test_login_with_invalid_password(client):
     assert resp.json["msg"] == "incorrect email and password"
 
 
+def test_register_with_verification(client_with_user_verification, app_with_user_verification):
+    data = {
+        "name": "New Tester",
+        "email": "new@tester.com",
+        "password": "newpass",
+    }
+    resp = client_with_user_verification.post("/register", data=json.dumps(data), content_type="application/json")
+
+    assert resp.status_code == 200
+    assert resp.is_json
+    assert resp.json["msg"] == "New user created"
+
+    with app_with_user_verification.app_context():
+        user = Users.query.filter_by(id=3).one()
+        assert user.name == "New Tester"
+        assert user.email == "new@tester.com"
+        assert user.check_password("newpass")
+        assert user.verified == False # the important bit
+
+
 def test_register(client, app):
     data = {
         "name": "New Tester",
