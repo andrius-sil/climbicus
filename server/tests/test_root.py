@@ -143,7 +143,7 @@ def test_index_user_unverified(client, auth_headers_user3_unverified):
     }
     resp = client.get("/", data=json.dumps(data), content_type="application/json", headers=auth_headers_user3_unverified)
 
-    assert resp.status_code == 401
+    assert resp.status_code == 403
     assert resp.is_json
     assert resp.json["msg"] == "user is unverified"
 

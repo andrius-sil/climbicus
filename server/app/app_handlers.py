@@ -73,4 +73,4 @@ def verify_user_identity():
         abort(403, "user is not authorized to access the resource")
 
     if current_app.config["ENABLE_USER_VERIFICATION"] and (not current_user.verified):
-        abort(401, "user is unverified")
+        abort(403, "user is unverified")
