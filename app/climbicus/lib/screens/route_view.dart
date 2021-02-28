@@ -48,39 +48,40 @@ class HeaderListItem extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.all(2),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          routeName,
-          Row(
-            children: <Widget>[
-              AscentWidget(mostRecentLog),
-              Expanded(
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (BuildContext context) {
-                        return RouteDetailedPage(routeWithUserMeta: this.routeWithUserMeta);
-                      },
-                    ));
-                  },
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(
+            builder: (BuildContext context) {
+              return RouteDetailedPage(routeWithUserMeta: this.routeWithUserMeta);
+            },
+          ));
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            routeName,
+            Row(
+              children: <Widget>[
+                AscentWidget(mostRecentLog),
+                Expanded(
                   child: Container(
                     height: ROUTE_LIST_ITEM_HEIGHT,
                     child: this.image,
                   ),
                 ),
-              ),
-              Expanded(
-                child: gradeAndDifficulty(this.routeWithUserMeta,
-                    ROUTE_LIST_ITEM_HEIGHT),
-              ),
-              Expanded(
-                child: qualityAndAscents(context, this.routeWithUserMeta,
-                    ROUTE_LIST_ITEM_HEIGHT),
-              ),
-            ],
-          ),
-        ],
+                Expanded(
+                  child: gradeAndDifficulty(this.routeWithUserMeta,
+                      ROUTE_LIST_ITEM_HEIGHT),
+                ),
+                Expanded(
+                  child: qualityAndAscents(context, this.routeWithUserMeta,
+                      ROUTE_LIST_ITEM_HEIGHT),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
