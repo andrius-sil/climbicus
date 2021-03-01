@@ -13,6 +13,7 @@ import 'package:climbicus/screens/gyms.dart';
 import 'package:climbicus/screens/login.dart';
 import 'package:climbicus/screens/route_view.dart';
 import 'package:climbicus/screens/settings.dart';
+import 'package:climbicus/screens/verify.dart';
 import 'package:climbicus/style.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -180,6 +181,10 @@ class _HomePageState extends State<HomePage> {
           Sentry.configureScope((scope) => scope.user = null);
 
           return LoginPage();
+        } else if (state is AuthenticationUnverified) {
+          Sentry.configureScope((scope) => scope.user = null);
+
+          return VerifyPage();
         }
 
         return _buildWaitingPage();

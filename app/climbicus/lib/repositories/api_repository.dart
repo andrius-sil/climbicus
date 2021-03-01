@@ -26,6 +26,11 @@ class UnauthorizedApiException extends ApiException {
       : super(response, responseJson);
 }
 
+class UnverifiedUserApiException extends ApiException {
+  UnverifiedUserApiException(http.StreamedResponse response, String responseJson)
+      : super(response, responseJson);
+}
+
 class ConflictingResourceApiException extends ApiException {
   ConflictingResourceApiException(http.StreamedResponse response, String responseJson)
       : super(response, responseJson);
@@ -51,6 +56,8 @@ class ApiRepository {
     switch (response.statusCode) {
       case 401:
         return UnauthorizedApiException(response, responseJson);
+      case 403:
+        return UnverifiedUserApiException(response, responseJson);
       case 409:
         return ConflictingResourceApiException(response, responseJson);
       case 422:
