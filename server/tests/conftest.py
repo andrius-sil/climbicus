@@ -42,6 +42,7 @@ def app(resource_dir):
         db_connection_uri=DATABASE_CONNECTION_URI,
         jwt_secret_key=JWT_SECRET_KEY,
         io_provider=TestInputOutputProvider(resource_dir),
+        enable_user_verification=True,
     )
 
     app.testing = True
@@ -55,6 +56,7 @@ def app(resource_dir):
                 name="Tester One",
                 email="test1@testing.com",
                 password="testing1",
+                verified=True,
                 created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
             )
         )
@@ -63,6 +65,16 @@ def app(resource_dir):
                 name="Tester Two",
                 email="test2@testing.com",
                 password="testing2",
+                verified=True,
+                created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
+            )
+        )
+        db.session.add(
+            Users(
+                name="Tester Three",
+                email="test3@testing.com",
+                password="testing3",
+                verified=False,
                 created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
             )
         )
@@ -221,12 +233,23 @@ def image_str(resource_dir, image_name):
 
 @pytest.fixture(scope="function")
 def auth_headers_user1(app):
-    return _auth_headers(app, identity=1)
+    with app.app_context():
+        user = Users.query.filter_by(id=1).one_or_none()
+    return _auth_headers(app, identity=user)
 
 
 @pytest.fixture(scope="function")
 def auth_headers_user2(app):
-    return _auth_headers(app, identity=2)
+    with app.app_context():
+        user = Users.query.filter_by(id=2).one_or_none()
+    return _auth_headers(app, identity=user)
+
+
+@pytest.fixture(scope="function")
+def auth_headers_user3_unverified(app):
+    with app.app_context():
+        user = Users.query.filter_by(id=3).one_or_none()
+    return _auth_headers(app, identity=user)
 
 
 def _auth_headers(app, identity):

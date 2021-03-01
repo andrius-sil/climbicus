@@ -24,6 +24,7 @@ class Users(db.Model):
     name = db.Column(db.String, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
     _password = db.Column(db.String, nullable=False)
+    verified = db.Column(db.Boolean, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     @property

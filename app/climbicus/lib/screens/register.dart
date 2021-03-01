@@ -96,7 +96,7 @@ class _RegisterPageState extends State<RegisterPage> {
         builder: (BuildContext context) => ListTile(
           title: RaisedButton(
             key: Key('register'),
-            child: Text('Register'),
+            child: Text('Register & Request Access'),
             onPressed: state is RegisterLoading ? null : () => validateAndRegister(context),
           ),
         ),

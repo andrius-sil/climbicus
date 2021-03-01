@@ -23,6 +23,9 @@ docker-down: check-env
 docker-stop: check-env
 	docker-compose -f docker-compose.yml -f docker-compose.${ENV}.yml stop
 
+docker-config: check-env
+	docker-compose -f docker-compose.yml -f docker-compose.${ENV}.yml config
+
 ec2-deploy: check-env
 	rsync -aHv --delete-during --exclude-from rsync_exclude.txt . ec2-climbicus-${ENV}:/home/ec2-user/climbicus/
 	rsync ${ENV}_secrets.env ec2-climbicus-${ENV}:/home/ec2-user/climbicus/

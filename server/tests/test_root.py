@@ -14,6 +14,7 @@ def test_login(client):
     assert resp.is_json
     assert "access_token" in resp.json
     assert resp.json["user_id"] == 1
+    assert resp.json["user_verified"] == True
 
 
 def test_login_with_invalid_email(client):
@@ -53,10 +54,11 @@ def test_register(client, app):
     assert resp.json["msg"] == "New user created"
 
     with app.app_context():
-        user = Users.query.filter_by(id=3).one()
+        user = Users.query.filter_by(id=4).one()
         assert user.name == "New Tester"
         assert user.email == "new@tester.com"
         assert user.check_password("newpass")
+        assert user.verified == False
 
 
 def test_register_email_already_taken(client, app):
@@ -117,7 +119,7 @@ def test_index_auth_header_and_user_id_mismatch(client, auth_headers_user1):
     }
     resp = client.get("/", data=json.dumps(data), content_type="application/json", headers=auth_headers_user1)
 
-    assert resp.status_code == 401
+    assert resp.status_code == 403
     assert resp.is_json
     assert resp.json["msg"] == "user is not authorized to access the resource"
 
@@ -131,9 +133,20 @@ def test_index_auth_header_and_user_id_mismatch_form_data(client, auth_headers_u
     }
     resp = client.get("/", data=data, headers=auth_headers_user1)
 
-    assert resp.status_code == 401
+    assert resp.status_code == 403
     assert resp.is_json
     assert resp.json["msg"] == "user is not authorized to access the resource"
+
+
+def test_index_user_unverified(client, auth_headers_user3_unverified):
+    data = {
+        "user_id": 3,
+    }
+    resp = client.get("/", data=json.dumps(data), content_type="application/json", headers=auth_headers_user3_unverified)
+
+    assert resp.status_code == 403
+    assert resp.is_json
+    assert resp.json["msg"] == "user is unverified"
 
 
 def test_internal_server_error(client):

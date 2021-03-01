@@ -29,10 +29,11 @@ def login():
 
     current_app.logger.info(f"logging in as '{email}'")
 
-    access_token = create_access_token(identity=user.id)
+    access_token = create_access_token(identity=user)
     return jsonify(
         access_token=access_token,
         user_id=user.id,
+        user_verified=user.verified,
     )
 
 
@@ -46,7 +47,7 @@ def register():
     email = request.json.get("email", None)
     password = request.json.get("password", None)
 
-    create_db_user(db, name=name, email=email, password=password)
+    create_db_user(db, name=name, email=email, password=password, verified=False)
 
     return jsonify({
         "msg": "New user created",

@@ -1,11 +1,11 @@
 import json
 
 from flask import request, current_app, abort, jsonify
-from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
+from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity, current_user
 from werkzeug.exceptions import HTTPException
 
 
-def register_handlers(app):
+def register_handlers(app, jwt):
     @app.before_request
     def check_auth_required():
         if app.config["DISABLE_AUTH"]:
@@ -37,6 +37,16 @@ def register_handlers(app):
         return jsonify(msg=msg), code
 
 
+    @jwt.user_identity_loader
+    def user_identity_lookup(user):
+        return user.id
+
+
+    @jwt.user_loader_callback_loader
+    def user_lookup_callback(identity):
+        from app.models import Users
+        return Users.query.filter_by(id=identity).one_or_none()
+
 
 def no_jwt_required(fn):
     fn.jwt_auth_required = False
@@ -60,4 +70,7 @@ def verify_user_identity():
         abort(400, "'user_id' is missing from the request data")
 
     if get_jwt_identity() != int(user_id):
-        abort(401, "user is not authorized to access the resource")
+        abort(403, "user is not authorized to access the resource")
+
+    if current_app.config["ENABLE_USER_VERIFICATION"] and (not current_user.verified):
+        abort(403, "user is unverified")

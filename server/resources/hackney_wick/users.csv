@@ -1,3 +1,3 @@
-name,email,password,created_at
-Andrius S.,silas04@gmail.com,chorrera,2019-10-10 00:00:00+0
-Liucija L.,keksainis@gmail.com,masterbates,2019-10-10 00:00:00+0
+name,email,password,verified,created_at
+Andrius S.,silas04@gmail.com,chorrera,True,2019-10-10 00:00:00+0
+Liucija L.,keksainis@gmail.com,masterbates,True,2019-10-10 00:00:00+0
