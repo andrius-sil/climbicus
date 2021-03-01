@@ -33,6 +33,7 @@ def login():
     return jsonify(
         access_token=access_token,
         user_id=user.id,
+        user_verified=user.verified,
     )
 
 

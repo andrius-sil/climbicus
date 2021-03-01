@@ -14,6 +14,7 @@ def test_login(client):
     assert resp.is_json
     assert "access_token" in resp.json
     assert resp.json["user_id"] == 1
+    assert resp.json["user_verified"] == True
 
 
 def test_login_with_invalid_email(client):
