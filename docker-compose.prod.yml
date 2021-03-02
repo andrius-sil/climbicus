@@ -3,6 +3,8 @@ services:
   server:
     env_file:
       - prod_secrets.env
+    depends_on:
+      - worker
     environment:
       - ENV=prod
       - PYTHONUNBUFFERED=1
