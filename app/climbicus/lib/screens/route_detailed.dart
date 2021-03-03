@@ -131,7 +131,7 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
                 style: TextStyle(fontSize: HEADING_SIZE_3),
               ),
               Text(
-                "Added at: ${dateToString(widget.routeWithUserMeta.route.createdAt)}",
+                "Added on: ${dateToString(widget.routeWithUserMeta.route.createdAt)}",
                 style: TextStyle(fontSize: HEADING_SIZE_3),
               ),
               Text(

@@ -21,17 +21,21 @@ class _VerifyPageState extends State<VerifyPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Waiting on approval"),
-      ),
       body: Column(
         children: [
           Expanded(
             child: Container(
               alignment: Alignment.center,
-              child: RaisedButton(
-                child: Text('I got approved!'),
-                onPressed: refresh,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text("Waiting on approval", style: TextStyle(fontSize: 20.0)),
+                  SizedBox(height: 10.0),
+                  RaisedButton(
+                    child: Text('Refresh'),
+                    onPressed: refresh,
+                  ),
+                ],
               ),
             ),
           ),
