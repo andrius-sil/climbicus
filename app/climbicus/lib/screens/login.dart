@@ -103,26 +103,24 @@ class _LoginPageState extends State<LoginPage> {
       )
     ];
 
-    if (getIt<SettingsRepository>().env != Environment.stag) {
-      widgets.add(
-        ListTile(
-          title: Row(
-            children: <Widget>[
-              Text("New user?"),
-              FlatButton(
-                textColor: Theme.of(context).buttonColor,
-                child: Text(
-                  "Register",
-                  style: TextStyle(fontSize: 18),
-                ),
-                onPressed: navigateRegister,
+    widgets.add(
+      ListTile(
+        title: Row(
+          children: <Widget>[
+            Text("New user?"),
+            FlatButton(
+              textColor: Theme.of(context).buttonColor,
+              child: Text(
+                "Register",
+                style: TextStyle(fontSize: 18),
               ),
-            ],
-            mainAxisAlignment: MainAxisAlignment.center,
-          ),
-        )
-      );
-    }
+              onPressed: navigateRegister,
+            ),
+          ],
+          mainAxisAlignment: MainAxisAlignment.center,
+        ),
+      )
+    );
 
     return widgets;
   }
