@@ -12,32 +12,32 @@ PODS:
     - Flutter
   - image_picker (0.0.1):
     - Flutter
-  - libwebp (1.1.0):
-    - libwebp/demux (= 1.1.0)
-    - libwebp/mux (= 1.1.0)
-    - libwebp/webp (= 1.1.0)
-  - libwebp/demux (1.1.0):
+  - libwebp (1.2.0):
+    - libwebp/demux (= 1.2.0)
+    - libwebp/mux (= 1.2.0)
+    - libwebp/webp (= 1.2.0)
+  - libwebp/demux (1.2.0):
     - libwebp/webp
-  - libwebp/mux (1.1.0):
+  - libwebp/mux (1.2.0):
     - libwebp/demux
-  - libwebp/webp (1.1.0)
-  - Mantle (2.1.1):
-    - Mantle/extobjc (= 2.1.1)
-  - Mantle/extobjc (2.1.1)
+  - libwebp/webp (1.2.0)
+  - Mantle (2.1.6):
+    - Mantle/extobjc (= 2.1.6)
+  - Mantle/extobjc (2.1.6)
   - package_info (0.0.1):
     - Flutter
   - path_provider (0.0.1):
     - Flutter
-  - SDWebImage/Core (5.9.0)
-  - SDWebImageWebPCoder (0.6.1):
+  - SDWebImage/Core (5.10.4)
+  - SDWebImageWebPCoder (0.8.3):
     - libwebp (~> 1.0)
-    - SDWebImage/Core (~> 5.7)
-  - Sentry (6.0.12):
-    - Sentry/Core (= 6.0.12)
-  - Sentry/Core (6.0.12)
+    - SDWebImage/Core (~> 5.10)
+  - Sentry (6.1.4):
+    - Sentry/Core (= 6.1.4)
+  - Sentry/Core (6.1.4)
   - sentry_flutter (0.0.1):
     - Flutter
-    - Sentry (~> 6.0.10)
+    - Sentry (~> 6.1.4)
   - shared_preferences (0.0.1):
     - Flutter
 
@@ -90,16 +90,16 @@ SPEC CHECKSUMS:
   flutter_image_compress: 082f8daaf6c1b0c9fe798251c750ef0ecd98d7ae
   flutter_secure_storage: 7953c38a04c3fdbb00571bcd87d8e3b5ceb9daec
   image_picker: 9c3312491f862b28d21ecd8fdf0ee14e601b3f09
-  libwebp: 946cb3063cea9236285f7e9a8505d806d30e07f3
-  Mantle: 35238ae6f2e2b2d474fa7b67fee82a59fea71915
+  libwebp: e90b9c01d99205d03b6bb8f2c8c415e5a4ef66f0
+  Mantle: 4c0ed6ce47c96eccc4dc3bb071deb3def0e2c3be
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
-  SDWebImage: 62ae4a18473520c67b79e9724c31a63599cc9423
-  SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
-  Sentry: 8ffcfe3416e0a58b90bb1ae319e8e8a13022a03e
-  sentry_flutter: e57e33f56d5791e4effa48e85e44505367686b27
+  SDWebImage: c666b97e1fa9c64b4909816a903322018f0a9c84
+  SDWebImageWebPCoder: bbf46e29fb8d1980a78ad3d5e9b4123c77f10ebc
+  Sentry: 9d055e2de30a77685e86b219acf02e59b82091fc
+  sentry_flutter: 8b2b2e1c0101ef562106b5d272d3c0c741512c01
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
 
-PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+PODFILE CHECKSUM: 33f74cf6f4e5775ad35ae5df4008ad34eb3f5e59
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.1
