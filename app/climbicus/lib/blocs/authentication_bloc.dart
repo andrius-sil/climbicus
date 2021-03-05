@@ -55,9 +55,6 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
       } on SignatureVerificationApiException {
         add(LoggedOut());
         return;
-      } on UnverifiedUserApiException {
-        yield AuthenticationUnverified();
-        return;
       }
 
       if (hasAuthenticated) {
@@ -73,11 +70,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
         userAuth: event.userAuth,
       );
 
-      if (event.userAuth["user_verified"]) {
-        yield AuthenticationAuthenticated();
-      } else {
-        yield AuthenticationUnverified();
-      }
+      yield AuthenticationAuthenticated();
     } else if (event is LoggedOut) {
       yield AuthenticationLoading();
 

@@ -18,8 +18,6 @@ services:
     restart: always
     depends_on:
       - worker
-    environment:
-      - ENABLE_USER_VERIFICATION=1
     build:
       dockerfile: Dockerfile
       context: ./server
