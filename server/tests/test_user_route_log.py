@@ -128,6 +128,7 @@ def test_update_count_ascents(client, app, auth_headers_user1):
         assert route_entry.count_ascents == 0
         assert route_entry.user_id == 1
         assert route_entry.gym_id == 1
+        assert route_entry.area_id == 1
         assert route_entry.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
 
     resp = client.post("/user_route_log/", data=json.dumps(data), content_type="application/json",
@@ -143,6 +144,7 @@ def test_update_count_ascents(client, app, auth_headers_user1):
         assert route_entry.count_ascents == 2
         assert route_entry.user_id == 1
         assert route_entry.gym_id == 1
+        assert route_entry.area_id == 1
         assert route_entry.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
 
 
@@ -163,6 +165,7 @@ def test_update_count_ascents_with_null_attempts(client, app, auth_headers_user1
         assert route_entry.count_ascents == 0
         assert route_entry.user_id == 1
         assert route_entry.gym_id == 1
+        assert route_entry.area_id == 1
         assert route_entry.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
 
     resp = client.post("/user_route_log/", data=json.dumps(data), content_type="application/json",
@@ -178,6 +181,7 @@ def test_update_count_ascents_with_null_attempts(client, app, auth_headers_user1
         assert route_entry.count_ascents == 1
         assert route_entry.user_id == 1
         assert route_entry.gym_id == 1
+        assert route_entry.area_id == 1
         assert route_entry.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
 
 
@@ -199,6 +203,7 @@ def test_delete_entry_update_count_ascents(client, app, auth_headers_user1):
         assert route_entry.count_ascents == 10
         assert route_entry.user_id == 2
         assert route_entry.gym_id == 2
+        assert route_entry.area_id == 2
         assert route_entry.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
 
     resp = client.delete("/user_route_log/5", data=json.dumps(data), content_type="application/json",
@@ -215,6 +220,7 @@ def test_delete_entry_update_count_ascents(client, app, auth_headers_user1):
         assert route_entry.count_ascents == 8
         assert route_entry.user_id == 2
         assert route_entry.gym_id == 2
+        assert route_entry.area_id == 2
         assert route_entry.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
 
 
@@ -236,6 +242,7 @@ def test_delete_entry_update_count_ascents_with_null_attempts(client, app, auth_
         assert route_entry.count_ascents == 10
         assert route_entry.user_id == 2
         assert route_entry.gym_id == 2
+        assert route_entry.area_id == 2
         assert route_entry.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
 
     resp = client.delete("/user_route_log/6", data=json.dumps(data), content_type="application/json",
@@ -252,4 +259,5 @@ def test_delete_entry_update_count_ascents_with_null_attempts(client, app, auth_
         assert route_entry.count_ascents == 9
         assert route_entry.user_id == 2
         assert route_entry.gym_id == 2
+        assert route_entry.area_id == 2
         assert route_entry.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)

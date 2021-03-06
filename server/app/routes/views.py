@@ -35,13 +35,14 @@ def route_list(route_id=None):
 def add():
     gym_id = request.json["gym_id"]
     user_id = request.json["user_id"]
+    area_id = request.json["area_id"]
     lower_grade = request.json["lower_grade"]
     upper_grade = request.json["upper_grade"]
     category = request.json["category"]
     name = request.json["name"]
 
-    route = Routes(gym_id=gym_id, user_id=user_id, lower_grade=lower_grade, upper_grade=upper_grade, category=category,
-                   name=name, created_at=datetime.datetime.utcnow(), count_ascents=0)
+    route = Routes(gym_id=gym_id, user_id=user_id, area_id=area_id, lower_grade=lower_grade, upper_grade=upper_grade,
+                   category=category, name=name, created_at=datetime.datetime.utcnow(), count_ascents=0)
 
     db.session.add(route)
     db.session.commit()

@@ -5,7 +5,7 @@ from flask_jwt_extended import create_access_token
 from sqlalchemy_utils import create_database, database_exists
 
 from app import create_app, db
-from app.models import Gyms, RouteImages, Routes, UserRouteLog, Users, UserRouteVotes
+from app.models import Gyms, RouteImages, Routes, UserRouteLog, Users, UserRouteVotes, Areas
 from datetime import datetime
 import pytz
 
@@ -85,10 +85,17 @@ def app(resource_dir):
                  created_at=datetime(2020, 1, 11, 10, 10, 10, tzinfo=pytz.UTC)),
         ])
         db.session.flush()
+        db.session.add_all([
+            Areas(gym_id=1, user_id=1, name="Cave", image_path="area_images/area1.jpg",
+                  created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)),
+            Areas(gym_id=1, user_id=1, name="Prow", image_path="area_images/area2.jpg",
+                  created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)),
+        ])
+        db.session.flush()
         for i in range(1, 100):
             db.session.add(
                 Routes(
-                    gym_id=1, user_id=1, category="bouldering", lower_grade="V_V1", upper_grade="V_V1",
+                    gym_id=1, user_id=1, area_id=1, category="bouldering", lower_grade="V_V1", upper_grade="V_V1",
                     name=f"Jug Fest {i}", avg_difficulty=None, avg_quality=None, count_ascents=0,
                     created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
                 )
@@ -96,7 +103,7 @@ def app(resource_dir):
         for i in range(100, 103):
             db.session.add(
                 Routes(
-                    gym_id=2, user_id=2, category="sport", lower_grade="Font_7A", upper_grade="Font_7A",
+                    gym_id=2, user_id=2, area_id=2, category="sport", lower_grade="Font_7A", upper_grade="Font_7A",
                     name=f"Crimpinator {i}", avg_difficulty="fair", avg_quality=2.0, count_ascents=10,
                     created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
                 )

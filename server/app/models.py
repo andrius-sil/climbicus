@@ -66,6 +66,29 @@ class Gyms(db.Model):
         return model_repr("Gym", id=self.id, name=self.name)
 
 
+class Areas(db.Model):
+    id = db.Column(db.Integer, db.Sequence('area_id_seq'), primary_key=True)
+    gym_id = db.Column(db.Integer, db.ForeignKey('gyms.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    name = db.Column(db.String, nullable=False)
+    image_path = db.Column(db.String, unique=True, nullable=False)
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False)
+
+    @property
+    def api_model(self):
+        return {
+            "id": self.id,
+            "gym_id": self.gym_id,
+            "user_id": self.user_id,
+            "name": self.name,
+            "created_at": self.created_at.isoformat(),
+            "image_path": s3_cdn_path(self.image_path),
+        }
+
+    def __repr__(self):
+        return model_repr("Area", id=self.id, gym_id=self.gym_id, name=self.name)
+
+
 class RouteCategory(Enum):
     bouldering = auto()
     sport = auto()
@@ -103,6 +126,7 @@ class Routes(db.Model):
     id = db.Column(db.Integer, db.Sequence('route_id_seq'), primary_key=True)
     gym_id = db.Column(db.Integer, db.ForeignKey('gyms.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    area_id = db.Column(db.Integer, db.ForeignKey('areas.id'), nullable=False)
     name = db.Column(db.String)
     category = db.Column(db.Enum(RouteCategory), nullable=False)
     lower_grade = db.Column(db.Enum(*grade_enum_values, name='lowergrade'), nullable=False)
@@ -122,6 +146,7 @@ class Routes(db.Model):
             "id": self.id,
             "gym_id": self.gym_id,
             "user_id": self.user_id,
+            "area_id": self.area_id,
             "name": self.name,
             "category": self.category.name,
             "lower_grade": self.lower_grade,
