@@ -2,16 +2,12 @@ import datetime
 import json
 import uuid
 
-import werkzeug
-
-from app import db, cbir_predictor, io
+from app import db, cbir_predictor
 from app.models import RouteImages, Routes
 
 from flask import abort, request, Blueprint, jsonify
 
-from app.tasks import upload_test_file_task, upload_file_task
-from app.utils.encoding import bytes_to_b64str
-from app.utils.io import S3InputOutputProvider
+from app.tasks import upload_file
 from predictor.cbir_predictor import InvalidImageException
 
 blueprint = Blueprint("routes_blueprint", __name__, url_prefix="/routes")
@@ -89,6 +85,7 @@ def predict_cbir():
     response = {"sorted_route_and_image_predictions": sorted_route_and_image_predictions}
     route_image = store_image(
         fs_image=fs_image,
+        dir_name="route_images",
         user_id=user_id,
         gym_id=gym_id,
         model_version=cbir_predictor.get_model_version(),
@@ -99,25 +96,10 @@ def predict_cbir():
     return jsonify(response)
 
 
-def upload_file(file: werkzeug.datastructures.FileStorage, remote_path):
-    filepath =  io.provider.upload_filepath(remote_path)
-
-    file.seek(0)
-    b64_str = bytes_to_b64str(file.read())
-
-    if isinstance(io.provider, S3InputOutputProvider):
-        bucket = io.provider.bucket
-        upload_file_task.delay(b64_str, bucket, remote_path, file.content_type)
-    else:
-        upload_test_file_task.delay(b64_str, filepath)
-
-    return filepath
-
-
-def store_image(fs_image, user_id, gym_id, model_version, descriptors):
+def store_image(fs_image, dir_name, user_id, gym_id, model_version, descriptors):
     now = datetime.datetime.utcnow()
     hex_id = uuid.uuid4().hex
-    imagepath = f"route_images/from_users/gym_id={gym_id}/year={now.year}/month={now.month:02d}/{hex_id}.jpg"
+    imagepath = f"{dir_name}/from_users/gym_id={gym_id}/year={now.year}/month={now.month:02d}/{hex_id}.jpg"
 
     saved_image_path = upload_file(fs_image, imagepath)
 

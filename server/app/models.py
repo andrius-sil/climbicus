@@ -5,13 +5,7 @@ from sqlalchemy import CheckConstraint, UniqueConstraint
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app import db
-
-
-CDNS = {
-    "dev": "http://dev-cdn.climbicus.com",
-    "stag": "http://stag-cdn.climbicus.com",
-    "prod": "http://prod-cdn.climbicus.com",
-}
+from app.utils.io import s3_cdn_path
 
 
 def model_repr(_name, **kwargs):
@@ -168,16 +162,12 @@ class RouteImages(db.Model):
 
     @property
     def api_model(self):
-        path_cdn = self.path
-        path_cdn = path_cdn.replace("s3://climbicus-dev", CDNS["dev"])
-        path_cdn = path_cdn.replace("s3://climbicus-stag", CDNS["stag"])
-        path_cdn = path_cdn.replace("s3://climbicus-prod", CDNS["prod"])
         return {
             "id": self.id,
             "user_id": self.user_id,
             "route_id": self.route_id,
             "created_at": self.created_at.isoformat(),
-            "path": path_cdn,
+            "path": s3_cdn_path(self.path),
         }
 
     def __repr__(self):
