@@ -54,7 +54,7 @@ def test_add_area(app, client, resource_dir, auth_headers_user1):
     }
 
     with app.app_context():
-        stored_area = db.session.query(Areas).filter_by(id=3).one()
+        stored_area = db.session.query(Areas).filter_by(id=4).one()
         assert stored_area.id == 4
         assert stored_area.gym_id == 1
         assert stored_area.user_id == 1
