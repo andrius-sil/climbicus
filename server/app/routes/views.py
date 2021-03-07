@@ -7,7 +7,7 @@ from app.models import RouteImages, Routes
 
 from flask import abort, request, Blueprint, jsonify
 
-from app.tasks import upload_file
+from app.tasks import store_image
 from predictor.cbir_predictor import InvalidImageException
 
 blueprint = Blueprint("routes_blueprint", __name__, url_prefix="/routes")
@@ -84,34 +84,22 @@ def predict_cbir():
         "route": r["route"].api_model,
     } for r in predicted_routes_and_images]
     response = {"sorted_route_and_image_predictions": sorted_route_and_image_predictions}
-    route_image = store_image(
+    image_path = store_image(
         fs_image=fs_image,
         dir_name="route_images",
-        user_id=user_id,
         gym_id=gym_id,
-        model_version=cbir_predictor.get_model_version(),
-        descriptors=descriptor,
     )
-    response["route_image"] = route_image.api_model
-
-    return jsonify(response)
-
-
-def store_image(fs_image, dir_name, user_id, gym_id, model_version, descriptors):
-    now = datetime.datetime.utcnow()
-    hex_id = uuid.uuid4().hex
-    imagepath = f"{dir_name}/from_users/gym_id={gym_id}/year={now.year}/month={now.month:02d}/{hex_id}.jpg"
-
-    saved_image_path = upload_file(fs_image, imagepath)
 
     route_image = RouteImages(
         user_id=user_id,
-        model_version=model_version,
-        path=saved_image_path,
-        created_at=now,
-        descriptors=descriptors,
+        model_version=cbir_predictor.get_model_version(),
+        path=image_path,
+        created_at=datetime.datetime.utcnow(),
+        descriptors=descriptor,
     )
     db.session.add(route_image)
     db.session.commit()
 
-    return route_image
+    response["route_image"] = route_image.api_model
+
+    return jsonify(response)
