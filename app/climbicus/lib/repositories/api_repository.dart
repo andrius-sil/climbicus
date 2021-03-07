@@ -243,6 +243,13 @@ class ApiRepository {
     return _requestJson("GET", "users/", {});
   }
 
+  Future<Map> fetchAreas() async {
+    Map data = {
+      "gym_id": _gymId,
+    };
+    return _requestJson("GET", "areas/", data);
+  }
+
   Future<Map> fetchVotes() async {
     Map data = {
       "gym_id": _gymId,

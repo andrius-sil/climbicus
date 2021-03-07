@@ -23,6 +23,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:device_preview/device_preview.dart';
 
 import 'blocs/authentication_bloc.dart';
+import 'blocs/gym_areas_bloc.dart';
 import 'blocs/gyms_bloc.dart';
 import 'blocs/login_bloc.dart';
 import 'blocs/settings_bloc.dart';
@@ -66,6 +67,7 @@ Future<void> mainDelegate(Environment env) async {
       )),
       BlocProvider<SettingsBloc>(create: (context) => SettingsBloc()),
       BlocProvider<GymsBloc>(create: (context) => GymsBloc()),
+      BlocProvider<GymAreasBloc>(create: (context) => GymAreasBloc()),
       BlocProvider<UsersBloc>(create: (context) => UsersBloc()),
       BlocProvider<RouteImagesBloc>(create: (context) => RouteImagesBloc()),
       BlocProvider<RoutePredictionBloc>(create: (context) => RoutePredictionBloc()),
