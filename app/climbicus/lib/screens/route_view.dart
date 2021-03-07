@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
+import 'package:climbicus/models/gym.dart';
 import 'package:climbicus/models/user_route_log.dart';
 import 'package:climbicus/screens/route_detailed.dart';
 import 'package:climbicus/screens/route_predictions.dart';
@@ -156,10 +157,10 @@ class _BodyListItemState extends State<BodyListItem> {
 
 class RouteViewPage extends StatefulWidget {
   final String routeCategory;
-  final int gymId;
+  final Gym gym;
 
-  RouteViewPage({@required this.routeCategory, @required this.gymId}) :
-        super(key: ValueKey("$gymId-$routeCategory"));
+  RouteViewPage({@required this.routeCategory, @required this.gym}) :
+        super(key: ValueKey("${gym.id}-$routeCategory"));
 
   @override
   State<StatefulWidget> createState() => _RouteViewPageState();
