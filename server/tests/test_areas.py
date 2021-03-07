@@ -13,6 +13,7 @@ from app.models import Areas
 def test_areas(client, auth_headers_user1):
     data = {
         "user_id": 1,
+        "gym_id": 1,
     }
     resp = client.get("/areas/", data=json.dumps(data), content_type="application/json", headers=auth_headers_user1)
 

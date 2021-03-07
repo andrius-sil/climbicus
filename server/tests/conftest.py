@@ -90,6 +90,8 @@ def app(resource_dir):
                   created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)),
             Areas(gym_id=1, user_id=1, name="Prow", image_path="area_images/area2.jpg",
                   created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)),
+            Areas(gym_id=2, user_id=1, name="Barrel", image_path="area_images/no_image.jpg",
+                  created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)),
         ])
         db.session.flush()
         for i in range(1, 100):

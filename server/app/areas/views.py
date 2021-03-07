@@ -12,7 +12,9 @@ blueprint = Blueprint("areas_blueprint", __name__, url_prefix="/areas")
 
 @blueprint.route("/", methods=["GET"])
 def areas_list():
-    query = db.session.query(Areas)
+    gym_id = request.json["gym_id"]
+
+    query = db.session.query(Areas).filter(Areas.gym_id == gym_id)
     areas = { area.id: area.api_model for area in query.all() }
 
     return jsonify({"areas": areas})
