@@ -149,6 +149,9 @@ class ClimbicusApp extends StatelessWidget {
     return MaterialApp(
       theme: appTheme(),
       locale: DevicePreview.locale(context),
+      navigatorObservers: [
+        SentryNavigatorObserver(),
+      ],
       builder: DevicePreview.appBuilder,
       home: HomePage(env: env),
     );
