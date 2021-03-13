@@ -3,6 +3,19 @@ from abc import ABC, abstractmethod
 
 import boto3
 
+CDNS = {
+    "dev": "http://dev-cdn.climbicus.com",
+    "stag": "http://stag-cdn.climbicus.com",
+    "prod": "http://prod-cdn.climbicus.com",
+}
+
+
+def s3_cdn_path(path):
+    return path \
+        .replace("s3://climbicus-dev", CDNS["dev"]) \
+        .replace("s3://climbicus-stag", CDNS["stag"]) \
+        .replace("s3://climbicus-prod", CDNS["prod"])
+
 
 class InputOutput:
 

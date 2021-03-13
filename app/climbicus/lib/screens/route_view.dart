@@ -1,7 +1,9 @@
 import 'dart:collection';
 
+import 'package:climbicus/blocs/gym_areas_bloc.dart';
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
+import 'package:climbicus/models/gym.dart';
 import 'package:climbicus/models/user_route_log.dart';
 import 'package:climbicus/screens/route_detailed.dart';
 import 'package:climbicus/screens/route_predictions.dart';
@@ -156,10 +158,10 @@ class _BodyListItemState extends State<BodyListItem> {
 
 class RouteViewPage extends StatefulWidget {
   final String routeCategory;
-  final int gymId;
+  final Gym gym;
 
-  RouteViewPage({@required this.routeCategory, @required this.gymId}) :
-        super(key: ValueKey("$gymId-$routeCategory"));
+  RouteViewPage({@required this.routeCategory, @required this.gym}) :
+        super(key: ValueKey("${gym.id}-$routeCategory"));
 
   @override
   State<StatefulWidget> createState() => _RouteViewPageState();
@@ -171,6 +173,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
   final sliderRouteGradesKey = GlobalKey<SliderRouteGradesState>();
 
   RouteImagesBloc _routeImagesBloc;
+  GymAreasBloc _gymAreasBloc;
   GymRoutesBloc _gymRoutesBloc;
 
   List<RouteListItem> _items = [];
@@ -180,8 +183,10 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
     super.initState();
 
     _routeImagesBloc = BlocProvider.of<RouteImagesBloc>(context);
+    _gymAreasBloc = BlocProvider.of<GymAreasBloc>(context);
     _gymRoutesBloc = BlocProvider.of<GymRoutesBloc>(context);
 
+    _gymAreasBloc.add(FetchGymAreas());
     _gymRoutesBloc.add(FetchGymRoutes());
   }
 
@@ -192,6 +197,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
       body: Column(
         children: <Widget>[
           _buildRouteFilterTile(),
+          // # TODO: wait on AreasBloc
           Expanded(
             child: BlocBuilder<GymRoutesBloc, GymRoutesState>(
               builder: (context, state) {
@@ -385,6 +391,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
   }
 
   Future<void> onRefreshView() async {
+    _gymAreasBloc.add(FetchGymAreas());
     _gymRoutesBloc.add(FetchGymRoutes());
   }
 

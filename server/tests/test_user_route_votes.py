@@ -91,6 +91,7 @@ def test_update_votes(client, app, auth_headers_user1):
         "id": 1,
         "gym_id": 1,
         "user_id": 1,
+        "area_id": 1,
         "name": "Jug Fest 1",
         "category": "bouldering",
         "count_ascents": 0,
@@ -140,6 +141,7 @@ def test_add_to_votes(client, app, auth_headers_user2):
         "id": 1,
         "gym_id": 1,
         "user_id": 1,
+        "area_id": 1,
         "name": "Jug Fest 1",
         "category": "bouldering",
         "count_ascents": 0,
@@ -269,6 +271,7 @@ def test_calc_avg_votes(client, app, auth_headers_user2):
         assert route_entry.avg_quality is None
         assert route_entry.user_id == 1
         assert route_entry.gym_id == 1
+        assert route_entry.area_id == 1
         assert route_entry.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
 
     resp = client.post("/user_route_votes/", data=json.dumps(data), content_type="application/json",
@@ -283,6 +286,7 @@ def test_calc_avg_votes(client, app, auth_headers_user2):
         assert route_entry.avg_quality == 2.0
         assert route_entry.user_id == 1
         assert route_entry.gym_id == 1
+        assert route_entry.area_id == 1
         assert route_entry.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
 
 
@@ -294,6 +298,7 @@ def test_calc_avg_votes_with_nulls(client, app, auth_headers_user1, auth_headers
         assert route_entry.avg_quality is None
         assert route_entry.user_id == 1
         assert route_entry.gym_id == 1
+        assert route_entry.area_id == 1
         assert route_entry.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
 
     # add a vote entry with nulls
@@ -331,4 +336,5 @@ def test_calc_avg_votes_with_nulls(client, app, auth_headers_user1, auth_headers
         assert route_entry.avg_quality == 3.0
         assert route_entry.user_id == 1
         assert route_entry.gym_id == 1
+        assert route_entry.area_id == 1
         assert route_entry.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)

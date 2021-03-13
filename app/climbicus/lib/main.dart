@@ -23,6 +23,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:device_preview/device_preview.dart';
 
 import 'blocs/authentication_bloc.dart';
+import 'blocs/gym_areas_bloc.dart';
 import 'blocs/gyms_bloc.dart';
 import 'blocs/login_bloc.dart';
 import 'blocs/settings_bloc.dart';
@@ -66,6 +67,7 @@ Future<void> mainDelegate(Environment env) async {
       )),
       BlocProvider<SettingsBloc>(create: (context) => SettingsBloc()),
       BlocProvider<GymsBloc>(create: (context) => GymsBloc()),
+      BlocProvider<GymAreasBloc>(create: (context) => GymAreasBloc()),
       BlocProvider<UsersBloc>(create: (context) => UsersBloc()),
       BlocProvider<RouteImagesBloc>(create: (context) => RouteImagesBloc()),
       BlocProvider<RoutePredictionBloc>(create: (context) => RoutePredictionBloc()),
@@ -147,6 +149,9 @@ class ClimbicusApp extends StatelessWidget {
     return MaterialApp(
       theme: appTheme(),
       locale: DevicePreview.locale(context),
+      navigatorObservers: [
+        SentryNavigatorObserver(),
+      ],
       builder: DevicePreview.appBuilder,
       home: HomePage(env: env),
     );
@@ -207,7 +212,7 @@ class _HomePageState extends State<HomePage> {
           return BlocBuilder<GymsBloc, GymsState>(
             builder: (context, gymState) {
               if (gymState is GymsLoaded) {
-                return _buildRouteTabView(settingsState.gymId, gymState.gyms);
+                return _buildRouteTabView(gymState.gyms[settingsState.gymId]);
               } else if (gymState is GymsError) {
                 return ErrorWidget.builder(gymState.errorDetails);
               }
@@ -220,15 +225,15 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildRouteTabView(int gymId, Map<int, Gym> gyms) {
+  Widget _buildRouteTabView(Gym gym) {
     List<Tab> tabs = [];
     List<RouteViewPage> tabViews = [];
-    if (gyms[gymId].hasSport) {
-      tabViews.add(RouteViewPage(routeCategory: SPORT_CATEGORY, gymId: gymId));
+    if (gym.hasSport) {
+      tabViews.add(RouteViewPage(routeCategory: SPORT_CATEGORY, gym: gym));
       tabs.add(Tab(text: "Sport"));
     }
-    if (gyms[gymId].hasBouldering) {
-      tabViews.add(RouteViewPage(routeCategory: BOULDERING_CATEGORY, gymId: gymId));
+    if (gym.hasBouldering) {
+      tabViews.add(RouteViewPage(routeCategory: BOULDERING_CATEGORY, gym: gym));
       tabs.add(Tab(text: "Bouldering"));
     }
 
@@ -239,7 +244,7 @@ class _HomePageState extends State<HomePage> {
           bottom: TabBar(
             tabs: tabs,
           ),
-          title: _buildTitle(gymId),
+          title: _buildTitle(gym),
         ),
         body: TabBarView(
           children: tabViews,
@@ -251,11 +256,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildTitle(int gymId) {
+  Widget _buildTitle(Gym gym) {
     return BlocBuilder<GymsBloc, GymsState>(
       builder: (context, state) {
         if (state is GymsLoaded) {
-          return Text(state.gyms[gymId].name);
+          return Text(gym.name);
         }
 
         return Text("");

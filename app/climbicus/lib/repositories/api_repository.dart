@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 class ApiException implements Exception {
   final http.StreamedResponse response;
@@ -45,7 +46,7 @@ class ApiRepository {
   final getIt = GetIt.instance;
 
   final String serverUrl;
-  final client = http.Client();
+  final client = SentryHttpClient();
 
   int _gymId;
   set gymId(int value) => _gymId = value;
@@ -241,6 +242,13 @@ class ApiRepository {
 
   Future<Map> fetchUsers() async {
     return _requestJson("GET", "users/", {});
+  }
+
+  Future<Map> fetchAreas() async {
+    Map data = {
+      "gym_id": _gymId,
+    };
+    return _requestJson("GET", "areas/", data);
   }
 
   Future<Map> fetchVotes() async {

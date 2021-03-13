@@ -5,13 +5,7 @@ from sqlalchemy import CheckConstraint, UniqueConstraint
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app import db
-
-
-CDNS = {
-    "dev": "http://dev-cdn.climbicus.com",
-    "stag": "http://stag-cdn.climbicus.com",
-    "prod": "http://prod-cdn.climbicus.com",
-}
+from app.utils.io import s3_cdn_path
 
 
 def model_repr(_name, **kwargs):
@@ -72,6 +66,29 @@ class Gyms(db.Model):
         return model_repr("Gym", id=self.id, name=self.name)
 
 
+class Areas(db.Model):
+    id = db.Column(db.Integer, db.Sequence('area_id_seq'), primary_key=True)
+    gym_id = db.Column(db.Integer, db.ForeignKey('gyms.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    name = db.Column(db.String, nullable=False)
+    image_path = db.Column(db.String, unique=True, nullable=False)
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False)
+
+    @property
+    def api_model(self):
+        return {
+            "id": self.id,
+            "gym_id": self.gym_id,
+            "user_id": self.user_id,
+            "name": self.name,
+            "created_at": self.created_at.isoformat(),
+            "image_path": s3_cdn_path(self.image_path),
+        }
+
+    def __repr__(self):
+        return model_repr("Area", id=self.id, gym_id=self.gym_id, name=self.name)
+
+
 class RouteCategory(Enum):
     bouldering = auto()
     sport = auto()
@@ -109,6 +126,7 @@ class Routes(db.Model):
     id = db.Column(db.Integer, db.Sequence('route_id_seq'), primary_key=True)
     gym_id = db.Column(db.Integer, db.ForeignKey('gyms.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    area_id = db.Column(db.Integer, db.ForeignKey('areas.id'), nullable=False)
     name = db.Column(db.String)
     category = db.Column(db.Enum(RouteCategory), nullable=False)
     lower_grade = db.Column(db.Enum(*grade_enum_values, name='lowergrade'), nullable=False)
@@ -128,6 +146,7 @@ class Routes(db.Model):
             "id": self.id,
             "gym_id": self.gym_id,
             "user_id": self.user_id,
+            "area_id": self.area_id,
             "name": self.name,
             "category": self.category.name,
             "lower_grade": self.lower_grade,
@@ -168,16 +187,12 @@ class RouteImages(db.Model):
 
     @property
     def api_model(self):
-        path_cdn = self.path
-        path_cdn = path_cdn.replace("s3://climbicus-dev", CDNS["dev"])
-        path_cdn = path_cdn.replace("s3://climbicus-stag", CDNS["stag"])
-        path_cdn = path_cdn.replace("s3://climbicus-prod", CDNS["prod"])
         return {
             "id": self.id,
             "user_id": self.user_id,
             "route_id": self.route_id,
             "created_at": self.created_at.isoformat(),
-            "path": path_cdn,
+            "path": s3_cdn_path(self.path),
         }
 
     def __repr__(self):
