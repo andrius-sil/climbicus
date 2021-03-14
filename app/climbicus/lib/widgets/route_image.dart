@@ -10,24 +10,37 @@ import 'package:get_it/get_it.dart';
 
 class RouteImageWidget extends StatelessWidget {
   // Determines how to display scaled image.
-  static const boxFit = BoxFit.cover;
+  static const defaultBoxFit = BoxFit.cover;
 
   final getIt = GetIt.instance;
   final RouteImage routeImage;
   final File imageFile;
 
-  RouteImageWidget(this.routeImage) : imageFile = null;
-  RouteImageWidget.fromFile(this.imageFile) : routeImage = null;
+  String imagePath;
+  BoxFit boxFit = defaultBoxFit;
+
+  RouteImageWidget(this.routeImage) :
+    imageFile = null,
+    imagePath = null;
+  RouteImageWidget.fromFile(this.imageFile) :
+    routeImage = null,
+    imagePath = null;
+  RouteImageWidget.fromPath(this.imagePath, {boxFit = defaultBoxFit}) :
+    routeImage = null,
+    imageFile = null,
+    boxFit = boxFit;
 
   @override
   Widget build(BuildContext context) {
     var imageWidget;
     if (imageFile != null) {
       imageWidget = Image.file(imageFile, fit: boxFit);
-    } else if (routeImage != null) {
+    } else if (routeImage != null || imagePath != null) {
+      imagePath ??= routeImage.path;
+
       imageWidget = Image(
-        image: NetworkImageWithRetry(routeImage.path, fetchStrategy: _fetchStrategy),
-        fit: BoxFit.cover,
+        image: NetworkImageWithRetry(imagePath, fetchStrategy: _fetchStrategy),
+        fit: boxFit,
       );
     } else {
       imageWidget = Image.asset("images/no_image.png");

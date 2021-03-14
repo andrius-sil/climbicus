@@ -1,3 +1,4 @@
+import 'package:climbicus/blocs/gym_areas_bloc.dart';
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/blocs/route_predictions_bloc.dart';
@@ -24,6 +25,7 @@ class AddRoutePage extends StatefulWidget {
 class _AddRoutePageState extends State<AddRoutePage> {
   static const NOT_SELECTED = "not selected";
 
+  final dropdownAreaKey = GlobalKey<DropdownAreaState>();
   final checkboxSentKey = GlobalKey<CheckboxWithTitleState>();
   final numberAttemptsKey = GlobalKey<NumberAttemptsState>();
   final routeDifficultyKey = GlobalKey<RouteDifficultyRatingState>();
@@ -103,6 +105,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
                 children: [
                   Expanded(child:  _buildSelectCategory()),
                   Expanded(child: _buildSelectGrade()),
+                  Expanded(child: _buildDropdownArea()),
                 ],
               ),
               Row(
@@ -134,11 +137,17 @@ class _AddRoutePageState extends State<AddRoutePage> {
     );
   }
 
-  TextStyle _dropdownValueStyle(String value) {
-    return TextStyle(
-      fontSize: headingSize5or6(context),
-      color: (value == NOT_SELECTED) ? Theme.of(context).accentColor : textColor,
-      fontStyle: (value == NOT_SELECTED) ? FontStyle.italic : FontStyle.normal,
+  Widget _buildDropdownArea() {
+    return BlocBuilder<GymAreasBloc, GymAreasState>(
+      builder: (context, state) {
+        if (state is GymAreasLoaded) {
+          return DropdownArea(key: dropdownAreaKey, areas: state.areas);
+        } else if (state is GymAreasError) {
+          return ErrorWidget.builder(state.errorDetails);
+        }
+
+        return Center(child: CircularProgressIndicator());
+      },
     );
   }
 
@@ -158,7 +167,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
               .map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
-              child: Text(value, style: _dropdownValueStyle(value)),
+              child: Text(value, style: dropdownValueStyle(value, context)),
             );
           }).toList(),
           onChanged: (String value) {
@@ -184,7 +193,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
           ].map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
-              child: Text(value, style: _dropdownValueStyle(value)),
+              child: Text(value, style: dropdownValueStyle(value, context)),
             );
           }).toList(),
           onChanged: (String value) {

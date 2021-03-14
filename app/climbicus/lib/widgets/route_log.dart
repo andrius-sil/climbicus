@@ -1,11 +1,14 @@
 
 import 'package:climbicus/constants.dart';
+import 'package:climbicus/models/area.dart';
 import 'package:climbicus/style.dart';
 import 'package:climbicus/utils/route_grades.dart';
 import 'package:climbicus/widgets/rating_star.dart';
+import 'package:climbicus/widgets/route_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_touch_spin/flutter_touch_spin.dart';
+import 'package:select_dialog/select_dialog.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 
@@ -26,6 +29,16 @@ Widget decorateLogWidget(BuildContext context, Widget logWidget,
     child: logWidget,
   );
 }
+
+
+TextStyle dropdownValueStyle(String value, BuildContext context) {
+  return TextStyle(
+    fontSize: headingSize5or6(context),
+    color: (value == NOT_SELECTED) ? Theme.of(context).accentColor : textColor,
+    fontStyle: (value == NOT_SELECTED) ? FontStyle.italic : FontStyle.normal,
+  );
+}
+
 
 class CheckboxSent extends CheckboxWithTitle {
   const CheckboxSent({Key key}) : super(key: key, title: "Sent?");
@@ -383,5 +396,124 @@ class RouteNameState extends State<RouteName> {
         });
       },
     ));
+  }
+}
+
+
+class DropdownArea extends StatefulWidget {
+  final Map<int, Area> areas;
+
+  const DropdownArea({Key key, this.areas}) : super(key: key);
+
+  @override
+  DropdownAreaState createState() => DropdownAreaState();
+}
+
+
+class DropdownAreaState extends State<DropdownArea> {
+  static Area notSelectedValue = Area(0, NOT_SELECTED, null);
+  Area _value = notSelectedValue;
+
+  int get value => _value.id;
+
+  @override
+  Widget build(BuildContext context) {
+    return decorateLogWidget(context, Column(
+      children: <Widget>[
+        Text("Select area", style: TextStyle(fontSize: headingSize5or6(context))),
+        _buildButton(),
+      ],
+    ));
+  }
+
+  Widget _buildButton() {
+    return Stack(
+      children: [
+        FlatButton(
+          padding: const EdgeInsets.all(0.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(_value.name, style: dropdownValueStyle(_value.name, context)),
+              Icon(Icons.unfold_more_outlined),
+            ],
+          ),
+          onPressed: _openDialog,
+        ),
+        // Copied from lib/src/material/dropdown.dart
+        Positioned(
+          left: 0.0,
+          right: 0.0,
+          bottom: 8.0,
+          child: Container(
+            height: 1.0,
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Color(0xFFBDBDBD),
+                  width: 0.0,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _openDialog() {
+    SelectDialog.showModal<Area>(
+      context,
+      showSearchBox: false,
+      label: "Select area",
+      selectedValue: _value,
+      items: widget.areas.values.toList(),
+      itemBuilder: (BuildContext context, Area area, bool isSelected) {
+        return _buildArea(area);
+      },
+      onChange: (Area value) {
+        setState(() {
+          _value = value;
+        });
+      },
+    );
+  }
+
+  Widget _buildArea(Area area) {
+    var name = Text(area.name);
+    if (area.id == 0) {
+      return name;
+    }
+
+    bool isLast = widget.areas.values.last == area;
+
+    var borderSide = BorderSide(
+      color: accentColor,
+      width: 2.0,
+    );
+
+    return Container(
+      height: 100.0,
+      padding: const EdgeInsets.all(2.0),
+      decoration: BoxDecoration(
+        border: Border(
+          top: borderSide,
+          bottom: isLast ? borderSide : BorderSide.none,
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: RouteImageWidget.fromPath(area.imagePath, boxFit: BoxFit.contain),
+          ),
+          Expanded(
+            flex: 1,
+            child: Center(child: name),
+          ),
+        ],
+      ),
+    );
   }
 }
