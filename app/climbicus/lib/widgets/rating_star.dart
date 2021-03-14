@@ -1,5 +1,5 @@
 
-import 'package:climbicus/blocs/gym_routes_bloc.dart';
+import 'package:climbicus/models/app/route_user_meta.dart';
 import 'package:climbicus/models/user_route_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';

@@ -1,5 +1,6 @@
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
+import 'package:climbicus/models/app/route_user_meta.dart';
 import 'package:climbicus/style.dart';
 import 'package:climbicus/widgets/route_image.dart';
 import 'package:climbicus/widgets/route_log.dart';
@@ -36,8 +37,6 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
   RouteImagesBloc _routeImagesBloc;
   GymRoutesBloc _gymRoutesBloc;
 
-  RouteWithUserMeta _routeWithUserMeta;
-
   @override
   void initState() {
     super.initState();
@@ -49,8 +48,6 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
       routeId: widget.selectedRouteId,
       routeImageId: widget.takenRouteImageId,
     ));
-
-    _routeWithUserMeta = _gymRoutesBloc.getGymRoute(widget.selectedRouteId);
   }
 
   @override

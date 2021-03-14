@@ -2,6 +2,7 @@ import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/blocs/user_route_log_bloc.dart';
 import 'package:climbicus/blocs/users_bloc.dart';
+import 'package:climbicus/models/app/route_user_meta.dart';
 import 'package:climbicus/models/user.dart';
 import 'package:climbicus/models/user_route_log.dart';
 import 'package:climbicus/repositories/user_repository.dart';
