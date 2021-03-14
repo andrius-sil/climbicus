@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:climbicus/blocs/gym_areas_bloc.dart';
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
+import 'package:climbicus/models/area.dart';
 import 'package:climbicus/models/gym.dart';
 import 'package:climbicus/models/user_route_log.dart';
 import 'package:climbicus/screens/route_detailed.dart';
@@ -14,6 +15,8 @@ import 'package:climbicus/widgets/route_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+const GROUP_BY_AREAS = true;
 
 const MAX_ROUTES_VISIBLE = 100;
 const ROUTE_LIST_ITEM_HEIGHT = 80.0;
@@ -157,6 +160,15 @@ class _BodyListItemState extends State<BodyListItem> {
   }
 }
 
+class AreaItem {
+  final Area area;
+  final List<RouteListItem> routeItems;
+  bool isExpanded;
+
+  AreaItem(this.area, this.routeItems, this.isExpanded);
+}
+
+
 class RouteViewPage extends StatefulWidget {
   final String routeCategory;
   final Gym gym;
@@ -178,7 +190,10 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
   GymAreasBloc _gymAreasBloc;
   GymRoutesBloc _gymRoutesBloc;
 
+  // TODO: rename with routes
   List<RouteListItem> _items = [];
+  Map<int, AreaItem> _itemsByArea = {};
+  List<int> _itemsByAreaIndices = [];
 
   @override
   void initState() {
@@ -199,14 +214,25 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
       body: Column(
         children: <Widget>[
           _buildRouteFilterTile(),
-          // # TODO: wait on AreasBloc
           Expanded(
             child: BlocBuilder<GymRoutesBloc, GymRoutesState>(
-              builder: (context, state) {
-                if (state is GymRoutesLoaded) {
-                  return _buildLogbookGridWithRefresh(state.entriesFiltered);
-                } else if (state is GymRoutesError) {
-                  return ErrorWidget.builder(state.errorDetails);
+              builder: (context, routesState) {
+                if (routesState is GymRoutesLoaded) {
+                  return BlocBuilder<GymAreasBloc, GymAreasState>(
+                    builder: (context, areasState) {
+                      if (areasState is GymAreasLoaded) {
+                        return _buildLogbookGridWithRefresh(
+                          areasState.areas,
+                          routesState.entriesFiltered,
+                        );
+                      } else if (areasState is GymAreasError) {
+                        return ErrorWidget.builder(areasState.errorDetails);
+                      }
+                      return Center(child: CircularProgressIndicator());
+                    }
+                  );
+                } else if (routesState is GymRoutesError) {
+                  return ErrorWidget.builder(routesState.errorDetails);
                 }
 
                 return Center(child: CircularProgressIndicator());
@@ -292,15 +318,15 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
     );
   }
 
-  Widget _buildLogbookGridWithRefresh(RoutesWithUserMeta entries) {
+  Widget _buildLogbookGridWithRefresh(Map<int, Area> areas, RoutesWithUserMeta routes) {
     return RefreshIndicator(
       onRefresh: onRefreshView,
-      child: _buildLogbookGrid(entries),
+      child: _buildLogbookGrid(areas, routes),
     );
   }
 
-  Widget _buildLogbookGrid(RoutesWithUserMeta entries) {
-    if (entries.isEmpty(widget.routeCategory)) {
+  Widget _buildLogbookGrid(Map<int, Area> areas, RoutesWithUserMeta routes) {
+    if (routes.isEmpty(widget.routeCategory)) {
       return SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         child: Center(
@@ -312,12 +338,29 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
       );
     }
 
+    // TODO: new class
     Map<int, bool> isExpandedPrevious = {};
     _items.forEach((item) => isExpandedPrevious[item.routeWithUserMeta.route.id] = item.isExpanded);
     _items.clear();
 
+    // TODO: new class
+    Map<int, bool> isExpandedPreviousArea = {};
+    _itemsByAreaIndices.asMap().forEach((idx, areaId) => isExpandedPreviousArea[areaId] = _itemsByArea[areaId].isExpanded);
+    _itemsByArea.clear();
+    _itemsByAreaIndices.clear();
+    areas.forEach((areaId, area) {
+      _itemsByArea[areaId] = AreaItem(
+        area,
+        [],
+        isExpandedPreviousArea[areaId] ?? false,
+      );
+      _itemsByAreaIndices.add(areaId);
+    });
+
+    var categoryRoutes = routes.allRoutes(widget.routeCategory);
+
     var i = 0;
-    (_sortEntriesByLogDate(entries.allRoutes(widget.routeCategory))).forEach((routeId, routeWithUserMeta) {
+    (_sortEntriesByLogDate(categoryRoutes)).forEach((routeId, routeWithUserMeta) {
       if (++i > MAX_ROUTES_VISIBLE) {
         return;
       }
@@ -337,11 +380,13 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
           isExpandedPrevious[routeId] :
           false;
 
-      _items.add(RouteListItem(
-          routeWithUserMeta: routeWithUserMeta,
-          image: imageWidget,
-          isExpanded: isExpanded,
-      ));
+      var item = RouteListItem(
+        routeWithUserMeta: routeWithUserMeta,
+        image: imageWidget,
+        isExpanded: isExpanded,
+      );
+      _items.add(item);
+      _itemsByArea[routeWithUserMeta.route.areaId].routeItems.add(item);
     });
 
     // Using AlwaysScrollableScrollPhysics to ensure that RefreshIndicator
@@ -353,42 +398,88 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
         controller: scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.only(bottom: ROUTE_LIST_ITEM_HEIGHT),
-        child: ExpansionPanelList(
-          expansionCallback: (int i, bool isExpanded) {
-            setState(() {
-              _items[i].isExpanded = !isExpanded;
-            });
-          },
-          children: _items.asMap().entries.map((entry) {
-            int idx = entry.key;
-            RouteListItem item = entry.value;
-
-            return ExpansionPanel(
-              headerBuilder: (BuildContext context, bool isExpanded) {
-                return HeaderListItem(
-                  routeWithUserMeta: item.routeWithUserMeta,
-                  image: item.image,
-                );
-              },
-              body: BodyListItem(
-                routeWithUserMeta: item.routeWithUserMeta,
-                gymRoutesBloc: _gymRoutesBloc,
-                onAdd: () {
-                  _items[idx].isExpanded = false;
-
-                  // using 0.5 as per https://github.com/flutter/flutter/issues/26833
-                  scrollController.animateTo(
-                    0.5,
-                    curve: Curves.easeOut,
-                    duration: const Duration(milliseconds: 100),
-                  );
-                }
-              ),
-              isExpanded: item.isExpanded,
-            );
-          }).toList(),
-        ),
+        child: GROUP_BY_AREAS ?
+            _areasExpansionList(scrollController) :
+            _routesExpansionList(_items, scrollController),
       ),
+    );
+  }
+
+  Widget _areasExpansionList(ScrollController scrollController) {
+    return ExpansionPanelList(
+      expansionCallback: (int i, bool isExpanded) {
+        setState(() {
+          _itemsByArea[_itemsByAreaIndices[i]].isExpanded = !isExpanded;
+        });
+      },
+      children: _itemsByArea.entries.where((e) => e.value.routeItems.isNotEmpty).map((entry) {
+        AreaItem areaItem = entry.value;
+
+        return ExpansionPanel(
+          headerBuilder: (BuildContext context, bool isExpanded) {
+            return Container(
+              height: 100.0,
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: RouteImageWidget.fromPath(areaItem.area.imagePath),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Center(
+                      child: Text(
+                        areaItem.area.name,
+                        style: TextStyle(fontSize: 18.0),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+          body: _routesExpansionList(areaItem.routeItems, scrollController),
+          isExpanded: areaItem.isExpanded,
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _routesExpansionList(List<RouteListItem> items, ScrollController scrollController) {
+    return ExpansionPanelList(
+      expansionCallback: (int i, bool isExpanded) {
+        setState(() {
+          items[i].isExpanded = !isExpanded;
+        });
+      },
+      children: items.asMap().entries.map((entry) {
+        int idx = entry.key;
+        RouteListItem item = entry.value;
+
+        return ExpansionPanel(
+          headerBuilder: (BuildContext context, bool isExpanded) {
+            return HeaderListItem(
+              routeWithUserMeta: item.routeWithUserMeta,
+              image: item.image,
+            );
+          },
+          body: BodyListItem(
+              routeWithUserMeta: item.routeWithUserMeta,
+              gymRoutesBloc: _gymRoutesBloc,
+              onAdd: () {
+                items[idx].isExpanded = false;
+
+                // using 0.5 as per https://github.com/flutter/flutter/issues/26833
+                scrollController.animateTo(
+                  0.5,
+                  curve: Curves.easeOut,
+                  duration: const Duration(milliseconds: 100),
+                );
+              }
+          ),
+          isExpanded: item.isExpanded,
+        );
+      }).toList(),
     );
   }
 
@@ -398,12 +489,12 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
   }
 
   // TODO: move elsewhere
-  Map<int, RouteWithUserMeta> _sortEntriesByLogDate(Map<int, RouteWithUserMeta> entries) {
-    var sortedKeys = entries.keys.toList(growable: false)
-      ..sort((k1, k2) => entries[k2].mostRecentCreatedAt().compareTo(entries[k1].mostRecentCreatedAt()));
+  Map<int, RouteWithUserMeta> _sortEntriesByLogDate(Map<int, RouteWithUserMeta> routes) {
+    var sortedKeys = routes.keys.toList(growable: false)
+      ..sort((k1, k2) => routes[k2].mostRecentCreatedAt().compareTo(routes[k1].mostRecentCreatedAt()));
 
     return LinkedHashMap.fromIterable(sortedKeys,
-        key: (k) => k, value: (k) => entries[k]);
+        key: (k) => k, value: (k) => routes[k]);
   }
 
   @override
