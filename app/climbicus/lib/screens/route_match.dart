@@ -27,6 +27,7 @@ class RouteMatchPage extends StatefulWidget {
 class _RouteMatchPageState extends State<RouteMatchPage> {
   static const double columnSize = 200.0;
 
+  // TODO: use callbacks instead
   final checkboxSentKey = GlobalKey<CheckboxWithTitleState>();
   final numberAttemptsKey = GlobalKey<NumberAttemptsState>();
   final routeQualityKey = GlobalKey<RouteQualityRatingState>();

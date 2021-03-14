@@ -13,6 +13,7 @@ import 'package:toggle_switch/toggle_switch.dart';
 
 
 const NOT_SELECTED = "not selected";
+const NOT_SELECTED_AREA = 0;
 
 
 Widget decorateLogWidget(BuildContext context, Widget logWidget,
@@ -402,8 +403,9 @@ class RouteNameState extends State<RouteName> {
 
 class DropdownArea extends StatefulWidget {
   final Map<int, Area> areas;
+  final void Function(Area) onChangeCallback;
 
-  const DropdownArea({Key key, this.areas}) : super(key: key);
+  const DropdownArea({this.areas, this.onChangeCallback});
 
   @override
   DropdownAreaState createState() => DropdownAreaState();
@@ -411,10 +413,8 @@ class DropdownArea extends StatefulWidget {
 
 
 class DropdownAreaState extends State<DropdownArea> {
-  static Area notSelectedValue = Area(0, NOT_SELECTED, null);
+  static Area notSelectedValue = Area(NOT_SELECTED_AREA, NOT_SELECTED, null);
   Area _value = notSelectedValue;
-
-  int get value => _value.id;
 
   @override
   Widget build(BuildContext context) {
@@ -473,6 +473,7 @@ class DropdownAreaState extends State<DropdownArea> {
         return _buildArea(area);
       },
       onChange: (Area value) {
+        widget.onChangeCallback(value);
         setState(() {
           _value = value;
         });
@@ -482,7 +483,7 @@ class DropdownAreaState extends State<DropdownArea> {
 
   Widget _buildArea(Area area) {
     var name = Text(area.name);
-    if (area.id == 0) {
+    if (area.id == NOT_SELECTED_AREA) {
       return name;
     }
 

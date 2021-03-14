@@ -102,6 +102,7 @@ class BodyListItem extends StatefulWidget {
 }
 
 class _BodyListItemState extends State<BodyListItem> {
+  // TODO: use callbacks instead
   final checkboxSentKey = GlobalKey<CheckboxWithTitleState>();
   final numberAttemptsKey = GlobalKey<NumberAttemptsState>();
   final routeDifficultyKey = GlobalKey<RouteDifficultyRatingState>();
@@ -168,6 +169,7 @@ class RouteViewPage extends StatefulWidget {
 }
 
 class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveClientMixin {
+  // TODO: use callbacks instead
   final checkboxHideSentKey = GlobalKey<CheckboxWithTitleState>();
   final checkboxHideAttemptedKey = GlobalKey<CheckboxWithTitleState>();
   final sliderRouteGradesKey = GlobalKey<SliderRouteGradesState>();

@@ -3,6 +3,7 @@ import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/blocs/route_predictions_bloc.dart';
 import 'package:climbicus/constants.dart';
+import 'package:climbicus/models/area.dart';
 import 'package:climbicus/models/route_image.dart';
 import 'package:climbicus/style.dart';
 import 'package:climbicus/utils/route_grades.dart';
@@ -25,7 +26,7 @@ class AddRoutePage extends StatefulWidget {
 class _AddRoutePageState extends State<AddRoutePage> {
   static const NOT_SELECTED = "not selected";
 
-  final dropdownAreaKey = GlobalKey<DropdownAreaState>();
+  // TODO: use callbacks instead
   final checkboxSentKey = GlobalKey<CheckboxWithTitleState>();
   final numberAttemptsKey = GlobalKey<NumberAttemptsState>();
   final routeDifficultyKey = GlobalKey<RouteDifficultyRatingState>();
@@ -38,6 +39,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
   RouteImagesBloc _routeImagesBloc;
   RoutePredictionBloc _routePredictionBloc;
 
+  int _selectedAreaId = NOT_SELECTED_AREA;
   String _selectedCategory = NOT_SELECTED;
   String _selectedGrade = NOT_SELECTED;
   String _selectedGradeSystem = NOT_SELECTED;
@@ -126,7 +128,8 @@ class _AddRoutePageState extends State<AddRoutePage> {
               RaisedButton(
                 child: Text('Add'),
                 onPressed: (_selectedCategory == NOT_SELECTED ||
-                            _selectedGrade == NOT_SELECTED) ?
+                            _selectedGrade == NOT_SELECTED ||
+                            _selectedAreaId == NOT_SELECTED_AREA) ?
                   null :
                   uploadAndNavigateBack,
               ),
@@ -141,7 +144,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
     return BlocBuilder<GymAreasBloc, GymAreasState>(
       builder: (context, state) {
         if (state is GymAreasLoaded) {
-          return DropdownArea(key: dropdownAreaKey, areas: state.areas);
+          return DropdownArea(areas: state.areas, onChangeCallback: _onAreaChangeCallback);
         } else if (state is GymAreasError) {
           return ErrorWidget.builder(state.errorDetails);
         }
@@ -149,6 +152,12 @@ class _AddRoutePageState extends State<AddRoutePage> {
         return Center(child: CircularProgressIndicator());
       },
     );
+  }
+
+  void _onAreaChangeCallback(Area area) {
+    setState(() {
+      _selectedAreaId = area.id;
+    });
   }
 
   Widget _buildSelectGrade() {
@@ -239,6 +248,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
 
   void uploadAndNavigateBack() {
     _gymRoutesBloc.add(AddNewGymRouteWithUserLog(
+      areaId: _selectedAreaId,
       category: _selectedCategory,
       grade: "${_selectedGradeSystem}_$_selectedGrade",
       name: routeNameKey.currentState.value,
