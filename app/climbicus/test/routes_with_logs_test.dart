@@ -10,10 +10,10 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('routes with logs - adding new routes and logs', () {
     var newRoutes = {
-      1: jsonmdl.Route(1, 1, 1, "sport", "Font_4+", "Font_4+", null, null, 0, DateTime.now()),
-      2: jsonmdl.Route(2, 1, 1, "sport", "Font_5+", "Font_5+", null, null, 0, DateTime.now()),
-      3: jsonmdl.Route(3, 1, 1, "bouldering", "V_V1", "V_V1", null, null, 0, DateTime.now()),
-      4: jsonmdl.Route(4, 1, 1, "bouldering", "V_V2", "V_V2", null, null, 0, DateTime.now()),
+      1: jsonmdl.Route(1, 1, 1, 1, "sport", "Font_4+", "Font_4+", null, null, 2, DateTime.now()),
+      2: jsonmdl.Route(2, 1, 1, 1, "sport", "Font_5+", "Font_5+", null, null, 0, DateTime.now()),
+      3: jsonmdl.Route(3, 1, 1, 1, "bouldering", "V_V1", "V_V1", null, null, 2, DateTime.now()),
+      4: jsonmdl.Route(4, 1, 1, 1, "bouldering", "V_V2", "V_V2", null, null, 0, DateTime.now()),
     };
 
     var newLogbook1 = {
@@ -82,7 +82,7 @@ void main() {
     expect(routesWithUserMeta.allRoutes("bouldering")[4].userRouteVotes, allRoutes[4].userRouteVotes);
 
     // addRoute
-    var fifthRoute = jsonmdl.Route(5, 1, 1, "sport", "Font_6A", "Font_6A", null, null, 0, DateTime.now());
+    var fifthRoute = jsonmdl.Route(5, 1, 1, 1, "sport", "Font_6A", "Font_6A", null, null, 1, DateTime.now());
     var thirdVote = UserRouteVotes(3, 5, 1, 1, 3.0, DIFFICULTY_FAIR, DateTime.utc(2020, 02, 01));
     routesWithUserMeta.addRoute(fifthRoute, thirdVote);
     expect(routesWithUserMeta.routeIdsAll(), [1, 2, 3, 4, 5]);
@@ -136,11 +136,11 @@ void main() {
 
   test('routes with logs - filters', () {
     var newRoutes = {
-      1: jsonmdl.Route(1, 1, 1, "sport", "Font_4+", "Font_4+", null, null, 0, DateTime.now()),
-      2: jsonmdl.Route(2, 1, 1, "sport", "Font_5+", "Font_5+", null, null, 0, DateTime.now()),
-      3: jsonmdl.Route(3, 1, 1, "sport", "Font_6A", "Font_6A", null, null, 0, DateTime.now()),
-      4: jsonmdl.Route(4, 1, 1, "sport", "Font_6B", "Font_6B", null, null, 0, DateTime.now()),
-      5: jsonmdl.Route(5, 1, 1, "sport", "Font_6C", "Font_6C", null, null, 0, DateTime.now()),
+      1: jsonmdl.Route(1, 1, 1, 1, "sport", "Font_4+", "Font_4+", null, null, 0, DateTime.now()),
+      2: jsonmdl.Route(2, 1, 1, 1, "sport", "Font_5+", "Font_5+", null, null, 0, DateTime.now()),
+      3: jsonmdl.Route(3, 1, 1, 1, "sport", "Font_6A", "Font_6A", null, null, 0, DateTime.now()),
+      4: jsonmdl.Route(4, 1, 1, 1, "sport", "Font_6B", "Font_6B", null, null, 0, DateTime.now()),
+      5: jsonmdl.Route(5, 1, 1, 1, "sport", "Font_6C", "Font_6C", null, null, 0, DateTime.now()),
     };
 
     var newLogbook = {
@@ -173,13 +173,13 @@ void main() {
 
   test('routes with logs - grade filters', () {
     var newRoutes = {
-      1: jsonmdl.Route(1, 1, 1, "bouldering", "V_V1", "V_V1", null, null, 0, DateTime.now()),
-      2: jsonmdl.Route(2, 1, 1, "bouldering", "V_V2", "V_V3", null, null, 0, DateTime.now()),
-      3: jsonmdl.Route(3, 1, 1, "bouldering", "V_V4", "V_V4", null, null, 0, DateTime.now()),
-      4: jsonmdl.Route(4, 1, 1, "bouldering", "V_V4", "V_V5", null, null, 0, DateTime.now()),
-      5: jsonmdl.Route(5, 1, 1, "bouldering", "V_V5", "V_V5", null, null, 0, DateTime.now()),
-      6: jsonmdl.Route(6, 1, 1, "bouldering", "V_V6", "V_V7", null, null, 0, DateTime.now()),
-      7: jsonmdl.Route(7, 1, 1, "bouldering", "V_V7", "V_V7", null, null, 0, DateTime.now()),
+      1: jsonmdl.Route(1, 1, 1, 1, "bouldering", "V_V1", "V_V1", null, null, 0, DateTime.now()),
+      2: jsonmdl.Route(2, 1, 1, 1, "bouldering", "V_V2", "V_V3", null, null, 0, DateTime.now()),
+      3: jsonmdl.Route(3, 1, 1, 1, "bouldering", "V_V4", "V_V4", null, null, 0, DateTime.now()),
+      4: jsonmdl.Route(4, 1, 1, 1, "bouldering", "V_V4", "V_V5", null, null, 0, DateTime.now()),
+      5: jsonmdl.Route(5, 1, 1, 1, "bouldering", "V_V5", "V_V5", null, null, 0, DateTime.now()),
+      6: jsonmdl.Route(6, 1, 1, 1, "bouldering", "V_V6", "V_V7", null, null, 0, DateTime.now()),
+      7: jsonmdl.Route(7, 1, 1, 1, "bouldering", "V_V7", "V_V7", null, null, 0, DateTime.now()),
     };
 
     var routesWithUserMeta = RoutesWithUserMeta(newRoutes, {}, {});
