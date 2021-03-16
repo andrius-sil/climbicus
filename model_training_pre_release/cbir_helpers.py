@@ -131,3 +131,4 @@ def get_stats(d):
         else:
             wrong_top_3.append(c_f)  
     print(f"% wrong overall top 3: {round(len(wrong_top_3)/(len(correct_top_3)+len(wrong_top_3)), 2)*100}%")
+    return correct, wrong, correct_top_3, wrong_top_3
