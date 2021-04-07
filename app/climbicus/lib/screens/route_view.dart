@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:climbicus/blocs/gym_areas_bloc.dart';
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
+import 'package:climbicus/models/app/area_route_list_items.dart';
 import 'package:climbicus/models/app/route_user_meta.dart';
 import 'package:climbicus/models/area.dart';
 import 'package:climbicus/models/gym.dart';
@@ -22,16 +23,6 @@ const GROUP_BY_AREAS = true;
 const MAX_ROUTES_VISIBLE = 100;
 const ROUTE_LIST_ITEM_HEIGHT = 80.0;
 
-class RouteListItem {
-  RouteWithUserMeta routeWithUserMeta;
-  Widget image;
-  bool isExpanded;
-  RouteListItem({
-    this.routeWithUserMeta,
-    this.image,
-    this.isExpanded: false
-  });
-}
 
 class HeaderListItem extends StatelessWidget {
   final RouteWithUserMeta routeWithUserMeta;
@@ -161,14 +152,6 @@ class _BodyListItemState extends State<BodyListItem> {
   }
 }
 
-class AreaItem {
-  final Area area;
-  final List<RouteListItem> routeItems;
-  bool isExpanded;
-
-  AreaItem(this.area, this.routeItems, this.isExpanded);
-}
-
 
 class RouteViewPage extends StatefulWidget {
   final String routeCategory;
@@ -191,10 +174,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
   GymAreasBloc _gymAreasBloc;
   GymRoutesBloc _gymRoutesBloc;
 
-  // TODO: rename with routes
-  List<RouteListItem> _items = [];
-  Map<int, AreaItem> _itemsByArea = {};
-  List<int> _itemsByAreaIndices = [];
+  AreaItems _areaItems = AreaItems();
 
   @override
   void initState() {
@@ -339,24 +319,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
       );
     }
 
-    // TODO: new class
-    Map<int, bool> isExpandedPrevious = {};
-    _items.forEach((item) => isExpandedPrevious[item.routeWithUserMeta.route.id] = item.isExpanded);
-    _items.clear();
-
-    // TODO: new class
-    Map<int, bool> isExpandedPreviousArea = {};
-    _itemsByAreaIndices.asMap().forEach((idx, areaId) => isExpandedPreviousArea[areaId] = _itemsByArea[areaId].isExpanded);
-    _itemsByArea.clear();
-    _itemsByAreaIndices.clear();
-    areas.forEach((areaId, area) {
-      _itemsByArea[areaId] = AreaItem(
-        area,
-        [],
-        isExpandedPreviousArea[areaId] ?? false,
-      );
-      _itemsByAreaIndices.add(areaId);
-    });
+    _areaItems.reset(areas);
 
     var categoryRoutes = routes.allRoutes(widget.routeCategory);
 
@@ -377,17 +340,12 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
         },
       );
 
-      bool isExpanded = isExpandedPrevious.containsKey(routeId) ?
-          isExpandedPrevious[routeId] :
-          false;
-
       var item = RouteListItem(
         routeWithUserMeta: routeWithUserMeta,
         image: imageWidget,
-        isExpanded: isExpanded,
+        isExpanded: _areaItems.isExpanded(routeId),
       );
-      _items.add(item);
-      _itemsByArea[routeWithUserMeta.route.areaId].routeItems.add(item);
+      _areaItems.add(routeWithUserMeta.route.areaId, item);
     });
 
     // Using AlwaysScrollableScrollPhysics to ensure that RefreshIndicator
@@ -401,7 +359,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
         padding: const EdgeInsets.only(bottom: ROUTE_LIST_ITEM_HEIGHT),
         child: GROUP_BY_AREAS ?
             _areasExpansionList(scrollController) :
-            _routesExpansionList(_items, scrollController),
+            _routesExpansionList(_areaItems.items, scrollController),
       ),
     );
   }
@@ -410,10 +368,10 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
     return ExpansionPanelList(
       expansionCallback: (int i, bool isExpanded) {
         setState(() {
-          _itemsByArea[_itemsByAreaIndices[i]].isExpanded = !isExpanded;
+          _areaItems.expand(i, isExpanded);
         });
       },
-      children: _itemsByArea.entries.where((e) => e.value.routeItems.isNotEmpty).map((entry) {
+      children: _areaItems.itemsByArea.map((entry) {
         AreaItem areaItem = entry.value;
 
         return ExpansionPanel(
