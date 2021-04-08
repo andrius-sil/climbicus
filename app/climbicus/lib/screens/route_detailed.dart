@@ -1,3 +1,4 @@
+import 'package:climbicus/blocs/gym_areas_bloc.dart';
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/blocs/user_route_log_bloc.dart';
@@ -138,6 +139,20 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
               Text(
                 "Category: ${widget.routeWithUserMeta.route.category}",
                 style: TextStyle(fontSize: HEADING_SIZE_3),
+              ),
+              BlocBuilder<GymAreasBloc, GymAreasState>(
+                builder: (context, state) {
+                  if (state is GymAreasLoaded) {
+                    return Text(
+                      "Area: ${state.areas[widget.routeWithUserMeta.route.areaId].name}",
+                      style: TextStyle(fontSize: HEADING_SIZE_3),
+                    );
+                  } else if (state is GymAreasError) {
+                    return ErrorWidget.builder(state.errorDetails);
+                  }
+
+                  return Center(child: CircularProgressIndicator());
+                },
               ),
             ],
           );
