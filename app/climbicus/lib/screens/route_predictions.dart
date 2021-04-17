@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:climbicus/blocs/gym_areas_bloc.dart';
 import 'package:climbicus/blocs/route_predictions_bloc.dart';
 import 'package:climbicus/blocs/settings_bloc.dart';
 import 'package:climbicus/screens/route_match.dart';
@@ -201,7 +202,17 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                Text("${prediction.route.grade}"),
+                Text("Grade: ${prediction.route.grade}"),
+                BlocBuilder<GymAreasBloc, GymAreasState>(
+                  builder: (context, areasState) {
+                    if (areasState is GymAreasLoaded) {
+                      return Text("Area: ${areasState.areas[prediction.route.areaId].name}");
+                    } else if (areasState is GymAreasError) {
+                      return ErrorWidget.builder(areasState.errorDetails);
+                    }
+                    return Center(child: CircularProgressIndicator());
+                  }
+                ),
               ],
             )
         ),
