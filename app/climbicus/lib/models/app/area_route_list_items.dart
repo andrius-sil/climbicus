@@ -64,6 +64,8 @@ class AreaItems {
   }
 
   void expand(int panelIndex, bool isExpanded) {
-    _itemsByArea[_itemsByAreaIndices[panelIndex]].isExpanded = !isExpanded;
+    var nonEmptyAreaIds = Map.fromEntries(itemsByArea).keys;
+    var itemsByAreaIndices = _itemsByAreaIndices.where((areaId) => nonEmptyAreaIds.contains(areaId));
+    _itemsByArea[itemsByAreaIndices.toList()[panelIndex]].isExpanded = !isExpanded;
   }
 }

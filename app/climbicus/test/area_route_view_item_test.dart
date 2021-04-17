@@ -51,7 +51,7 @@ void main() {
     expect(areaItems.isExpanded(2), false);
 
     item1.isExpanded = true;
-    areaItems.expand(1, false);
+    areaItems.expand(0, false);
 
     expect(Map.fromEntries(areaItems.itemsByArea)[2].isExpanded, true);
     expect(Map.fromEntries(areaItems.itemsByArea)[3].isExpanded, false);
