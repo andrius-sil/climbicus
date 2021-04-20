@@ -252,6 +252,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
 
   Widget _buildRouteFilterTile() {
     return ExpansionTile(
+      maintainState: true,
       leading: const Icon(Icons.filter_list),
       title: Text(""),
       children: <Widget>[
