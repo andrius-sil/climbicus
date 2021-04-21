@@ -1,9 +1,20 @@
 version: '2.1'
 services:
+  db:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./db
+    env_file:
+      - stag_secrets.env
+    ports:
+      - "5432:5432"
+    command:
+      postgres -c track_commit_timestamp=on
   server:
     env_file:
       - stag_secrets.env
     depends_on:
+      - db
       - worker
     environment:
       - ENV=stag
