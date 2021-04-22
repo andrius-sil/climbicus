@@ -17,6 +17,8 @@ import 'package:climbicus/widgets/route_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_image/network.dart';
+import 'package:photo_view/photo_view.dart';
 
 const GROUP_BY_AREAS = true;
 
@@ -377,31 +379,56 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
 
         return ExpansionPanel(
           headerBuilder: (BuildContext context, bool isExpanded) {
-            return Container(
-              height: 100.0,
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: RouteImageWidget.fromPath(areaItem.area.imagePath),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Center(
-                      child: Text(
-                        areaItem.area.name,
-                        style: TextStyle(fontSize: 18.0),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
+            return _areaHeaderItem(areaItem);
           },
           body: _routesExpansionList(areaItem.routeItems, scrollController),
           isExpanded: areaItem.isExpanded,
         );
       }).toList(),
+    );
+  }
+
+  Widget _areaHeaderItem(AreaItem areaItem) {
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Container(
+              alignment: Alignment.center,
+              child: PhotoView(
+                imageProvider: NetworkImageWithRetry(
+                  areaItem.area.imagePath,
+                  fetchStrategy: RouteImageWidget.fetchStrategy,
+                ),
+                tightMode: true,
+                maxScale: 1.0,
+              ),
+            );
+          },
+        );
+      },
+      child: Container(
+        height: 100.0,
+        child: Row(
+          children: [
+            Expanded(
+              flex: 2,
+              child: RouteImageWidget.fromPath(areaItem.area.imagePath),
+            ),
+            Expanded(
+              flex: 1,
+              child: Center(
+                child: Text(
+                  areaItem.area.name,
+                  style: TextStyle(fontSize: 18.0),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

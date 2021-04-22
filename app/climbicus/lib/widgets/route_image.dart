@@ -39,7 +39,7 @@ class RouteImageWidget extends StatelessWidget {
       imagePath ??= routeImage.path;
 
       imageWidget = Image(
-        image: NetworkImageWithRetry(imagePath, fetchStrategy: _fetchStrategy),
+        image: NetworkImageWithRetry(imagePath, fetchStrategy: fetchStrategy),
         fit: boxFit,
       );
     } else {
@@ -74,7 +74,7 @@ class RouteImageWidget extends StatelessWidget {
     );
   }
 
-  static final FetchStrategy _fetchStrategy = const FetchStrategyBuilder(
+  static final FetchStrategy fetchStrategy = const FetchStrategyBuilder(
     transientHttpStatusCodePredicate: _transientHttpStatusCodePredicate,
   ).build();
 
