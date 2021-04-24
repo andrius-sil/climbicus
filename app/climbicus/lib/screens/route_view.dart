@@ -383,12 +383,36 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
           },
           body: _routesExpansionList(areaItem.routeItems, scrollController),
           isExpanded: areaItem.isExpanded,
+          canTapOnHeader: true,
         );
       }).toList(),
     );
   }
 
   Widget _areaHeaderItem(AreaItem areaItem) {
+    return Container(
+      height: 100.0,
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: _areaImagePreview(areaItem),
+          ),
+          Expanded(
+            flex: 1,
+            child: Center(
+              child: Text(
+                areaItem.area.name,
+                style: TextStyle(fontSize: 18.0),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _areaImagePreview(AreaItem areaItem) {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
@@ -409,26 +433,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
           },
         );
       },
-      child: Container(
-        height: 100.0,
-        child: Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: RouteImageWidget.fromPath(areaItem.area.imagePath),
-            ),
-            Expanded(
-              flex: 1,
-              child: Center(
-                child: Text(
-                  areaItem.area.name,
-                  style: TextStyle(fontSize: 18.0),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+      child: RouteImageWidget.fromPath(areaItem.area.imagePath),
     );
   }
 
