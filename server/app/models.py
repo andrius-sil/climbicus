@@ -72,6 +72,7 @@ class Areas(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     name = db.Column(db.String, nullable=False)
     image_path = db.Column(db.String, unique=True, nullable=False)
+    thumbnail_image_path = db.Column(db.String, unique=True, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     @property
@@ -83,6 +84,7 @@ class Areas(db.Model):
             "name": self.name,
             "created_at": self.created_at.isoformat(),
             "image_path": s3_cdn_path(self.image_path),
+            "thumbnail_image_path": s3_cdn_path(self.thumbnail_image_path),
         }
 
     def __repr__(self):
@@ -182,6 +184,7 @@ class RouteImages(db.Model):
 
     model_version = db.Column(db.String, nullable=False)
     path = db.Column(db.String, unique=True, nullable=False)
+    thumbnail_path = db.Column(db.String, unique=True, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
     descriptors = db.Column(db.LargeBinary, nullable=False)
 
@@ -193,11 +196,12 @@ class RouteImages(db.Model):
             "route_id": self.route_id,
             "created_at": self.created_at.isoformat(),
             "path": s3_cdn_path(self.path),
+            "thumbnail_path": s3_cdn_path(self.thumbnail_path),
         }
 
     def __repr__(self):
         return model_repr("RouteImage", id=self.id, user_id=self.user_id, route_id=self.route_id,
-                          path=self.path)
+                          path=self.path, thumbnail_path=self.thumbnail_path)
 
 
 class UserRouteLog(db.Model):

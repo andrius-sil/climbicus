@@ -22,9 +22,9 @@ def test_areas(client, auth_headers_user1):
 
     expected_areas = {
         "1": {"id": 1, "gym_id": 1, "user_id": 1, "name": "Cave", "image_path": "area_images/area1.jpg",
-              "created_at": "2019-03-04T10:10:10+00:00"},
+              "thumbnail_image_path": "area_images/area1.jpg", "created_at": "2019-03-04T10:10:10+00:00"},
         "2": {"id": 2, "gym_id": 1, "user_id": 1, "name": "Prow", "image_path": "area_images/area2.jpg",
-              "created_at": "2019-03-04T10:10:10+00:00"},
+              "thumbnail_image_path": "area_images/area2.jpg", "created_at": "2019-03-04T10:10:10+00:00"},
     }
 
     assert resp.json["areas"] == expected_areas
@@ -51,6 +51,7 @@ def test_add_area(app, client, resource_dir, auth_headers_user1):
     assert resp.json["area"] == {
         "id": 4, "gym_id": 1, "user_id": 1, "name": "Area 51", "created_at": "2019-03-04T10:10:10+00:00",
         "image_path": "/tmp/climbicus_tests/area_images/from_users/gym_id=1/year=2019/month=03/12345678123456781234567812345678.jpg",
+        "thumbnail_image_path": "/tmp/climbicus_tests/area_images/from_users/gym_id=1/year=2019/month=03/12345678123456781234567812345678.jpg",
     }
 
     with app.app_context():
@@ -60,4 +61,5 @@ def test_add_area(app, client, resource_dir, auth_headers_user1):
         assert stored_area.user_id == 1
         assert stored_area.name == "Area 51"
         assert stored_area.image_path == "/tmp/climbicus_tests/area_images/from_users/gym_id=1/year=2019/month=03/12345678123456781234567812345678.jpg"
+        assert stored_area.thumbnail_image_path == "/tmp/climbicus_tests/area_images/from_users/gym_id=1/year=2019/month=03/12345678123456781234567812345678.jpg"
         assert stored_area.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
