@@ -336,7 +336,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
         builder: (context, state) {
           if (state is RouteImagesLoaded) {
             var routeImage = _routeImagesBloc.images.defaultImage(routeId);
-            return RouteImageWidget(routeImage);
+            return RouteImageWidget(routeImage, thumbnail: true);
           } else {
             return Container(width: 0, height: 0);
           }
@@ -433,7 +433,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
           },
         );
       },
-      child: RouteImageWidget.fromPath(areaItem.area.imagePath),
+      child: RouteImageWidget.fromPath(areaItem.area.thumbnailImagePath),
     );
   }
 
