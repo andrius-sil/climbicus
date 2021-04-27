@@ -336,7 +336,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
         builder: (context, state) {
           if (state is RouteImagesLoaded) {
             var routeImage = _routeImagesBloc.images.defaultImage(routeId);
-            return RouteImageWidget(routeImage);
+            return RouteImageWidget(routeImage, thumbnail: true);
           } else {
             return Container(width: 0, height: 0);
           }
@@ -400,10 +400,13 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
           ),
           Expanded(
             flex: 1,
-            child: Center(
+            child: Container(
+              alignment: Alignment.center,
+              padding: const EdgeInsets.all(4.0),
               child: Text(
                 areaItem.area.name,
                 style: TextStyle(fontSize: 18.0),
+                textAlign: TextAlign.center,
               ),
             ),
           ),
@@ -433,7 +436,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
           },
         );
       },
-      child: RouteImageWidget.fromPath(areaItem.area.imagePath),
+      child: RouteImageWidget.fromPath(areaItem.area.thumbnailImagePath),
     );
   }
 

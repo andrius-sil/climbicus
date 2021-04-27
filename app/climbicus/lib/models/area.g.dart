@@ -16,7 +16,8 @@ Area _$AreaFromJson(Map<String, dynamic> json) {
   )
     ..gymId = json['gym_id'] as int
     ..userId = json['user_id'] as int
-    ..imagePath = json['image_path'] as String;
+    ..imagePath = json['image_path'] as String
+    ..thumbnailImagePath = json['thumbnail_image_path'] as String;
 }
 
 Map<String, dynamic> _$AreaToJson(Area instance) => <String, dynamic>{
@@ -25,5 +26,6 @@ Map<String, dynamic> _$AreaToJson(Area instance) => <String, dynamic>{
       'user_id': instance.userId,
       'name': instance.name,
       'image_path': instance.imagePath,
+      'thumbnail_image_path': instance.thumbnailImagePath,
       'created_at': instance.createdAt?.toIso8601String(),
     };

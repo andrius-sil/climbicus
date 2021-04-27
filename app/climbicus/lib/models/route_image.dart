@@ -11,6 +11,7 @@ class RouteImage {
   int routeId;
   DateTime createdAt;
   String path;
+  String thumbnailPath;
 
   factory RouteImage.fromJson(Map<String, dynamic> json) =>
       _$RouteImageFromJson(json);

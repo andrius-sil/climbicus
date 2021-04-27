@@ -19,9 +19,9 @@ class RouteImageWidget extends StatelessWidget {
   String imagePath;
   BoxFit boxFit = defaultBoxFit;
 
-  RouteImageWidget(this.routeImage) :
+  RouteImageWidget(this.routeImage, {thumbnail: false}) :
     imageFile = null,
-    imagePath = null;
+    imagePath = thumbnail ? routeImage.thumbnailPath : routeImage.path;
   RouteImageWidget.fromFile(this.imageFile) :
     routeImage = null,
     imagePath = null;
@@ -35,9 +35,7 @@ class RouteImageWidget extends StatelessWidget {
     var imageWidget;
     if (imageFile != null) {
       imageWidget = Image.file(imageFile, fit: boxFit);
-    } else if (routeImage != null || imagePath != null) {
-      imagePath ??= routeImage.path;
-
+    } else if (imagePath != null) {
       imageWidget = Image(
         image: NetworkImageWithRetry(imagePath, fetchStrategy: fetchStrategy),
         fit: boxFit,

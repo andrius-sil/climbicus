@@ -38,7 +38,9 @@ def add_area():
         gym_id=gym_id,
     )
 
-    area = Areas(gym_id=gym_id, user_id=user_id, name=name, image_path=image_path, created_at=datetime.datetime.utcnow())
+    # TODO
+    area = Areas(gym_id=gym_id, user_id=user_id, name=name, image_path=image_path, thumbnail_image_path=image_path,
+                 created_at=datetime.datetime.utcnow())
 
     db.session.add(area)
     db.session.commit()

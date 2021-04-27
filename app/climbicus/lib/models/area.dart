@@ -11,6 +11,7 @@ class Area {
   int userId;
   String name;
   String imagePath;
+  String thumbnailImagePath;
   DateTime createdAt;
 
   factory Area.fromJson(Map<String, dynamic> json) => _$AreaFromJson(json);

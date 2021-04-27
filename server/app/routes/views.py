@@ -94,6 +94,7 @@ def predict_cbir():
         user_id=user_id,
         model_version=cbir_predictor.get_model_version(),
         path=image_path,
+        thumbnail_path=image_path, # TODO
         created_at=datetime.datetime.utcnow(),
         descriptors=descriptor,
     )
