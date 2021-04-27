@@ -1,9 +1,9 @@
 import datetime
 import json
-import uuid
 
 from app import db, cbir_predictor
 from app.models import RouteImages, Routes
+from app.utils.image import resize_fbytes_image
 
 from flask import abort, request, Blueprint, jsonify
 
@@ -13,6 +13,7 @@ from predictor.cbir_predictor import InvalidImageException
 blueprint = Blueprint("routes_blueprint", __name__, url_prefix="/routes")
 
 MAX_NUMBER_OF_PREDICTED_ROUTES = 20
+MAX_THUMBNAIL_IMG_WIDTH = 128
 
 
 @blueprint.route("/", methods=["GET"])
@@ -70,7 +71,7 @@ def predict_cbir():
 
     routes_and_images = [{"route_image": route_image, "route": route} for (route_image, route) in query.all()]
 
-    fbytes_image = fs_image.read()
+    fbytes_image, file_content_type = fs_image.read(), fs_image.content_type
     try:
         cbir_prediction = cbir_predictor.predict_route(fbytes_image, routes_and_images, MAX_NUMBER_OF_PREDICTED_ROUTES)
     except InvalidImageException:
@@ -85,16 +86,26 @@ def predict_cbir():
     } for r in predicted_routes_and_images]
     response = {"sorted_route_and_image_predictions": sorted_route_and_image_predictions}
     image_path = store_image(
-        fs_image=fs_image,
+        fbytes_image=fbytes_image,
+        file_content_type=file_content_type,
         dir_name="route_images",
         gym_id=gym_id,
+        image_size="full_size"
+    )
+    thumbnail_fbytes_image = resize_fbytes_image(fbytes_image, MAX_THUMBNAIL_IMG_WIDTH)
+    thumbnail_path = store_image(
+        fbytes_image=thumbnail_fbytes_image,
+        file_content_type=file_content_type,
+        dir_name="route_images",
+        gym_id=gym_id,
+        image_size="thumbnail"
     )
 
     route_image = RouteImages(
         user_id=user_id,
         model_version=cbir_predictor.get_model_version(),
         path=image_path,
-        thumbnail_path=image_path, # TODO
+        thumbnail_path=thumbnail_path,
         created_at=datetime.datetime.utcnow(),
         descriptors=descriptor,
     )
