@@ -400,10 +400,13 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
           ),
           Expanded(
             flex: 1,
-            child: Center(
+            child: Container(
+              alignment: Alignment.center,
+              padding: const EdgeInsets.all(4.0),
               child: Text(
                 areaItem.area.name,
                 style: TextStyle(fontSize: 18.0),
+                textAlign: TextAlign.center,
               ),
             ),
           ),
