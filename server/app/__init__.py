@@ -3,6 +3,7 @@ from celery import Celery
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 from app.app_handlers import register_handlers
 from app.utils.io import InputOutput
@@ -65,6 +66,8 @@ def create_app(db_connection_uri, jwt_secret_key, io_provider, disable_auth=Fals
     app.config["SQLALCHEMY_DATABASE_URI"] = db_connection_uri
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.init_app(app)
+
+    migrate = Migrate(app, db)
 
     io.load(io_provider)
 
