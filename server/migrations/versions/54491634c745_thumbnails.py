@@ -18,7 +18,7 @@ depends_on = None
 
 def upgrade():
     op.add_column('areas', sa.Column('thumbnail_image_path', sa.String(), nullable=True))
-    op.execute("UPDATE areas SET thumbnail_image_path=replace(image_path, 'month=04/', 'month=04/thumbnail/')")
+    op.execute("UPDATE areas SET thumbnail_image_path=image_path")
     op.alter_column('areas', 'thumbnail_image_path', nullable=False)
 
     op.add_column('route_images', sa.Column('thumbnail_path', sa.String(), nullable=True))
