@@ -192,8 +192,10 @@ def test_predict_with_unknown_image(client, resource_dir, auth_headers_user1):
 
     assert resp.json["route_image"] == {
         "id": 9, "route_id": None, "user_id": 1, "created_at": "2019-03-04T10:10:10+00:00",
-        "path": "/tmp/climbicus_tests/route_images/from_users/gym_id=1/year=2019/month=03/12345678123456781234567812345678.jpg",
-        "thumbnail_path": "/tmp/climbicus_tests/route_images/from_users/gym_id=1/year=2019/month=03/12345678123456781234567812345678.jpg",
+        "path": "/tmp/climbicus_tests/route_images/from_users/gym_id=1/year=2019/month=03"
+                "/full_size/12345678123456781234567812345678.jpg",
+        "thumbnail_path": "/tmp/climbicus_tests/route_images/from_users/gym_id=1/year=2019/month=03"
+                          "/thumbnail/12345678123456781234567812345678.jpg",
     }
 
 
@@ -251,8 +253,10 @@ def test_cbir_predict_with_image(app, client, resource_dir, auth_headers_user1):
 
     assert resp.json["route_image"] == {
         "id": 9, "route_id": None, "user_id": 1, "created_at": "2019-03-04T10:10:10+00:00",
-        "path": "/tmp/climbicus_tests/route_images/from_users/gym_id=1/year=2019/month=03/12345678123456781234567812345678.jpg",
-        "thumbnail_path": "/tmp/climbicus_tests/route_images/from_users/gym_id=1/year=2019/month=03/12345678123456781234567812345678.jpg",
+        "path": "/tmp/climbicus_tests/route_images/from_users/gym_id=1/year=2019/month=03"
+                "/full_size/12345678123456781234567812345678.jpg",
+        "thumbnail_path": "/tmp/climbicus_tests/route_images/from_users/gym_id=1/year=2019/month=03"
+                          "/thumbnail/12345678123456781234567812345678.jpg",
     }
 
     with app.app_context():
@@ -262,8 +266,10 @@ def test_cbir_predict_with_image(app, client, resource_dir, auth_headers_user1):
         assert stored_image.route_id is None
         assert stored_image.route_unmatched == False
         assert stored_image.model_version == "cbir_v1"
-        assert stored_image.path == "/tmp/climbicus_tests/route_images/from_users/gym_id=1/year=2019/month=03/12345678123456781234567812345678.jpg"
-        assert stored_image.thumbnail_path == "/tmp/climbicus_tests/route_images/from_users/gym_id=1/year=2019/month=03/12345678123456781234567812345678.jpg"
+        assert stored_image.path == "/tmp/climbicus_tests/route_images/from_users/gym_id=1/year=2019/month=03" \
+                                    "/full_size/12345678123456781234567812345678.jpg"
+        assert stored_image.thumbnail_path == "/tmp/climbicus_tests/route_images/from_users/gym_id=1/year=2019/month" \
+                                              "=03/thumbnail/12345678123456781234567812345678.jpg"
         assert stored_image.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
         with open(f"{resource_dir}/cbir/green_route_descriptor.json") as f:
             assert stored_image.descriptors == json_to_nparraybytes(f.read())
