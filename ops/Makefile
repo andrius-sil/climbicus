@@ -15,6 +15,9 @@ flutter-apk-install-hack: check-env
 flutter-appbundle-build: check-env
 	cd ../app/climbicus/; flutter build appbundle -t lib/main_${ENV}.dart
 
+flutter-ipa-build: check-env
+	cd ../app/climbicus/; flutter build ipa -t lib/main_${ENV}.dart
+
 flutter-code-gen:
 	cd ../app/climbicus/; flutter pub run build_runner build
 

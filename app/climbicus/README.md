@@ -1,16 +1,20 @@
 # climbicus
 
-A new Flutter project.
+Climbing app for gyms.
 
-## Getting Started
+## App releases
 
-This project is a starting point for a Flutter application.
+- Update version in [pubspec.yaml](pubspec.yaml)
 
-A few resources to get you started if this is your first Flutter project:
+### Android
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+- make flutter-appbundle-build
+- Create a new release in [Google Play Console](https://play.google.com/console/u/0/developers/5343407907611504813/app/4974722539259597079/app-dashboard)
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+### iOS
+
+- Build on iPhone simulator in Android Studio first
+- Open Xcode, select `Runner -> Any iOS Device`
+- Create build archive [using Xcode](https://flutter.dev/docs/deployment/ios#create-a-build-archive)
+- Create `appstorereview` user if it doesn't exist already
