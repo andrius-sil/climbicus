@@ -23,5 +23,6 @@ def resize_fbytes_image(fbytes_image, max_width):
         h = int(h / ratio)
     dim = (w, h)
     resized = cv2.resize(img, dim)
-    resized_fbytes_image = resized.tobytes()
+    _, resized_buffer = cv2.imencode('.jpg', resized)
+    resized_fbytes_image = resized_buffer.tobytes()
     return resized_fbytes_image
