@@ -1,0 +1,13 @@
+gym_id,user_id,name,image_path,created_at
+1,1,Boulder Room 1,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/boulder.jpg,2019-10-10 00:00:00+0
+1,1,Boulder Room 2,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/boulder.jpg,2019-10-10 00:00:00+0
+1,1,The Prow,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/lead1.jpg,2019-10-10 00:00:00+0
+1,1,Left of the Prow,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/lead2.jpg,2019-10-10 00:00:00+0
+1,1,Right of the Prow,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/lead2.jpg,2019-10-10 00:00:00+0
+1,1,In front of entrance,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/lead3.jpeg,2019-10-10 00:00:00+0
+1,1,Top rope corner,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/lead1.jpg,2019-10-10 00:00:00+0
+1,1,Placeholder 1,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/lead1.jpg,2019-10-10 00:00:00+0
+1,1,Placeholder 2,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/lead1.jpg,2019-10-10 00:00:00+0
+1,1,Placeholder 3,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/lead1.jpg,2019-10-10 00:00:00+0
+1,1,Placeholder 4,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/lead1.jpg,2019-10-10 00:00:00+0
+1,1,Placeholder 5,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/lead1.jpg,2019-10-10 00:00:00+0

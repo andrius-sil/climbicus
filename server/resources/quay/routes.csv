@@ -1,1 +1,1 @@
-gym_id,user_id,lower_grade,upper_grade,created_at,category,name,avg_difficulty,avg_quality,count_ascents
+gym_id,user_id,area_id,lower_grade,upper_grade,created_at,category,name,avg_difficulty,avg_quality,count_ascents
