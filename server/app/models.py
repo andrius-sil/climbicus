@@ -71,7 +71,7 @@ class Areas(db.Model):
     gym_id = db.Column(db.Integer, db.ForeignKey('gyms.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     name = db.Column(db.String, nullable=False)
-    image_path = db.Column(db.String, unique=False, nullable=False)
+    image_path = db.Column(db.String, unique=True, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     @property
