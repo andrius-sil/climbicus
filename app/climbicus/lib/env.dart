@@ -11,6 +11,18 @@ const ENVIRONMENT_NAMES = {
   Environment.prod: "prod",
 };
 
+
+class EnvironmentConfig {
+  static const ENV = String.fromEnvironment("ENV", defaultValue: null);
+  static const DEV_HOST_IP = String.fromEnvironment("DEV_HOST_IP");
+
+  static void display() {
+    print("\tENV: '$ENV'");
+    print("\tDEV_HOST_IP: '$DEV_HOST_IP'");
+  }
+}
+
+
 Future<bool> _isAndroidEmulator() async {
   var isEmulator = false;
 
@@ -47,8 +59,7 @@ Future<String> getServerUrl(Environment env) async {
     } else if (await _isIOSEmulator()) {
       return "http://127.0.0.1:5000";
     } else {
-      const String hostIp = String.fromEnvironment("HOST_IP");
-      return hostIp;
+      return EnvironmentConfig.DEV_HOST_IP;
     }
   }
 

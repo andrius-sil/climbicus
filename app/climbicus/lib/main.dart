@@ -34,6 +34,16 @@ import 'env.dart';
 import 'models/gym.dart';
 
 
+void main() {
+  print("Using config:");
+  EnvironmentConfig.display();
+
+  assert(EnvironmentConfig.ENV != null);
+  var env = Environment.values.firstWhere(
+          (e) => e.toString() == "Environment.${EnvironmentConfig.ENV}");
+
+  mainDelegate(env);
+}
 
 
 Future<void> mainDelegate(Environment env) async {

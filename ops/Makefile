@@ -4,19 +4,19 @@ ec2-update-security-group-rules: check-env
 	./ec2_update_security_group_rules.sh
 
 flutter-apk-install: check-env
-	cd ../app/climbicus/; flutter build apk -t lib/main_${ENV}.dart --split-per-abi; flutter install
+	cd ../app/climbicus/; flutter build apk --dart-define=ENV=${ENV} --split-per-abi; flutter install
 
 # Workarounds for
 # - https://issuetracker.google.com/issues/158753935
 # - https://github.com/flutter/flutter/issues/65334
 flutter-apk-install-hack: check-env
-	cd ../app/climbicus/; flutter build apk --debug -t lib/main_${ENV}.dart --split-per-abi --no-shrink; flutter build apk --profile -t lib/main_${ENV}.dart --split-per-abi --no-shrink; flutter build apk -t lib/main_${ENV}.dart --split-per-abi --no-shrink; flutter install
+	cd ../app/climbicus/; flutter build apk --debug --dart-define=ENV=${ENV} --split-per-abi --no-shrink; flutter build apk --profile --dart-define=ENV=${ENV} --split-per-abi --no-shrink; flutter build apk --dart-define=ENV=${ENV} --split-per-abi --no-shrink; flutter install
 
 flutter-appbundle-build: check-env
-	cd ../app/climbicus/; flutter build appbundle -t lib/main_${ENV}.dart
+	cd ../app/climbicus/; flutter build appbundle --dart-define=ENV=${ENV}
 
 flutter-ipa-build: check-env
-	cd ../app/climbicus/; flutter build ipa -t lib/main_${ENV}.dart
+	cd ../app/climbicus/; flutter build ipa --dart-define=ENV=${ENV}
 
 flutter-code-gen:
 	cd ../app/climbicus/; flutter pub run build_runner build

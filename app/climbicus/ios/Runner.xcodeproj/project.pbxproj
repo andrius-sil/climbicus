@@ -396,7 +396,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = FG5M2MC76G;
 				ENABLE_BITCODE = NO;
-				FLUTTER_TARGET = /Users/andriussilinskas/personal/climbicus/app/climbicus/lib/main_stag.dart;
+				FLUTTER_TARGET = /Users/andriussilinskas/personal/climbicus/app/climbicus/lib/main.dart;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -530,7 +530,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = FG5M2MC76G;
 				ENABLE_BITCODE = NO;
-				FLUTTER_TARGET = /Users/andriussilinskas/personal/climbicus/app/climbicus/lib/main_stag.dart;
+				FLUTTER_TARGET = /Users/andriussilinskas/personal/climbicus/app/climbicus/lib/main.dart;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -560,7 +560,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = FG5M2MC76G;
 				ENABLE_BITCODE = NO;
-				FLUTTER_TARGET = /Users/andriussilinskas/personal/climbicus/app/climbicus/lib/main_stag.dart;
+				FLUTTER_TARGET = /Users/andriussilinskas/personal/climbicus/app/climbicus/lib/main.dart;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
