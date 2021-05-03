@@ -507,7 +507,7 @@ class DropdownAreaState extends State<DropdownArea> {
         children: [
           Expanded(
             flex: 2,
-            child: RouteImageWidget.fromPath(area.imagePath, boxFit: BoxFit.contain),
+            child: RouteImageWidget.fromPath(area.thumbnailImagePath, boxFit: BoxFit.contain),
           ),
           Expanded(
             flex: 1,
