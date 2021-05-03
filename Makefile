@@ -8,6 +8,7 @@ endif
 docker-build: check-env
 	docker-compose -f docker-compose.yml -f docker-compose.${ENV}.yml build $(args)
 
+# E.g. make args="flask routes" docker-run
 docker-run: check-env
 	docker-compose -f docker-compose.yml -f docker-compose.${ENV}.yml run server $(args)
 
