@@ -19,7 +19,7 @@ flutter-ipa-build: check-env
 	cd ../app/climbicus/; flutter build ipa --dart-define=ENV=${ENV}
 
 flutter-code-gen:
-	cd ../app/climbicus/; flutter pub run build_runner build
+	cd ../app/climbicus/; flutter pub run build_runner build --delete-conflicting-outputs
 
 flutter-launcher-icons:
 	cd ../app/climbicus/; flutter pub run flutter_launcher_icons:main
