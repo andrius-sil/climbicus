@@ -5,7 +5,7 @@ part 'route.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Route {
-  Route(this.id, this.gymId, this.userId, this.areaId, this.category, this.lowerGrade, this.upperGrade, this.avgDifficulty, this.avgQuality, this.countAscents, this.createdAt);
+  Route(this.id, this.gymId, this.userId, this.areaId, this.category, this.name, this.lowerGrade, this.upperGrade, this.avgDifficulty, this.avgQuality, this.countAscents, this.createdAt);
 
   int id;
   int gymId;
@@ -43,7 +43,7 @@ class Route {
     assert(splits.length == 2);
 
     var gradeSystem = GRADE_SYSTEMS[splits[0]];
-    return gradeSystem.indexOf(splits[1]);
+    return gradeSystem!.indexOf(splits[1]);
   }
 
   int lowerGradeIndex() {

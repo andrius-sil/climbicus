@@ -4,7 +4,7 @@ part 'area.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Area {
-  Area(this.id, this.name, this.createdAt);
+  Area(this.id, this.gymId, this.userId, this.name, this.imagePath, this.thumbnailImagePath, this.createdAt);
 
   int id;
   int gymId;

@@ -4,7 +4,7 @@ part 'gym.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Gym {
-  Gym(this.id, this.name, this.createdAt);
+  Gym(this.id, this.name, this.hasBouldering, this.hasSport, this.createdAt);
 
   int id;
   String name;

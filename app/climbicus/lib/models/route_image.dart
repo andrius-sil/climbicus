@@ -4,7 +4,7 @@ part 'route_image.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class RouteImage {
-  RouteImage(this.id, this.userId, this.routeId, this.createdAt, this.path);
+  RouteImage(this.id, this.userId, this.routeId, this.createdAt, this.path, this.thumbnailPath);
 
   int id;
   int userId;
