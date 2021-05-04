@@ -105,10 +105,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
   String _versionString(PackageInfo packageInfo) {
     String version = packageInfo.version;
-    if (widget.env != Environment.dev) {
-      return version;
-    }
-
     return "$version (${packageInfo.buildNumber}) ${ENVIRONMENT_NAMES[widget.env]}";
   }
 
