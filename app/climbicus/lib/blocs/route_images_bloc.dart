@@ -106,8 +106,7 @@ class RouteImagesBloc extends Bloc<RouteImagesEvent, RouteImagesState> {
 
   final Images images = Images();
 
-  @override
-  RouteImagesState get initialState => RouteImagesUninitialized();
+  RouteImagesBloc() : super(RouteImagesUninitialized());
 
   @override
   Stream<RouteImagesState> mapEventToState(RouteImagesEvent event) async* {

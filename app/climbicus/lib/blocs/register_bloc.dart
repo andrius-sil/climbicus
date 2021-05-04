@@ -48,10 +48,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
   final AuthenticationBloc authenticationBloc;
 
-  RegisterBloc({@required this.authenticationBloc});
-
-  @override
-  RegisterState get initialState => RegisterInitial();
+  RegisterBloc({@required this.authenticationBloc}) : super(RegisterInitial());
 
   @override
   Stream<RegisterState> mapEventToState(RegisterEvent event) async* {

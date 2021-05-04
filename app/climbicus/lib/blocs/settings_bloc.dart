@@ -62,7 +62,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     storeSetting("seen_camera_help_overlay", _seenCameraHelpOverlay.toString());
   }
 
-  SettingsBloc() {
+  SettingsBloc() : super(SettingsUninitialized()) {
     retrieveSettings();
   }
 
@@ -72,9 +72,6 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     packageInfo: _packageInfo,
     seenCameraHelpOverlay: _seenCameraHelpOverlay,
   );
-
-  @override
-  SettingsState get initialState => SettingsUninitialized();
 
   Future<void> retrieveSettings() async {
     _imagePicker = await retrieveSetting("image_picker", _imagePicker);

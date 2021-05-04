@@ -132,7 +132,7 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
     return _entries.getRouteWithUserMeta(routeId);
   }
 
-  GymRoutesBloc({@required this.routeImagesBloc}) {
+  GymRoutesBloc({@required this.routeImagesBloc}) : super(GymRoutesUninitialized()) {
     _sentFilterEnabled = Map.fromIterable(ROUTE_CATEGORIES,
       key: (category) => category,
       value: (_) => false,
@@ -146,9 +146,6 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
       value: (category) => GradeValues(0, (GRADE_SYSTEMS[DEFAULT_GRADE_SYSTEM[category]].length - 1)),
     );
   }
-
-  @override
-  GymRoutesState get initialState => GymRoutesUninitialized();
 
   @override
   Stream<GymRoutesState> mapEventToState(GymRoutesEvent event) async* {

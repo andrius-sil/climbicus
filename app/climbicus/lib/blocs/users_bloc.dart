@@ -37,12 +37,9 @@ class FetchUsers extends UsersEvent {}
 class UsersBloc extends Bloc<UsersEvent, UsersState> {
   final getIt = GetIt.instance;
 
-  UsersBloc() {
+  UsersBloc() : super(UsersUninitialized()) {
     add(FetchUsers());
   }
-
-  @override
-  UsersState get initialState => UsersUninitialized();
 
   @override
   Stream<UsersState> mapEventToState(UsersEvent event) async* {

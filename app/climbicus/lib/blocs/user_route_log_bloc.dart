@@ -47,8 +47,7 @@ class UserRouteLogBloc extends Bloc<UserRouteLogEvent, UserRouteLogState> {
 
   Map<int, Map<int, UserRouteLog>> userRouteLogs = {};
 
-  @override
-  UserRouteLogState get initialState => UserRouteLogUninitialized();
+  UserRouteLogBloc() : super(UserRouteLogUninitialized());
 
   @override
   Stream<UserRouteLogState> mapEventToState(UserRouteLogEvent event) async* {

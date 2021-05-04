@@ -37,12 +37,9 @@ class FetchGyms extends GymsEvent {}
 class GymsBloc extends Bloc<GymsEvent, GymsState> {
   final getIt = GetIt.instance;
 
-  GymsBloc() {
+  GymsBloc() : super(GymsUninitialized()) {
     add(FetchGyms());
   }
-
-  @override
-  GymsState get initialState => GymsUninitialized();
 
   @override
   Stream<GymsState> mapEventToState(GymsEvent event) async* {

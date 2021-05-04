@@ -53,7 +53,7 @@ Future<void> mainDelegate(Environment env) async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  BlocSupervisor.delegate = SimpleBlocDelegate();
+  Bloc.observer = SimpleBlocObserver();
 
   final getIt = GetIt.instance;
   getIt.registerSingleton<ApiRepository>(ApiRepository(

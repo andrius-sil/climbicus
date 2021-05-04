@@ -63,8 +63,7 @@ class RoutePredictionBloc extends Bloc<RoutePredictionEvent, RoutePredictionStat
 
   ImagePickerData _imgPickerData;
 
-  @override
-  RoutePredictionState get initialState => RoutePredictionUninitialized();
+  RoutePredictionBloc() : super(RoutePredictionUninitialized());
 
   @override
   Stream<RoutePredictionState> mapEventToState(RoutePredictionEvent event) async* {

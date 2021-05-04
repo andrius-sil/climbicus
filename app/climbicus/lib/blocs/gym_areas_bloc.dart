@@ -36,8 +36,7 @@ class FetchGymAreas extends GymAreasEvent {}
 class GymAreasBloc extends Bloc<GymAreasEvent, GymAreasState> {
   final getIt = GetIt.instance;
 
-  @override
-  GymAreasState get initialState => GymAreasUninitialized();
+  GymAreasBloc() : super(GymAreasUninitialized());
 
   @override
   Stream<GymAreasState> mapEventToState(GymAreasEvent event) async* {

@@ -36,12 +36,9 @@ class AuthenticationLoading extends AuthenticationState {}
 class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
   final getIt = GetIt.instance;
 
-  AuthenticationBloc() {
+  AuthenticationBloc() : super(AuthenticationUninitialized()) {
     add(AppStarted());
   }
-
-  @override
-  AuthenticationState get initialState => AuthenticationUninitialized();
 
   @override
   Stream<AuthenticationState> mapEventToState(AuthenticationEvent event) async* {
