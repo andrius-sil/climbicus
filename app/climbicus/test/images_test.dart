@@ -11,7 +11,7 @@ void main() {
     var routeIds = List<int>.generate(10, (int index) => index + 1);
     var routes = Map<int, RouteImage>.fromIterable(routeIds,
       key: (id) => id,
-      value: (id) => RouteImage(id, 1, id, DateTime.now(), ""),
+      value: (id) => RouteImage(id, 1, id, DateTime.now(), "", ""),
     );
     images.addRoutes(routes);
     routeIds.forEach((index) {
@@ -22,7 +22,7 @@ void main() {
     // Add 10 images to an existing route.
     var routeImageIds = List<int>.generate(20, (int index) => index + 11);
     var routeImages = routeImageIds.map(
-            (id) => RouteImage(id, 1, 5, DateTime.now(), "")
+            (id) => RouteImage(id, 1, 5, DateTime.now(), "", "")
     ).toList();
     images.addRouteImages(5, routeImages);
     expect(images.allImages(5).values, routeImages);

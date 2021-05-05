@@ -43,7 +43,7 @@ class Route {
     assert(splits.length == 2);
 
     var gradeSystem = GRADE_SYSTEMS[splits[0]];
-    return gradeSystem!.indexOf(splits[1]);
+    return gradeSystem.indexOf(splits[1]);
   }
 
   int lowerGradeIndex() {

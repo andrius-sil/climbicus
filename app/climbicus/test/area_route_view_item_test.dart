@@ -8,9 +8,9 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('area items', () {
     var areas = {
-      1: Area(1, "one", DateTime.now()),
-      2: Area(2, "two", DateTime.now()),
-      3: Area(3, "three", DateTime.now()),
+      1: Area(1, 1, 1, "one", "", "", DateTime.now()),
+      2: Area(2, 1, 1, "two", "", "", DateTime.now()),
+      3: Area(3, 1, 1, "three", "", "", DateTime.now()),
     };
     var areaItems = AreaItems();
 
@@ -21,7 +21,7 @@ void main() {
 
     var item1 = RouteListItem(
       routeWithUserMeta: RouteWithUserMeta(
-        jsonmdl.Route(1, null, null, null, null, null, null, null, null, null, null),
+        jsonmdl.Route(1, null, null, null, null, null, null, null, null, null, null, null),
         null,
         null,
       ),
@@ -30,7 +30,7 @@ void main() {
     );
     var item2 = RouteListItem(
       routeWithUserMeta: RouteWithUserMeta(
-        jsonmdl.Route(2, null, null, null, null, null, null, null, null, null, null),
+        jsonmdl.Route(2, null, null, null, null, null, null, null, null, null, null, null),
         null,
         null,
       ),

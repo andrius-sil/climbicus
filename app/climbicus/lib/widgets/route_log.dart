@@ -413,7 +413,7 @@ class DropdownArea extends StatefulWidget {
 
 
 class DropdownAreaState extends State<DropdownArea> {
-  static Area notSelectedValue = Area(NOT_SELECTED_AREA, NOT_SELECTED, null);
+  static Area notSelectedValue = Area(NOT_SELECTED_AREA, 0, 0, NOT_SELECTED, "", "", DateTime.now());
   Area _value = notSelectedValue;
 
   @override

@@ -186,7 +186,7 @@ class _HomePageState extends State<HomePage> {
     return BlocBuilder<AuthenticationBloc, AuthenticationState>(
       builder: (context, state) {
         if (state is AuthenticationAuthenticated) {
-          Sentry.configureScope((scope) => scope.user = User(
+          Sentry.configureScope((scope) => scope.user = SentryUser(
             id: "${getIt<UserRepository>().userId}",
             email: getIt<UserRepository>().email,
           ));
