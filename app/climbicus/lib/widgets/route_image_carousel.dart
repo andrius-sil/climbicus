@@ -32,9 +32,16 @@ class _RouteImageCarouselState extends State<RouteImageCarousel> {
 
     return Stack(children: [
       CarouselSlider(
-        viewportFraction: 0.5,
-        enlargeCenterPage: true,
-        enableInfiniteScroll: false,
+        options: CarouselOptions(
+          viewportFraction: 0.5,
+          enlargeCenterPage: true,
+          enableInfiniteScroll: false,
+          onPageChanged: (index, reason) {
+            setState(() {
+              _current = index;
+            });
+          },
+        ),
         items: widget.images.values.map((img) {
           return Builder(
               builder: (BuildContext context) {
@@ -42,11 +49,6 @@ class _RouteImageCarouselState extends State<RouteImageCarousel> {
               }
           );
         }).toList(),
-        onPageChanged: (index) {
-          setState(() {
-            _current = index;
-          });
-        },
       ),
       Positioned(
         top: 0.0,

@@ -16,6 +16,8 @@ class CameraCustom extends StatefulWidget {
 }
 
 class _CameraCustomState extends State<CameraCustom> {
+  final _imagePicker = ImagePicker();
+
   List<CameraDescription> _cameras;
   CameraController _controller;
   Future<void> _initializeControllerFuture;
@@ -172,12 +174,12 @@ class _CameraCustomState extends State<CameraCustom> {
   }
 
   Future<void> _onPickPictureButtonPressed() async {
-    var imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
-    if (imageFile == null) {
+    var pickedFile = await _imagePicker.getImage(source: ImageSource.gallery);
+    if (pickedFile == null) {
       return;
     }
 
-    Navigator.pop(context, imageFile);
+    Navigator.pop(context, File(pickedFile.path));
   }
 
   Future<void> _onTakePictureButtonPressed() async {
@@ -188,10 +190,7 @@ class _CameraCustomState extends State<CameraCustom> {
   }
 
   Future<String> takePicture() async {
-    var dirPath = await routePicturesDir();
-    final String filePath = "$dirPath/${timestamp()}.jpg";
-
-    await _controller.takePicture(filePath);
-    return filePath;
+    XFile xfile = await _controller.takePicture();
+    return xfile.path;
   }
 }
