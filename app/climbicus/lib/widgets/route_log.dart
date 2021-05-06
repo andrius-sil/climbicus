@@ -17,7 +17,7 @@ const NOT_SELECTED_AREA = 0;
 
 
 Widget decorateLogWidget(BuildContext context, Widget logWidget,
-    {double height = 80.0, double padding = 4.0}) {
+    {double? height = 80.0, double padding = 4.0}) {
   return Container(
     padding: EdgeInsets.all(padding),
     margin: const EdgeInsets.all(4),
@@ -42,15 +42,15 @@ TextStyle dropdownValueStyle(String value, BuildContext context) {
 
 
 class CheckboxSent extends CheckboxWithTitle {
-  const CheckboxSent({Key key}) : super(key: key, title: "Sent?");
+  const CheckboxSent({required Key key}) : super(key: key, title: "Sent?");
 }
 
 class CheckboxWithTitle extends StatefulWidget {
   final String title;
-  final VoidCallback onTicked;
+  final VoidCallback? onTicked;
   final bool titleAbove;
 
-  const CheckboxWithTitle({Key key, this.title, this.onTicked, this.titleAbove = true}) : super(key: key);
+  const CheckboxWithTitle({required Key key, required this.title, this.onTicked, this.titleAbove = true}) : super(key: key);
 
   @override
   CheckboxWithTitleState createState() => CheckboxWithTitleState();
@@ -85,10 +85,10 @@ class CheckboxWithTitleState extends State<CheckboxWithTitle> {
           setState(() {
             _value = value;
             if (widget.onTicked != null) {
-              widget.onTicked();
+              widget.onTicked!();
             }
           });
-        },
+        } as void Function(bool?)?,
       ),
     );
 
@@ -116,7 +116,7 @@ class CheckboxWithTitleState extends State<CheckboxWithTitle> {
 
 
 class NumberAttempts extends StatefulWidget {
-  const NumberAttempts({Key key}) : super(key: key);
+  const NumberAttempts({required Key/*!*/ key}) : super(key: key);
 
   @override
   NumberAttemptsState createState() => NumberAttemptsState();
@@ -127,7 +127,7 @@ class NumberAttemptsState extends State<NumberAttempts> {
 
   int _value;
 
-  int get value => (_value == 0) ? null : _value;
+  int? get value => (_value == 0) ? null : _value;
 
   int _initialValue() => 0;
 
@@ -171,16 +171,16 @@ class NumberAttemptsState extends State<NumberAttempts> {
 
 
 class SliderAttempts extends StatefulWidget {
-  const SliderAttempts({Key key}) : super(key: key);
+  const SliderAttempts({required Key key}) : super(key: key);
 
   @override
   SliderAttemptsState createState() => SliderAttemptsState();
 }
 
 class SliderAttemptsState extends State<SliderAttempts> {
-  double _value;
+  double? _value;
 
-  int get value => (_value == null) ? null : _value.toInt();
+  int? get value => (_value == null) ? null : _value!.toInt();
 
   @override
   Widget build(BuildContext context) {
@@ -188,7 +188,7 @@ class SliderAttemptsState extends State<SliderAttempts> {
       children: <Widget>[
         Text("How many attempts?\t${_numAttemptsLabel()}"),
         Slider(
-          value: (_value == null) ? 0.0 : _value,
+          value: (_value == null) ? 0.0 : _value!,
           min: 0.0,
           max: 30.0,
           divisions: 30,
@@ -206,7 +206,7 @@ class SliderAttemptsState extends State<SliderAttempts> {
   String _numAttemptsLabel() {
     return (_value == null) ?
     "-" :
-    "${_value.toInt()}";
+    "${_value!.toInt()}";
   }
 }
 
@@ -216,8 +216,8 @@ class SliderRouteGrades extends StatefulWidget {
   final List<String> gradeSystem;
   final VoidCallback onChangeEnd;
 
-  SliderRouteGrades({Key key, this.routeCategory, this.onChangeEnd}) :
-    gradeSystem = GRADE_SYSTEMS[DEFAULT_GRADE_SYSTEM[routeCategory]],
+  SliderRouteGrades({required Key key, required this.routeCategory, required this.onChangeEnd}) :
+    gradeSystem = GRADE_SYSTEMS[DEFAULT_GRADE_SYSTEM[routeCategory]!]!,
     super(key: key);
 
   @override
@@ -225,7 +225,7 @@ class SliderRouteGrades extends StatefulWidget {
 }
 
 class SliderRouteGradesState extends State<SliderRouteGrades> {
-  RangeValues _values;
+  late RangeValues _values;
 
   GradeValues get values => GradeValues(_values.start.toInt(), _values.end.toInt());
 
@@ -274,9 +274,9 @@ class SliderRouteGradesState extends State<SliderRouteGrades> {
 
 
 class RouteDifficultyRating extends StatefulWidget {
-  final String initialValue;
+  final String? initialValue;
 
-  const RouteDifficultyRating({Key key, this.initialValue}) : super(key: key);
+  const RouteDifficultyRating({required Key key, this.initialValue}) : super(key: key);
 
   @override
   RouteDifficultyRatingState createState() => RouteDifficultyRatingState();
@@ -288,7 +288,7 @@ class RouteDifficultyRatingState extends State<RouteDifficultyRating> {
 
   int _index;
 
-  String get value => (_index == -1) ? null : _values[_index];
+  String? get value => (_index == -1) ? null : _values[_index];
 
   int _initialValue() => (widget.initialValue == null) ? -1 : _values.indexOf(widget.initialValue);
 
@@ -328,9 +328,9 @@ class RouteDifficultyRatingState extends State<RouteDifficultyRating> {
 
 
 class RouteQualityRating extends StatefulWidget {
-  final double initialValue;
+  final double? initialValue;
 
-  const RouteQualityRating({Key key, this.initialValue}): super(key: key);
+  const RouteQualityRating({required Key key, this.initialValue}): super(key: key);
 
   @override
   RouteQualityRatingState createState() => RouteQualityRatingState();
@@ -339,9 +339,9 @@ class RouteQualityRating extends StatefulWidget {
 class RouteQualityRatingState extends State<RouteQualityRating> {
   double _value;
 
-  double get value => (_value == 0) ? null : _value;
+  double? get value => (_value == 0) ? null : _value;
 
-  double _initialValue() => (widget.initialValue == null) ? 0 : widget.initialValue;
+  double _initialValue() => (widget.initialValue == null) ? 0 : widget.initialValue!;
 
   void resetState() {
     setState(() {
@@ -372,7 +372,7 @@ class RouteQualityRatingState extends State<RouteQualityRating> {
 
 
 class RouteName extends StatefulWidget {
-  const RouteName({Key key}) : super(key: key);
+  const RouteName({required Key key}) : super(key: key);
 
   @override
   RouteNameState createState() => RouteNameState();
@@ -381,7 +381,7 @@ class RouteName extends StatefulWidget {
 class RouteNameState extends State<RouteName> {
   String _value;
 
-  String get value => (_value == "") ? null : _value;
+  String? get value => (_value == "") ? null : _value;
 
   @override
   Widget build(BuildContext context) {
@@ -405,7 +405,7 @@ class DropdownArea extends StatefulWidget {
   final Map<int, Area> areas;
   final void Function(Area) onChangeCallback;
 
-  const DropdownArea({this.areas, this.onChangeCallback});
+  const DropdownArea({required this.areas, required this.onChangeCallback});
 
   @override
   DropdownAreaState createState() => DropdownAreaState();
@@ -490,7 +490,7 @@ class DropdownAreaState extends State<DropdownArea> {
     bool isLast = widget.areas.values.last == area;
 
     var borderSide = BorderSide(
-      color: accentColor,
+      color: accentColor!,
       width: 2.0,
     );
 

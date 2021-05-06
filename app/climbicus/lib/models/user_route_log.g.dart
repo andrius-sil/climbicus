@@ -13,7 +13,7 @@ UserRouteLog _$UserRouteLogFromJson(Map<String, dynamic> json) {
     json['user_id'] as int,
     json['gym_id'] as int,
     json['completed'] as bool,
-    json['num_attempts'] as int,
+    json['num_attempts'] as int?,
     DateTime.parse(json['created_at'] as String),
   );
 }

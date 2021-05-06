@@ -44,8 +44,8 @@ void main() {
     expect(areaItems.items, [item1, item2]);
     expect(Map.fromEntries(areaItems.itemsByArea).length, 2);
 
-    expect(Map.fromEntries(areaItems.itemsByArea)[2].isExpanded, false);
-    expect(Map.fromEntries(areaItems.itemsByArea)[3].isExpanded, false);
+    expect(Map.fromEntries(areaItems.itemsByArea)[2]!.isExpanded, false);
+    expect(Map.fromEntries(areaItems.itemsByArea)[3]!.isExpanded, false);
     expect(areaItems.isExpanded(0), false);
     expect(areaItems.isExpanded(1), false);
     expect(areaItems.isExpanded(2), false);
@@ -53,8 +53,8 @@ void main() {
     item1.isExpanded = true;
     areaItems.expand(0, false);
 
-    expect(Map.fromEntries(areaItems.itemsByArea)[2].isExpanded, true);
-    expect(Map.fromEntries(areaItems.itemsByArea)[3].isExpanded, false);
+    expect(Map.fromEntries(areaItems.itemsByArea)[2]!.isExpanded, true);
+    expect(Map.fromEntries(areaItems.itemsByArea)[3]!.isExpanded, false);
     expect(areaItems.isExpanded(0), false);
     expect(areaItems.isExpanded(1), false);
     expect(areaItems.isExpanded(2), false);
@@ -63,8 +63,8 @@ void main() {
     areaItems.add(2, item1);
     areaItems.add(3, item2);
 
-    expect(Map.fromEntries(areaItems.itemsByArea)[2].isExpanded, true);
-    expect(Map.fromEntries(areaItems.itemsByArea)[3].isExpanded, false);
+    expect(Map.fromEntries(areaItems.itemsByArea)[2]!.isExpanded, true);
+    expect(Map.fromEntries(areaItems.itemsByArea)[3]!.isExpanded, false);
     expect(areaItems.isExpanded(0), false);
     expect(areaItems.isExpanded(1), true);
     expect(areaItems.isExpanded(2), false);

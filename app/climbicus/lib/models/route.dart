@@ -12,11 +12,11 @@ class Route {
   int userId;
   int areaId;
   String category;
-  String name;
+  String? name;
   String lowerGrade;
   String upperGrade;
-  String avgDifficulty;
-  double avgQuality;
+  String? avgDifficulty;
+  double? avgQuality;
   int countAscents;
   DateTime createdAt;
 
@@ -42,7 +42,7 @@ class Route {
     var splits = grade.split("_");
     assert(splits.length == 2);
 
-    var gradeSystem = GRADE_SYSTEMS[splits[0]];
+    var gradeSystem = GRADE_SYSTEMS[splits[0]]!;
     return gradeSystem.indexOf(splits[1]);
   }
 

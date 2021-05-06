@@ -15,13 +15,13 @@ class GymAreasLoading extends GymAreasState {}
 
 class GymAreasLoaded extends GymAreasState {
   final Map<int, Area> areas;
-  const GymAreasLoaded({@required this.areas});
+  const GymAreasLoaded({required this.areas});
 }
 
 class GymAreasError extends GymAreasState {
   FlutterErrorDetails errorDetails;
 
-  GymAreasError({Object exception, StackTrace stackTrace}):
+  GymAreasError({required Object exception, StackTrace? stackTrace}):
         errorDetails = FlutterErrorDetails(exception: exception, stack: stackTrace) {
     FlutterError.reportError(errorDetails);
   }

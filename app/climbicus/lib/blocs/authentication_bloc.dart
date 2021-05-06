@@ -15,7 +15,7 @@ class LoggedIn extends AuthenticationEvent {
   final String email;
   final Map userAuth;
 
-  const LoggedIn({@required this.email, @required this.userAuth});
+  const LoggedIn({required this.email, required this.userAuth});
 }
 
 class LoggedOut extends AuthenticationEvent {}

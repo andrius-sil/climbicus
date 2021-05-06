@@ -7,8 +7,8 @@ class RouteListItem {
   Widget image;
   bool isExpanded;
   RouteListItem({
-    this.routeWithUserMeta,
-    this.image,
+    required this.routeWithUserMeta,
+    required this.image,
     this.isExpanded: false
   });
 }
@@ -38,7 +38,7 @@ class AreaItems {
     _items.clear();
 
     Map<int, bool> isExpandedPreviousArea = {};
-    _itemsByAreaIndices.asMap().forEach((idx, areaId) => isExpandedPreviousArea[areaId] = _itemsByArea[areaId].isExpanded);
+    _itemsByAreaIndices.asMap().forEach((idx, areaId) => isExpandedPreviousArea[areaId] = _itemsByArea[areaId]!.isExpanded);
     _itemsByArea.clear();
     _itemsByAreaIndices.clear();
 
@@ -54,18 +54,18 @@ class AreaItems {
 
   void add(int areaId, RouteListItem item) {
     _items.add(item);
-    _itemsByArea[areaId].routeItems.add(item);
+    _itemsByArea[areaId]!.routeItems.add(item);
   }
 
   bool isExpanded(int routeId) {
     return _isExpandedPrevious.containsKey(routeId) ?
-      _isExpandedPrevious[routeId] :
+      _isExpandedPrevious[routeId]! :
       false;
   }
 
   void expand(int panelIndex, bool isExpanded) {
     var nonEmptyAreaIds = Map.fromEntries(itemsByArea).keys;
     var itemsByAreaIndices = _itemsByAreaIndices.where((areaId) => nonEmptyAreaIds.contains(areaId));
-    _itemsByArea[itemsByAreaIndices.toList()[panelIndex]].isExpanded = !isExpanded;
+    _itemsByArea[itemsByAreaIndices.toList()[panelIndex]]!.isExpanded = !isExpanded;
   }
 }

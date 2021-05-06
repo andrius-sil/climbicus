@@ -11,7 +11,7 @@ class UserRouteVotes {
   int userId;
   int gymId;
   double quality;
-  String difficulty;
+  String? difficulty;
   DateTime createdAt;
 
   factory UserRouteVotes.fromJson(Map<String, dynamic> json) =>

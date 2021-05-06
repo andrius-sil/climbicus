@@ -30,15 +30,15 @@ class HeaderListItem extends StatelessWidget {
   final RouteWithUserMeta routeWithUserMeta;
   final Widget image;
 
-  const HeaderListItem({this.routeWithUserMeta, this.image});
+  const HeaderListItem({required this.routeWithUserMeta, required this.image});
 
   @override
   Widget build(BuildContext context) {
-    UserRouteLog mostRecentLog = routeWithUserMeta.mostRecentLog();
+    UserRouteLog mostRecentLog = routeWithUserMeta.mostRecentLog()!;
 
-    Widget routeNameText;
+    Widget? routeNameText;
     if (this.routeWithUserMeta.route.name != null) {
-      routeNameText = Text(this.routeWithUserMeta.route.name, style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic));
+      routeNameText = Text(this.routeWithUserMeta.route.name!, style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic));
     }
     Widget routeName = Container(
       padding: const EdgeInsets.only(left: 8.0),
@@ -92,7 +92,7 @@ class BodyListItem extends StatefulWidget {
   final GymRoutesBloc gymRoutesBloc;
   final VoidCallback onAdd;
 
-  const BodyListItem({this.routeWithUserMeta, this.gymRoutesBloc, this.onAdd});
+  const BodyListItem({required this.routeWithUserMeta, required this.gymRoutesBloc, required this.onAdd});
 
   @override
   _BodyListItemState createState() => _BodyListItemState();
@@ -134,23 +134,23 @@ class _BodyListItemState extends State<BodyListItem> {
 
     widget.gymRoutesBloc.add(AddNewUserRouteLog(
       routeId: widget.routeWithUserMeta.route.id,
-      completed: checkboxSentKey.currentState.value,
-      numAttempts: numberAttemptsKey.currentState.value,
+      completed: checkboxSentKey.currentState!.value,
+      numAttempts: numberAttemptsKey.currentState!.value,
     ));
 
     widget.gymRoutesBloc.add(AddOrUpdateUserRouteVotes(
       routeId: widget.routeWithUserMeta.route.id,
       userRouteVotesData: UserRouteVotesData(
-        routeQualityKey.currentState.value,
-        routeDifficultyKey.currentState.value,
+        routeQualityKey.currentState!.value,
+        routeDifficultyKey.currentState!.value,
       ),
     ));
 
     // Clear the fields.
-    checkboxSentKey.currentState.resetState();
-    numberAttemptsKey.currentState.resetState();
-    routeQualityKey.currentState.resetState();
-    routeDifficultyKey.currentState.resetState();
+    checkboxSentKey.currentState!.resetState();
+    numberAttemptsKey.currentState!.resetState();
+    routeQualityKey.currentState!.resetState();
+    routeDifficultyKey.currentState!.resetState();
   }
 }
 
@@ -159,7 +159,7 @@ class RouteViewPage extends StatefulWidget {
   final String routeCategory;
   final Gym gym;
 
-  RouteViewPage({@required this.routeCategory, @required this.gym}) :
+  RouteViewPage({required this.routeCategory, required this.gym}) :
         super(key: ValueKey("${gym.id}-$routeCategory"));
 
   @override
@@ -172,9 +172,9 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
   final checkboxHideAttemptedKey = GlobalKey<CheckboxWithTitleState>();
   final sliderRouteGradesKey = GlobalKey<SliderRouteGradesState>();
 
-  RouteImagesBloc _routeImagesBloc;
-  GymAreasBloc _gymAreasBloc;
-  GymRoutesBloc _gymRoutesBloc;
+  late RouteImagesBloc _routeImagesBloc;
+  late GymAreasBloc _gymAreasBloc;
+  late GymRoutesBloc _gymRoutesBloc;
 
   AreaItems _areaItems = AreaItems();
 
@@ -267,7 +267,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
                 titleAbove: false,
                 onTicked: () => _gymRoutesBloc.add(
                     FilterSentGymRoutes(
-                      enabled: checkboxHideSentKey.currentState.value,
+                      enabled: checkboxHideSentKey.currentState!.value,
                       category: widget.routeCategory,
                     )
                 ),
@@ -280,7 +280,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
                 titleAbove: false,
                 onTicked: () => _gymRoutesBloc.add(
                     FilterAttemptedGymRoutes(
-                      enabled: checkboxHideAttemptedKey.currentState.value,
+                      enabled: checkboxHideAttemptedKey.currentState!.value,
                       category: widget.routeCategory,
                     )
                 ),
@@ -293,7 +293,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
           routeCategory: widget.routeCategory,
           onChangeEnd: () => _gymRoutesBloc.add(
             FilterGradesGymRoutes(
-              gradeValues: sliderRouteGradesKey.currentState.values,
+              gradeValues: sliderRouteGradesKey.currentState!.values,
               category: widget.routeCategory,
             )
           ),
@@ -324,7 +324,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
 
     _areaItems.reset(areas);
 
-    var categoryRoutes = routes.allRoutes(widget.routeCategory);
+    var categoryRoutes = routes.allRoutes(widget.routeCategory)!;
 
     var i = 0;
     (_sortEntriesByLogDate(categoryRoutes)).forEach((routeId, routeWithUserMeta) {
@@ -486,10 +486,10 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
   // TODO: move elsewhere
   Map<int, RouteWithUserMeta> _sortEntriesByLogDate(Map<int, RouteWithUserMeta> routes) {
     var sortedKeys = routes.keys.toList(growable: false)
-      ..sort((k1, k2) => routes[k2].mostRecentCreatedAt().compareTo(routes[k1].mostRecentCreatedAt()));
+      ..sort((k1, k2) => routes[k2]!.mostRecentCreatedAt().compareTo(routes[k1]!.mostRecentCreatedAt()));
 
     return LinkedHashMap.fromIterable(sortedKeys,
-        key: (k) => k, value: (k) => routes[k]);
+        key: ((k) => k) as int Function(dynamic)?, value: ((k) => routes[k]!) as RouteWithUserMeta Function(dynamic)?);
   }
 
   @override

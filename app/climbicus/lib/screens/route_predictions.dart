@@ -18,18 +18,18 @@ class RoutePredictionsPage extends StatefulWidget {
   final File image;
   final String routeCategory;
 
-  RoutePredictionsPage({this.image, this.routeCategory});
+  RoutePredictionsPage({required this.image, required this.routeCategory});
 
   @override
   State<StatefulWidget> createState() => _RoutePredictionsPageState();
 }
 
 class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
-  RouteImageWidget _takenImage;
-  ImagePickerData _imgPickerData;
+  RouteImageWidget? _takenImage;
+  ImagePickerData? _imgPickerData;
 
-  SettingsBloc _settingsBloc;
-  RoutePredictionBloc _routePredictionBloc;
+  late SettingsBloc _settingsBloc;
+  late RoutePredictionBloc _routePredictionBloc;
 
   @override
   void initState() {
@@ -135,7 +135,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
   Future<void> noMatch() async {
     Navigator.push(context, MaterialPageRoute(
       builder: (BuildContext context) {
-        return AddRoutePage(imgPickerData: _imgPickerData, routeCategory: widget.routeCategory);
+        return AddRoutePage(imgPickerData: _imgPickerData!, routeCategory: widget.routeCategory);
       },
     ));
   }
@@ -206,7 +206,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
                 BlocBuilder<GymAreasBloc, GymAreasState>(
                   builder: (context, areasState) {
                     if (areasState is GymAreasLoaded) {
-                      return Text("Area: ${areasState.areas[prediction.route.areaId].name}");
+                      return Text("Area: ${areasState.areas[prediction.route.areaId]!.name}");
                     } else if (areasState is GymAreasError) {
                       return ErrorWidget.builder(areasState.errorDetails);
                     }
@@ -249,7 +249,7 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
               selectedRouteId: routeId,
               selectedImage: imageWidget,
               takenRouteImageId: takenRouteImageId,
-              takenImage: _takenImage,
+              takenImage: _takenImage!,
             );
           },
         ));

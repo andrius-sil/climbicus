@@ -9,7 +9,7 @@ class VerifyPage extends StatefulWidget {
 }
 
 class _VerifyPageState extends State<VerifyPage> {
-  AuthenticationBloc _authenticationBloc;
+  late AuthenticationBloc _authenticationBloc;
 
   @override
   void initState() {

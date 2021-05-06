@@ -48,7 +48,7 @@ void main() {
 
 Future<void> mainDelegate(Environment env) async {
   ErrorWidget.builder = _buildErrorWidget;
-  debugPrint = _debugPrintWrapper;
+  debugPrint = _debugPrintWrapper as void Function(String?, {int? wrapWidth});
   FlutterError.onError = _onError;
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -111,7 +111,7 @@ void _onError(FlutterErrorDetails details) {
   Sentry.captureException(details.exception, stackTrace: details.stack);
 }
 
-SentryEvent _sentryBeforeSend(SentryEvent event, {dynamic hint}) {
+SentryEvent? _sentryBeforeSend(SentryEvent event, {dynamic hint}) {
   return isInDebugMode ? null : event;
 }
 
@@ -124,7 +124,7 @@ Future _sentryInit(Environment env) async {
   );
 }
 
-void _debugPrintWrapper(String message, {int wrapWidth}) {
+void _debugPrintWrapper(String message, {int? wrapWidth}) {
   var now = DateTime.now();
   message = "$now: $message";
   debugPrintThrottled(message, wrapWidth: wrapWidth);
@@ -152,7 +152,7 @@ bool get isInDebugMode {
 class ClimbicusApp extends StatelessWidget {
   final Environment env;
 
-  const ClimbicusApp({this.env});
+  const ClimbicusApp({required this.env});
 
   @override
   Widget build(BuildContext context) {
@@ -172,7 +172,7 @@ class ClimbicusApp extends StatelessWidget {
 class HomePage extends StatefulWidget {
   final Environment env;
 
-  HomePage({@required this.env});
+  HomePage({required this.env});
 
   @override
   State<StatefulWidget> createState() => _HomePageState();
@@ -222,7 +222,7 @@ class _HomePageState extends State<HomePage> {
           return BlocBuilder<GymsBloc, GymsState>(
             builder: (context, gymState) {
               if (gymState is GymsLoaded) {
-                return _buildRouteTabView(gymState.gyms[settingsState.gymId]);
+                return _buildRouteTabView(gymState.gyms[settingsState.gymId]!);
               } else if (gymState is GymsError) {
                 return ErrorWidget.builder(gymState.errorDetails);
               }

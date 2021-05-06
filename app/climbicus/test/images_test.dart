@@ -25,10 +25,10 @@ void main() {
             (id) => RouteImage(id, 1, 5, DateTime.now(), "", "")
     ).toList();
     images.addRouteImages(5, routeImages);
-    expect(images.allImages(5).values, routeImages);
+    expect(images.allImages(5)!.values, routeImages);
 
-    expect(images.allImages(1)[1], routes[1]);
-    expect(images.allImages(1)[2], null);
+    expect(images.allImages(1)![1], routes[1]);
+    expect(images.allImages(1)![2], null);
     expect(images.allImages(11), null);
   });
 }

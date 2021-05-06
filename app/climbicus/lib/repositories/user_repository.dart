@@ -8,33 +8,33 @@ class UserRepository {
   final getIt = GetIt.instance;
   final secureStorage = FlutterSecureStorage();
 
-  String _accessToken;
-  String _email;
-  int _userId;
+  String? _accessToken;
+  String? _email;
+  int? _userId;
 
-  String get accessToken => _accessToken;
-  String get email => _email;
-  int get userId => _userId;
+  String get accessToken => _accessToken!;
+  String get email => _email!;
+  int get userId => _userId!;
 
   Future<void> register({
-    @required String name,
-    @required String email,
-    @required String password,
+    required String name,
+    required String email,
+    required String password,
   }) async {
     await getIt<ApiRepository>().register(name, email, password);
   }
 
   Future<Map> authenticate({
-    @required String email,
-    @required String password,
+    required String email,
+    required String password,
   }) async {
     var userAuth = await getIt<ApiRepository>().login(email, password);
     return userAuth;
   }
 
   Future<void> persistAuth({
-    @required String email,
-    @required Map userAuth,
+    required String email,
+    required Map userAuth,
   }) async {
     _accessToken = userAuth["access_token"];
     _userId = userAuth["user_id"];
@@ -62,7 +62,7 @@ class UserRepository {
       return false;
     }
 
-    _userId = int.parse(await secureStorage.read(key: "user_id"));
+    _userId = int.parse(await (secureStorage.read(key: "user_id") as FutureOr<String>));
     _email = await secureStorage.read(key: "email");
 
     return true;

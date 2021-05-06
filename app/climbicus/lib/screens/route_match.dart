@@ -9,16 +9,16 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RouteMatchPage extends StatefulWidget {
-  final int selectedRouteId;
+  final int? selectedRouteId;
   final Widget selectedImage;
   final int takenRouteImageId;
   final RouteImageWidget takenImage;
 
   RouteMatchPage({
     this.selectedRouteId,
-    this.selectedImage,
-    this.takenRouteImageId,
-    this.takenImage,
+    required this.selectedImage,
+    required this.takenRouteImageId,
+    required this.takenImage,
   });
 
   @override
@@ -34,8 +34,8 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
   final routeQualityKey = GlobalKey<RouteQualityRatingState>();
   final routeDifficultyKey = GlobalKey<RouteDifficultyRatingState>();
 
-  RouteImagesBloc _routeImagesBloc;
-  GymRoutesBloc _gymRoutesBloc;
+  late RouteImagesBloc _routeImagesBloc;
+  late GymRoutesBloc _gymRoutesBloc;
 
   @override
   void initState() {
@@ -45,7 +45,7 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
     _gymRoutesBloc = BlocProvider.of<GymRoutesBloc>(context);
 
     _routeImagesBloc.add(UpdateRouteImage(
-      routeId: widget.selectedRouteId,
+      routeId: widget.selectedRouteId!,
       routeImageId: widget.takenRouteImageId,
     ));
   }
@@ -122,16 +122,16 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
 
   void _logAndNavigateBack() {
     _gymRoutesBloc.add(AddNewUserRouteLog(
-      routeId: widget.selectedRouteId,
-      completed: checkboxSentKey.currentState.value,
-      numAttempts: numberAttemptsKey.currentState.value,
+      routeId: widget.selectedRouteId!,
+      completed: checkboxSentKey.currentState!.value,
+      numAttempts: numberAttemptsKey.currentState!.value,
     ));
 
     _gymRoutesBloc.add(AddOrUpdateUserRouteVotes(
-      routeId: widget.selectedRouteId,
+      routeId: widget.selectedRouteId!,
       userRouteVotesData: UserRouteVotesData(
-        routeQualityKey.currentState.value,
-        routeDifficultyKey.currentState.value,
+        routeQualityKey.currentState!.value,
+        routeDifficultyKey.currentState!.value,
       ),
     ));
 

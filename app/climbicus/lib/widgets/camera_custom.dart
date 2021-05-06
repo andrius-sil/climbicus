@@ -18,11 +18,11 @@ class CameraCustom extends StatefulWidget {
 class _CameraCustomState extends State<CameraCustom> {
   final _imagePicker = ImagePicker();
 
-  List<CameraDescription> _cameras;
-  CameraController _controller;
-  Future<void> _initializeControllerFuture;
+  late List<CameraDescription> _cameras;
+  late CameraController _controller;
+  Future<void>? _initializeControllerFuture;
 
-  SettingsBloc _settingsBloc;
+  late SettingsBloc _settingsBloc;
 
   @override
   void initState() {
@@ -31,7 +31,7 @@ class _CameraCustomState extends State<CameraCustom> {
     _settingsBloc = BlocProvider.of<SettingsBloc>(context);
 
     if (!_settingsBloc.seenCameraHelpOverlay) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
+      WidgetsBinding.instance!.addPostFrameCallback((_) async {
         _showHelpOverlay();
       });
 

@@ -63,5 +63,5 @@ Future<String> getServerUrl(Environment env) async {
     }
   }
 
-  return SERVER_URLS[env];
+  return SERVER_URLS[env]!;
 }

@@ -17,10 +17,10 @@ class SettingsState {
   final bool seenCameraHelpOverlay;
 
   SettingsState({
-    @required this.displayPredictionsNum,
-    @required this.gymId,
-    @required this.packageInfo,
-    @required this.seenCameraHelpOverlay,
+    required this.displayPredictionsNum,
+    required this.gymId,
+    required this.packageInfo,
+    required this.seenCameraHelpOverlay,
   });
 }
 
@@ -34,7 +34,7 @@ class InitializedSettings extends SettingsEvent {}
 
 class GymChanged extends SettingsEvent {
   final int gymId;
-  const GymChanged({@required this.gymId});
+  const GymChanged({required this.gymId});
 }
 
 
@@ -45,7 +45,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   String _imagePicker = "both";
   int _displayPredictionsNum = 3;
   int _gymId = PLACEHOLDER_GYM_ID;
-  PackageInfo _packageInfo;
+  late PackageInfo _packageInfo;
   bool _seenCameraHelpOverlay = false;
 
   int get gymId => _gymId;
@@ -109,7 +109,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   Future<String> retrieveSetting(String settingName, String defaultVal) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (prefs.containsKey(settingName)) {
-      return prefs.getString(settingName);
+      return prefs.getString(settingName)!;
     }
 
     return defaultVal;

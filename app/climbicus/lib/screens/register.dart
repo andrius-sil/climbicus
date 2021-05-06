@@ -11,11 +11,11 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  RegisterBloc _registerBloc;
+  late RegisterBloc _registerBloc;
 
-  String _name;
-  String _email;
-  String _password;
+  String? _name;
+  String? _email;
+  String? _password;
 
   @override
   void initState() {
@@ -65,7 +65,7 @@ class _RegisterPageState extends State<RegisterPage> {
           key: Key('name'),
           keyboardType: TextInputType.text,
           decoration: InputDecoration(labelText: 'Name / Nickname'),
-          validator: (value) => value.isEmpty ? "Name / Nickname can't be empty" : null,
+          validator: (value) => value!.isEmpty ? "Name / Nickname can't be empty" : null,
           onSaved: (value) => _name = value,
         ),
       ),
@@ -74,7 +74,7 @@ class _RegisterPageState extends State<RegisterPage> {
           key: Key('email'),
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(labelText: 'Email'),
-          validator: (value) => value.isEmpty ? "Email can't be empty" : null,
+          validator: (value) => value!.isEmpty ? "Email can't be empty" : null,
           onSaved: (value) => _email = value,
         ),
       ),
@@ -83,7 +83,7 @@ class _RegisterPageState extends State<RegisterPage> {
           key: Key('password'),
           obscureText: true,
           decoration: InputDecoration(labelText: 'Password'),
-          validator: (value) => value.isEmpty ? "Password can't be empty" : null,
+          validator: (value) => value!.isEmpty ? "Password can't be empty" : null,
           onSaved: (value) => _password = value,
         ),
       ),
@@ -105,16 +105,16 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void validateAndRegister(BuildContext context) {
-    final FormState form = formKey.currentState;
+    final FormState form = formKey.currentState!;
     if (!form.validate()) {
       return;
     }
     form.save();
 
     _registerBloc.add(RegisterButtonPressed(
-      name: _name,
-      email: _email,
-      password: _password,
+      name: _name!,
+      email: _email!,
+      password: _password!,
     ));
   }
 }

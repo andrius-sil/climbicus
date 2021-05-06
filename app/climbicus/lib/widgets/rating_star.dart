@@ -98,7 +98,7 @@ class AscentWidget extends StatelessWidget {
         " — ";
       ascentStatus = Center(
         child: (userRouteLog.completed && userRouteLog.numAttempts == 1) ?
-        Icon(Icons.flash_on, color: Theme.of(context).textTheme.headline6.color) :
+        Icon(Icons.flash_on, color: Theme.of(context).textTheme.headline6!.color) :
         Text(numAttemptsStr, style: TextStyle(fontSize: 18)),
       );
     }

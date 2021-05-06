@@ -13,7 +13,7 @@ import 'package:package_info/package_info.dart';
 class SettingsPage extends StatefulWidget {
   final Environment env;
 
-  SettingsPage({@required this.env});
+  SettingsPage({required this.env});
 
   @override
   State<StatefulWidget> createState() => _SettingsPageState();
@@ -22,10 +22,10 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   final getIt = GetIt.instance;
 
-  AuthenticationBloc _authenticationBloc;
-  SettingsBloc _settingsBloc;
+  late AuthenticationBloc _authenticationBloc;
+  late SettingsBloc _settingsBloc;
 
-  double displayPredictionsNum;
+  late double displayPredictionsNum;
 
   @override
   void initState() {
@@ -75,7 +75,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return BlocBuilder<GymsBloc, GymsState>(
       builder: (context, state) {
         if (state is GymsLoaded) {
-          return Text("Your gym: ${state.gyms[gymId].name}");
+          return Text("Your gym: ${state.gyms[gymId]!.name}");
         }
 
         return Text("");

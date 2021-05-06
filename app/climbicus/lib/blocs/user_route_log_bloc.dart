@@ -14,13 +14,13 @@ class UserRouteLogLoading extends UserRouteLogState {}
 
 class UserRouteLogLoaded extends UserRouteLogState {
   final Map<int, Map<int, UserRouteLog>> userRouteLogs;
-  const UserRouteLogLoaded({@required this.userRouteLogs});
+  const UserRouteLogLoaded({required this.userRouteLogs});
 }
 
 class UserRouteLogError extends UserRouteLogState {
   FlutterErrorDetails errorDetails;
 
-  UserRouteLogError({Object exception, StackTrace stackTrace}):
+  UserRouteLogError({required Object exception, StackTrace? stackTrace}):
         errorDetails = FlutterErrorDetails(exception: exception, stack: stackTrace) {
     FlutterError.reportError(errorDetails);
   }
@@ -33,13 +33,13 @@ abstract class UserRouteLogEvent {
 class FetchUserRouteLog extends UserRouteLogEvent {
   final int routeId;
 
-  const FetchUserRouteLog({@required this.routeId});
+  const FetchUserRouteLog({required this.routeId});
 }
 
 class DeleteUserRouteLog extends UserRouteLogEvent {
   final UserRouteLog userRouteLog;
 
-  const DeleteUserRouteLog({@required this.userRouteLog});
+  const DeleteUserRouteLog({required this.userRouteLog});
 }
 
 class UserRouteLogBloc extends Bloc<UserRouteLogEvent, UserRouteLogState> {
@@ -65,7 +65,7 @@ class UserRouteLogBloc extends Bloc<UserRouteLogEvent, UserRouteLogState> {
         yield UserRouteLogError(exception: e, stackTrace: st);
       }
     } else if (event is DeleteUserRouteLog) {
-      userRouteLogs[event.userRouteLog.routeId].remove(event.userRouteLog.id);
+      userRouteLogs[event.userRouteLog.routeId]!.remove(event.userRouteLog.id);
       yield UserRouteLogLoaded(userRouteLogs: userRouteLogs);
     }
   }

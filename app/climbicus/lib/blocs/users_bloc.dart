@@ -16,13 +16,13 @@ class UsersLoading extends UsersState {}
 
 class UsersLoaded extends UsersState {
   final Map<int, User> users;
-  const UsersLoaded({@required this.users});
+  const UsersLoaded({required this.users});
 }
 
 class UsersError extends UsersState {
   FlutterErrorDetails errorDetails;
 
-  UsersError({Object exception, StackTrace stackTrace}):
+  UsersError({required Object exception, StackTrace? stackTrace}):
         errorDetails = FlutterErrorDetails(exception: exception, stack: stackTrace) {
     FlutterError.reportError(errorDetails);
   }

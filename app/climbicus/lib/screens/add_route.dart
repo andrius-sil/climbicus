@@ -17,7 +17,7 @@ class AddRoutePage extends StatefulWidget {
   final ImagePickerData imgPickerData;
   final String routeCategory;
 
-  AddRoutePage({this.imgPickerData, this.routeCategory});
+  AddRoutePage({required this.imgPickerData, required this.routeCategory});
 
   @override
   State<StatefulWidget> createState() => _AddRoutePageState();
@@ -35,9 +35,9 @@ class _AddRoutePageState extends State<AddRoutePage> {
 
   Map<int, RouteImage> _takenImages = {};
 
-  GymRoutesBloc _gymRoutesBloc;
-  RouteImagesBloc _routeImagesBloc;
-  RoutePredictionBloc _routePredictionBloc;
+  late GymRoutesBloc _gymRoutesBloc;
+  late RouteImagesBloc _routeImagesBloc;
+  late RoutePredictionBloc _routePredictionBloc;
 
   int _selectedAreaId = NOT_SELECTED_AREA;
   String _selectedCategory = NOT_SELECTED;
@@ -49,7 +49,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
     super.initState();
 
     _selectedCategory = widget.routeCategory;
-    _selectedGradeSystem = DEFAULT_GRADE_SYSTEM[widget.routeCategory];
+    _selectedGradeSystem = DEFAULT_GRADE_SYSTEM[widget.routeCategory]!;
 
     _gymRoutesBloc = BlocProvider.of<GymRoutesBloc>(context);
     _routeImagesBloc = BlocProvider.of<RouteImagesBloc>(context);
@@ -179,9 +179,9 @@ class _AddRoutePageState extends State<AddRoutePage> {
               child: Text(value, style: dropdownValueStyle(value, context)),
             );
           }).toList(),
-          onChanged: (String value) {
+          onChanged: (String? value) {
             setState(() {
-              _selectedGrade = value;
+              _selectedGrade = value!;
             });
           },
         ),
@@ -205,10 +205,10 @@ class _AddRoutePageState extends State<AddRoutePage> {
               child: Text(value, style: dropdownValueStyle(value, context)),
             );
           }).toList(),
-          onChanged: (String value) {
+          onChanged: (String? value) {
             setState(() {
-              _selectedCategory = value;
-              _selectedGradeSystem = DEFAULT_GRADE_SYSTEM[value];
+              _selectedCategory = value!;
+              _selectedGradeSystem = DEFAULT_GRADE_SYSTEM[value]!;
             });
           },
         ),
@@ -243,7 +243,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
       return [];
     }
 
-    return GRADE_SYSTEMS[_selectedGradeSystem];
+    return GRADE_SYSTEMS[_selectedGradeSystem]!;
   }
 
   void uploadAndNavigateBack() {
@@ -251,13 +251,13 @@ class _AddRoutePageState extends State<AddRoutePage> {
       areaId: _selectedAreaId,
       category: _selectedCategory,
       grade: "${_selectedGradeSystem}_$_selectedGrade",
-      name: routeNameKey.currentState.value,
-      completed: checkboxSentKey.currentState.value,
-      numAttempts: numberAttemptsKey.currentState.value,
+      name: routeNameKey.currentState!.value,
+      completed: checkboxSentKey.currentState!.value,
+      numAttempts: numberAttemptsKey.currentState!.value,
       routeImages: _takenImages.values.toList(),
       userRouteVotesData: UserRouteVotesData(
-        routeQualityKey.currentState.value,
-        routeDifficultyKey.currentState.value,
+        routeQualityKey.currentState!.value,
+        routeDifficultyKey.currentState!.value,
       ),
     ));
 

@@ -11,26 +11,26 @@ class ImagesData {
   int defaultRouteImageId;
   Map<int, RouteImage> routeImages;
 
-  RouteImage get defaultRouteImage => routeImages[defaultRouteImageId];
+  RouteImage? get defaultRouteImage => routeImages[defaultRouteImageId];
 }
 
 class Images {
   Map<int, ImagesData> _data = {};
 
-  RouteImage defaultImage(int routeId) {
+  RouteImage? defaultImage(int routeId) {
     if (!_data.containsKey(routeId)) {
       return null;
     }
 
-    return _data[routeId].defaultRouteImage;
+    return _data[routeId]!.defaultRouteImage;
   }
 
-  Map<int, RouteImage> allImages(int routeId) {
+  Map<int, RouteImage>? allImages(int routeId) {
     if (!_data.containsKey(routeId)) {
       return null;
     }
 
-    return _data[routeId].routeImages;
+    return _data[routeId]!.routeImages;
   }
 
   bool contains(int routeId) => _data.containsKey(routeId);
@@ -46,9 +46,9 @@ class Images {
       return;
     }
 
-    _data[routeId].routeImages = Map.fromIterable(images,
-      key: (img) => img.id,
-      value: (img) => img,
+    _data[routeId]!.routeImages = Map.fromIterable(images,
+      key: ((img) => img.id) as int Function(dynamic)?,
+      value: ((img) => img) as RouteImage Function(dynamic)?,
     );
   }
 }
@@ -59,24 +59,24 @@ abstract class RouteImagesEvent {
 
 class FetchRouteImages extends RouteImagesEvent {
   final List<int> routeIds;
-  const FetchRouteImages({@required this.routeIds});
+  const FetchRouteImages({required this.routeIds});
 }
 
 class FetchRouteImagesAll extends RouteImagesEvent {
   final int routeId;
-  const FetchRouteImagesAll({@required this.routeId});
+  const FetchRouteImagesAll({required this.routeId});
 }
 
 class AddNewRouteImage extends RouteImagesEvent {
   final int routeId;
   final RouteImage routeImage;
-  const AddNewRouteImage({this.routeId, this.routeImage});
+  const AddNewRouteImage({required this.routeId, required this.routeImage});
 }
 
 class UpdateRouteImage extends RouteImagesEvent {
   final int routeImageId;
   final int routeId;
-  const UpdateRouteImage({@required this.routeImageId, this.routeId});
+  const UpdateRouteImage({required this.routeImageId, required this.routeId});
 }
 
 abstract class RouteImagesState {
@@ -89,13 +89,13 @@ class RouteImagesLoading extends RouteImagesState {}
 
 class RouteImagesLoaded extends RouteImagesState {
   final Images images;
-  const RouteImagesLoaded({this.images});
+  const RouteImagesLoaded({required this.images});
 }
 
 class RouteImagesError extends RouteImagesState {
   FlutterErrorDetails errorDetails;
 
-  RouteImagesError({Object exception, StackTrace stackTrace}):
+  RouteImagesError({required Object exception, StackTrace? stackTrace}):
         errorDetails = FlutterErrorDetails(exception: exception, stack: stackTrace) {
     FlutterError.reportError(errorDetails);
   }

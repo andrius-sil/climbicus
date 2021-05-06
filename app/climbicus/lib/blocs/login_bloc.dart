@@ -14,7 +14,7 @@ class LoginButtonPressed extends LoginEvent {
   final String email;
   final String password;
 
-  const LoginButtonPressed({@required this.email, @required this.password});
+  const LoginButtonPressed({required this.email, required this.password});
 }
 
 
@@ -29,7 +29,7 @@ class LoginUnauthorized extends LoginState {}
 class LoginError extends LoginState {
   FlutterErrorDetails errorDetails;
 
-  LoginError({Object exception, StackTrace stackTrace}):
+  LoginError({required Object exception, StackTrace? stackTrace}):
         errorDetails = FlutterErrorDetails(exception: exception, stack: stackTrace) {
     FlutterError.reportError(errorDetails);
   }
@@ -41,7 +41,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   final AuthenticationBloc authenticationBloc;
 
-  LoginBloc({@required this.authenticationBloc}) : super(LoginInitial());
+  LoginBloc({required this.authenticationBloc}) : super(LoginInitial());
 
   @override
   Stream<LoginState> mapEventToState(LoginEvent event) async* {

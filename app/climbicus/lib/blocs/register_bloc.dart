@@ -16,9 +16,9 @@ class RegisterButtonPressed extends RegisterEvent {
   final String password;
 
   const RegisterButtonPressed({
-    @required this.name,
-    @required this.email,
-    @required this.password,
+    required this.name,
+    required this.email,
+    required this.password,
   });
 }
 
@@ -36,7 +36,7 @@ class RegisterUserAlreadyExists extends RegisterState {}
 class RegisterError extends RegisterState {
   FlutterErrorDetails errorDetails;
 
-  RegisterError({Object exception, StackTrace stackTrace}):
+  RegisterError({required Object exception, StackTrace? stackTrace}):
         errorDetails = FlutterErrorDetails(exception: exception, stack: stackTrace) {
     FlutterError.reportError(errorDetails);
   }
@@ -48,7 +48,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
   final AuthenticationBloc authenticationBloc;
 
-  RegisterBloc({@required this.authenticationBloc}) : super(RegisterInitial());
+  RegisterBloc({required this.authenticationBloc}) : super(RegisterInitial());
 
   @override
   Stream<RegisterState> mapEventToState(RegisterEvent event) async* {
