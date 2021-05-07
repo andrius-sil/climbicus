@@ -63,7 +63,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               ListTile(
                 title: Text("Version"),
-                subtitle: Text(_versionString(state.packageInfo)),
+                subtitle: Text(_versionString(state.packageInfo!)),
               ),
             ] + _buildDevSettings()
           );

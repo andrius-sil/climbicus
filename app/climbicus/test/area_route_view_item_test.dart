@@ -2,6 +2,7 @@ import 'package:climbicus/models/app/area_route_list_items.dart';
 import 'package:climbicus/models/app/route_user_meta.dart';
 import 'package:climbicus/models/area.dart';
 import 'package:climbicus/models/route.dart' as jsonmdl;
+import 'package:flutter/material.dart';
 
 import 'package:flutter_test/flutter_test.dart';
 
@@ -21,20 +22,20 @@ void main() {
 
     var item1 = RouteListItem(
       routeWithUserMeta: RouteWithUserMeta(
-        jsonmdl.Route(1, null, null, null, null, null, null, null, null, null, null, null),
-        null,
+        jsonmdl.Route(1, 1, 1, 1, "bouldering", "", "V_V2", "V_V2", null, null, 0, DateTime.now()),
+        {},
         null,
       ),
-      image: null,
+      image: Container(),
       isExpanded: false,
     );
     var item2 = RouteListItem(
       routeWithUserMeta: RouteWithUserMeta(
-        jsonmdl.Route(2, null, null, null, null, null, null, null, null, null, null, null),
-        null,
+        jsonmdl.Route(2, 1, 1, 1, "bouldering", "", "V_V2", "V_V2", null, null, 0, DateTime.now()),
+        {},
         null,
       ),
-      image: null,
+      image: Container(),
       isExpanded: false,
     );
 

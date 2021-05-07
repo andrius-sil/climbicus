@@ -75,8 +75,8 @@ class AddNewRouteImage extends RouteImagesEvent {
 
 class UpdateRouteImage extends RouteImagesEvent {
   final int routeImageId;
-  final int routeId;
-  const UpdateRouteImage({required this.routeImageId, required this.routeId});
+  final int? routeId;
+  const UpdateRouteImage({required this.routeImageId, this.routeId});
 }
 
 abstract class RouteImagesState {

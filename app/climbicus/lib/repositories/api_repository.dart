@@ -146,7 +146,7 @@ class ApiRepository {
     return _requestJson("POST", "register", data, auth: false);
   }
 
-  Future<Map> routeMatch(int routeImageId, int routeId) async {
+  Future<Map> routeMatch(int routeImageId, int? routeId) async {
     Map data = {
       "is_match": (routeId != null) ? 1 : 0,
       "route_id": routeId,

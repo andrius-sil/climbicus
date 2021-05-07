@@ -1,6 +1,7 @@
 
+import 'dart:async';
+
 import 'package:climbicus/repositories/api_repository.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 

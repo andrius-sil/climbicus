@@ -57,7 +57,7 @@ class CheckboxWithTitle extends StatefulWidget {
 }
 
 class CheckboxWithTitleState extends State<CheckboxWithTitle> {
-  bool _value;
+  late bool _value;
 
   bool get value => _value;
 
@@ -125,7 +125,7 @@ class NumberAttempts extends StatefulWidget {
 class NumberAttemptsState extends State<NumberAttempts> {
   var _touchSpinKey = UniqueKey();
 
-  int _value;
+  late int _value;
 
   int? get value => (_value == 0) ? null : _value;
 
@@ -286,11 +286,11 @@ class RouteDifficultyRatingState extends State<RouteDifficultyRating> {
   final _labels = [DIFFICULTY_NAME_SOFT, DIFFICULTY_NAME_FAIR, DIFFICULTY_NAME_HARD];
   final _values = [DIFFICULTY_SOFT, DIFFICULTY_FAIR, DIFFICULTY_HARD];
 
-  int _index;
+  late int _index;
 
   String? get value => (_index == -1) ? null : _values[_index];
 
-  int _initialValue() => (widget.initialValue == null) ? -1 : _values.indexOf(widget.initialValue);
+  int _initialValue() => (widget.initialValue == null) ? -1 : _values.indexOf(widget.initialValue!);
 
   void resetState() {
     setState(() {
@@ -337,7 +337,7 @@ class RouteQualityRating extends StatefulWidget {
 }
 
 class RouteQualityRatingState extends State<RouteQualityRating> {
-  double _value;
+  late double _value;
 
   double? get value => (_value == 0) ? null : _value;
 
@@ -379,7 +379,7 @@ class RouteName extends StatefulWidget {
 }
 
 class RouteNameState extends State<RouteName> {
-  String _value;
+  String? _value;
 
   String? get value => (_value == "") ? null : _value;
 

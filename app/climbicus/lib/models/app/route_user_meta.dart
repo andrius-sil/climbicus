@@ -64,8 +64,8 @@ class RouteWithUserMeta {
 }
 
 class RoutesWithUserMeta {
-  late Map<String?, Map<int, RouteWithUserMeta>> _data;
-  Map<int, jsonmdl.Route> _routes;
+  late Map<String, Map<int, RouteWithUserMeta>> _data;
+  late Map<int, jsonmdl.Route> _routes;
 
   RoutesWithUserMeta(
       Map<int, jsonmdl.Route> newRoutes,

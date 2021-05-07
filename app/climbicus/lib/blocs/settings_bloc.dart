@@ -1,19 +1,20 @@
 
 import 'package:bloc/bloc.dart';
 import 'package:climbicus/repositories/api_repository.dart';
-import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
+const DEFAULT_DISPLAY_PREDICTIONS_NUM = 3;
 const PLACEHOLDER_GYM_ID = -1;
+const DEFAULT_SEEN_CAMERA_HELP_OVERLAY = false;
 
 
 class SettingsState {
   final int displayPredictionsNum;
   final int gymId;
-  final PackageInfo packageInfo;
+  final PackageInfo? packageInfo;
   final bool seenCameraHelpOverlay;
 
   SettingsState({
@@ -24,7 +25,14 @@ class SettingsState {
   });
 }
 
-class SettingsUninitialized extends SettingsState {}
+class SettingsUninitialized extends SettingsState {
+  SettingsUninitialized() : super(
+    displayPredictionsNum: DEFAULT_DISPLAY_PREDICTIONS_NUM,
+    gymId: PLACEHOLDER_GYM_ID,
+    packageInfo: null,
+    seenCameraHelpOverlay: DEFAULT_SEEN_CAMERA_HELP_OVERLAY,
+  );
+}
 
 abstract class SettingsEvent {
   const SettingsEvent();
@@ -43,10 +51,10 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
 
   // Initialise settings with default values.
   String _imagePicker = "both";
-  int _displayPredictionsNum = 3;
+  int _displayPredictionsNum = DEFAULT_DISPLAY_PREDICTIONS_NUM;
   int _gymId = PLACEHOLDER_GYM_ID;
   late PackageInfo _packageInfo;
-  bool _seenCameraHelpOverlay = false;
+  bool _seenCameraHelpOverlay = DEFAULT_SEEN_CAMERA_HELP_OVERLAY;
 
   int get gymId => _gymId;
 

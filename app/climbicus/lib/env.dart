@@ -13,7 +13,7 @@ const ENVIRONMENT_NAMES = {
 
 
 class EnvironmentConfig {
-  static const ENV = String.fromEnvironment("ENV", defaultValue: null);
+  static const ENV = String.fromEnvironment("ENV");
   static const DEV_HOST_IP = String.fromEnvironment("DEV_HOST_IP");
 
   static void display() {
