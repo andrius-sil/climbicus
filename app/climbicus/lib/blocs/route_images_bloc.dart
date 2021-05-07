@@ -47,8 +47,8 @@ class Images {
     }
 
     _data[routeId]!.routeImages = Map.fromIterable(images,
-      key: ((img) => img.id) as int Function(dynamic)?,
-      value: ((img) => img) as RouteImage Function(dynamic)?,
+      key: ((img) => img.id),
+      value: ((img) => img),
     );
   }
 }

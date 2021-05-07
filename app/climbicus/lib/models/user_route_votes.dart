@@ -10,7 +10,7 @@ class UserRouteVotes {
   int routeId;
   int userId;
   int gymId;
-  double quality;
+  double? quality;
   String? difficulty;
   DateTime createdAt;
 

@@ -134,15 +134,15 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
 
   GymRoutesBloc({required this.routeImagesBloc}) : super(GymRoutesUninitialized()) {
     _sentFilterEnabled = Map.fromIterable(ROUTE_CATEGORIES,
-      key: ((category) => category) as String Function(dynamic)?,
+      key: ((category) => category),
       value: (_) => false,
     );
     _attemptedFilterEnabled = Map.fromIterable(ROUTE_CATEGORIES,
-      key: ((category) => category) as String Function(dynamic)?,
+      key: ((category) => category),
       value: (_) => false,
     );
     _gradesFilter = Map.fromIterable(ROUTE_CATEGORIES,
-      key: ((category) => category) as String Function(dynamic)?,
+      key: ((category) => category),
       value: (category) => GradeValues(0, (GRADE_SYSTEMS[DEFAULT_GRADE_SYSTEM[category]!]!.length - 1)),
     );
   }

@@ -33,7 +33,7 @@ class HeaderListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    UserRouteLog mostRecentLog = routeWithUserMeta.mostRecentLog()!;
+    UserRouteLog? mostRecentLog = routeWithUserMeta.mostRecentLog();
 
     Widget? routeNameText;
     if (this.routeWithUserMeta.route.name != null) {
@@ -484,8 +484,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
     var sortedKeys = routes.keys.toList(growable: false)
       ..sort((k1, k2) => routes[k2]!.mostRecentCreatedAt().compareTo(routes[k1]!.mostRecentCreatedAt()));
 
-    return LinkedHashMap.fromIterable(sortedKeys,
-        key: ((k) => k) as int Function(dynamic)?, value: ((k) => routes[k]!) as RouteWithUserMeta Function(dynamic)?);
+    return LinkedHashMap.fromIterable(sortedKeys, key: ((k) => k), value: ((k) => routes[k]!));
   }
 
   @override

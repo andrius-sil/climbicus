@@ -17,7 +17,7 @@ Route _$RouteFromJson(Map<String, dynamic> json) {
     json['lower_grade'] as String,
     json['upper_grade'] as String,
     json['avg_difficulty'] as String?,
-    (json['avg_quality'] as num).toDouble(),
+    (json['avg_quality'] as num?)?.toDouble(),
     json['count_ascents'] as int,
     DateTime.parse(json['created_at'] as String),
   );

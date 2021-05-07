@@ -76,7 +76,6 @@ class _GymsPageState extends State<GymsPage> {
     var sortedKeys = gyms.keys.toList(growable: false)
       ..sort((k1, k2) => gyms[k1]!.name.compareTo(gyms[k2]!.name));
 
-    return LinkedHashMap.fromIterable(sortedKeys,
-        key: ((k) => k) as int Function(dynamic)?, value: ((k) => gyms[k]!) as Gym Function(dynamic)?);
+    return LinkedHashMap.fromIterable(sortedKeys, key: ((k) => k), value: ((k) => gyms[k]!));
   }
 }

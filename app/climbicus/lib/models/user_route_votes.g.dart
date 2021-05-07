@@ -12,7 +12,7 @@ UserRouteVotes _$UserRouteVotesFromJson(Map<String, dynamic> json) {
     json['route_id'] as int,
     json['user_id'] as int,
     json['gym_id'] as int,
-    (json['quality'] as num).toDouble(),
+    (json['quality'] as num?)?.toDouble(),
     json['difficulty'] as String?,
     DateTime.parse(json['created_at'] as String),
   );
