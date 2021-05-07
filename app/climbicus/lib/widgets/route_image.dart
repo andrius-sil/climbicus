@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'dart:io';
 
 import 'package:climbicus/env.dart';
@@ -13,15 +14,15 @@ class RouteImageWidget extends StatelessWidget {
   static const defaultBoxFit = BoxFit.cover;
 
   final getIt = GetIt.instance;
-  final RouteImage? routeImage;
-  final File? imageFile;
+  final RouteImage routeImage;
+  final File imageFile;
 
-  String? imagePath;
+  String imagePath;
   BoxFit boxFit = defaultBoxFit;
 
   RouteImageWidget(this.routeImage, {thumbnail: false}) :
     imageFile = null,
-    imagePath = thumbnail ? routeImage!.thumbnailPath : routeImage!.path;
+    imagePath = thumbnail ? routeImage.thumbnailPath : routeImage.path;
   RouteImageWidget.fromFile(this.imageFile) :
     routeImage = null,
     imagePath = null;
@@ -34,12 +35,13 @@ class RouteImageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     var imageWidget;
     if (imageFile != null) {
-      imageWidget = Image.file(imageFile!, fit: boxFit);
+      imageWidget = Image.file(imageFile, fit: boxFit);
     } else if (imagePath != null) {
       imageWidget = Image(
-        image: NetworkImageWithRetry(imagePath!, fetchStrategy: fetchStrategy),
+        image: NetworkImageWithRetry(imagePath, fetchStrategy: fetchStrategy),
         fit: boxFit,
       );
+      // imageWidget = Image.network(imagePath!, fit: boxFit);
     } else {
       imageWidget = Image.asset("images/no_image.png");
     }
@@ -55,8 +57,8 @@ class RouteImageWidget extends StatelessWidget {
     var routeId = 0;
     var imageId = 0;
     if (routeImage != null) {
-      routeId = routeImage!.routeId;
-      imageId = routeImage!.id;
+      routeId = routeImage.routeId;
+      imageId = routeImage.id;
     }
     return Stack(
       children: <Widget>[
@@ -104,4 +106,12 @@ class ScaledImage extends StatelessWidget {
       aspectRatio: 1,
     );
   }
+}
+
+
+ImageProvider networkImageFromPath(String imagePath) {
+  return NetworkImageWithRetry(
+    imagePath,
+    fetchStrategy: RouteImageWidget.fetchStrategy,
+  );
 }

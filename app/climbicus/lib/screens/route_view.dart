@@ -17,7 +17,6 @@ import 'package:climbicus/widgets/route_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_image/network.dart';
 import 'package:photo_view/photo_view.dart';
 
 const GROUP_BY_AREAS = true;
@@ -425,10 +424,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
             return Container(
               alignment: Alignment.center,
               child: PhotoView(
-                imageProvider: NetworkImageWithRetry(
-                  areaItem.area.imagePath,
-                  fetchStrategy: RouteImageWidget.fetchStrategy,
-                ),
+                imageProvider: networkImageFromPath(areaItem.area.imagePath),
                 tightMode: true,
                 maxScale: 1.0,
               ),
