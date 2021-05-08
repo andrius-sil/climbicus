@@ -17,10 +17,10 @@ class _LoginPageState extends State<LoginPage> {
 
   final getIt = GetIt.instance;
 
-  LoginBloc _loginBloc;
+  late LoginBloc _loginBloc;
 
-  String _email;
-  String _password;
+  String? _email;
+  String? _password;
 
   @override
   void initState() {
@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
       body: BlocListener<LoginBloc, LoginState>(
         listener: (context, state) {
-          var errorMsg = null;
+          dynamic errorMsg = null;
           if (state is LoginError) {
             errorMsg = "Ooops.. an error has occured";
           } else if (state is LoginUnauthorized) {
@@ -74,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
           key: Key('email'),
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(labelText: 'Email'),
-          validator: (value) => value.isEmpty ? "Email can't be empty" : null,
+          validator: (value) => value!.isEmpty ? "Email can't be empty" : null,
           onSaved: (value) => _email = value,
         ),
       ),
@@ -83,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
           key: Key('password'),
           obscureText: true,
           decoration: InputDecoration(labelText: 'Password'),
-          validator: (value) => value.isEmpty ? "Password can't be empty" : null,
+          validator: (value) => value!.isEmpty ? "Password can't be empty" : null,
           onSaved: (value) => _password = value,
         ),
       ),
@@ -126,15 +126,15 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void validateAndLogin(BuildContext context) {
-    final FormState form = formKey.currentState;
+    final FormState form = formKey.currentState!;
     if (!form.validate()) {
       return;
     }
     form.save();
 
     _loginBloc.add(LoginButtonPressed(
-      email: _email,
-      password: _password,
+      email: _email!,
+      password: _password!,
     ));
   }
 

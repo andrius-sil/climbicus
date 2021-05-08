@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'dart:io';
 
 import 'package:climbicus/env.dart';
@@ -40,6 +41,7 @@ class RouteImageWidget extends StatelessWidget {
         image: NetworkImageWithRetry(imagePath, fetchStrategy: fetchStrategy),
         fit: boxFit,
       );
+      // imageWidget = Image.network(imagePath!, fit: boxFit);
     } else {
       imageWidget = Image.asset("images/no_image.png");
     }
@@ -104,4 +106,12 @@ class ScaledImage extends StatelessWidget {
       aspectRatio: 1,
     );
   }
+}
+
+
+ImageProvider networkImageFromPath(String imagePath) {
+  return NetworkImageWithRetry(
+    imagePath,
+    fetchStrategy: RouteImageWidget.fetchStrategy,
+  );
 }

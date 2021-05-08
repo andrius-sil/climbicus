@@ -13,7 +13,7 @@ class ApiException implements Exception {
   final http.StreamedResponse response;
   final String responseJson;
 
-  String message;
+  String? message;
 
   ApiException(this.response, this.responseJson) {
     message = jsonDecode(responseJson)["msg"];
@@ -48,10 +48,10 @@ class ApiRepository {
   final String serverUrl;
   final client = SentryHttpClient();
 
-  int _gymId;
+  int? _gymId;
   set gymId(int value) => _gymId = value;
 
-  ApiRepository({this.serverUrl});
+  ApiRepository({required this.serverUrl});
 
   ApiException _apiException(response, responseJson) {
     switch (response.statusCode) {
@@ -146,7 +146,7 @@ class ApiRepository {
     return _requestJson("POST", "register", data, auth: false);
   }
 
-  Future<Map> routeMatch(int routeImageId, int routeId) async {
+  Future<Map> routeMatch(int routeImageId, int? routeId) async {
     Map data = {
       "is_match": (routeId != null) ? 1 : 0,
       "route_id": routeId,
@@ -155,7 +155,7 @@ class ApiRepository {
     return _requestJson("PATCH", "route_images/$routeImageId", data);
   }
 
-  Future<Map> logbookAdd(int routeId, bool completed, int numAttempts) async {
+  Future<Map> logbookAdd(int routeId, bool completed, int? numAttempts) async {
     Map data = {
       "route_id": routeId,
       "completed": completed,
@@ -224,7 +224,7 @@ class ApiRepository {
     return _requestJson("GET", "routes/$routeId", data);
   }
 
-  Future<Map> routeAdd(int areaId, String category, String grade, String name) async {
+  Future<Map> routeAdd(int areaId, String category, String grade, String? name) async {
     Map data = {
       "gym_id": _gymId,
       "area_id": areaId,
@@ -266,7 +266,7 @@ class ApiRepository {
     return _requestJson("GET", "user_route_votes/$routeId", data);
   }
 
-  Future<Map> userRouteVotesAdd(int routeId, double quality, String difficulty) async {
+  Future<Map> userRouteVotesAdd(int routeId, double? quality, String? difficulty) async {
     Map data = {
       "gym_id": _gymId,
       "route_id": routeId,
@@ -277,7 +277,7 @@ class ApiRepository {
     return _requestJson("POST", "user_route_votes/", data);
   }
 
-  Future<Map> userRouteVotesUpdate(int userRouteVotesId, double quality, String difficulty) async {
+  Future<Map> userRouteVotesUpdate(int userRouteVotesId, double? quality, String? difficulty) async {
     Map data = {
       "quality": quality,
       "difficulty": difficulty,

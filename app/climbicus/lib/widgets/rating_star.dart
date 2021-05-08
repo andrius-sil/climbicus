@@ -70,7 +70,7 @@ Widget qualityAndAscents(BuildContext context,
 }
 
 class AscentWidget extends StatelessWidget {
-  final UserRouteLog userRouteLog;
+  final UserRouteLog? userRouteLog;
 
   AscentWidget(this.userRouteLog);
 
@@ -80,7 +80,7 @@ class AscentWidget extends StatelessWidget {
     var ascentStatus;
 
     if (userRouteLog != null) {
-      var boxColor = (userRouteLog.completed) ?
+      var boxColor = (userRouteLog!.completed) ?
         Theme.of(context).accentColor :
         null;
 
@@ -93,12 +93,12 @@ class AscentWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       );
 
-      var numAttemptsStr = userRouteLog.numAttempts != null ?
-        userRouteLog.numAttempts.toString() :
+      var numAttemptsStr = userRouteLog!.numAttempts != null ?
+        userRouteLog!.numAttempts.toString() :
         " — ";
       ascentStatus = Center(
-        child: (userRouteLog.completed && userRouteLog.numAttempts == 1) ?
-        Icon(Icons.flash_on, color: Theme.of(context).textTheme.headline6.color) :
+        child: (userRouteLog!.completed && userRouteLog!.numAttempts == 1) ?
+        Icon(Icons.flash_on, color: Theme.of(context).textTheme.headline6!.color) :
         Text(numAttemptsStr, style: TextStyle(fontSize: 18)),
       );
     }

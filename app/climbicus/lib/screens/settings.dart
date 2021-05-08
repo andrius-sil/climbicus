@@ -13,7 +13,7 @@ import 'package:package_info/package_info.dart';
 class SettingsPage extends StatefulWidget {
   final Environment env;
 
-  SettingsPage({@required this.env});
+  SettingsPage({required this.env});
 
   @override
   State<StatefulWidget> createState() => _SettingsPageState();
@@ -22,10 +22,10 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   final getIt = GetIt.instance;
 
-  AuthenticationBloc _authenticationBloc;
-  SettingsBloc _settingsBloc;
+  late AuthenticationBloc _authenticationBloc;
+  late SettingsBloc _settingsBloc;
 
-  double displayPredictionsNum;
+  late double displayPredictionsNum;
 
   @override
   void initState() {
@@ -63,7 +63,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               ListTile(
                 title: Text("Version"),
-                subtitle: Text(_versionString(state.packageInfo)),
+                subtitle: Text(_versionString(state.packageInfo!)),
               ),
             ] + _buildDevSettings()
           );
@@ -75,7 +75,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return BlocBuilder<GymsBloc, GymsState>(
       builder: (context, state) {
         if (state is GymsLoaded) {
-          return Text("Your gym: ${state.gyms[gymId].name}");
+          return Text("Your gym: ${state.gyms[gymId]!.name}");
         }
 
         return Text("");
@@ -105,10 +105,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
   String _versionString(PackageInfo packageInfo) {
     String version = packageInfo.version;
-    if (widget.env != Environment.dev) {
-      return version;
-    }
-
     return "$version (${packageInfo.buildNumber}) ${ENVIRONMENT_NAMES[widget.env]}";
   }
 

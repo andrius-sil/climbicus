@@ -15,13 +15,13 @@ class GymAreasLoading extends GymAreasState {}
 
 class GymAreasLoaded extends GymAreasState {
   final Map<int, Area> areas;
-  const GymAreasLoaded({@required this.areas});
+  const GymAreasLoaded({required this.areas});
 }
 
 class GymAreasError extends GymAreasState {
   FlutterErrorDetails errorDetails;
 
-  GymAreasError({Object exception, StackTrace stackTrace}):
+  GymAreasError({required Object exception, StackTrace? stackTrace}):
         errorDetails = FlutterErrorDetails(exception: exception, stack: stackTrace) {
     FlutterError.reportError(errorDetails);
   }
@@ -36,8 +36,7 @@ class FetchGymAreas extends GymAreasEvent {}
 class GymAreasBloc extends Bloc<GymAreasEvent, GymAreasState> {
   final getIt = GetIt.instance;
 
-  @override
-  GymAreasState get initialState => GymAreasUninitialized();
+  GymAreasBloc() : super(GymAreasUninitialized());
 
   @override
   Stream<GymAreasState> mapEventToState(GymAreasEvent event) async* {

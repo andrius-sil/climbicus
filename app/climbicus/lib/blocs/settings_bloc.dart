@@ -1,30 +1,38 @@
 
 import 'package:bloc/bloc.dart';
 import 'package:climbicus/repositories/api_repository.dart';
-import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
+const DEFAULT_DISPLAY_PREDICTIONS_NUM = 3;
 const PLACEHOLDER_GYM_ID = -1;
+const DEFAULT_SEEN_CAMERA_HELP_OVERLAY = false;
 
 
 class SettingsState {
   final int displayPredictionsNum;
   final int gymId;
-  final PackageInfo packageInfo;
+  final PackageInfo? packageInfo;
   final bool seenCameraHelpOverlay;
 
   SettingsState({
-    @required this.displayPredictionsNum,
-    @required this.gymId,
-    @required this.packageInfo,
-    @required this.seenCameraHelpOverlay,
+    required this.displayPredictionsNum,
+    required this.gymId,
+    required this.packageInfo,
+    required this.seenCameraHelpOverlay,
   });
 }
 
-class SettingsUninitialized extends SettingsState {}
+class SettingsUninitialized extends SettingsState {
+  SettingsUninitialized() : super(
+    displayPredictionsNum: DEFAULT_DISPLAY_PREDICTIONS_NUM,
+    gymId: PLACEHOLDER_GYM_ID,
+    packageInfo: null,
+    seenCameraHelpOverlay: DEFAULT_SEEN_CAMERA_HELP_OVERLAY,
+  );
+}
 
 abstract class SettingsEvent {
   const SettingsEvent();
@@ -34,7 +42,7 @@ class InitializedSettings extends SettingsEvent {}
 
 class GymChanged extends SettingsEvent {
   final int gymId;
-  const GymChanged({@required this.gymId});
+  const GymChanged({required this.gymId});
 }
 
 
@@ -43,10 +51,10 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
 
   // Initialise settings with default values.
   String _imagePicker = "both";
-  int _displayPredictionsNum = 3;
+  int _displayPredictionsNum = DEFAULT_DISPLAY_PREDICTIONS_NUM;
   int _gymId = PLACEHOLDER_GYM_ID;
-  PackageInfo _packageInfo;
-  bool _seenCameraHelpOverlay = false;
+  late PackageInfo _packageInfo;
+  bool _seenCameraHelpOverlay = DEFAULT_SEEN_CAMERA_HELP_OVERLAY;
 
   int get gymId => _gymId;
 
@@ -62,7 +70,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     storeSetting("seen_camera_help_overlay", _seenCameraHelpOverlay.toString());
   }
 
-  SettingsBloc() {
+  SettingsBloc() : super(SettingsUninitialized()) {
     retrieveSettings();
   }
 
@@ -72,9 +80,6 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     packageInfo: _packageInfo,
     seenCameraHelpOverlay: _seenCameraHelpOverlay,
   );
-
-  @override
-  SettingsState get initialState => SettingsUninitialized();
 
   Future<void> retrieveSettings() async {
     _imagePicker = await retrieveSetting("image_picker", _imagePicker);
@@ -112,7 +117,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   Future<String> retrieveSetting(String settingName, String defaultVal) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (prefs.containsKey(settingName)) {
-      return prefs.getString(settingName);
+      return prefs.getString(settingName)!;
     }
 
     return defaultVal;

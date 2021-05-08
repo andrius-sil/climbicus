@@ -14,7 +14,7 @@ import 'package:get_it/get_it.dart';
 class Prediction {
   jsonmdl.Route route;
   RouteImage routeImage;
-  Prediction({this.route, this.routeImage});
+  Prediction({required this.route, required this.routeImage});
 }
 
 class ImagePickerData {
@@ -35,13 +35,13 @@ class RoutePredictionLoading extends RoutePredictionState {}
 
 class RoutePredictionLoaded extends RoutePredictionState {
   final ImagePickerData imgPickerData;
-  const RoutePredictionLoaded({this.imgPickerData});
+  const RoutePredictionLoaded({required this.imgPickerData});
 }
 
 class RoutePredictionError extends RoutePredictionState {
   FlutterErrorDetails errorDetails;
 
-  RoutePredictionError({Object exception, StackTrace stackTrace}):
+  RoutePredictionError({required Object exception, StackTrace? stackTrace}):
         errorDetails = FlutterErrorDetails(exception: exception, stack: stackTrace) {
     FlutterError.reportError(errorDetails);
   }
@@ -54,17 +54,16 @@ abstract class RoutePredictionEvent {
 class FetchRoutePrediction extends RoutePredictionEvent {
   final File image;
   final String routeCategory;
-  const FetchRoutePrediction({this.image, this.routeCategory});
+  const FetchRoutePrediction({required this.image, required this.routeCategory});
 }
 
 
 class RoutePredictionBloc extends Bloc<RoutePredictionEvent, RoutePredictionState> {
   final getIt = GetIt.instance;
 
-  ImagePickerData _imgPickerData;
+  late ImagePickerData _imgPickerData;
 
-  @override
-  RoutePredictionState get initialState => RoutePredictionUninitialized();
+  RoutePredictionBloc() : super(RoutePredictionUninitialized());
 
   @override
   Stream<RoutePredictionState> mapEventToState(RoutePredictionEvent event) async* {
@@ -73,12 +72,12 @@ class RoutePredictionBloc extends Bloc<RoutePredictionEvent, RoutePredictionStat
 
       try {
         var dirPath = await routePicturesDir();
-        var compressedImage = await FlutterImageCompress.compressAndGetFile(
+        var compressedImage = await (FlutterImageCompress.compressAndGetFile(
           event.image.absolute.path,
           p.join(dirPath, "compressed_${p.basename(event.image.path)}"),
           minWidth: 1024,
           quality: 75,
-        );
+        ) as FutureOr<File>);
         debugPrint("compressed photo size: ${compressedImage.lengthSync()} bytes");
 
         var imageAndPredictions = (await getIt<ApiRepository>().routePredictions(compressedImage, event.routeCategory));

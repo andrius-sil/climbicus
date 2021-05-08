@@ -16,11 +16,13 @@ class CameraCustom extends StatefulWidget {
 }
 
 class _CameraCustomState extends State<CameraCustom> {
-  List<CameraDescription> _cameras;
-  CameraController _controller;
-  Future<void> _initializeControllerFuture;
+  final _imagePicker = ImagePicker();
 
-  SettingsBloc _settingsBloc;
+  late List<CameraDescription> _cameras;
+  late CameraController _controller;
+  Future<void>? _initializeControllerFuture;
+
+  late SettingsBloc _settingsBloc;
 
   @override
   void initState() {
@@ -29,7 +31,7 @@ class _CameraCustomState extends State<CameraCustom> {
     _settingsBloc = BlocProvider.of<SettingsBloc>(context);
 
     if (!_settingsBloc.seenCameraHelpOverlay) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
+      WidgetsBinding.instance!.addPostFrameCallback((_) async {
         _showHelpOverlay();
       });
 
@@ -127,7 +129,7 @@ class _CameraCustomState extends State<CameraCustom> {
 
   Widget _buildCameraPreview() {
     return AspectRatio(
-      aspectRatio: _controller.value.aspectRatio,
+      aspectRatio: _controller.value.previewSize!.height / _controller.value.previewSize!.width,
       child: Stack(
         children: <Widget>[
           CameraPreview(_controller),
@@ -172,12 +174,12 @@ class _CameraCustomState extends State<CameraCustom> {
   }
 
   Future<void> _onPickPictureButtonPressed() async {
-    var imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
-    if (imageFile == null) {
+    var pickedFile = await _imagePicker.getImage(source: ImageSource.gallery);
+    if (pickedFile == null) {
       return;
     }
 
-    Navigator.pop(context, imageFile);
+    Navigator.pop(context, File(pickedFile.path));
   }
 
   Future<void> _onTakePictureButtonPressed() async {
@@ -188,10 +190,7 @@ class _CameraCustomState extends State<CameraCustom> {
   }
 
   Future<String> takePicture() async {
-    var dirPath = await routePicturesDir();
-    final String filePath = "$dirPath/${timestamp()}.jpg";
-
-    await _controller.takePicture(filePath);
-    return filePath;
+    XFile xfile = await _controller.takePicture();
+    return xfile.path;
   }
 }

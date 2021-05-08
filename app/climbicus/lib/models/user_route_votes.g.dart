@@ -12,11 +12,9 @@ UserRouteVotes _$UserRouteVotesFromJson(Map<String, dynamic> json) {
     json['route_id'] as int,
     json['user_id'] as int,
     json['gym_id'] as int,
-    (json['quality'] as num)?.toDouble(),
-    json['difficulty'] as String,
-    json['created_at'] == null
-        ? null
-        : DateTime.parse(json['created_at'] as String),
+    (json['quality'] as num?)?.toDouble(),
+    json['difficulty'] as String?,
+    DateTime.parse(json['created_at'] as String),
   );
 }
 
@@ -28,5 +26,5 @@ Map<String, dynamic> _$UserRouteVotesToJson(UserRouteVotes instance) =>
       'gym_id': instance.gymId,
       'quality': instance.quality,
       'difficulty': instance.difficulty,
-      'created_at': instance.createdAt?.toIso8601String(),
+      'created_at': instance.createdAt.toIso8601String(),
     };

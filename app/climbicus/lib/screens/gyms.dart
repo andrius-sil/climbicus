@@ -14,8 +14,8 @@ class GymsPage extends StatefulWidget {
 }
 
 class _GymsPageState extends State<GymsPage> {
-  GymsBloc _gymsBloc;
-  SettingsBloc _settingsBloc;
+  late GymsBloc _gymsBloc;
+  late SettingsBloc _settingsBloc;
 
   @override
   void initState() {
@@ -74,9 +74,8 @@ class _GymsPageState extends State<GymsPage> {
 
   Map<int, Gym> _sortGymsByName(Map<int, Gym> gyms) {
     var sortedKeys = gyms.keys.toList(growable: false)
-      ..sort((k1, k2) => gyms[k1].name.compareTo(gyms[k2].name));
+      ..sort((k1, k2) => gyms[k1]!.name.compareTo(gyms[k2]!.name));
 
-    return LinkedHashMap.fromIterable(sortedKeys,
-        key: (k) => k, value: (k) => gyms[k]);
+    return LinkedHashMap.fromIterable(sortedKeys, key: ((k) => k), value: ((k) => gyms[k]!));
   }
 }

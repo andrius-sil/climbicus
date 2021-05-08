@@ -49,9 +49,9 @@ final appTheme = () =>  ThemeData(
   ),
 
   sliderTheme: SliderThemeData.fromPrimaryColors(
-      primaryColor: accentColor,
-      primaryColorDark: accentColor,
-      primaryColorLight: accentColor,
+      primaryColor: accentColor!,
+      primaryColorDark: accentColor!,
+      primaryColorLight: accentColor!,
       valueIndicatorTextStyle: TextStyle(),
   ),
 

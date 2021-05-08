@@ -4,5 +4,5 @@ import 'package:climbicus/env.dart';
 class SettingsRepository {
   final Environment env;
 
-  const SettingsRepository({this.env});
+  const SettingsRepository({required this.env});
 }

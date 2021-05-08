@@ -16,8 +16,8 @@ import 'package:get_it/get_it.dart';
 
 
 class UserRouteVotesData {
-  final double quality;
-  final String difficulty;
+  final double? quality;
+  final String? difficulty;
   const UserRouteVotesData(this.quality, this.difficulty);
 }
 
@@ -33,13 +33,13 @@ class GymRoutesLoading extends GymRoutesState {}
 class GymRoutesLoaded extends GymRoutesState {
   final RoutesWithUserMeta entries;
   final RoutesWithUserMeta entriesFiltered;
-  const GymRoutesLoaded({@required this.entries, @required this.entriesFiltered}) ;
+  const GymRoutesLoaded({required this.entries, required this.entriesFiltered}) ;
 }
 
 class GymRoutesError extends GymRoutesState {
   FlutterErrorDetails errorDetails;
 
-  GymRoutesError({Object exception, StackTrace stackTrace}):
+  GymRoutesError({required Object exception, StackTrace? stackTrace}):
         errorDetails = FlutterErrorDetails(exception: exception, stack: stackTrace) {
     FlutterError.reportError(errorDetails);
   }
@@ -54,29 +54,29 @@ class FetchGymRoutes extends GymRoutesEvent {}
 class FilterSentGymRoutes extends GymRoutesEvent {
   final bool enabled;
   final String category;
-  const FilterSentGymRoutes({@required this.enabled, @required this.category});
+  const FilterSentGymRoutes({required this.enabled, required this.category});
 }
 
 class FilterAttemptedGymRoutes extends GymRoutesEvent {
   final bool enabled;
   final String category;
-  const FilterAttemptedGymRoutes({@required this.enabled, @required this.category});
+  const FilterAttemptedGymRoutes({required this.enabled, required this.category});
 }
 
 class FilterGradesGymRoutes extends GymRoutesEvent {
   final GradeValues gradeValues;
   final String category;
-  const FilterGradesGymRoutes({@required this.gradeValues, @required this.category});
+  const FilterGradesGymRoutes({required this.gradeValues, required this.category});
 }
 
 class AddNewUserRouteLog extends GymRoutesEvent {
   final int routeId;
   final bool completed;
-  final int numAttempts;
+  final int? numAttempts;
   const AddNewUserRouteLog({
-    @required this.routeId,
-    @required this.completed,
-    @required this.numAttempts,
+    required this.routeId,
+    required this.completed,
+    required this.numAttempts,
   });
 }
 
@@ -84,8 +84,8 @@ class AddOrUpdateUserRouteVotes extends GymRoutesEvent {
   final int routeId;
   final UserRouteVotesData userRouteVotesData;
   const AddOrUpdateUserRouteVotes({
-    @required this.routeId,
-    @required this.userRouteVotesData,
+    required this.routeId,
+    required this.userRouteVotesData,
   });
 }
 
@@ -93,27 +93,27 @@ class AddNewGymRouteWithUserLog extends GymRoutesEvent {
   final int areaId;
   final String category;
   final String grade;
-  final String name;
+  final String? name;
   final bool completed;
-  final int numAttempts;
+  final int? numAttempts;
   final List<RouteImage> routeImages;
   final UserRouteVotesData userRouteVotesData;
   const AddNewGymRouteWithUserLog({
-    @required this.areaId,
-    @required this.category,
-    @required this.grade,
-    @required this.name,
-    @required this.completed,
-    @required this.numAttempts,
-    @required this.routeImages,
-    @required this.userRouteVotesData,
+    required this.areaId,
+    required this.category,
+    required this.grade,
+    required this.name,
+    required this.completed,
+    required this.numAttempts,
+    required this.routeImages,
+    required this.userRouteVotesData,
   });
 }
 
 class DeleteUserLog extends GymRoutesEvent {
   final UserRouteLog userRouteLog;
 
-  const DeleteUserLog({@required this.userRouteLog});
+  const DeleteUserLog({required this.userRouteLog});
 }
 
 class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
@@ -121,34 +121,31 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
 
   final RouteImagesBloc routeImagesBloc;
 
-  RoutesWithUserMeta _entries;
+  late RoutesWithUserMeta _entries;
   RoutesWithUserMeta get _entriesFiltered => filterEntries();
 
-  Map<String, bool> _sentFilterEnabled;
-  Map<String, bool> _attemptedFilterEnabled;
-  Map<String, GradeValues> _gradesFilter;
+  late Map<String, bool> _sentFilterEnabled;
+  late Map<String, bool> _attemptedFilterEnabled;
+  late Map<String, GradeValues> _gradesFilter;
   
   RouteWithUserMeta getGymRoute(int routeId) {
     return _entries.getRouteWithUserMeta(routeId);
   }
 
-  GymRoutesBloc({@required this.routeImagesBloc}) {
+  GymRoutesBloc({required this.routeImagesBloc}) : super(GymRoutesUninitialized()) {
     _sentFilterEnabled = Map.fromIterable(ROUTE_CATEGORIES,
-      key: (category) => category,
+      key: ((category) => category),
       value: (_) => false,
     );
     _attemptedFilterEnabled = Map.fromIterable(ROUTE_CATEGORIES,
-      key: (category) => category,
+      key: ((category) => category),
       value: (_) => false,
     );
     _gradesFilter = Map.fromIterable(ROUTE_CATEGORIES,
-      key: (category) => category,
-      value: (category) => GradeValues(0, (GRADE_SYSTEMS[DEFAULT_GRADE_SYSTEM[category]].length - 1)),
+      key: ((category) => category),
+      value: (category) => GradeValues(0, (GRADE_SYSTEMS[DEFAULT_GRADE_SYSTEM[category]!]!.length - 1)),
     );
   }
-
-  @override
-  GymRoutesState get initialState => GymRoutesUninitialized();
 
   @override
   Stream<GymRoutesState> mapEventToState(GymRoutesEvent event) async* {

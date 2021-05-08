@@ -22,16 +22,16 @@ class RouteDetailedPage extends StatefulWidget {
 
   final RouteWithUserMeta routeWithUserMeta;
 
-  RouteDetailedPage({@required this.routeWithUserMeta});
+  RouteDetailedPage({required this.routeWithUserMeta});
 
   @override
   State<StatefulWidget> createState() => _RouteDetailedPage();
 }
 
 class _RouteDetailedPage extends State<RouteDetailedPage> {
-  RouteImagesBloc _routeImagesBloc;
-  UserRouteLogBloc _userRouteLogBloc;
-  GymRoutesBloc _gymRoutesBloc;
+  late RouteImagesBloc _routeImagesBloc;
+  late UserRouteLogBloc _userRouteLogBloc;
+  late GymRoutesBloc _gymRoutesBloc;
 
   @override
   void initState() {
@@ -124,7 +124,7 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
     return BlocBuilder<UsersBloc, UsersState>(
       builder: (context, state) {
         if (state is UsersLoaded) {
-          var userName = state.users[widget.routeWithUserMeta.route.userId].name;
+          var userName = state.users[widget.routeWithUserMeta.route.userId]!.name;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -144,7 +144,7 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
                 builder: (context, state) {
                   if (state is GymAreasLoaded) {
                     return Text(
-                      "Area: ${state.areas[widget.routeWithUserMeta.route.areaId].name}",
+                      "Area: ${state.areas[widget.routeWithUserMeta.route.areaId]!.name}",
                       style: TextStyle(fontSize: HEADING_SIZE_3),
                     );
                   } else if (state is GymAreasError) {
@@ -196,7 +196,7 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
     );
   }
 
-  Widget _buildDeleteButton(UserRouteLog userRouteLog) {
+  Widget? _buildDeleteButton(UserRouteLog userRouteLog) {
     if (widget.getIt<UserRepository>().userId != userRouteLog.userId) {
       return null;
     }
@@ -214,7 +214,7 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
       Map<int, UserRouteLog> userRouteLogs) {
     List<Widget> ascents = [];
     for (var userRouteLog in userRouteLogs.values) {
-      var user = users[userRouteLog.userId].name;
+      var user = users[userRouteLog.userId]!.name;
       ascents.add(
         ListTile(
           leading: AscentWidget(userRouteLog),

@@ -11,7 +11,7 @@ class UserRouteLog {
   int userId;
   int gymId;
   bool completed;
-  int numAttempts;
+  int? numAttempts;
   DateTime createdAt;
 
   factory UserRouteLog.fromJson(Map<String, dynamic> json) =>

@@ -2,9 +2,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 
-class SimpleBlocDelegate extends BlocDelegate {
+class SimpleBlocObserver extends BlocObserver {
   @override
-  void onEvent(Bloc bloc, Object event) {
+  void onEvent(Bloc bloc, Object? event) {
     super.onEvent(bloc, event);
     debugPrint("Event: $event");
   }
@@ -16,7 +16,7 @@ class SimpleBlocDelegate extends BlocDelegate {
   }
 
   @override
-  void onError(Bloc bloc, Object error, StackTrace stacktrace) {
+  void onError(BlocBase bloc, Object error, StackTrace stacktrace) {
     super.onError(bloc, error, stacktrace);
     var errorDetails = FlutterErrorDetails(exception: error, stack: stacktrace);
     throw errorDetails;

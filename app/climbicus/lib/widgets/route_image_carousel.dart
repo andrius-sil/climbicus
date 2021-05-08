@@ -5,7 +5,7 @@ import 'package:climbicus/widgets/route_image.dart';
 import 'package:flutter/material.dart';
 
 class RouteImageCarousel extends StatefulWidget {
-  final Map<int, RouteImage> images;
+  final Map<int, RouteImage>? images;
 
   const RouteImageCarousel({this.images});
 
@@ -32,21 +32,23 @@ class _RouteImageCarouselState extends State<RouteImageCarousel> {
 
     return Stack(children: [
       CarouselSlider(
-        viewportFraction: 0.5,
-        enlargeCenterPage: true,
-        enableInfiniteScroll: false,
-        items: widget.images.values.map((img) {
+        options: CarouselOptions(
+          viewportFraction: 0.5,
+          enlargeCenterPage: true,
+          enableInfiniteScroll: false,
+          onPageChanged: (index, reason) {
+            setState(() {
+              _current = index;
+            });
+          },
+        ),
+        items: widget.images!.values.map((img) {
           return Builder(
               builder: (BuildContext context) {
                 return RouteImageWidget(img);
               }
           );
         }).toList(),
-        onPageChanged: (index) {
-          setState(() {
-            _current = index;
-          });
-        },
       ),
       Positioned(
         top: 0.0,
@@ -54,7 +56,7 @@ class _RouteImageCarouselState extends State<RouteImageCarousel> {
         right: 0.0,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: widget.images.values.toList().asMap().map((index, i) {
+          children: widget.images!.values.toList().asMap().map((index, i) {
             return MapEntry(index, Container(
               width: 8.0,
               height: 8.0,

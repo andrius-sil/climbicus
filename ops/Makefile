@@ -1,25 +1,26 @@
 include ../Makefile
 
+IP_ADDR = $(shell ipconfig getifaddr en0)
+
 ec2-update-security-group-rules: check-env
 	./ec2_update_security_group_rules.sh
 
 flutter-apk-install: check-env
-	cd ../app/climbicus/; flutter build apk --dart-define=ENV=${ENV} --split-per-abi; flutter install
+	cd ../app/climbicus/; flutter build apk --dart-define=ENV=${ENV} --dart-define=DEV_HOST_IP=http://${IP_ADDR}:5000 --split-per-abi --no-sound-null-safety; flutter install
 
-# Workarounds for
-# - https://issuetracker.google.com/issues/158753935
-# - https://github.com/flutter/flutter/issues/65334
-flutter-apk-install-hack: check-env
-	cd ../app/climbicus/; flutter build apk --debug --dart-define=ENV=${ENV} --split-per-abi --no-shrink; flutter build apk --profile --dart-define=ENV=${ENV} --split-per-abi --no-shrink; flutter build apk --dart-define=ENV=${ENV} --split-per-abi --no-shrink; flutter install
+flutter-ios-install: check-env
+	cd ../app/climbicus/; flutter build ios --dart-define=ENV=${ENV} --dart-define=DEV_HOST_IP=http://${IP_ADDR}:5000 --no-sound-null-safety; flutter install
 
 flutter-appbundle-build: check-env
-	cd ../app/climbicus/; flutter build appbundle --dart-define=ENV=${ENV}
+	cd ../app/climbicus/; flutter build appbundle --dart-define=ENV=${ENV} --no-sound-null-safety
 
 flutter-ipa-build: check-env
-	cd ../app/climbicus/; flutter build ipa --dart-define=ENV=${ENV}
+	cd ../app/climbicus/; flutter build ipa --dart-define=ENV=${ENV} --no-sound-null-safety
+
+flutter-cross-build: flutter-appbundle-build flutter-ipa-build
 
 flutter-code-gen:
-	cd ../app/climbicus/; flutter pub run build_runner build
+	cd ../app/climbicus/; flutter pub run build_runner build --delete-conflicting-outputs
 
 flutter-launcher-icons:
 	cd ../app/climbicus/; flutter pub run flutter_launcher_icons:main
