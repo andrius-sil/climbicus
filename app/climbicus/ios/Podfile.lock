@@ -42,6 +42,8 @@ PODS:
     - Sentry (~> 6.2.1)
   - shared_preferences (0.0.1):
     - Flutter
+  - url_launcher (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - camera (from `.symlinks/plugins/camera/ios`)
@@ -55,6 +57,7 @@ DEPENDENCIES:
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - sentry_flutter (from `.symlinks/plugins/sentry_flutter/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
+  - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
 
 SPEC REPOS:
   trunk:
@@ -87,6 +90,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sentry_flutter/ios"
   shared_preferences:
     :path: ".symlinks/plugins/shared_preferences/ios"
+  url_launcher:
+    :path: ".symlinks/plugins/url_launcher/ios"
 
 SPEC CHECKSUMS:
   camera: a0ca5080336f7af47b88436e5e26da3dee5568f0
@@ -105,6 +110,7 @@ SPEC CHECKSUMS:
   Sentry: 9b922b396b0e0bca8516a10e36b0ea3ebea5faf7
   sentry_flutter: 5b3c6d717db5b7482504a313c831b318297d4d37
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
+  url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
 
 PODFILE CHECKSUM: 33f74cf6f4e5775ad35ae5df4008ad34eb3f5e59
 

@@ -9,8 +9,17 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:package_info/package_info.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../constants.dart';
+
+
+const feedbackSubject = "App feedback";
+
 
 class SettingsPage extends StatefulWidget {
+  String feedbackUrl = Uri.encodeFull("mailto:$FEEDBACK_EMAIL?subject=$feedbackSubject");
+
   final Environment env;
 
   SettingsPage({required this.env});
@@ -59,6 +68,16 @@ class _SettingsPageState extends State<SettingsPage> {
                 trailing: RaisedButton(
                   child: Text('Log Out'),
                   onPressed: logout,
+                ),
+              ),
+              ListTile(
+                title: Text("Feedback"),
+                trailing: TextButton(
+                  child: Text(
+                    FEEDBACK_EMAIL,
+                    style: TextStyle(color: Theme.of(context).buttonColor),
+                  ),
+                  onPressed: launchFeedbackMail,
                 ),
               ),
               ListTile(
@@ -134,5 +153,10 @@ class _SettingsPageState extends State<SettingsPage> {
     }
 
     return _buildDisplayPredictionsNumSelection();
+  }
+
+  Future<void> launchFeedbackMail() async {
+    var url = widget.feedbackUrl;
+    await canLaunch(url) ? await launch(url) : throw "Could not launch $url";
   }
 }
