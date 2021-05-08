@@ -129,7 +129,7 @@ class _CameraCustomState extends State<CameraCustom> {
 
   Widget _buildCameraPreview() {
     return AspectRatio(
-      aspectRatio: _controller.value.aspectRatio,
+      aspectRatio: _controller.value.previewSize!.height / _controller.value.previewSize!.width,
       child: Stack(
         children: <Widget>[
           CameraPreview(_controller),
