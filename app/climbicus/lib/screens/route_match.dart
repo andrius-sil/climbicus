@@ -1,6 +1,5 @@
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
-import 'package:climbicus/models/app/route_user_meta.dart';
 import 'package:climbicus/style.dart';
 import 'package:climbicus/widgets/route_image.dart';
 import 'package:climbicus/widgets/route_log.dart';
@@ -8,18 +7,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class RouteMatchPage extends StatefulWidget {
+class RouteMatchArgs {
   final int? selectedRouteId;
   final Widget selectedImage;
   final int takenRouteImageId;
   final RouteImageWidget takenImage;
 
-  RouteMatchPage({
+  RouteMatchArgs({
     this.selectedRouteId,
     required this.selectedImage,
     required this.takenRouteImageId,
     required this.takenImage,
   });
+}
+
+class RouteMatchPage extends StatefulWidget {
+  static const routeName = '/route_match';
+
+  final RouteMatchArgs args;
+
+  RouteMatchPage(this.args);
 
   @override
   State<StatefulWidget> createState() => _RouteMatchPageState();
@@ -45,8 +52,8 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
     _gymRoutesBloc = BlocProvider.of<GymRoutesBloc>(context);
 
     _routeImagesBloc.add(UpdateRouteImage(
-      routeId: widget.selectedRouteId!,
-      routeImageId: widget.takenRouteImageId,
+      routeId: widget.args.selectedRouteId!,
+      routeImageId: widget.args.takenRouteImageId,
     ));
   }
 
@@ -63,7 +70,7 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
                 Container(
                   height: columnSize,
                   width: columnSize,
-                  child: widget.takenImage,
+                  child: widget.args.takenImage,
                 ),
               ],
             ),
@@ -76,7 +83,7 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
                 Container(
                   height: columnSize,
                   width: columnSize,
-                  child: widget.selectedImage,
+                  child: widget.args.selectedImage,
                 ),
               ],
             ),
@@ -122,13 +129,13 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
 
   void _logAndNavigateBack() {
     _gymRoutesBloc.add(AddNewUserRouteLog(
-      routeId: widget.selectedRouteId!,
+      routeId: widget.args.selectedRouteId!,
       completed: checkboxSentKey.currentState!.value,
       numAttempts: numberAttemptsKey.currentState!.value,
     ));
 
     _gymRoutesBloc.add(AddOrUpdateUserRouteVotes(
-      routeId: widget.selectedRouteId!,
+      routeId: widget.args.selectedRouteId!,
       userRouteVotesData: UserRouteVotesData(
         routeQualityKey.currentState!.value,
         routeDifficultyKey.currentState!.value,

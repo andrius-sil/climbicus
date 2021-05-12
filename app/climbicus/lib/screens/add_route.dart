@@ -13,11 +13,19 @@ import 'package:climbicus/widgets/route_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AddRoutePage extends StatefulWidget {
+class AddRouteArgs {
   final ImagePickerData imgPickerData;
   final String routeCategory;
 
-  AddRoutePage({required this.imgPickerData, required this.routeCategory});
+  AddRouteArgs(this.imgPickerData, this.routeCategory);
+}
+
+class AddRoutePage extends StatefulWidget {
+  static const routeName = '/add_route';
+
+  final AddRouteArgs args;
+
+  AddRoutePage(this.args);
 
   @override
   State<StatefulWidget> createState() => _AddRoutePageState();
@@ -48,15 +56,15 @@ class _AddRoutePageState extends State<AddRoutePage> {
   void initState() {
     super.initState();
 
-    _selectedCategory = widget.routeCategory;
-    _selectedGradeSystem = DEFAULT_GRADE_SYSTEM[widget.routeCategory]!;
+    _selectedCategory = widget.args.routeCategory;
+    _selectedGradeSystem = DEFAULT_GRADE_SYSTEM[widget.args.routeCategory]!;
 
     _gymRoutesBloc = BlocProvider.of<GymRoutesBloc>(context);
     _routeImagesBloc = BlocProvider.of<RouteImagesBloc>(context);
     _routePredictionBloc = BlocProvider.of<RoutePredictionBloc>(context);
 
     _routeImagesBloc.add(UpdateRouteImage(
-      routeImageId: widget.imgPickerData.routeImage.id,
+      routeImageId: widget.args.imgPickerData.routeImage.id,
     ));
   }
 
@@ -220,18 +228,17 @@ class _AddRoutePageState extends State<AddRoutePage> {
     return IconButton(
       icon: const Icon(Icons.add_a_photo_outlined),
       onPressed: () async {
-        final imageFile = await Navigator.push(context, MaterialPageRoute(
-          builder: (BuildContext context) {
-            return CameraCustom();
-          },
-        ));
+        final dynamic imageFile = await Navigator.pushNamed(
+            context,
+            CameraCustom.routeName,
+        );
         if (imageFile == null) {
           return;
         }
 
         _routePredictionBloc.add(FetchRoutePrediction(
           image: imageFile,
-          routeCategory: widget.routeCategory,
+          routeCategory: widget.args.routeCategory,
         ));
       },
       iconSize: 48,

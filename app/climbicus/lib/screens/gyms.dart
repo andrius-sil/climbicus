@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GymsPage extends StatefulWidget {
+  static const routeName = '/gyms';
+
   @override
   State<StatefulWidget> createState() => _GymsPageState();
 

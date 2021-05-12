@@ -17,12 +17,20 @@ import 'package:get_it/get_it.dart';
 
 import '../style.dart';
 
-class RouteDetailedPage extends StatefulWidget {
-  final getIt = GetIt.instance;
-
+class RouteDetailedArgs {
   final RouteWithUserMeta routeWithUserMeta;
 
-  RouteDetailedPage({required this.routeWithUserMeta});
+  RouteDetailedArgs(this.routeWithUserMeta);
+}
+
+class RouteDetailedPage extends StatefulWidget {
+  static const routeName = '/route_detailed';
+  
+  final getIt = GetIt.instance;
+
+  final RouteDetailedArgs args;
+
+  RouteDetailedPage(this.args);
 
   @override
   State<StatefulWidget> createState() => _RouteDetailedPage();
@@ -38,18 +46,18 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
     super.initState();
 
     _routeImagesBloc = BlocProvider.of<RouteImagesBloc>(context);
-    _routeImagesBloc.add(FetchRouteImagesAll(routeId: widget.routeWithUserMeta.route.id));
+    _routeImagesBloc.add(FetchRouteImagesAll(routeId: widget.args.routeWithUserMeta.route.id));
 
     _userRouteLogBloc = BlocProvider.of<UserRouteLogBloc>(context);
-    _userRouteLogBloc.add(FetchUserRouteLog(routeId: widget.routeWithUserMeta.route.id));
+    _userRouteLogBloc.add(FetchUserRouteLog(routeId: widget.args.routeWithUserMeta.route.id));
 
     _gymRoutesBloc = BlocProvider.of<GymRoutesBloc>(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    var routeTitleName = widget.routeWithUserMeta.route.name ??
-        '${widget.routeWithUserMeta.route.grade} route';
+    var routeTitleName = widget.args.routeWithUserMeta.route.name ??
+        '${widget.args.routeWithUserMeta.route.grade} route';
 
     return Scaffold(
       appBar: AppBar(
@@ -63,7 +71,7 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
               builder: (context, state) {
                 if (state is RouteImagesLoaded) {
                   return RouteImageCarousel(
-                    images: state.images.allImages(widget.routeWithUserMeta.route.id),
+                    images: state.images.allImages(widget.args.routeWithUserMeta.route.id),
                   );
                 } else if (state is RouteImagesError) {
                   return ErrorWidget.builder(state.errorDetails);
@@ -104,10 +112,10 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
           return Row(
             children: [
               Expanded(
-                  child: gradeAndDifficulty(widget.routeWithUserMeta, 80.0)
+                  child: gradeAndDifficulty(widget.args.routeWithUserMeta, 80.0)
               ),
               Expanded(
-                  child: qualityAndAscents(context, widget.routeWithUserMeta, 80.0)
+                  child: qualityAndAscents(context, widget.args.routeWithUserMeta, 80.0)
               ),
             ],
           );
@@ -124,7 +132,7 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
     return BlocBuilder<UsersBloc, UsersState>(
       builder: (context, state) {
         if (state is UsersLoaded) {
-          var userName = state.users[widget.routeWithUserMeta.route.userId]!.name;
+          var userName = state.users[widget.args.routeWithUserMeta.route.userId]!.name;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -133,18 +141,18 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
                 style: TextStyle(fontSize: HEADING_SIZE_3),
               ),
               Text(
-                "Added on: ${dateToString(widget.routeWithUserMeta.route.createdAt)}",
+                "Added on: ${dateToString(widget.args.routeWithUserMeta.route.createdAt)}",
                 style: TextStyle(fontSize: HEADING_SIZE_3),
               ),
               Text(
-                "Category: ${widget.routeWithUserMeta.route.category}",
+                "Category: ${widget.args.routeWithUserMeta.route.category}",
                 style: TextStyle(fontSize: HEADING_SIZE_3),
               ),
               BlocBuilder<GymAreasBloc, GymAreasState>(
                 builder: (context, state) {
                   if (state is GymAreasLoaded) {
                     return Text(
-                      "Area: ${state.areas[widget.routeWithUserMeta.route.areaId]!.name}",
+                      "Area: ${state.areas[widget.args.routeWithUserMeta.route.areaId]!.name}",
                       style: TextStyle(fontSize: HEADING_SIZE_3),
                     );
                   } else if (state is GymAreasError) {
@@ -173,7 +181,7 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
             builder: (context, userRouteLogState) {
               if (userRouteLogState is UserRouteLogLoaded) {
                 // Keep waiting if this route's logs haven't been fetched yet.
-                var userRouteLogs = userRouteLogState.userRouteLogs[widget.routeWithUserMeta.route.id];
+                var userRouteLogs = userRouteLogState.userRouteLogs[widget.args.routeWithUserMeta.route.id];
                 if (userRouteLogs != null) {
                   return _buildRouteAscentsWithUsers(
                     usersState.users,

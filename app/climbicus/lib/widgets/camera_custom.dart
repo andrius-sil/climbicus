@@ -2,13 +2,13 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:climbicus/blocs/settings_bloc.dart';
-import 'package:climbicus/utils/io.dart';
-import 'package:climbicus/utils/time.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CameraCustom extends StatefulWidget {
+  static const routeName = '/camera_custom';
+
   const CameraCustom();
 
   @override

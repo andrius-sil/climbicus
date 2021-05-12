@@ -13,12 +13,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'add_route.dart';
 
-class RoutePredictionsPage extends StatefulWidget {
-
+class RoutePredictionsArgs {
   final File image;
   final String routeCategory;
 
-  RoutePredictionsPage({required this.image, required this.routeCategory});
+  RoutePredictionsArgs(this.image, this.routeCategory);
+}
+
+class RoutePredictionsPage extends StatefulWidget {
+  static const routeName = '/route_predictions';
+
+  final RoutePredictionsArgs args;
+
+  RoutePredictionsPage(this.args);
 
   @override
   State<StatefulWidget> createState() => _RoutePredictionsPageState();
@@ -38,11 +45,11 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
     _settingsBloc = BlocProvider.of<SettingsBloc>(context);
     _routePredictionBloc = BlocProvider.of<RoutePredictionBloc>(context);
     _routePredictionBloc.add(FetchRoutePrediction(
-        image: widget.image,
-        routeCategory: widget.routeCategory,
+        image: widget.args.image,
+        routeCategory: widget.args.routeCategory,
     ));
 
-    _takenImage = RouteImageWidget.fromFile(widget.image);
+    _takenImage = RouteImageWidget.fromFile(widget.args.image);
   }
 
   @override
@@ -98,20 +105,14 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
             IconButton(
               icon: const Icon(Icons.replay),
               onPressed: () async {
-                final imageFile = await Navigator.push(context, MaterialPageRoute(
-                  builder: (BuildContext context) {
-                    return CameraCustom();
-                  },
-                ));
+                final dynamic imageFile = await Navigator.pushNamed(context, CameraCustom.routeName);
                 if (imageFile == null) {
                   return;
                 }
 
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (BuildContext context) {
-                    return RoutePredictionsPage(image: imageFile, routeCategory: widget.routeCategory);
-                  },
-                ));
+                Navigator.pushNamed(context, RoutePredictionsPage.routeName,
+                  arguments: RoutePredictionsArgs(imageFile, widget.args.routeCategory),
+                );
               },
               iconSize: 48,
             ),
@@ -133,11 +134,9 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
   }
 
   Future<void> noMatch() async {
-    Navigator.push(context, MaterialPageRoute(
-      builder: (BuildContext context) {
-        return AddRoutePage(imgPickerData: _imgPickerData!, routeCategory: widget.routeCategory);
-      },
-    ));
+    Navigator.pushNamed(context, AddRoutePage.routeName,
+      arguments: AddRouteArgs(_imgPickerData!, widget.args.routeCategory),
+    );
   }
 
   Widget _buildPredictionsComponent(BuildContext context) {
@@ -243,16 +242,14 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
       Widget childWidget, int routeId, Widget imageWidget, int takenRouteImageId) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(
-          builder: (BuildContext context) {
-            return RouteMatchPage(
+        Navigator.pushNamed(context, RouteMatchPage.routeName,
+            arguments: RouteMatchArgs(
               selectedRouteId: routeId,
               selectedImage: imageWidget,
               takenRouteImageId: takenRouteImageId,
               takenImage: _takenImage!,
-            );
-          },
-        ));
+            ),
+        );
       },
       child: childWidget,
     );

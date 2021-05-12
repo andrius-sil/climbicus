@@ -49,11 +49,9 @@ class HeaderListItem extends StatelessWidget {
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () {
-          Navigator.push(context, MaterialPageRoute(
-            builder: (BuildContext context) {
-              return RouteDetailedPage(routeWithUserMeta: this.routeWithUserMeta);
-            },
-          ));
+          Navigator.pushNamed(context, RouteDetailedPage.routeName,
+            arguments: RouteDetailedArgs(this.routeWithUserMeta),
+          );
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -230,20 +228,17 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
   Widget _buildImagePicker() {
     return FloatingActionButton(
       onPressed: () async {
-        final imageFile = await Navigator.push(context, MaterialPageRoute(
-          builder: (BuildContext context) {
-            return CameraCustom();
-          },
-        ));
+        final dynamic imageFile = await Navigator.pushNamed(
+          context,
+          CameraCustom.routeName,
+        );
         if (imageFile == null) {
           return;
         }
 
-        Navigator.push(context, MaterialPageRoute(
-          builder: (BuildContext context) {
-            return RoutePredictionsPage(image: imageFile, routeCategory: widget.routeCategory);
-          },
-        ));
+        Navigator.pushNamed(context, RoutePredictionsPage.routeName,
+          arguments: RoutePredictionsArgs(imageFile, widget.routeCategory),
+        );
       },
       tooltip: "Add a new route",
       child: Icon(Icons.add_a_photo),

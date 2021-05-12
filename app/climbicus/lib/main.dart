@@ -9,12 +9,18 @@ import 'package:climbicus/constants.dart';
 import 'package:climbicus/repositories/api_repository.dart';
 import 'package:climbicus/repositories/settings_repository.dart';
 import 'package:climbicus/repositories/user_repository.dart';
+import 'package:climbicus/screens/add_route.dart';
 import 'package:climbicus/screens/gyms.dart';
 import 'package:climbicus/screens/login.dart';
+import 'package:climbicus/screens/register.dart';
+import 'package:climbicus/screens/route_detailed.dart';
+import 'package:climbicus/screens/route_match.dart';
+import 'package:climbicus/screens/route_predictions.dart';
 import 'package:climbicus/screens/route_view.dart';
 import 'package:climbicus/screens/settings.dart';
 import 'package:climbicus/screens/verify.dart';
 import 'package:climbicus/style.dart';
+import 'package:climbicus/widgets/camera_custom.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -164,6 +170,23 @@ class ClimbicusApp extends StatelessWidget {
       ],
       builder: DevicePreview.appBuilder,
       home: HomePage(env: env),
+      routes: {
+        RegisterPage.routeName: (BuildContext context) => RegisterPage(),
+        GymsPage.routeName: (BuildContext context) => GymsPage(),
+        CameraCustom.routeName: (BuildContext context) => CameraCustom(),
+        RoutePredictionsPage.routeName: (BuildContext context) => RoutePredictionsPage(
+          ModalRoute.of(context)!.settings.arguments as RoutePredictionsArgs,
+        ),
+        AddRoutePage.routeName: (BuildContext context) => AddRoutePage(
+          ModalRoute.of(context)!.settings.arguments as AddRouteArgs,
+        ),
+        RouteMatchPage.routeName: (BuildContext context) => RouteMatchPage(
+          ModalRoute.of(context)!.settings.arguments as RouteMatchArgs,
+        ),
+        RouteDetailedPage.routeName : (BuildContext context) => RouteDetailedPage(
+          ModalRoute.of(context)!.settings.arguments as RouteDetailedArgs,
+        ),
+      },
     );
   }
 }

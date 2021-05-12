@@ -107,11 +107,7 @@ class _SettingsPageState extends State<SettingsPage> {
     // Close the drawer first.
     Navigator.pop(context);
 
-    Navigator.push(context, MaterialPageRoute(
-      builder: (BuildContext context) {
-        return GymsPage();
-      },
-    ));
+    Navigator.pushNamed(context, GymsPage.routeName);
   }
 
   Future<void> logout() async {

@@ -139,10 +139,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void navigateRegister() {
-    Navigator.push(context, MaterialPageRoute(
-      builder: (BuildContext context) {
-        return RegisterPage();
-      },
-    ));
+    Navigator.pushNamed(context, RegisterPage.routeName);
   }
 }
