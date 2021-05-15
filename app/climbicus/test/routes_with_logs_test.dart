@@ -191,4 +191,26 @@ void main() {
       ..filterGrades("bouldering", GradeValues(GRADE_SYSTEMS["V"]!.indexOf("V5"), GRADE_SYSTEMS["V"]!.indexOf("V6")));
     expect(filteredGrades.routeIds("bouldering"), [4, 5, 6]);
   });
+  
+  test('routes with logs - sorting', () {
+    var unsortedRoutes = {
+      1: RouteWithUserMeta(jsonmdl.Route(1, 1, 1, 1, "bouldering", "", "V_V1", "V_V1", null, null, 0, DateTime.utc(2020, 6, 1)), {}, null),
+      2: RouteWithUserMeta(jsonmdl.Route(2, 1, 1, 1, "bouldering", "", "V_V1", "V_V1", null, null, 0, DateTime.utc(2020, 6, 3)),
+                          {1: UserRouteLog(1, 1, 1, 1, false, 5, DateTime.utc(2020, 6, 4))}, null),
+      3: RouteWithUserMeta(jsonmdl.Route(3, 1, 1, 1, "bouldering", "", "V_V1", "V_V1", null, null, 0, DateTime.utc(2020, 6, 6)), {}, null),
+      4: RouteWithUserMeta(jsonmdl.Route(4, 1, 1, 1, "bouldering", "", "V_V1", "V_V1", null, null, 0, DateTime.utc(2020, 6, 7)), {}, null),
+      5: RouteWithUserMeta(jsonmdl.Route(5, 1, 1, 1, "bouldering", "", "V_V1", "V_V1", null, null, 0, DateTime.utc(2020, 6, 2)), {}, null),
+    };
+
+    var categoryRoutes = CategoryRoutes.fromMap(unsortedRoutes);
+
+    var sortedRoutes = categoryRoutes.sortEntriesByLogDate();
+
+    // compare ignoring sorting
+    expect(sortedRoutes, unsortedRoutes);
+
+    // compare sorting
+    expect(sortedRoutes.keys, [4, 3, 2, 5, 1]);
+  });
+
 }
