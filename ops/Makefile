@@ -5,6 +5,9 @@ IP_ADDR = $(shell ipconfig getifaddr en0)
 ec2-update-security-group-rules: check-env
 	./ec2_update_security_group_rules.sh
 
+db-backup: check-env
+	./db_backup.sh
+
 flutter-apk-install: check-env
 	cd ../app/climbicus/; flutter build apk --dart-define=ENV=${ENV} --dart-define=DEV_HOST_IP=http://${IP_ADDR}:5000 --split-per-abi --no-sound-null-safety; flutter install
 
