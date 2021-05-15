@@ -71,6 +71,7 @@ class CategoryRoutes {
 
   CategoryRoutes(): _routes = {};
   CategoryRoutes.from(CategoryRoutes categoryRoutes): _routes = Map.from(categoryRoutes._routes);
+  CategoryRoutes.fromMap(Map<int, RouteWithUserMeta> routes): _routes = Map.from(routes);
 
   void add(int routeId, RouteWithUserMeta route) => _routes[routeId] = route;
 
@@ -109,7 +110,6 @@ class CategoryRoutes {
 
     return LinkedHashMap.fromIterable(sortedKeys, key: ((k) => k), value: ((k) => _routes[k]!));
   }
-
 }
 
 
