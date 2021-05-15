@@ -31,8 +31,8 @@ class GymRoutesUninitialized extends GymRoutesState {}
 class GymRoutesLoading extends GymRoutesState {}
 
 class GymRoutesLoaded extends GymRoutesState {
-  final RoutesWithUserMeta entries;
-  final RoutesWithUserMeta entriesFiltered;
+  final GymRoutes entries;
+  final GymRoutes entriesFiltered;
   const GymRoutesLoaded({required this.entries, required this.entriesFiltered}) ;
 }
 
@@ -121,8 +121,8 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
 
   final RouteImagesBloc routeImagesBloc;
 
-  late RoutesWithUserMeta _entries;
-  RoutesWithUserMeta get _entriesFiltered => filterEntries();
+  late GymRoutes _entries;
+  GymRoutes get _entriesFiltered => filterEntries();
 
   late Map<String, bool> _sentFilterEnabled;
   late Map<String, bool> _attemptedFilterEnabled;
@@ -161,7 +161,7 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
         var newVotes = (await dataVotes).map((userRouteVotesId, model) =>
             MapEntry(int.parse(userRouteVotesId), UserRouteVotes.fromJson(model)));
 
-        _entries = RoutesWithUserMeta(newRoutes, newLogbook, newVotes);
+        _entries = GymRoutes(newRoutes, newLogbook, newVotes);
 
         yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
 
@@ -252,8 +252,8 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
     return;
   }
 
-  RoutesWithUserMeta filterEntries() {
-    var entriesFiltered = RoutesWithUserMeta.fromRoutesWithUserMeta(_entries);
+  GymRoutes filterEntries() {
+    var entriesFiltered = GymRoutes.from(_entries);
 
     _sentFilterEnabled.forEach((category, enabled) {
       if (enabled) {

@@ -113,12 +113,11 @@ class CategoryRoutes {
 }
 
 
-// TODO: rename to GymRoutes
-class RoutesWithUserMeta {
+class GymRoutes {
   late Map<String, CategoryRoutes> _data;
   late Map<int, jsonmdl.Route> _routes;
 
-  RoutesWithUserMeta(
+  GymRoutes(
       Map<int, jsonmdl.Route> newRoutes,
       Map<int, UserRouteLog> newLogbook,
       Map<int, UserRouteVotes> newVotes,
@@ -143,12 +142,12 @@ class RoutesWithUserMeta {
     });
   }
 
-  RoutesWithUserMeta.fromRoutesWithUserMeta(RoutesWithUserMeta routesWithUserMeta) {
+  GymRoutes.from(GymRoutes gymRoutes) {
     _data = Map.fromIterable(ROUTE_CATEGORIES,
       key: (category) => category,
-      value: ((category) => CategoryRoutes.from(routesWithUserMeta._data[category]!)),
+      value: ((category) => CategoryRoutes.from(gymRoutes._data[category]!)),
     );
-    _routes = routesWithUserMeta._routes;
+    _routes = gymRoutes._routes;
   }
 
   bool isEmpty(String category) => _data[category]!.isEmpty;

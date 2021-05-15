@@ -294,14 +294,14 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
     );
   }
 
-  Widget _buildLogbookGridWithRefresh(Map<int, Area> areas, RoutesWithUserMeta routes) {
+  Widget _buildLogbookGridWithRefresh(Map<int, Area> areas, GymRoutes routes) {
     return RefreshIndicator(
       onRefresh: onRefreshView,
       child: _buildLogbookGrid(areas, routes),
     );
   }
 
-  Widget _buildLogbookGrid(Map<int, Area> areas, RoutesWithUserMeta routes) {
+  Widget _buildLogbookGrid(Map<int, Area> areas, GymRoutes routes) {
     if (routes.isEmpty(widget.routeCategory)) {
       return SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),

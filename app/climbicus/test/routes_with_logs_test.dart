@@ -31,7 +31,7 @@ void main() {
       2: UserRouteVotes(2, 3, 1, 1, 1.0, DIFFICULTY_FAIR, DateTime.utc(2020, 03, 01)),
     };
 
-    var routesWithUserMeta = RoutesWithUserMeta(
+    var routesWithUserMeta = GymRoutes(
       newRoutes,
       {}..addAll(newLogbook1)..addAll(newLogbook2),
       newVotes,
@@ -153,20 +153,20 @@ void main() {
       7: UserRouteLog(7, 4, 1, 1, false, 5, DateTime.now()),
     };
 
-    var routesWithUserMeta = RoutesWithUserMeta(newRoutes, newLogbook, {});
+    var routesWithUserMeta = GymRoutes(newRoutes, newLogbook, {});
 
     expect(routesWithUserMeta.isEmpty("sport"), false);
     expect(routesWithUserMeta.routeIds("sport"), [1, 2, 3, 4, 5]);
 
-    var filteredSent = RoutesWithUserMeta.fromRoutesWithUserMeta(routesWithUserMeta)
+    var filteredSent = GymRoutes.from(routesWithUserMeta)
       ..filterSent("sport");
     expect(filteredSent.routeIds("sport"), [2, 4, 5]);
 
-    var filteredAttempted = RoutesWithUserMeta.fromRoutesWithUserMeta(routesWithUserMeta)
+    var filteredAttempted = GymRoutes.from(routesWithUserMeta)
       ..filterAttempted("sport");
     expect(filteredAttempted.routeIds("sport"), [5]);
 
-    var filteredGrades = RoutesWithUserMeta.fromRoutesWithUserMeta(routesWithUserMeta)
+    var filteredGrades = GymRoutes.from(routesWithUserMeta)
       ..filterGrades("sport", GradeValues(GRADE_SYSTEMS["Font"]!.indexOf("6A"), GRADE_SYSTEMS["Font"]!.indexOf("6B")));
     expect(filteredGrades.routeIds("sport"), [3, 4]);
   });
@@ -182,12 +182,12 @@ void main() {
       7: jsonmdl.Route(7, 1, 1, 1, "bouldering", "", "V_V7", "V_V7", null, null, 0, DateTime.now()),
     };
 
-    var routesWithUserMeta = RoutesWithUserMeta(newRoutes, {}, {});
+    var routesWithUserMeta = GymRoutes(newRoutes, {}, {});
 
     expect(routesWithUserMeta.isEmpty("bouldering"), false);
     expect(routesWithUserMeta.routeIds("bouldering"), [1, 2, 3, 4, 5, 6, 7]);
 
-    var filteredGrades = RoutesWithUserMeta.fromRoutesWithUserMeta(routesWithUserMeta)
+    var filteredGrades = GymRoutes.from(routesWithUserMeta)
       ..filterGrades("bouldering", GradeValues(GRADE_SYSTEMS["V"]!.indexOf("V5"), GRADE_SYSTEMS["V"]!.indexOf("V6")));
     expect(filteredGrades.routeIds("bouldering"), [4, 5, 6]);
   });
