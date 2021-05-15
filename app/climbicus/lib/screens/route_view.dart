@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:climbicus/blocs/gym_areas_bloc.dart';
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
@@ -321,7 +319,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
     var categoryRoutes = routes.allRoutes(widget.routeCategory)!;
 
     var i = 0;
-    (_sortEntriesByLogDate(categoryRoutes)).forEach((routeId, routeWithUserMeta) {
+    (categoryRoutes.sortEntriesByLogDate()).forEach((routeId, routeWithUserMeta) {
       if (++i > MAX_ROUTES_VISIBLE) {
         return;
       }
@@ -472,14 +470,6 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
   Future<void> onRefreshView() async {
     _gymAreasBloc.add(FetchGymAreas());
     _gymRoutesBloc.add(FetchGymRoutes());
-  }
-
-  // TODO: move elsewhere
-  Map<int, RouteWithUserMeta> _sortEntriesByLogDate(Map<int, RouteWithUserMeta> routes) {
-    var sortedKeys = routes.keys.toList(growable: false)
-      ..sort((k1, k2) => routes[k2]!.mostRecentCreatedAt().compareTo(routes[k1]!.mostRecentCreatedAt()));
-
-    return LinkedHashMap.fromIterable(sortedKeys, key: ((k) => k), value: ((k) => routes[k]!));
   }
 
   @override

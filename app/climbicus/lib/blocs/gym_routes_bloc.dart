@@ -127,10 +127,6 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
   late Map<String, bool> _sentFilterEnabled;
   late Map<String, bool> _attemptedFilterEnabled;
   late Map<String, GradeValues> _gradesFilter;
-  
-  RouteWithUserMeta getGymRoute(int routeId) {
-    return _entries.getRouteWithUserMeta(routeId);
-  }
 
   GymRoutesBloc({required this.routeImagesBloc}) : super(GymRoutesUninitialized()) {
     _sentFilterEnabled = Map.fromIterable(ROUTE_CATEGORIES,

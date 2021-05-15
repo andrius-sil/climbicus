@@ -65,73 +65,73 @@ void main() {
     // allRoutes
     expect(routesWithUserMeta.routeIds("sport"), [1, 2]);
     expect(routesWithUserMeta.allRoutes("sport")!.length, 2);
-    expect(routesWithUserMeta.allRoutes("sport")![1]!.route, allRoutes[1]!.route);
-    expect(routesWithUserMeta.allRoutes("sport")![1]!.userRouteLogs, allRoutes[1]!.userRouteLogs);
-    expect(routesWithUserMeta.allRoutes("sport")![1]!.userRouteVotes, allRoutes[1]!.userRouteVotes);
-    expect(routesWithUserMeta.allRoutes("sport")![2]!.route, allRoutes[2]!.route);
-    expect(routesWithUserMeta.allRoutes("sport")![2]!.userRouteLogs, allRoutes[2]!.userRouteLogs);
-    expect(routesWithUserMeta.allRoutes("sport")![2]!.userRouteVotes, allRoutes[2]!.userRouteVotes);
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(1)!.route, allRoutes[1]!.route);
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(1)!.userRouteLogs, allRoutes[1]!.userRouteLogs);
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(1)!.userRouteVotes, allRoutes[1]!.userRouteVotes);
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(2)!.route, allRoutes[2]!.route);
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(2)!.userRouteLogs, allRoutes[2]!.userRouteLogs);
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(2)!.userRouteVotes, allRoutes[2]!.userRouteVotes);
 
     expect(routesWithUserMeta.routeIds("bouldering"), [3, 4]);
     expect(routesWithUserMeta.allRoutes("bouldering")!.length, 2);
-    expect(routesWithUserMeta.allRoutes("bouldering")![3]!.route, allRoutes[3]!.route);
-    expect(routesWithUserMeta.allRoutes("bouldering")![3]!.userRouteLogs, allRoutes[3]!.userRouteLogs);
-    expect(routesWithUserMeta.allRoutes("bouldering")![3]!.userRouteVotes, allRoutes[3]!.userRouteVotes);
-    expect(routesWithUserMeta.allRoutes("bouldering")![4]!.route, allRoutes[4]!.route);
-    expect(routesWithUserMeta.allRoutes("bouldering")![4]!.userRouteLogs, allRoutes[4]!.userRouteLogs);
-    expect(routesWithUserMeta.allRoutes("bouldering")![4]!.userRouteVotes, allRoutes[4]!.userRouteVotes);
+    expect(routesWithUserMeta.allRoutes("bouldering")!.getRoute(3)!.route, allRoutes[3]!.route);
+    expect(routesWithUserMeta.allRoutes("bouldering")!.getRoute(3)!.userRouteLogs, allRoutes[3]!.userRouteLogs);
+    expect(routesWithUserMeta.allRoutes("bouldering")!.getRoute(3)!.userRouteVotes, allRoutes[3]!.userRouteVotes);
+    expect(routesWithUserMeta.allRoutes("bouldering")!.getRoute(4)!.route, allRoutes[4]!.route);
+    expect(routesWithUserMeta.allRoutes("bouldering")!.getRoute(4)!.userRouteLogs, allRoutes[4]!.userRouteLogs);
+    expect(routesWithUserMeta.allRoutes("bouldering")!.getRoute(4)!.userRouteVotes, allRoutes[4]!.userRouteVotes);
 
     // addRoute
     var fifthRoute = jsonmdl.Route(5, 1, 1, 1, "sport", "", "Font_6A", "Font_6A", null, null, 1, DateTime.now());
     var thirdVote = UserRouteVotes(3, 5, 1, 1, 3.0, DIFFICULTY_FAIR, DateTime.utc(2020, 02, 01));
     routesWithUserMeta.addRoute(fifthRoute, thirdVote);
     expect(routesWithUserMeta.routeIdsAll(), [1, 2, 3, 4, 5]);
-    expect(routesWithUserMeta.allRoutes("sport")![5]!.route, fifthRoute);
-    expect(routesWithUserMeta.allRoutes("sport")![5]!.userRouteLogs, {});
-    expect(routesWithUserMeta.allRoutes("sport")![5]!.userRouteVotes, thirdVote);
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(5)!.route, fifthRoute);
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(5)!.userRouteLogs, {});
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(5)!.userRouteVotes, thirdVote);
 
     // addUserRouteLog
     var fifthLog = UserRouteLog(5, 5, 1, 1, false, 5, DateTime.now());
     routesWithUserMeta.addUserRouteLog(fifthLog);
-    expect(routesWithUserMeta.allRoutes("sport")![5]!.userRouteLogs, {5: fifthLog});
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(5)!.userRouteLogs, {5: fifthLog});
 
     // addUserRouteVotes
     var fourthVote = UserRouteVotes(4, 2, 1, 1, 3.0, DIFFICULTY_HARD, DateTime.utc(2020, 02, 01));
     routesWithUserMeta.addUserRouteVotes(fourthVote);
-    expect(routesWithUserMeta.allRoutes("sport")![2]!.userRouteVotes, fourthVote);
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(2)!.userRouteVotes, fourthVote);
 
-    expect(routesWithUserMeta.allRoutes("sport")![1]!.mostRecentLog(), newLogbook1[2]);
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(1)!.mostRecentLog(), newLogbook1[2]);
 
     // numAttempts
-    expect(routesWithUserMeta.allRoutes("sport")![1]!.numAttempts(), 2);
-    expect(routesWithUserMeta.allRoutes("sport")![2]!.numAttempts(), 0);
-    expect(routesWithUserMeta.allRoutes("bouldering")![3]!.numAttempts(), 2);
-    expect(routesWithUserMeta.allRoutes("bouldering")![4]!.numAttempts(), 0);
-    expect(routesWithUserMeta.allRoutes("sport")![5]!.numAttempts(), 1);
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(1)!.numAttempts(), 2);
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(2)!.numAttempts(), 0);
+    expect(routesWithUserMeta.allRoutes("bouldering")!.getRoute(3)!.numAttempts(), 2);
+    expect(routesWithUserMeta.allRoutes("bouldering")!.getRoute(4)!.numAttempts(), 0);
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(5)!.numAttempts(), 1);
 
     // qualityVote
-    expect(routesWithUserMeta.allRoutes("sport")![1]!.qualityVote(), 2.0);
-    expect(routesWithUserMeta.allRoutes("sport")![2]!.qualityVote(), 3.0);
-    expect(routesWithUserMeta.allRoutes("bouldering")![3]!.qualityVote(), 1.0);
-    expect(routesWithUserMeta.allRoutes("bouldering")![4]!.qualityVote(), null);
-    expect(routesWithUserMeta.allRoutes("sport")![5]!.qualityVote(), 3.0);
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(1)!.qualityVote(), 2.0);
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(2)!.qualityVote(), 3.0);
+    expect(routesWithUserMeta.allRoutes("bouldering")!.getRoute(3)!.qualityVote(), 1.0);
+    expect(routesWithUserMeta.allRoutes("bouldering")!.getRoute(4)!.qualityVote(), null);
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(5)!.qualityVote(), 3.0);
 
     // difficultyVote
-    expect(routesWithUserMeta.allRoutes("sport")![1]!.difficultyVote(), DIFFICULTY_SOFT);
-    expect(routesWithUserMeta.allRoutes("sport")![2]!.difficultyVote(), DIFFICULTY_HARD);
-    expect(routesWithUserMeta.allRoutes("bouldering")![3]!.difficultyVote(), DIFFICULTY_FAIR);
-    expect(routesWithUserMeta.allRoutes("bouldering")![4]!.difficultyVote(), null);
-    expect(routesWithUserMeta.allRoutes("sport")![5]!.difficultyVote(), DIFFICULTY_FAIR);
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(1)!.difficultyVote(), DIFFICULTY_SOFT);
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(2)!.difficultyVote(), DIFFICULTY_HARD);
+    expect(routesWithUserMeta.allRoutes("bouldering")!.getRoute(3)!.difficultyVote(), DIFFICULTY_FAIR);
+    expect(routesWithUserMeta.allRoutes("bouldering")!.getRoute(4)!.difficultyVote(), null);
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(5)!.difficultyVote(), DIFFICULTY_FAIR);
 
     // deleteUserRouteLog
-    expect(routesWithUserMeta.allRoutes("sport")![1]!.userRouteLogs, newLogbook1);
-    expect(routesWithUserMeta.allRoutes("sport")![1]!.mostRecentLog(), newLogbook1[2]);
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(1)!.userRouteLogs, newLogbook1);
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(1)!.mostRecentLog(), newLogbook1[2]);
     routesWithUserMeta.deleteUserRouteLog(newLogbook1[2]!);
-    expect(routesWithUserMeta.allRoutes("sport")![1]!.userRouteLogs, {1: newLogbook1[1]});
-    expect(routesWithUserMeta.allRoutes("sport")![1]!.mostRecentLog(), newLogbook1[1]);
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(1)!.userRouteLogs, {1: newLogbook1[1]});
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(1)!.mostRecentLog(), newLogbook1[1]);
     routesWithUserMeta.deleteUserRouteLog(newLogbook1[1]!);
-    expect(routesWithUserMeta.allRoutes("sport")![1]!.userRouteLogs, {});
-    expect(routesWithUserMeta.allRoutes("sport")![1]!.mostRecentLog(), null);
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(1)!.userRouteLogs, {});
+    expect(routesWithUserMeta.allRoutes("sport")!.getRoute(1)!.mostRecentLog(), null);
   });
 
   test('routes with logs - filters', () {
