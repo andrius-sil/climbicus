@@ -100,7 +100,7 @@ void main() {
     gymRoutes.addUserRouteVotes(fourthVote);
     expect(gymRoutes.allRoutes("sport")!.getRoute(2)!.userRouteVotes, fourthVote);
 
-    expect(gymRoutes.allRoutes("sport")!.getRoute(1)!.mostRecentLog(), newLogbook1[2]);
+    expect(gymRoutes.allRoutes("sport")!.getRoute(1)!.mostRecentLog, newLogbook1[2]);
 
     // numAttempts
     expect(gymRoutes.allRoutes("sport")!.getRoute(1)!.numAttempts(), 2);
@@ -125,13 +125,13 @@ void main() {
 
     // deleteUserRouteLog
     expect(gymRoutes.allRoutes("sport")!.getRoute(1)!.userRouteLogs, newLogbook1);
-    expect(gymRoutes.allRoutes("sport")!.getRoute(1)!.mostRecentLog(), newLogbook1[2]);
+    expect(gymRoutes.allRoutes("sport")!.getRoute(1)!.mostRecentLog, newLogbook1[2]);
     gymRoutes.deleteUserRouteLog(newLogbook1[2]!);
     expect(gymRoutes.allRoutes("sport")!.getRoute(1)!.userRouteLogs, {1: newLogbook1[1]});
-    expect(gymRoutes.allRoutes("sport")!.getRoute(1)!.mostRecentLog(), newLogbook1[1]);
+    expect(gymRoutes.allRoutes("sport")!.getRoute(1)!.mostRecentLog, newLogbook1[1]);
     gymRoutes.deleteUserRouteLog(newLogbook1[1]!);
     expect(gymRoutes.allRoutes("sport")!.getRoute(1)!.userRouteLogs, {});
-    expect(gymRoutes.allRoutes("sport")!.getRoute(1)!.mostRecentLog(), null);
+    expect(gymRoutes.allRoutes("sport")!.getRoute(1)!.mostRecentLog, null);
   });
 
   test('routes with logs - filters', () {
@@ -196,10 +196,13 @@ void main() {
     var unsortedRoutes = {
       1: RouteWithUserMeta(jsonmdl.Route(1, 1, 1, 1, "bouldering", "", "V_V1", "V_V1", null, null, 0, DateTime.utc(2020, 6, 1)), {}, null),
       2: RouteWithUserMeta(jsonmdl.Route(2, 1, 1, 1, "bouldering", "", "V_V1", "V_V1", null, null, 0, DateTime.utc(2020, 6, 3)),
-                          {1: UserRouteLog(1, 1, 1, 1, false, 5, DateTime.utc(2020, 6, 4))}, null),
+                          {1: UserRouteLog(1, 2, 1, 1, false, 5, DateTime.utc(2020, 6, 5))}, null),
       3: RouteWithUserMeta(jsonmdl.Route(3, 1, 1, 1, "bouldering", "", "V_V1", "V_V1", null, null, 0, DateTime.utc(2020, 6, 6)), {}, null),
       4: RouteWithUserMeta(jsonmdl.Route(4, 1, 1, 1, "bouldering", "", "V_V1", "V_V1", null, null, 0, DateTime.utc(2020, 6, 7)), {}, null),
       5: RouteWithUserMeta(jsonmdl.Route(5, 1, 1, 1, "bouldering", "", "V_V1", "V_V1", null, null, 0, DateTime.utc(2020, 6, 2)), {}, null),
+      6: RouteWithUserMeta(jsonmdl.Route(6, 1, 1, 1, "bouldering", "", "V_V1", "V_V1", null, null, 0, DateTime.utc(2020, 6, 6)), {}, null),
+      7: RouteWithUserMeta(jsonmdl.Route(7, 1, 1, 1, "bouldering", "", "V_V1", "V_V1", null, null, 0, DateTime.utc(2020, 6, 3)),
+          {1: UserRouteLog(1, 7, 1, 1, false, 5, DateTime.utc(2020, 6, 4))}, null),
     };
 
     var categoryRoutes = CategoryRoutes.fromMap(unsortedRoutes);
@@ -210,7 +213,7 @@ void main() {
     expect(sortedRoutes, unsortedRoutes);
 
     // compare sorting
-    expect(sortedRoutes.keys, [4, 3, 2, 5, 1]);
+    expect(sortedRoutes.keys, [2, 7, 4, 3, 6, 5, 1]);
   });
 
 }

@@ -9,24 +9,61 @@ import 'package:climbicus/utils/route_grades.dart';
 
 class RouteWithUserMeta {
   jsonmdl.Route route;
-  Map<int, UserRouteLog> userRouteLogs;
+  Map<int, UserRouteLog> _userRouteLogs;
   UserRouteVotes? userRouteVotes;
 
-  RouteWithUserMeta(this.route, this.userRouteLogs, this.userRouteVotes);
+  UserRouteLog? _mostRecentLog;
+  late bool _isSent;
 
-  UserRouteLog? mostRecentLog() {
-    if (userRouteLogs.isEmpty) {
-      return null;
+  RouteWithUserMeta(this.route, this._userRouteLogs, this.userRouteVotes) {
+    _updateMostRecentLog();
+    _updateIsSent();
+  }
+
+  Map<int, UserRouteLog> get userRouteLogs => _userRouteLogs;
+
+  void addLog(int logId, UserRouteLog log) {
+    _userRouteLogs[logId] = log;
+
+    _updateMostRecentLog();
+    _updateIsSent();
+  }
+
+  void removeLog(int logId) {
+    _userRouteLogs.remove(logId);
+
+    _updateMostRecentLog();
+    _updateIsSent();
+  }
+
+  UserRouteLog? get mostRecentLog => _mostRecentLog;
+
+  void _updateMostRecentLog() {
+    if (_userRouteLogs.isEmpty) {
+      _mostRecentLog = null;
+      return;
     }
 
-    var sortedKeys = userRouteLogs.keys.toList(growable: false)
-      ..sort((k1, k2) => userRouteLogs[k2]!.createdAt.compareTo(userRouteLogs[k1]!.createdAt));
+    var sortedKeys = _userRouteLogs.keys.toList(growable: false)
+      ..sort((k1, k2) => _userRouteLogs[k2]!.createdAt.compareTo(_userRouteLogs[k1]!.createdAt));
 
-    return userRouteLogs[sortedKeys.first];
+    _mostRecentLog = _userRouteLogs[sortedKeys.first];
+  }
+
+  int compareTo(RouteWithUserMeta other) {
+    if (mostRecentLog != null && other.mostRecentLog != null) {
+      return mostRecentLog!.createdAt.compareTo(other.mostRecentLog!.createdAt);
+    } else if (mostRecentLog != null) {
+      return 1;
+    } else if (other.mostRecentLog != null) {
+      return -1;
+    }
+
+    return route.createdAt.compareTo(other.route.createdAt);
   }
 
   DateTime mostRecentCreatedAt() {
-    var log = mostRecentLog();
+    var log = mostRecentLog;
     if (log != null) {
       return log.createdAt;
     }
@@ -34,17 +71,20 @@ class RouteWithUserMeta {
     return route.createdAt;
   }
 
-  bool isSent() {
-    for (var e in userRouteLogs.entries) {
+  bool get isSent => _isSent;
+
+  void _updateIsSent() {
+    for (var e in _userRouteLogs.entries) {
       if (e.value.completed) {
-        return true;
+        _isSent = true;
+        return;
       }
     }
 
-    return false;
+    _isSent = false;
   }
 
-  bool isAttempted() => userRouteLogs.isNotEmpty;
+  bool isAttempted() => _userRouteLogs.isNotEmpty;
 
   int numAttempts() => route.countAscents;
 
@@ -76,10 +116,10 @@ class CategoryRoutes {
   void add(int routeId, RouteWithUserMeta route) => _routes[routeId] = route;
 
   void updateRoute(int routeId, jsonmdl.Route route) => _routes[routeId]!.route = route;
-  void updateLog(int routeId, int logId, UserRouteLog log) => _routes[routeId]!.userRouteLogs[logId] = log;
+  void updateLog(int routeId, int logId, UserRouteLog log) => _routes[routeId]!.addLog(logId, log);
   void updateVotes(int routeId, UserRouteVotes votes) => _routes[routeId]!.userRouteVotes = votes;
 
-  void removeLog(int routeId, int logId) => _routes[routeId]!.userRouteLogs.remove(logId);
+  void removeLog(int routeId, int logId) => _routes[routeId]!.removeLog(logId);
 
   RouteWithUserMeta? getRoute(int routeId) => _routes[routeId];
 
@@ -90,7 +130,7 @@ class CategoryRoutes {
   List<int> routeIds() => _routes.keys.toList();
 
   void filterSent() {
-    _routes.removeWhere((routeId, routeWithUserMeta) => (routeWithUserMeta.isSent()));
+    _routes.removeWhere((routeId, routeWithUserMeta) => (routeWithUserMeta.isSent));
   }
 
   void filterAttempted() {
@@ -106,7 +146,7 @@ class CategoryRoutes {
 
   Map<int, RouteWithUserMeta> sortEntriesByLogDate() {
     var sortedKeys = _routes.keys.toList(growable: false)
-      ..sort((k1, k2) => _routes[k2]!.mostRecentCreatedAt().compareTo(_routes[k1]!.mostRecentCreatedAt()));
+      ..sort((k1, k2) => _routes[k2]!.compareTo(_routes[k1]!));
 
     return LinkedHashMap.fromIterable(sortedKeys, key: ((k) => k), value: ((k) => _routes[k]!));
   }

@@ -31,7 +31,7 @@ class HeaderListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    UserRouteLog? mostRecentLog = routeWithUserMeta.mostRecentLog();
+    UserRouteLog? mostRecentLog = routeWithUserMeta.mostRecentLog;
 
     Widget? routeNameText;
     if (this.routeWithUserMeta.route.name != null) {
