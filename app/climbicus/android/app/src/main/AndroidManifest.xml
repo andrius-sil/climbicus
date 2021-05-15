@@ -12,6 +12,8 @@
     <application
         android:label="Climbicus"
         android:usesCleartextTraffic="true"
+        android:allowBackup="false"
+        android:fullBackupContent="false"
         android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
@@ -24,6 +26,8 @@
                  until Flutter renders its first frame. It can be removed if
                  there is no splash screen (such as the default splash screen
                  defined in @style/LaunchTheme). -->
+            <!-- allowBackup & fullBackupContent set to "false" to workaround
+                 https://github.com/mogol/flutter_secure_storage/issues/161 -->
             <meta-data
                 android:name="flutterEmbedding"
                 android:value="2" />
