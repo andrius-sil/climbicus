@@ -1,5 +1,6 @@
 from enum import Enum, auto
 
+from flask_sqlalchemy import BaseQuery
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import CheckConstraint, UniqueConstraint
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -11,6 +12,35 @@ from app.utils.io import s3_cdn_path
 def model_repr(_name, **kwargs):
     fields = ", ".join([f"{field}={value}" for field, value in kwargs.items()])
     return f"<{_name}({fields})>"
+
+# from https://blog.miguelgrinberg.com/post/implementing-the-soft-delete-pattern-with-flask-and-sqlalchemy
+class QueryWithSoftDelete(BaseQuery):
+    _with_deleted = False
+
+    def __new__(cls, *args, **kwargs):
+        obj = super(QueryWithSoftDelete, cls).__new__(cls)
+        obj._with_deleted = kwargs.pop('_with_deleted', False)
+        if len(args) > 0:
+            super(QueryWithSoftDelete, obj).__init__(*args, **kwargs)
+            return obj.filter_by(deleted_at=None) if not obj._with_deleted else obj
+        return obj
+
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def with_deleted(self):
+        return self.__class__(self._only_full_mapper_zero('get'),
+                              session=db.session(), _with_deleted=True)
+
+    def _get(self, *args, **kwargs):
+        # this calls the original query.get function from the base class
+        return super(QueryWithSoftDelete, self).get(*args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        # the query.get method does not like it if there is a filter clause
+        # pre-loaded, so we need to implement it using a workaround
+        obj = self.with_deleted()._get(*args, **kwargs)
+        return obj if obj is None or self._with_deleted or not obj.deleted else None
 
 
 class Users(db.Model):
@@ -137,6 +167,10 @@ class Routes(db.Model):
     avg_quality = db.Column(db.Float)
     count_ascents = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
+    deleted_at = db.Column(db.DateTime(timezone=True), nullable=True)
+
+    query_class = QueryWithSoftDelete
+
     __table_args__ = (
         CheckConstraint('avg_quality >= 1.0'),
         CheckConstraint('avg_quality <= 3.0'),
@@ -157,6 +191,7 @@ class Routes(db.Model):
             "avg_quality": self.avg_quality,
             "count_ascents": self.count_ascents,
             "created_at": self.created_at.isoformat(),
+            "deleted_at": self.deleted_at.isoformat() if self.deleted_at else None
         }
 
     @property
