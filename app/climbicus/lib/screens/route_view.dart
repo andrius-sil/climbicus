@@ -249,18 +249,17 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
         if (permissionStatus.isPermanentlyDenied) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             backgroundColor: Theme.of(context).accentColor,
-            content: const Text("You must grant Camera permission in app settings in order to add new routes"),
+            content: const Text("You must grant Camera permission in app settings in order to search or add new routes"),
             action: SnackBarAction(
               label: "Open app settings",
               onPressed: () => openAppSettings(),
             ),
           ));
-        }
-
-        if (!permissionStatus.isGranted) {
+          return;
+        } else if (!permissionStatus.isGranted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             backgroundColor: Theme.of(context).accentColor,
-            content: const Text("Camera permission needs to be granted in order to add new routes"),
+            content: const Text("Camera permissions need to be granted in order to search or add new routes"),
           ));
           return;
         }
