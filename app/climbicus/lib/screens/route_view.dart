@@ -1,6 +1,7 @@
 import 'package:climbicus/blocs/gym_areas_bloc.dart';
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
+import 'package:climbicus/blocs/settings_bloc.dart';
 import 'package:climbicus/models/app/area_route_list_items.dart';
 import 'package:climbicus/models/app/route_user_meta.dart';
 import 'package:climbicus/models/area.dart';
@@ -17,6 +18,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 const GROUP_BY_AREAS = true;
 
@@ -171,8 +173,14 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
   late RouteImagesBloc _routeImagesBloc;
   late GymAreasBloc _gymAreasBloc;
   late GymRoutesBloc _gymRoutesBloc;
+  late SettingsBloc _settingsBloc;
 
   AreaItems _areaItems = AreaItems();
+
+  late TutorialCoachMark _tutorialCoachMark;
+  var _tutorialTargets = <TargetFocus>[];
+
+  final _imagePickerButtonKey = GlobalKey();
 
   @override
   void initState() {
@@ -181,9 +189,18 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
     _routeImagesBloc = BlocProvider.of<RouteImagesBloc>(context);
     _gymAreasBloc = BlocProvider.of<GymAreasBloc>(context);
     _gymRoutesBloc = BlocProvider.of<GymRoutesBloc>(context);
+    _settingsBloc = BlocProvider.of<SettingsBloc>(context);
 
     _gymAreasBloc.add(FetchGymAreas());
     _gymRoutesBloc.add(FetchGymRoutes());
+
+    _initTutorial();
+
+    if (!_settingsBloc.seenHomeTutorial) {
+      _showTutorial();
+
+      _settingsBloc.seenHomeTutorial = true;
+    }
   }
 
   @override
@@ -226,6 +243,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
 
   Widget _buildImagePicker() {
     return FloatingActionButton(
+      key: _imagePickerButtonKey,
       onPressed: () async {
         var permissionStatus = await Permission.camera.request();
         if (permissionStatus.isPermanentlyDenied) {
@@ -495,4 +513,31 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
 
   @override
   bool get wantKeepAlive => true;
+
+  void _initTutorial() {
+    _tutorialTargets.add(
+      TargetFocus(
+        keyTarget: _imagePickerButtonKey,
+        contents: [
+          TargetContent(
+            align: ContentAlign.top,
+            child: Text(
+              "Take a picture of the starting hold to search or add new routes!",
+              style: TextStyle(fontSize: 20.0),
+            ),
+          ),
+        ]
+      ),
+    );
+
+    _tutorialCoachMark = TutorialCoachMark(
+      context,
+      targets: _tutorialTargets,
+      hideSkip: true,
+    );
+  }
+
+  void _showTutorial() {
+    _tutorialCoachMark.show();
+  }
 }

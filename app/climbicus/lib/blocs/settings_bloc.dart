@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 const DEFAULT_DISPLAY_PREDICTIONS_NUM = 3;
 const PLACEHOLDER_GYM_ID = -1;
 const DEFAULT_SEEN_CAMERA_HELP_OVERLAY = false;
+const DEFAULT_SEEN_HOME_TUTORIAL = false;
 
 
 class SettingsState {
@@ -16,12 +17,14 @@ class SettingsState {
   final int gymId;
   final PackageInfo? packageInfo;
   final bool seenCameraHelpOverlay;
+  final bool seenHomeTutorial;
 
   SettingsState({
     required this.displayPredictionsNum,
     required this.gymId,
     required this.packageInfo,
     required this.seenCameraHelpOverlay,
+    required this.seenHomeTutorial,
   });
 }
 
@@ -31,6 +34,7 @@ class SettingsUninitialized extends SettingsState {
     gymId: PLACEHOLDER_GYM_ID,
     packageInfo: null,
     seenCameraHelpOverlay: DEFAULT_SEEN_CAMERA_HELP_OVERLAY,
+    seenHomeTutorial: DEFAULT_SEEN_HOME_TUTORIAL,
   );
 }
 
@@ -55,6 +59,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   int _gymId = PLACEHOLDER_GYM_ID;
   late PackageInfo _packageInfo;
   bool _seenCameraHelpOverlay = DEFAULT_SEEN_CAMERA_HELP_OVERLAY;
+  bool _seenHomeTutorial = DEFAULT_SEEN_HOME_TUTORIAL;
 
   int get gymId => _gymId;
 
@@ -70,6 +75,12 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     storeSetting("seen_camera_help_overlay", _seenCameraHelpOverlay.toString());
   }
 
+  bool get seenHomeTutorial => _seenHomeTutorial;
+  set seenHomeTutorial(bool v) {
+    _seenHomeTutorial = v;
+    storeSetting("seen_home_tutorial", _seenHomeTutorial.toString());
+  }
+
   SettingsBloc() : super(SettingsUninitialized()) {
     retrieveSettings();
   }
@@ -79,6 +90,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     gymId: _gymId,
     packageInfo: _packageInfo,
     seenCameraHelpOverlay: _seenCameraHelpOverlay,
+    seenHomeTutorial: _seenHomeTutorial,
   );
 
   Future<void> retrieveSettings() async {
@@ -91,6 +103,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
 
     _seenCameraHelpOverlay = (await retrieveSetting("seen_camera_help_overlay",
       _seenCameraHelpOverlay.toString())) == "true";
+    _seenHomeTutorial = (await retrieveSetting("seen_home_tutorial",
+      _seenHomeTutorial.toString())) == "true";
 
     getIt<ApiRepository>().gymId = _gymId;
 
