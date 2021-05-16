@@ -191,7 +191,6 @@ class Routes(db.Model):
             "avg_quality": self.avg_quality,
             "count_ascents": self.count_ascents,
             "created_at": self.created_at.isoformat(),
-            "deleted_at": self.deleted_at.isoformat() if self.deleted_at else None
         }
 
     @property

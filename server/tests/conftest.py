@@ -113,6 +113,14 @@ def app(resource_dir):
                     created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
                 )
             )
+        db.session.add(
+            Routes(
+                gym_id=2, user_id=2, area_id=2, category="sport", lower_grade="Font_8A", upper_grade="Font_8A",
+                name=f"Deleted Route", avg_difficulty="fair", avg_quality=2.0, count_ascents=10,
+                created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
+                deleted_at=datetime(2020, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
+            )
+        )
         db.session.flush()
         for i in range(1, 5):
             db.session.add(

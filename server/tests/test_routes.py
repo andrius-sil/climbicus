@@ -7,7 +7,7 @@ import pytz
 
 from app.models import RouteImages, Routes
 from app import db
-from flask import json
+from flask import json, jsonify
 
 from app.utils.encoding import json_to_nparraybytes
 from app import cbir_predictor
@@ -73,12 +73,12 @@ def test_add_route(client, app, auth_headers_user1):
     assert resp.is_json
     assert resp.json["msg"] == "Route added"
     assert resp.json["route"] == {"avg_difficulty": None, "avg_quality": None, "category": "sport", "count_ascents": 0,
-                                  "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 1, "id": 103,
+                                  "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 1, "id": 104,
                                   "lower_grade": "Font_7A", "upper_grade": "Font_7A", "user_id": 1,
                                   "name": "No Hands Slab", "area_id": 2}
 
     with app.app_context():
-        route = Routes.query.filter_by(id=103).one()
+        route = Routes.query.filter_by(id=104).one()
         assert route.gym_id == 1
         assert route.user_id == 1
         assert route.area_id == 2
@@ -333,3 +333,53 @@ def test_cbir_apply_threshold(app, client, resource_dir, auth_headers_user1):
                             'route_id': 4, 'user_id': 2},
         },
     ]
+
+
+def test_with_deleted(app):
+    user_id = 2
+    gym_id = 2
+
+    with app.app_context():
+        query = Routes.query.with_deleted().filter(Routes.gym_id==gym_id, Routes.user_id==user_id)
+        gym_routes = {}
+        for route in query.all():
+            gym_routes[route.id] = route.api_model
+        gym_routes_jsonified = jsonify(gym_routes)
+
+    expected_routes = {
+        "100": {"avg_difficulty": "fair", "avg_quality": 2.0, "category": "sport", "count_ascents": 10,
+                "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 100, "lower_grade": "Font_7A",
+                "upper_grade": "Font_7A", "user_id": 2, "name": "Crimpinator 100", "area_id": 2},
+        "101": {"avg_difficulty": "fair", "avg_quality": 2.0, "category": "sport", "count_ascents": 10,
+                "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 101, "lower_grade": "Font_7A",
+                "upper_grade": "Font_7A", "user_id": 2, "name": "Crimpinator 101", "area_id": 2},
+        "102": {"avg_difficulty": "fair", "avg_quality": 2.0, "category": "sport", "count_ascents": 10,
+                "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 102, "lower_grade": "Font_7A",
+                "upper_grade": "Font_7A", "user_id": 2, "name": "Crimpinator 102", "area_id": 2},
+        "103": {"avg_difficulty": "fair", "avg_quality": 2.0, "category": "sport", "count_ascents": 10,
+                "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 103, "lower_grade": "Font_8A",
+                "upper_grade": "Font_8A", "user_id": 2, "name": "Deleted Route", "area_id": 2,}
+    }
+
+    assert expected_routes == gym_routes_jsonified.json
+
+
+def test_only_deleted(app):
+    user_id = 2
+    gym_id = 2
+
+    with app.app_context():
+        query = Routes.query.with_deleted().filter(Routes.gym_id==gym_id, Routes.user_id==user_id,
+                                                   Routes.deleted_at!=None)
+        gym_routes = {}
+        for route in query.all():
+            gym_routes[route.id] = route.api_model
+        gym_routes_jsonified = jsonify(gym_routes)
+
+    expected_routes = {
+        "103": {"avg_difficulty": "fair", "avg_quality": 2.0, "category": "sport", "count_ascents": 10,
+                "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 103, "lower_grade": "Font_8A",
+                "upper_grade": "Font_8A", "user_id": 2, "name": "Deleted Route", "area_id": 2}
+    }
+
+    assert expected_routes == gym_routes_jsonified.json
