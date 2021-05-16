@@ -21,7 +21,7 @@ MAX_THUMBNAIL_IMG_WIDTH = 128
 def route_list(route_id=None):
     gym_id = request.json["gym_id"]
 
-    query = db.session.query(Routes).filter(Routes.gym_id == gym_id)
+    query = Routes.query.filter(Routes.gym_id == gym_id)
     if route_id:
         query = query.filter(Routes.id == route_id)
 
