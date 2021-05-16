@@ -73,12 +73,12 @@ def test_add_route(client, app, auth_headers_user1):
     assert resp.is_json
     assert resp.json["msg"] == "Route added"
     assert resp.json["route"] == {"avg_difficulty": None, "avg_quality": None, "category": "sport", "count_ascents": 0,
-                                  "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 1, "id": 104,
+                                  "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 1, "id": 105,
                                   "lower_grade": "Font_7A", "upper_grade": "Font_7A", "user_id": 1,
                                   "name": "No Hands Slab", "area_id": 2}
 
     with app.app_context():
-        route = Routes.query.filter_by(id=104).one()
+        route = Routes.query.filter_by(id=105).one()
         assert route.gym_id == 1
         assert route.user_id == 1
         assert route.area_id == 2
