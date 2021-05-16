@@ -15,6 +15,7 @@ import 'package:climbicus/widgets/route_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_view/photo_view.dart';
 
 const GROUP_BY_AREAS = true;
@@ -226,6 +227,26 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
   Widget _buildImagePicker() {
     return FloatingActionButton(
       onPressed: () async {
+        var permissionStatus = await Permission.camera.request();
+        if (permissionStatus.isPermanentlyDenied) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Theme.of(context).accentColor,
+            content: const Text("You must grant Camera permission in app settings in order to add new routes"),
+            action: SnackBarAction(
+              label: "Open app settings",
+              onPressed: () => openAppSettings(),
+            ),
+          ));
+        }
+
+        if (!permissionStatus.isGranted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Theme.of(context).accentColor,
+            content: const Text("Camera permission needs to be granted in order to add new routes"),
+          ));
+          return;
+        }
+
         final dynamic imageFile = await Navigator.pushNamed(
           context,
           CameraCustom.routeName,
