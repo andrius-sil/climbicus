@@ -106,7 +106,9 @@ class _CameraCustomState extends State<CameraCustom> {
       body: FutureBuilder<void>(
         future: _initializeControllerFuture,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            throw snapshot.error!;
+          } else if (snapshot.connectionState == ConnectionState.done) {
             return Column(
               children: <Widget>[
                 Expanded(
