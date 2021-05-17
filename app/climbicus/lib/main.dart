@@ -105,10 +105,11 @@ Future<void> mainDelegate(Environment env) async {
     runApp(devicePreviewApp);
   }, (Object error, StackTrace stackTrace) {
     var exception = error is FlutterErrorDetails ? error.exception : error;
+    var trace = error is FlutterErrorDetails ? error.stack : stackTrace;
 
     print(exception);
-    print(stackTrace);
-    Sentry.captureException(exception, stackTrace: stackTrace);
+    print(trace);
+    Sentry.captureException(exception, stackTrace: trace);
   });
 }
 
