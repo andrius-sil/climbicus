@@ -15,6 +15,7 @@ def test_login(client):
     assert "access_token" in resp.json
     assert resp.json["user_id"] == 1
     assert resp.json["user_verified"] == True
+    assert resp.json["user_is_admin"] == False
 
 
 def test_login_with_invalid_email(client):
@@ -54,11 +55,12 @@ def test_register(client, app):
     assert resp.json["msg"] == "New user created"
 
     with app.app_context():
-        user = Users.query.filter_by(id=4).one()
+        user = Users.query.filter_by(id=5).one()
         assert user.name == "New Tester"
         assert user.email == "new@tester.com"
         assert user.check_password("newpass")
         assert user.verified == False
+        assert user.is_admin == False
 
 
 def test_register_email_already_taken(client, app):
