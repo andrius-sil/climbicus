@@ -398,7 +398,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
   }
 
   Widget _areasExpansionList(ScrollController scrollController) {
-    return ExpansionPanelList(
+    return ExpansionPanelList.radio(
       expansionCallback: (int i, bool isExpanded) {
         setState(() {
           _areaItems.expand(i, isExpanded);
@@ -407,12 +407,12 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
       children: _areaItems.itemsByArea.map((entry) {
         AreaItem areaItem = entry.value;
 
-        return ExpansionPanel(
+        return ExpansionPanelRadio(
           headerBuilder: (BuildContext context, bool isExpanded) {
             return _areaHeaderItem(areaItem);
           },
           body: _routesExpansionList(areaItem.routeItems, scrollController),
-          isExpanded: areaItem.isExpanded,
+          value: areaItem.area.id,
           canTapOnHeader: true,
         );
       }).toList(),
@@ -468,7 +468,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
   }
 
   Widget _routesExpansionList(List<RouteListItem> items, ScrollController scrollController) {
-    return ExpansionPanelList(
+    return ExpansionPanelList.radio(
       expansionCallback: (int i, bool isExpanded) {
         setState(() {
           items[i].isExpanded = !isExpanded;
@@ -478,7 +478,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
         int idx = entry.key;
         RouteListItem item = entry.value;
 
-        return ExpansionPanel(
+        return ExpansionPanelRadio(
           headerBuilder: (BuildContext context, bool isExpanded) {
             return HeaderListItem(
               routeWithUserMeta: item.routeWithUserMeta,
@@ -499,7 +499,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
                 );
               }
           ),
-          isExpanded: item.isExpanded,
+          value: item.routeWithUserMeta.route.id,
         );
       }).toList(),
     );
