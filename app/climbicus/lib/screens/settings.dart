@@ -144,9 +144,12 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   List<Widget> _buildDevSettings() {
-    if (widget.env != Environment.dev) {
+    if (!getIt<UserRepository>().userIsAdmin) {
       return [];
     }
+
+    // DO NOT put anything sensitive here. The check for 'isAdmin'
+    // isn't rigorous.
 
     return _buildDisplayPredictionsNumSelection();
   }
