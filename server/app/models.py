@@ -5,6 +5,7 @@ from sqlalchemy import CheckConstraint, UniqueConstraint
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app import db
+from app.soft_delete_mixin import SoftDeleteMixin
 from app.utils.io import s3_cdn_path
 
 
@@ -124,7 +125,7 @@ class RouteDifficulty(Enum):
     hard = 1.0
 
 
-class Routes(db.Model):
+class Routes(SoftDeleteMixin, db.Model):
     id = db.Column(db.Integer, db.Sequence('route_id_seq'), primary_key=True)
     gym_id = db.Column(db.Integer, db.ForeignKey('gyms.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
@@ -137,7 +138,6 @@ class Routes(db.Model):
     avg_quality = db.Column(db.Float)
     count_ascents = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
-    deleted_at = db.Column(db.DateTime(timezone=True), nullable=True)
 
     __table_args__ = (
         CheckConstraint('avg_quality >= 1.0'),

@@ -191,7 +191,7 @@ def test_predict_with_unknown_image(client, resource_dir, auth_headers_user1):
     ]
 
     assert resp.json["route_image"] == {
-        "id": 9, "route_id": None, "user_id": 1, "created_at": "2019-03-04T10:10:10+00:00",
+        "id": 10, "route_id": None, "user_id": 1, "created_at": "2019-03-04T10:10:10+00:00",
         "path": "/tmp/climbicus_tests/route_images/from_users/gym_id=1/year=2019/month=03"
                 "/full_size/12345678123456781234567812345678.jpg",
         "thumbnail_path": "/tmp/climbicus_tests/route_images/from_users/gym_id=1/year=2019/month=03"
@@ -252,7 +252,7 @@ def test_cbir_predict_with_image(app, client, resource_dir, auth_headers_user1):
     ]
 
     assert resp.json["route_image"] == {
-        "id": 9, "route_id": None, "user_id": 1, "created_at": "2019-03-04T10:10:10+00:00",
+        "id": 10, "route_id": None, "user_id": 1, "created_at": "2019-03-04T10:10:10+00:00",
         "path": "/tmp/climbicus_tests/route_images/from_users/gym_id=1/year=2019/month=03"
                 "/full_size/12345678123456781234567812345678.jpg",
         "thumbnail_path": "/tmp/climbicus_tests/route_images/from_users/gym_id=1/year=2019/month=03"
@@ -260,8 +260,8 @@ def test_cbir_predict_with_image(app, client, resource_dir, auth_headers_user1):
     }
 
     with app.app_context():
-        stored_image = db.session.query(RouteImages).filter_by(id=9).one()
-        assert stored_image.id == 9
+        stored_image = db.session.query(RouteImages).filter_by(id=10).one()
+        assert stored_image.id == 10
         assert stored_image.user_id == 1
         assert stored_image.route_id is None
         assert stored_image.route_unmatched == False
@@ -340,7 +340,8 @@ def test_with_deleted(app):
     gym_id = 2
 
     with app.app_context():
-        query = Routes.query.with_deleted().filter(Routes.gym_id==gym_id, Routes.user_id==user_id)
+        query = db.session.query(Routes).execution_options(include_deleted=True).filter(Routes.gym_id == gym_id,
+                                                                                        Routes.user_id==user_id)
         gym_routes = {}
         for route in query.all():
             gym_routes[route.id] = route.api_model
@@ -369,8 +370,9 @@ def test_only_deleted(app):
     gym_id = 2
 
     with app.app_context():
-        query = Routes.query.with_deleted().filter(Routes.gym_id==gym_id, Routes.user_id==user_id,
-                                                   Routes.deleted_at!=None)
+        query = db.session.query(Routes).execution_options(include_deleted=True).filter(Routes.gym_id==gym_id,
+                                                                                        Routes.user_id==user_id,
+                                                                                        Routes.deleted_at!=None)
         gym_routes = {}
         for route in query.all():
             gym_routes[route.id] = route.api_model
