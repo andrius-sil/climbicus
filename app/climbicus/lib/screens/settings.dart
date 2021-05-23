@@ -18,7 +18,7 @@ const feedbackSubject = "App feedback";
 
 
 class SettingsPage extends StatefulWidget {
-  String feedbackUrl = Uri.encodeFull("mailto:$FEEDBACK_EMAIL?subject=$feedbackSubject");
+  final String feedbackUrl = Uri.encodeFull("mailto:$FEEDBACK_EMAIL?subject=$feedbackSubject");
 
   final Environment env;
 

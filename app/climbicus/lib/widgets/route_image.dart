@@ -15,16 +15,18 @@ class RouteImageWidget extends StatefulWidget {
   final RouteImage? routeImage;
   final File? imageFile;
 
-  String? imagePath;
-  BoxFit boxFit = defaultBoxFit;
+  final String? imagePath;
+  final BoxFit boxFit;
 
-  RouteImageWidget(this.routeImage, {thumbnail: false}) :
+  RouteImageWidget(this.routeImage, {thumbnail: false, boxFit: defaultBoxFit}) :
     imageFile = null,
-    imagePath = thumbnail ? routeImage!.thumbnailPath : routeImage!.path;
-  RouteImageWidget.fromFile(this.imageFile) :
+    imagePath = thumbnail ? routeImage!.thumbnailPath : routeImage!.path,
+    boxFit = boxFit;
+  RouteImageWidget.fromFile(this.imageFile, {boxFit: defaultBoxFit}) :
     routeImage = null,
-    imagePath = null;
-  RouteImageWidget.fromPath(this.imagePath, {boxFit = defaultBoxFit}) :
+    imagePath = null,
+    boxFit = boxFit;
+  RouteImageWidget.fromPath(this.imagePath, {boxFit: defaultBoxFit}) :
     routeImage = null,
     imageFile = null,
     boxFit = boxFit;
