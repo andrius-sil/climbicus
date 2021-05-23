@@ -55,7 +55,7 @@ def test_register(client, app):
     assert resp.json["msg"] == "New user created"
 
     with app.app_context():
-        user = Users.query.filter_by(id=5).one()
+        user = Users.query.filter_by(id=4).one()
         assert user.name == "New Tester"
         assert user.email == "new@tester.com"
         assert user.check_password("newpass")
