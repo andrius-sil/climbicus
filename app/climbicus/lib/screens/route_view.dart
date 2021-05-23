@@ -22,7 +22,7 @@ import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 const GROUP_BY_AREAS = true;
 
-const MAX_ROUTES_VISIBLE = 100;
+const MAX_ROUTES_VISIBLE = 500;
 const ROUTE_LIST_ITEM_HEIGHT = 80.0;
 
 
