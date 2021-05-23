@@ -143,6 +143,20 @@ class _SettingsPageState extends State<SettingsPage> {
     ];
   }
 
+  List<Widget> _buildImageIdCheckbox() {
+    return [
+      ListTile(
+        title: Text("Show image IDs"),
+        trailing: Checkbox(
+          value: _settingsBloc.showImageIds,
+          onChanged: (bool? val) => setState(() {
+            _settingsBloc.showImageIds = val!;
+          }),
+        ),
+      ),
+    ];
+  }
+
   List<Widget> _buildDevSettings() {
     if (!getIt<UserRepository>().userIsAdmin) {
       return [];
@@ -151,7 +165,7 @@ class _SettingsPageState extends State<SettingsPage> {
     // DO NOT put anything sensitive here. The check for 'isAdmin'
     // isn't rigorous.
 
-    return _buildDisplayPredictionsNumSelection();
+    return _buildDisplayPredictionsNumSelection() + _buildImageIdCheckbox();
   }
 
   Future<void> launchFeedbackMail() async {
