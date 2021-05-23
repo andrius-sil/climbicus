@@ -31,7 +31,7 @@ class _VerifyPageState extends State<VerifyPage> {
                 children: [
                   Text("Waiting on approval", style: TextStyle(fontSize: 20.0)),
                   SizedBox(height: 10.0),
-                  RaisedButton(
+                  ElevatedButton(
                     child: Text('Refresh'),
                     onPressed: refresh,
                   ),
@@ -41,7 +41,7 @@ class _VerifyPageState extends State<VerifyPage> {
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: OutlineButton(
+            child: OutlinedButton(
               child: Text('Log Out'),
               onPressed: logout,
             ),

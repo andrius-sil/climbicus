@@ -44,7 +44,6 @@ void main() {
   print("Using config:");
   EnvironmentConfig.display();
 
-  assert(EnvironmentConfig.ENV != null);
   var env = Environment.values.firstWhere(
           (e) => e.toString() == "Environment.${EnvironmentConfig.ENV}");
 

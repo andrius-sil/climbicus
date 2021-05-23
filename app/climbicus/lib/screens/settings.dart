@@ -58,14 +58,14 @@ class _SettingsPageState extends State<SettingsPage> {
             children: <Widget>[
               ListTile(
                 title: _buildGymTitle(_settingsBloc.gymId),
-                trailing: RaisedButton(
+                trailing: ElevatedButton(
                   child: Text('Switch'),
                   onPressed: openGymsPage,
                 ),
               ),
               ListTile(
                 title: Text("Logged in as ${getIt<UserRepository>().email}"),
-                trailing: RaisedButton(
+                trailing: ElevatedButton(
                   child: Text('Log Out'),
                   onPressed: logout,
                 ),

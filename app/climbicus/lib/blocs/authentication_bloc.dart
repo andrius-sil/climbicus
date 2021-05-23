@@ -2,7 +2,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:climbicus/repositories/api_repository.dart';
 import 'package:climbicus/repositories/user_repository.dart';
-import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 
 abstract class AuthenticationEvent {
@@ -48,7 +47,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
         // Verify that auth token is still valid upon logging back in.
         // If not, clear auth details and go back to log in page.
         try {
-          var results = (await getIt<ApiRepository>().fetchGyms())["gyms"];
+          await getIt<ApiRepository>().fetchGyms();
         } on SignatureVerificationApiException {
           add(LoggedOut());
           return;

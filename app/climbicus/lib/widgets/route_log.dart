@@ -429,14 +429,14 @@ class DropdownAreaState extends State<DropdownArea> {
   Widget _buildButton() {
     return Stack(
       children: [
-        FlatButton(
-          padding: const EdgeInsets.all(0.0),
+        TextButton(
+          style: TextButton.styleFrom(padding: EdgeInsets.zero),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(_value.name, style: dropdownValueStyle(_value.name, context)),
-              Icon(Icons.unfold_more_outlined),
+              Icon(Icons.unfold_more_outlined, color: textColor),
             ],
           ),
           onPressed: _openDialog,

@@ -133,7 +133,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
               Container(
                 child: RouteName(key: routeNameKey),
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text('Add'),
                 onPressed: (_selectedCategory == NOT_SELECTED ||
                             _selectedGrade == NOT_SELECTED ||

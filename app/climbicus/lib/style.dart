@@ -44,6 +44,13 @@ final appTheme = () =>  ThemeData(
   buttonColor: accentColor,
   toggleableActiveColor: accentColor,
 
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      primary: accentColor,
+      minimumSize: Size(88, 36)
+    ),
+  ),
+
   iconTheme: IconThemeData(
     color: accentColor,
   ),

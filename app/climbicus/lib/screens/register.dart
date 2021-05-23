@@ -41,7 +41,7 @@ class _RegisterPageState extends State<RegisterPage> {
               backgroundColor: Theme.of(context).accentColor,
               content: Text("Email already exists. Try again."),
             );
-            Scaffold.of(context).showSnackBar(snackBar);
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
           }
         },
         child: BlocBuilder<RegisterBloc, RegisterState>(
@@ -96,7 +96,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return <Widget>[
       Builder(
         builder: (BuildContext context) => ListTile(
-          title: RaisedButton(
+          title: ElevatedButton(
             key: Key('register'),
             child: Text('Register'),
             onPressed: state is RegisterLoading ? null : () => validateAndRegister(context),

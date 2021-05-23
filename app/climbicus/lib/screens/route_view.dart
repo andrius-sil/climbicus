@@ -119,7 +119,7 @@ class _BodyListItemState extends State<BodyListItem> {
             Expanded(child: RouteQualityRating(key: routeQualityKey)),
           ],
         ),
-        RaisedButton(
+        ElevatedButton(
           child: Text("Add"),
           onPressed: _onAddButtonPressed,
         ),
