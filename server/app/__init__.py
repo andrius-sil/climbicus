@@ -2,7 +2,7 @@ import boto3
 from celery import Celery
 from flask import Flask
 from flask_jwt_extended import JWTManager
-from flask_sqlalchemy import BaseQuery, SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
 from app.app_handlers import register_handlers
@@ -18,6 +18,7 @@ def create_celery(app_name=__name__):
         broker=redis_uri,
         include=['app.tasks'],
     )
+
 
 db = SQLAlchemy()
 cbir_predictor = CBIRPredictor()

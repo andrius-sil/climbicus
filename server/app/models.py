@@ -5,7 +5,7 @@ from sqlalchemy import CheckConstraint, UniqueConstraint
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app import db
-from app.soft_delete_mixin import SoftDeleteMixin
+from app.db.soft_delete_mixin import SoftDeleteMixin
 from app.utils.io import s3_cdn_path
 
 
