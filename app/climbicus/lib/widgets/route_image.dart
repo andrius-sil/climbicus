@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:io';
 
 import 'package:climbicus/blocs/settings_bloc.dart';
@@ -13,15 +12,15 @@ class RouteImageWidget extends StatefulWidget {
   // Determines how to display scaled image.
   static const defaultBoxFit = BoxFit.cover;
 
-  final RouteImage routeImage;
-  final File imageFile;
+  final RouteImage? routeImage;
+  final File? imageFile;
 
-  String imagePath;
+  String? imagePath;
   BoxFit boxFit = defaultBoxFit;
 
   RouteImageWidget(this.routeImage, {thumbnail: false}) :
     imageFile = null,
-    imagePath = thumbnail ? routeImage.thumbnailPath : routeImage.path;
+    imagePath = thumbnail ? routeImage!.thumbnailPath : routeImage!.path;
   RouteImageWidget.fromFile(this.imageFile) :
     routeImage = null,
     imagePath = null;
@@ -55,7 +54,7 @@ class RouteImageWidget extends StatefulWidget {
 class RouteImageWidgetState extends State<RouteImageWidget> {
   final getIt = GetIt.instance;
 
-  SettingsBloc _settingsBloc;
+  late SettingsBloc _settingsBloc;
 
   @override
   void initState() {
@@ -68,10 +67,10 @@ class RouteImageWidgetState extends State<RouteImageWidget> {
   Widget build(BuildContext context) {
     var imageWidget;
     if (widget.imageFile != null) {
-      imageWidget = Image.file(widget.imageFile, fit: widget.boxFit);
+      imageWidget = Image.file(widget.imageFile!, fit: widget.boxFit);
     } else if (widget.imagePath != null) {
       imageWidget = Image(
-        image: NetworkImageWithRetry(widget.imagePath, fetchStrategy: RouteImageWidget.fetchStrategy),
+        image: NetworkImageWithRetry(widget.imagePath!, fetchStrategy: RouteImageWidget.fetchStrategy),
         fit: widget.boxFit,
       );
     } else {
@@ -83,11 +82,11 @@ class RouteImageWidgetState extends State<RouteImageWidget> {
       return scaledImageWidget;
     }
 
-    var routeId = 0;
+    int? routeId = 0;
     var imageId = 0;
     if (widget.routeImage != null) {
-      routeId = widget.routeImage.routeId;
-      imageId = widget.routeImage.id;
+      routeId = widget.routeImage!.routeId;
+      imageId = widget.routeImage!.id;
     }
     return Stack(
       children: <Widget>[

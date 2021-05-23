@@ -81,14 +81,14 @@ class CheckboxWithTitleState extends State<CheckboxWithTitle> {
       scale: 1.0,
       child: Checkbox(
         value: _value,
-        onChanged: (bool value) {
+        onChanged: (bool? value) {
           setState(() {
-            _value = value;
+            _value = value!;
             if (widget.onTicked != null) {
               widget.onTicked!();
             }
           });
-        } as void Function(bool?)?,
+        },
       ),
     );
 

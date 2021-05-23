@@ -69,7 +69,8 @@ class UserRepository {
       return false;
     }
 
-    _userId = int.parse(await (secureStorage.read(key: "user_id") as FutureOr<String>));
+    var userIdStr = await secureStorage.read(key: "user_id");
+    _userId = int.parse(userIdStr!);
     _userIsAdmin = (await secureStorage.read(key: "user_is_admin")) == "true";
     _email = await secureStorage.read(key: "email");
 

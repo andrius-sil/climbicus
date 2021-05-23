@@ -77,8 +77,8 @@ class RoutePredictionBloc extends Bloc<RoutePredictionEvent, RoutePredictionStat
           p.join(dirPath, "compressed_${p.basename(event.image.path)}"),
           minWidth: 1024,
           quality: 75,
-        ) as FutureOr<File>);
-        debugPrint("compressed photo size: ${compressedImage.lengthSync()} bytes");
+        ));
+        debugPrint("compressed photo size: ${compressedImage!.lengthSync()} bytes");
 
         var imageAndPredictions = (await getIt<ApiRepository>().routePredictions(compressedImage, event.routeCategory));
         List<dynamic> predictions = imageAndPredictions["sorted_route_and_image_predictions"];

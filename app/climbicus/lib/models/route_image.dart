@@ -8,7 +8,7 @@ class RouteImage {
 
   int id;
   int userId;
-  int routeId;
+  int? routeId;
   DateTime createdAt;
   String path;
   String thumbnailPath;
