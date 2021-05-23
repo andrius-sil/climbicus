@@ -18,7 +18,7 @@ const feedbackSubject = "App feedback";
 
 
 class SettingsPage extends StatefulWidget {
-  String feedbackUrl = Uri.encodeFull("mailto:$FEEDBACK_EMAIL?subject=$feedbackSubject");
+  final String feedbackUrl = Uri.encodeFull("mailto:$FEEDBACK_EMAIL?subject=$feedbackSubject");
 
   final Environment env;
 
@@ -58,14 +58,14 @@ class _SettingsPageState extends State<SettingsPage> {
             children: <Widget>[
               ListTile(
                 title: _buildGymTitle(_settingsBloc.gymId),
-                trailing: RaisedButton(
+                trailing: ElevatedButton(
                   child: Text('Switch'),
                   onPressed: openGymsPage,
                 ),
               ),
               ListTile(
                 title: Text("Logged in as ${getIt<UserRepository>().email}"),
-                trailing: RaisedButton(
+                trailing: ElevatedButton(
                   child: Text('Log Out'),
                   onPressed: logout,
                 ),
@@ -143,12 +143,29 @@ class _SettingsPageState extends State<SettingsPage> {
     ];
   }
 
+  List<Widget> _buildImageIdCheckbox() {
+    return [
+      ListTile(
+        title: Text("Show image IDs"),
+        trailing: Checkbox(
+          value: _settingsBloc.showImageIds,
+          onChanged: (bool? val) => setState(() {
+            _settingsBloc.showImageIds = val!;
+          }),
+        ),
+      ),
+    ];
+  }
+
   List<Widget> _buildDevSettings() {
-    if (widget.env != Environment.dev) {
+    if (!getIt<UserRepository>().userIsAdmin) {
       return [];
     }
 
-    return _buildDisplayPredictionsNumSelection();
+    // DO NOT put anything sensitive here. The check for 'isAdmin'
+    // isn't rigorous.
+
+    return _buildDisplayPredictionsNumSelection() + _buildImageIdCheckbox();
   }
 
   Future<void> launchFeedbackMail() async {

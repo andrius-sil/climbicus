@@ -34,6 +34,7 @@ def login():
         access_token=access_token,
         user_id=user.id,
         user_verified=user.verified,
+        user_is_admin=user.is_admin,
     )
 
 

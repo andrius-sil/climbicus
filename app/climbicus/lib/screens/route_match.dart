@@ -102,7 +102,7 @@ class _RouteMatchPageState extends State<RouteMatchPage> {
           Expanded(child: RouteQualityRating(key: routeQualityKey)),
         ],
       ),
-      RaisedButton(
+      ElevatedButton(
         child: Text('Add'),
         onPressed: _logAndNavigateBack,
       ),

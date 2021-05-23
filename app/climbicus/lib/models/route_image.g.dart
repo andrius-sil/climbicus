@@ -10,7 +10,7 @@ RouteImage _$RouteImageFromJson(Map<String, dynamic> json) {
   return RouteImage(
     json['id'] as int,
     json['user_id'] as int,
-    json['route_id'] as int,
+    json['route_id'] as int?,
     DateTime.parse(json['created_at'] as String),
     json['path'] as String,
     json['thumbnail_path'] as String,

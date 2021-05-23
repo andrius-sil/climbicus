@@ -12,10 +12,12 @@ class UserRepository {
   String? _accessToken;
   String? _email;
   int? _userId;
+  bool? _userIsAdmin;
 
   String get accessToken => _accessToken!;
   String get email => _email!;
   int get userId => _userId!;
+  bool get userIsAdmin => _userIsAdmin!;
 
   Future<void> register({
     required String name,
@@ -39,20 +41,24 @@ class UserRepository {
   }) async {
     _accessToken = userAuth["access_token"];
     _userId = userAuth["user_id"];
+    _userIsAdmin = userAuth["user_is_admin"];
     _email = email;
 
     await secureStorage.write(key: "access_token", value: _accessToken);
     await secureStorage.write(key: "user_id", value: _userId.toString());
+    await secureStorage.write(key: "user_is_admin", value: _userIsAdmin.toString());
     await secureStorage.write(key: "email", value: _email);
   }
 
   Future<void> deauthenticate() async {
     _accessToken = null;
     _userId = null;
+    _userIsAdmin = null;
     _email = null;
 
     await secureStorage.delete(key: "access_token");
     await secureStorage.delete(key: "user_id");
+    await secureStorage.delete(key: "user_is_admin");
     await secureStorage.delete(key: "email");
   }
 
@@ -63,7 +69,9 @@ class UserRepository {
       return false;
     }
 
-    _userId = int.parse(await (secureStorage.read(key: "user_id") as FutureOr<String>));
+    var userIdStr = await secureStorage.read(key: "user_id");
+    _userId = int.parse(userIdStr!);
+    _userIsAdmin = (await secureStorage.read(key: "user_is_admin")) == "true";
     _email = await secureStorage.read(key: "email");
 
     return true;

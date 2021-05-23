@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:async/async.dart';
 import 'package:climbicus/repositories/user_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
@@ -19,7 +18,7 @@ class ApiException implements Exception {
     message = jsonDecode(responseJson)["msg"];
   }
 
-  String toString() => "ApiException: ${response.statusCode} - ${message}";
+  String toString() => "ApiException: ${response.statusCode} - message";
 }
 
 class UnauthorizedApiException extends ApiException {
@@ -111,7 +110,8 @@ class ApiRepository {
     var uri = Uri.parse("$serverUrl/$urlPath");
     var request = http.MultipartRequest("POST", uri);
 
-    var stream = http.ByteStream(DelegatingStream.typed(image.openRead()));
+    var stream = http.ByteStream(image.openRead());
+    stream.cast();
     var length = await image.length();
     var multipartFile = http.MultipartFile('image', stream, length,
         filename: basename(image.path));

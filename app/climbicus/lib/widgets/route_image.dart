@@ -1,78 +1,38 @@
-// @dart=2.9
 import 'dart:io';
 
-import 'package:climbicus/env.dart';
+import 'package:climbicus/blocs/settings_bloc.dart';
 import 'package:climbicus/models/route_image.dart';
-import 'package:climbicus/repositories/settings_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image/network.dart';
 import 'package:get_it/get_it.dart';
 
-class RouteImageWidget extends StatelessWidget {
+class RouteImageWidget extends StatefulWidget {
   // Determines how to display scaled image.
   static const defaultBoxFit = BoxFit.cover;
 
-  final getIt = GetIt.instance;
-  final RouteImage routeImage;
-  final File imageFile;
+  final RouteImage? routeImage;
+  final File? imageFile;
 
-  String imagePath;
-  BoxFit boxFit = defaultBoxFit;
+  final String? imagePath;
+  final BoxFit boxFit;
 
-  RouteImageWidget(this.routeImage, {thumbnail: false}) :
+  RouteImageWidget(this.routeImage, {thumbnail: false, boxFit: defaultBoxFit}) :
     imageFile = null,
-    imagePath = thumbnail ? routeImage.thumbnailPath : routeImage.path;
-  RouteImageWidget.fromFile(this.imageFile) :
+    imagePath = thumbnail ? routeImage!.thumbnailPath : routeImage!.path,
+    boxFit = boxFit;
+  RouteImageWidget.fromFile(this.imageFile, {boxFit: defaultBoxFit}) :
     routeImage = null,
-    imagePath = null;
-  RouteImageWidget.fromPath(this.imagePath, {boxFit = defaultBoxFit}) :
+    imagePath = null,
+    boxFit = boxFit;
+  RouteImageWidget.fromPath(this.imagePath, {boxFit: defaultBoxFit}) :
     routeImage = null,
     imageFile = null,
     boxFit = boxFit;
 
   @override
-  Widget build(BuildContext context) {
-    var imageWidget;
-    if (imageFile != null) {
-      imageWidget = Image.file(imageFile, fit: boxFit);
-    } else if (imagePath != null) {
-      imageWidget = Image(
-        image: NetworkImageWithRetry(imagePath, fetchStrategy: fetchStrategy),
-        fit: boxFit,
-      );
-      // imageWidget = Image.network(imagePath!, fit: boxFit);
-    } else {
-      imageWidget = Image.asset("images/no_image.png");
-    }
-    var scaledImageWidget = ScaledImage(imageWidget);
-
-    // TODO: use env var
-    // var debug = getIt<SettingsRepository>().env == Environment.dev;
-    var debug = false;
-    if (!debug) {
-      return scaledImageWidget;
-    }
-
-    var routeId = 0;
-    var imageId = 0;
-    if (routeImage != null) {
-      routeId = routeImage.routeId;
-      imageId = routeImage.id;
-    }
-    return Stack(
-      children: <Widget>[
-        scaledImageWidget,
-        Align(
-          alignment: Alignment.bottomLeft,
-          child: Text(
-            "route_id: $routeId\nimage_id: $imageId",
-            style: TextStyle(fontSize: 10),
-          ),
-        ),
-      ],
-    );
-  }
+  RouteImageWidgetState createState() => RouteImageWidgetState();
 
   static final FetchStrategy fetchStrategy = const FetchStrategyBuilder(
     transientHttpStatusCodePredicate: _transientHttpStatusCodePredicate,
@@ -91,6 +51,58 @@ class RouteImageWidget extends StatelessWidget {
     503, // Service unavailable
     504 // Gateway timeout
   ];
+}
+
+class RouteImageWidgetState extends State<RouteImageWidget> {
+  final getIt = GetIt.instance;
+
+  late SettingsBloc _settingsBloc;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _settingsBloc = BlocProvider.of<SettingsBloc>(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var imageWidget;
+    if (widget.imageFile != null) {
+      imageWidget = Image.file(widget.imageFile!, fit: widget.boxFit);
+    } else if (widget.imagePath != null) {
+      imageWidget = Image(
+        image: NetworkImageWithRetry(widget.imagePath!, fetchStrategy: RouteImageWidget.fetchStrategy),
+        fit: widget.boxFit,
+      );
+    } else {
+      imageWidget = Image.asset("images/no_image.png");
+    }
+    var scaledImageWidget = ScaledImage(imageWidget);
+
+    if (!_settingsBloc.showImageIds) {
+      return scaledImageWidget;
+    }
+
+    int? routeId = 0;
+    var imageId = 0;
+    if (widget.routeImage != null) {
+      routeId = widget.routeImage!.routeId;
+      imageId = widget.routeImage!.id;
+    }
+    return Stack(
+      children: <Widget>[
+        scaledImageWidget,
+        Align(
+          alignment: Alignment.bottomLeft,
+          child: Text(
+            "route_id: $routeId\nimage_id: $imageId",
+            style: TextStyle(fontSize: 10),
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 

@@ -10,6 +10,7 @@ const DEFAULT_DISPLAY_PREDICTIONS_NUM = 3;
 const PLACEHOLDER_GYM_ID = -1;
 const DEFAULT_SEEN_CAMERA_HELP_OVERLAY = false;
 const DEFAULT_SEEN_HOME_TUTORIAL = false;
+const DEFAULT_SHOW_IMAGE_IDS = false;
 
 
 class SettingsState {
@@ -18,6 +19,7 @@ class SettingsState {
   final PackageInfo? packageInfo;
   final bool seenCameraHelpOverlay;
   final bool seenHomeTutorial;
+  final bool showImageIds;
 
   SettingsState({
     required this.displayPredictionsNum,
@@ -25,6 +27,7 @@ class SettingsState {
     required this.packageInfo,
     required this.seenCameraHelpOverlay,
     required this.seenHomeTutorial,
+    required this.showImageIds,
   });
 }
 
@@ -35,6 +38,7 @@ class SettingsUninitialized extends SettingsState {
     packageInfo: null,
     seenCameraHelpOverlay: DEFAULT_SEEN_CAMERA_HELP_OVERLAY,
     seenHomeTutorial: DEFAULT_SEEN_HOME_TUTORIAL,
+    showImageIds: DEFAULT_SHOW_IMAGE_IDS,
   );
 }
 
@@ -60,6 +64,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   late PackageInfo _packageInfo;
   bool _seenCameraHelpOverlay = DEFAULT_SEEN_CAMERA_HELP_OVERLAY;
   bool _seenHomeTutorial = DEFAULT_SEEN_HOME_TUTORIAL;
+  bool showImageIds = DEFAULT_SHOW_IMAGE_IDS;
 
   int get gymId => _gymId;
 
@@ -91,6 +96,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     packageInfo: _packageInfo,
     seenCameraHelpOverlay: _seenCameraHelpOverlay,
     seenHomeTutorial: _seenHomeTutorial,
+    showImageIds: showImageIds,
   );
 
   Future<void> retrieveSettings() async {

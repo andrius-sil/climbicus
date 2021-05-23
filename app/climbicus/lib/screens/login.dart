@@ -1,6 +1,4 @@
 import 'package:climbicus/blocs/login_bloc.dart';
-import 'package:climbicus/env.dart';
-import 'package:climbicus/repositories/settings_repository.dart';
 import 'package:climbicus/screens/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
       body: BlocListener<LoginBloc, LoginState>(
         listener: (context, state) {
-          dynamic errorMsg = null;
+          dynamic errorMsg;
           if (state is LoginError) {
             errorMsg = "Ooops.. an error has occured";
           } else if (state is LoginUnauthorized) {
@@ -48,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
               backgroundColor: Theme.of(context).accentColor,
               content: Text(errorMsg),
             );
-            Scaffold.of(context).showSnackBar(snackBar);
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
           }
         },
         child: BlocBuilder<LoginBloc, LoginState>(
@@ -94,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
     List<Widget> widgets = [
       Builder(
         builder: (BuildContext context) => ListTile(
-          title: RaisedButton(
+          title: ElevatedButton(
             key: Key('logIn'),
             child: Text('Log in'),
             onPressed: state is LoginLoading ? null : () => validateAndLogin(context),
@@ -108,11 +106,10 @@ class _LoginPageState extends State<LoginPage> {
         title: Row(
           children: <Widget>[
             Text("New user?"),
-            FlatButton(
-              textColor: Theme.of(context).buttonColor,
+            TextButton(
               child: Text(
                 "Register",
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: 18, color: Theme.of(context).buttonColor),
               ),
               onPressed: navigateRegister,
             ),

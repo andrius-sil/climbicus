@@ -57,6 +57,7 @@ def app(resource_dir):
                 email="test1@testing.com",
                 password="testing1",
                 verified=True,
+                is_admin=False,
                 created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
             )
         )
@@ -66,6 +67,7 @@ def app(resource_dir):
                 email="test2@testing.com",
                 password="testing2",
                 verified=True,
+                is_admin=False,
                 created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
             )
         )
@@ -75,6 +77,7 @@ def app(resource_dir):
                 email="test3@testing.com",
                 password="testing3",
                 verified=False,
+                is_admin=False,
                 created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
             )
         )

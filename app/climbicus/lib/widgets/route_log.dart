@@ -81,14 +81,14 @@ class CheckboxWithTitleState extends State<CheckboxWithTitle> {
       scale: 1.0,
       child: Checkbox(
         value: _value,
-        onChanged: (bool value) {
+        onChanged: (bool? value) {
           setState(() {
-            _value = value;
+            _value = value!;
             if (widget.onTicked != null) {
               widget.onTicked!();
             }
           });
-        } as void Function(bool?)?,
+        },
       ),
     );
 
@@ -429,14 +429,14 @@ class DropdownAreaState extends State<DropdownArea> {
   Widget _buildButton() {
     return Stack(
       children: [
-        FlatButton(
-          padding: const EdgeInsets.all(0.0),
+        TextButton(
+          style: TextButton.styleFrom(padding: EdgeInsets.zero),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(_value.name, style: dropdownValueStyle(_value.name, context)),
-              Icon(Icons.unfold_more_outlined),
+              Icon(Icons.unfold_more_outlined, color: textColor),
             ],
           ),
           onPressed: _openDialog,

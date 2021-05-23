@@ -9,16 +9,16 @@ db-backup: check-env
 	./db_backup.sh
 
 flutter-apk-install: check-env
-	cd ../app/climbicus/; flutter build apk --dart-define=ENV=${ENV} --dart-define=DEV_HOST_IP=http://${IP_ADDR}:5000 --split-per-abi --no-sound-null-safety; flutter install
+	cd ../app/climbicus/; flutter build apk --dart-define=ENV=${ENV} --dart-define=DEV_HOST_IP=http://${IP_ADDR}:5000 --split-per-abi; flutter install
 
 flutter-ios-install: check-env
-	cd ../app/climbicus/; flutter build ios --dart-define=ENV=${ENV} --dart-define=DEV_HOST_IP=http://${IP_ADDR}:5000 --no-sound-null-safety; flutter install
+	cd ../app/climbicus/; flutter build ios --dart-define=ENV=${ENV} --dart-define=DEV_HOST_IP=http://${IP_ADDR}:5000; flutter install
 
 flutter-appbundle-build: check-env
-	cd ../app/climbicus/; flutter build appbundle --dart-define=ENV=${ENV} --no-sound-null-safety
+	cd ../app/climbicus/; flutter build appbundle --dart-define=ENV=${ENV}
 
 flutter-ipa-build: check-env
-	cd ../app/climbicus/; flutter build ipa --dart-define=ENV=${ENV} --no-sound-null-safety
+	cd ../app/climbicus/; flutter build ipa --dart-define=ENV=${ENV}
 
 flutter-cross-build: flutter-appbundle-build flutter-ipa-build
 

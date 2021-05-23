@@ -44,7 +44,6 @@ void main() {
   print("Using config:");
   EnvironmentConfig.display();
 
-  assert(EnvironmentConfig.ENV != null);
   var env = Environment.values.firstWhere(
           (e) => e.toString() == "Environment.${EnvironmentConfig.ENV}");
 
@@ -54,7 +53,7 @@ void main() {
 
 Future<void> mainDelegate(Environment env) async {
   ErrorWidget.builder = _buildErrorWidget;
-  debugPrint = _debugPrintWrapper as void Function(String?, {int? wrapWidth});
+  debugPrint = _debugPrintWrapper;
   FlutterError.onError = _onError;
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -131,7 +130,7 @@ Future _sentryInit(Environment env) async {
   );
 }
 
-void _debugPrintWrapper(String message, {int? wrapWidth}) {
+void _debugPrintWrapper(String? message, {int? wrapWidth}) {
   var now = DateTime.now();
   message = "$now: $message";
   debugPrintThrottled(message, wrapWidth: wrapWidth);
