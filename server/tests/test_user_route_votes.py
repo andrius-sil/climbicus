@@ -132,7 +132,7 @@ def test_add_to_votes(client, app, auth_headers_user2):
         "created_at": "2019-03-04T10:10:10+00:00",
         "difficulty": "soft",
         "gym_id": 1,
-        "id": 3,
+        "id": 4,
         "quality": None,
         "route_id": 1,
         "user_id": 2,
@@ -153,7 +153,7 @@ def test_add_to_votes(client, app, auth_headers_user2):
     }
 
     with app.app_context():
-        user_route_log = UserRouteVotes.query.filter_by(id=3).one()
+        user_route_log = UserRouteVotes.query.filter_by(id=4).one()
         assert user_route_log.difficulty_name == "soft"
         assert user_route_log.quality is None
         assert user_route_log.user_id == 2

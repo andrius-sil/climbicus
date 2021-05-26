@@ -230,6 +230,14 @@ def app(resource_dir):
                     num_attempts=None,
                     created_at=datetime(2012, 3, 2, 10, 10, 10, tzinfo=pytz.UTC),
                 ),
+                UserRouteLog(
+                    route_id=104, # deleted route
+                    user_id=1,
+                    gym_id=1,
+                    completed=True,
+                    num_attempts=None,
+                    created_at=datetime(2012, 3, 2, 10, 10, 10, tzinfo=pytz.UTC),
+                ),
             ]
         )
         db.session.add_all(
@@ -248,6 +256,14 @@ def app(resource_dir):
                     gym_id=1,
                     quality=3.0,
                     difficulty="hard",
+                    created_at=datetime(2012, 3, 2, 10, 10, 10, tzinfo=pytz.UTC),
+                ),
+                UserRouteVotes(
+                    route_id=104, # deleted route
+                    user_id=1,
+                    gym_id=1,
+                    quality=2.0,
+                    difficulty="soft",
                     created_at=datetime(2012, 3, 2, 10, 10, 10, tzinfo=pytz.UTC),
                 ),
             ]

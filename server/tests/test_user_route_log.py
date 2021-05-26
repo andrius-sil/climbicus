@@ -63,11 +63,11 @@ def test_add_to_logbook(client, app, auth_headers_user1):
     assert resp.is_json
     assert resp.json["msg"] == "Route status added to log"
     assert resp.json["user_route_log"] == {"completed": True, "created_at": "2019-03-04T10:10:10+00:00",
-                                           "gym_id": 1, "id": 7, "num_attempts": None, "route_id": 1,
+                                           "gym_id": 1, "id": 8, "num_attempts": None, "route_id": 1,
                                            "user_id": 1}
 
     with app.app_context():
-        user_route_log = UserRouteLog.query.filter_by(id=7).one()
+        user_route_log = UserRouteLog.query.filter_by(id=8).one()
         assert user_route_log.completed == True
         assert user_route_log.num_attempts is None
         assert user_route_log.user_id == 1

@@ -44,15 +44,17 @@ def view(route_id=None):
     user_id = request.json["user_id"]
     gym_id = request.json["gym_id"]
 
-    query = db.session.query(UserRouteLog).filter_by(gym_id=gym_id)
+    # It is important that 'Routes' is joined with and is in query's SELECT columns
+    # in order to filter out entries where corresponding route is deleted.
+    query = db.session.query(UserRouteLog, Routes) \
+        .join(Routes, Routes.id == UserRouteLog.route_id) \
+        .filter(UserRouteLog.gym_id == gym_id)
     if route_id:
-        query = query.filter_by(route_id=route_id)
+        query = query.filter(UserRouteLog.route_id == route_id)
     else:
-        query = query.filter_by(user_id=user_id)
+        query = query.filter(UserRouteLog.user_id == user_id)
 
-    logbook = {}
-    for user_route_log in query.all():
-        logbook[user_route_log.id] = user_route_log.api_model
+    logbook = {user_route_log.id: user_route_log.api_model for (user_route_log, _) in query.all()}
     return jsonify(logbook)
 
 
