@@ -45,7 +45,7 @@ class ApiRepository {
   final getIt = GetIt.instance;
 
   final String serverUrl;
-  final client = SentryHttpClient();
+  final client = http.Client();
 
   int? _gymId;
   set gymId(int value) => _gymId = value;
@@ -67,13 +67,30 @@ class ApiRepository {
     }
   }
 
-  Future<Map> _request(http.BaseRequest request, bool auth) async {
+  Future<Map> _request(http.BaseRequest request, bool auth, Map data) async {
     if (auth) {
       var accessToken = getIt<UserRepository>().accessToken;
       request.headers["Authorization"] = "Bearer $accessToken";
     }
 
+    var scrubbedData = _scrubData(data);
+
+    debugPrint("http request: '${request.url}' - '${request.method}' - '${json.encode(scrubbedData)}'");
+
     final response = await client.send(request);
+
+    Sentry.addBreadcrumb(Breadcrumb(
+      type: 'http',
+      category: 'http',
+      data: {
+        'url': request.url.toString(),
+        'method': request.method,
+        'status_code': response.statusCode,
+        // reason is optional, therefore only add it in case it is not null
+        if (response.reasonPhrase != null) 'reason': response.reasonPhrase,
+        'request_data': scrubbedData,
+      },
+    ));
 
     if (response.statusCode != 200) {
       final exception =
@@ -99,10 +116,7 @@ class ApiRepository {
     data.addAll(requestData);
     request.body = json.encode(data);
 
-    debugPrint(
-        "http json request: '${request.url}' - '${request.method}' - '${request.body}'");
-
-    return _request(request, auth);
+    return _request(request, auth, data);
   }
 
   Future<Map> _requestMultipart(
@@ -121,10 +135,7 @@ class ApiRepository {
     data.addAll(requestData);
     request.fields["json"] = json.encode(data);
 
-    debugPrint(
-        "http multipart request: '${request.url}' - '${request.method}' - '${request.fields}'");
-
-    return _request(request, true);
+    return _request(request, true, data);
   }
 
   Future<Map> login(String email, String password) async {
@@ -284,5 +295,13 @@ class ApiRepository {
     };
 
     return _requestJson("PATCH", "user_route_votes/$userRouteVotesId", data);
+  }
+
+  Map _scrubData(Map data) {
+    if (data.containsKey("password")) {
+      data["password"] = "****";
+    }
+
+    return data;
   }
 }
