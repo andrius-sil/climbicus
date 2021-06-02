@@ -114,6 +114,10 @@ Future<void> mainDelegate(Environment env) async {
 
 void _onError(FlutterErrorDetails details) {
   FlutterError.dumpErrorToConsole(details);
+
+  if (details.context != null) {
+    Sentry.addBreadcrumb(Breadcrumb(message: "Error context: ${details.context!.toDescription()}"));
+  }
   Sentry.captureException(details.exception, stackTrace: details.stack);
 }
 
