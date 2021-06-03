@@ -58,6 +58,7 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
   Widget build(BuildContext context) {
     var routeTitleName = widget.args.routeWithUserMeta.route.name ??
         '${widget.args.routeWithUserMeta.route.grade} route';
+    var userId = widget.args.routeWithUserMeta.route.userId;
 
     return Scaffold(
       appBar: AppBar(
@@ -82,7 +83,7 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
             ),
           ),
           decorateLogWidget(context, _buildRouteVotes()),
-          decorateLogWidget(context, _buildRouteDetails(), height: null, padding: 10),
+          decorateLogWidget(context, _buildRouteDetails(userId), height: null, padding: 10),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(8),
@@ -128,11 +129,11 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
     );
   }
 
-  Widget _buildRouteDetails() {
+  Widget _buildRouteDetails(int userId) {
     return BlocBuilder<UsersBloc, UsersState>(
       builder: (context, state) {
-        if (state is UsersLoaded) {
-          var userName = state.users[widget.args.routeWithUserMeta.route.userId]!.name;
+        if (state is UsersLoaded && state.users.loadResources({userId})) {
+          var userName = state.users.getResource(userId)!.name;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -174,29 +175,31 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
   }
 
   Widget _buildRouteAscents() {
-    return BlocBuilder<UsersBloc, UsersState>(
-      builder: (context, usersState) {
-        if (usersState is UsersLoaded) {
-          return BlocBuilder<UserRouteLogBloc, UserRouteLogState>(
-            builder: (context, userRouteLogState) {
-              if (userRouteLogState is UserRouteLogLoaded) {
-                // Keep waiting if this route's logs haven't been fetched yet.
-                var userRouteLogs = userRouteLogState.userRouteLogs[widget.args.routeWithUserMeta.route.id];
-                if (userRouteLogs != null) {
+    return BlocBuilder<UserRouteLogBloc, UserRouteLogState>(
+      builder: (context, userRouteLogState) {
+        if (userRouteLogState is UserRouteLogLoaded) {
+          // Keep waiting if this route's logs haven't been fetched yet.
+          var userRouteLogs = userRouteLogState.userRouteLogs[widget.args.routeWithUserMeta.route.id];
+          if (userRouteLogs != null) {
+            var userIds = userRouteLogs.values.map((e) => e.userId).toSet();
+
+            return BlocBuilder<UsersBloc, UsersState>(
+              builder: (context, usersState) {
+                if (usersState is UsersLoaded && usersState.users.loadResources(userIds)) {
                   return _buildRouteAscentsWithUsers(
                     usersState.users,
                     userRouteLogs,
                   );
+                } else if (usersState is UsersError) {
+                  return ErrorWidget.builder(usersState.errorDetails);
                 }
-              } else if (userRouteLogState is UserRouteLogError) {
-                return ErrorWidget.builder(userRouteLogState.errorDetails);
-              }
 
-              return Center(child: CircularProgressIndicator());
-            },
-          );
-        } else if (usersState is UsersError) {
-          return ErrorWidget.builder(usersState.errorDetails);
+                return Center(child: CircularProgressIndicator());
+              },
+            );
+          }
+        } else if (userRouteLogState is UserRouteLogError) {
+          return ErrorWidget.builder(userRouteLogState.errorDetails);
         }
 
         return Center(child: CircularProgressIndicator());
@@ -218,11 +221,11 @@ class _RouteDetailedPage extends State<RouteDetailedPage> {
     );
   }
 
-  Widget _buildRouteAscentsWithUsers(Map<int, User> users,
+  Widget _buildRouteAscentsWithUsers(Users users,
       Map<int, UserRouteLog> userRouteLogs) {
     List<Widget> ascents = [];
     for (var userRouteLog in userRouteLogs.values) {
-      var user = users[userRouteLog.userId]!.name;
+      var user = users.getResource(userRouteLog.userId)!.name;
       ascents.add(
         ListTile(
           leading: AscentWidget(userRouteLog),
