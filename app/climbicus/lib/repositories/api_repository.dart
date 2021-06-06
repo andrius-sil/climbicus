@@ -252,8 +252,11 @@ class ApiRepository {
     return _requestJson("GET", "gyms/", {});
   }
 
-  Future<Map> fetchUsers() async {
-    return _requestJson("GET", "users/", {});
+  Future<Map> fetchUsers(Set<int>? ids) async {
+    Map data = {
+      "user_ids": ids?.toList(),
+    };
+    return _requestJson("GET", "users/", data);
   }
 
   Future<Map> fetchAreas() async {

@@ -83,12 +83,11 @@ void main() {
 
     // addRoute
     var fifthRoute = jsonmdl.Route(5, 1, 1, 1, "sport", "", "Font_6A", "Font_6A", null, null, 1, DateTime.now());
-    var thirdVote = UserRouteVotes(3, 5, 1, 1, 3.0, DIFFICULTY_FAIR, DateTime.utc(2020, 02, 01));
-    gymRoutes.addRoute(fifthRoute, thirdVote);
+    gymRoutes.addRoute(fifthRoute);
     expect(gymRoutes.routeIdsAll(), [1, 2, 3, 4, 5]);
     expect(gymRoutes.allRoutes("sport")!.getRoute(5)!.route, fifthRoute);
     expect(gymRoutes.allRoutes("sport")!.getRoute(5)!.userRouteLogs, {});
-    expect(gymRoutes.allRoutes("sport")!.getRoute(5)!.userRouteVotes, thirdVote);
+    expect(gymRoutes.allRoutes("sport")!.getRoute(5)!.userRouteVotes, null);
 
     // addUserRouteLog
     var fifthLog = UserRouteLog(5, 5, 1, 1, false, 5, DateTime.now());
@@ -114,14 +113,14 @@ void main() {
     expect(gymRoutes.allRoutes("sport")!.getRoute(2)!.qualityVote(), 3.0);
     expect(gymRoutes.allRoutes("bouldering")!.getRoute(3)!.qualityVote(), 1.0);
     expect(gymRoutes.allRoutes("bouldering")!.getRoute(4)!.qualityVote(), null);
-    expect(gymRoutes.allRoutes("sport")!.getRoute(5)!.qualityVote(), 3.0);
+    expect(gymRoutes.allRoutes("sport")!.getRoute(5)!.qualityVote(), null);
 
     // difficultyVote
     expect(gymRoutes.allRoutes("sport")!.getRoute(1)!.difficultyVote(), DIFFICULTY_SOFT);
     expect(gymRoutes.allRoutes("sport")!.getRoute(2)!.difficultyVote(), DIFFICULTY_HARD);
     expect(gymRoutes.allRoutes("bouldering")!.getRoute(3)!.difficultyVote(), DIFFICULTY_FAIR);
     expect(gymRoutes.allRoutes("bouldering")!.getRoute(4)!.difficultyVote(), null);
-    expect(gymRoutes.allRoutes("sport")!.getRoute(5)!.difficultyVote(), DIFFICULTY_FAIR);
+    expect(gymRoutes.allRoutes("sport")!.getRoute(5)!.difficultyVote(), null);
 
     // deleteUserRouteLog
     expect(gymRoutes.allRoutes("sport")!.getRoute(1)!.userRouteLogs, newLogbook1);

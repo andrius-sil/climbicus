@@ -195,15 +195,19 @@ class GymRoutes {
   List<int> routeIdsAll() => _routes.keys.toList();
   List<int> routeIds(String category) => _data[category]!.routeIds();
 
-  void addRoute(jsonmdl.Route route, UserRouteVotes? userRouteVotes) {
+  void addRoute(jsonmdl.Route route) {
     _routes[route.id] = route;
-    _data[route.category]!.add(route.id, RouteWithUserMeta(route, {}, userRouteVotes));
+    _data[route.category]!.add(route.id, RouteWithUserMeta(route, {}, null));
   }
 
   void updateRoute(jsonmdl.Route route,
       {UserRouteVotes? userRouteVotes, UserRouteLog? userRouteLog}) {
-    _routes[route.id] = route;
-    _data[route.category]!.updateRoute(route.id, route);
+    if (_routes.containsKey(route.id)) {
+      _routes[route.id] = route;
+      _data[route.category]!.updateRoute(route.id, route);
+    } else {
+      addRoute(route);
+    }
     if (userRouteVotes != null) {
       _data[route.category]!.updateVotes(route.id, userRouteVotes);
     }
@@ -228,6 +232,10 @@ class GymRoutes {
   }
 
   UserRouteVotes? getUserRouteVotes(int routeId) {
+    if (!_routes.containsKey(routeId)) {
+      return null;
+    }
+
     String category = _routes[routeId]!.category;
     return _data[category]!.getRoute(routeId)!.userRouteVotes;
   }

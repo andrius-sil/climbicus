@@ -189,6 +189,9 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
         userRouteLog: UserRouteLog.fromJson(results["user_route_log"]),
       );
 
+      // Fetching images in case this was a new route added.
+      routeImagesBloc.add(FetchRouteImages(routeIds: [event.routeId]));
+
       yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
     } else if (event is AddOrUpdateUserRouteVotes) {
       var results;
@@ -212,12 +215,15 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
         userRouteVotes: UserRouteVotes.fromJson(results["user_route_votes"]),
       );
 
+      // Fetching images in case this was a new route added.
+      routeImagesBloc.add(FetchRouteImages(routeIds: [event.routeId]));
+
       yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
     } else if (event is AddNewGymRouteWithUserLog) {
       var results = await getIt<ApiRepository>().routeAdd(event.areaId, event.category, event.grade, event.name);
       var newRoute = jsonmdl.Route.fromJson(results["route"]);
 
-      _entries.addRoute(newRoute, null);
+      _entries.addRoute(newRoute);
 
       this.add(AddOrUpdateUserRouteVotes(
         routeId: newRoute.id,
