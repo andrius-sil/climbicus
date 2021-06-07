@@ -30,9 +30,8 @@ def compress_and_save(image_path, dest_image_path):
     newImage.save(dest_image_path, "JPEG", quality=90)
     
     
-def cbir_compress_and_save(image_path, dest_image_path):
+def cbir_compress_and_save(image_path, dest_image_path, max_width):
     image = cv2.imread(image_path)
-    max_width = 512
     w = image.shape[1]
     h = image.shape[0]
     ratio = w/max_width
