@@ -21,6 +21,7 @@ import 'package:climbicus/screens/settings.dart';
 import 'package:climbicus/screens/verify.dart';
 import 'package:climbicus/style.dart';
 import 'package:climbicus/widgets/camera_custom.dart';
+import 'package:climbicus/widgets/route_painter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -217,6 +218,11 @@ class _HomePageState extends State<HomePage> {
             id: "${getIt<UserRepository>().userId}",
             email: getIt<UserRepository>().email,
           ));
+
+          // return RoutePainter(
+          //   height: 400.0,
+          //   imageNetworkPath: "http://dev-cdn.climbicus.com/white_boulder.jpg",
+          // );
 
           return _buildHomePage();
         } else if (state is AuthenticationUnauthenticated) {
