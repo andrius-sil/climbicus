@@ -75,3 +75,10 @@
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 
 .flutter-plugins-dependencies
+
+.gradle/
+gradle/
+gradlew
+gradlew.bat
+local.properties
+

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:climbicus/utils/images.dart';
 import 'package:path/path.dart' as p;
 
 import 'package:bloc/bloc.dart';
@@ -76,7 +77,7 @@ class RoutePredictionBloc extends Bloc<RoutePredictionEvent, RoutePredictionStat
           event.image.absolute.path,
           p.join(dirPath, "compressed_${p.basename(event.image.path)}"),
           minWidth: 1024,
-          quality: 75,
+          quality: JPEG_QUALITY,
         ));
         debugPrint("compressed photo size: ${compressedImage!.lengthSync()} bytes");
 
