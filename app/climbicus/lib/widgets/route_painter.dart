@@ -10,80 +10,43 @@ import 'package:climbicus/utils/io.dart';
 import 'package:flutter/material.dart';
 
 
-class RoutePainter extends StatefulWidget {
-  final double height;
-  final String imageNetworkPath;
+class RoutePainterController {
+  late double canvasHeight;
 
-  const RoutePainter({
-    required this.height,
-    required this.imageNetworkPath,
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  _RoutePainterState createState() => _RoutePainterState();
-}
-
-class _RoutePainterState extends State<RoutePainter> {
   ui.Image? uiBgImage;
   i.Image? iBgImage;
 
-  late PathHistory _pathHistory;
+  late PathHistory pathHistory;
 
-  @override
-  void initState() {
-    super.initState();
+  int get _imageHeight => uiBgImage!.height;
+  int get _imageWidth => uiBgImage!.width;
 
-    _getImage();
-  }
+  double get _scaleHeight => _imageHeight / canvasHeight;
+  double get _scaleWidth => _imageWidth / canvasWidth;
 
-  Future<void> _getImage() async {
-    uiBgImage = await uiImageFromNetworkPath(widget.imageNetworkPath);
+  double get _aspectRatio => uiBgImage!.width / uiBgImage!.height;
+
+  double get canvasWidth => canvasHeight * _aspectRatio;
+
+  Future<void> initialize(double cvHeight, String imageNetworkPath) async {
+    canvasHeight = cvHeight;
+
+    uiBgImage = await uiImageFromNetworkPath(imageNetworkPath);
     iBgImage = await imageUiToI(uiBgImage!);
 
-    _pathHistory = PathHistory(paint: _getPaint(), scaleX: _scaleWidth, scaleY: _scaleHeight);
-
-    setState(() {});
+    pathHistory = PathHistory(paint: _getPaint(), scaleX: _scaleWidth, scaleY: _scaleHeight);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    if (this.uiBgImage == null) {
-      return Center(child: CircularProgressIndicator());
-    }
-
-    var customPaint = ClipRect(
-      child: CustomPaint(
-        painter: ImagePainter(image: uiBgImage!, pathHistory: _pathHistory),
-        willChange: true,
-      ),
-    );
-
-    var paintingImage = FittedBox(
-      child: SizedBox(
-        height: _canvasHeight,
-        width: _canvasWidth,
-        child: GestureDetector(
-          child: customPaint,
-          onTapUp: _onTapUp,
-        ),
-      ),
-    );
-
-    return Column(
-      children: [
-        Expanded(child: paintingImage),
-        ElevatedButton(
-          child: Text("save"),
-          onPressed: _onSave,
-        ),
-      ],
-    );
+  Paint _getPaint({double scale = 1.0}) {
+    return Paint()
+      ..color = Colors.red
+      ..strokeWidth = PAINT_STROKE_WIDTH * scale
+      ..style = PaintingStyle.stroke;
   }
 
-  Future<void> _onSave() async {
-    List<int> _pointsColors = _pathHistory.pointsScaled.map((point) =>
-      pixelColorFromImage(iBgImage!, point.dx.toInt(), point.dy.toInt())).toList();
+  Future<File> save() async {
+    List<int> _pointsColors = pathHistory.pointsScaled.map((point) =>
+        pixelColorFromImage(iBgImage!, point.dx.toInt(), point.dy.toInt())).toList();
     var overallColor = middleColorByHue(_pointsColors);
 
     var recorder = ui.PictureRecorder();
@@ -96,21 +59,23 @@ class _RoutePainterState extends State<RoutePainter> {
     );
 
     // canvas.drawPath(_pathHistory.pathScaled, _getPaint(scale: _scaleHeight));
-    for (var loc in _pathHistory.pointsScaled) {
+    for (var loc in pathHistory.pointsScaled) {
       canvas.drawCircle(loc, PAINT_CIRCLE_RADIUS * _scaleHeight, _getPaint(scale: _scaleHeight));
     }
 
     var picture = recorder.endRecording();
 
     var recordedImage = picture.toImage(_imageWidth, _imageHeight);
-    String savedImagePath = await _saveImage(recordedImage);
+    File savedImageFile = await _saveImage(recordedImage);
 
     // TODO: wrap in a results class
-    print("saved to '$savedImagePath'");
+    print("saved to '${savedImageFile.path}'");
     print("overall color is '${overallColor.toRadixString(16)}");
+
+    return savedImageFile;
   }
 
-  Future<String> _saveImage(Future<ui.Image> image) async {
+  Future<File> _saveImage(Future<ui.Image> image) async {
     var dirPath = await routePicturesDir();
     var imagePath = p.join(dirPath, "route_image_paint.jpg");
     File imageFile = File(imagePath);
@@ -119,32 +84,71 @@ class _RoutePainterState extends State<RoutePainter> {
     var decodedImg = await imageUiToI(img);
     imageFile.writeAsBytes(i.encodeJpg(decodedImg!, quality: JPEG_QUALITY));
 
-    return imagePath;
+    return imageFile;
+  }
+}
+
+
+class RoutePainter extends StatefulWidget {
+  final double canvasHeight;
+  final RoutePainterController controller;
+  final String imageNetworkPath;
+
+  const RoutePainter({
+    required this.canvasHeight,
+    required this.controller,
+    required this.imageNetworkPath,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  _RoutePainterState createState() => _RoutePainterState();
+}
+
+class _RoutePainterState extends State<RoutePainter> {
+  @override
+  void initState() {
+    super.initState();
+
+    _initController();
   }
 
-  void _onTapUp(TapUpDetails details) {
-    _pathHistory.add(details.localPosition);
+  Future<void> _initController() async {
+    await widget.controller.initialize(widget.canvasHeight, widget.imageNetworkPath);
 
     setState(() {});
   }
 
-  Paint _getPaint({double scale = 1.0}) {
-    return Paint()
-      ..color = Colors.red
-      ..strokeWidth = PAINT_STROKE_WIDTH * scale
-      ..style = PaintingStyle.stroke;
+  @override
+  Widget build(BuildContext context) {
+    if (widget.controller.uiBgImage == null) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    var customPaint = ClipRect(
+      child: CustomPaint(
+        painter: ImagePainter(image: widget.controller.uiBgImage!, pathHistory: widget.controller.pathHistory),
+        willChange: true,
+      ),
+    );
+
+    return FittedBox(
+      child: SizedBox(
+        height: widget.controller.canvasHeight,
+        width: widget.controller.canvasWidth,
+        child: GestureDetector(
+          child: customPaint,
+          onTapUp: _onTapUp,
+        ),
+      ),
+    );
   }
 
-  double get _aspectRatio => uiBgImage!.width / uiBgImage!.height;
+  void _onTapUp(TapUpDetails details) {
+    widget.controller.pathHistory.add(details.localPosition);
 
-  double get _canvasHeight => widget.height;
-  double get _canvasWidth => widget.height * _aspectRatio;
-
-  int get _imageHeight => uiBgImage!.height;
-  int get _imageWidth => uiBgImage!.width;
-
-  double get _scaleHeight => _imageHeight / _canvasHeight;
-  double get _scaleWidth => _imageWidth / _canvasWidth;
+    setState(() {});
+  }
 }
 
 
