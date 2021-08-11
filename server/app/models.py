@@ -138,6 +138,7 @@ class Routes(SoftDeleteMixin, db.Model):
     avg_difficulty = db.Column(db.Enum(RouteDifficulty))
     avg_quality = db.Column(db.Float)
     count_ascents = db.Column(db.Integer, nullable=False)
+    colour = db.Column(db.String, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     __table_args__ = (
@@ -159,6 +160,7 @@ class Routes(SoftDeleteMixin, db.Model):
             "avg_difficulty": self.avg_difficulty_name,
             "avg_quality": self.avg_quality,
             "count_ascents": self.count_ascents,
+            "colour": self.colour,
             "created_at": self.created_at.isoformat(),
         }
 

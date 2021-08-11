@@ -25,12 +25,15 @@ def test_routes(client, auth_headers_user1):
     expected_routes = {
         "100": {"avg_difficulty": "fair", "avg_quality": 2.0, "category": "sport", "count_ascents": 10,
                 "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 100, "lower_grade": "Font_7A",
+                "colour": "ff55452c",
                 "upper_grade": "Font_7A", "user_id": 2, "name": "Crimpinator 100", "area_id": 2},
         "101": {"avg_difficulty": "fair", "avg_quality": 2.0, "category": "sport", "count_ascents": 10,
                 "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 101, "lower_grade": "Font_7A",
+                "colour": "ff55452c",
                 "upper_grade": "Font_7A", "user_id": 2, "name": "Crimpinator 101", "area_id": 2},
         "102": {"avg_difficulty": "fair", "avg_quality": 2.0, "category": "sport", "count_ascents": 10,
                 "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 102, "lower_grade": "Font_7A",
+                "colour": "ff55452c",
                 "upper_grade": "Font_7A", "user_id": 2, "name": "Crimpinator 102", "area_id": 2},
     }
 
@@ -50,6 +53,7 @@ def test_single_route(client, auth_headers_user1):
     expected_routes = {
         "101": {"avg_difficulty": "fair", "avg_quality": 2.0, "category": "sport", "count_ascents": 10,
                 "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 101, "lower_grade": "Font_7A",
+                "colour": "ff55452c",
                 "upper_grade": "Font_7A", "user_id": 2, "name": "Crimpinator 101", "area_id": 2},
     }
 
@@ -66,6 +70,7 @@ def test_add_route(client, app, auth_headers_user1):
         "name": "No Hands Slab",
         "lower_grade": "Font_7A",
         "upper_grade": "Font_7A",
+        "colour": "ff55452c",
     }
     resp = client.post("/routes/", data=json.dumps(data), content_type="application/json", headers=auth_headers_user1)
 
@@ -75,7 +80,7 @@ def test_add_route(client, app, auth_headers_user1):
     assert resp.json["route"] == {"avg_difficulty": None, "avg_quality": None, "category": "sport", "count_ascents": 0,
                                   "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 1, "id": 105,
                                   "lower_grade": "Font_7A", "upper_grade": "Font_7A", "user_id": 1,
-                                  "name": "No Hands Slab", "area_id": 2}
+                                  "name": "No Hands Slab", "area_id": 2, "colour": "ff55452c"}
 
     with app.app_context():
         route = Routes.query.filter_by(id=105).one()
@@ -85,6 +90,7 @@ def test_add_route(client, app, auth_headers_user1):
         assert route.lower_grade == "Font_7A"
         assert route.upper_grade == "Font_7A"
         assert route.name == "No Hands Slab"
+        assert route.colour == "ff55452c"
         assert route.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
 
 
@@ -163,6 +169,7 @@ def test_predict_with_unknown_image(client, resource_dir, auth_headers_user1):
         {
             'route': {'avg_difficulty': None, 'avg_quality': None, 'category': 'bouldering', 'count_ascents': 0,
                       'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 2,
+                      "colour": "ff55452c",
                       'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1, 'name': 'Jug Fest 2', 'area_id': 1},
             'route_image': {'path': "route_images/user2_route2_1.jpg", 'thumbnail_path': "route_images/user2_route2_1.jpg",
                             'created_at': '2019-02-04T10:10:10+00:00', 'id': 3, 'route_id': 2, 'user_id': 2},
@@ -170,6 +177,7 @@ def test_predict_with_unknown_image(client, resource_dir, auth_headers_user1):
         {
             'route': {'avg_difficulty': None, 'avg_quality': None, 'category': 'bouldering', 'count_ascents': 0,
                       'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 4,
+                      "colour": "ff55452c",
                       'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1, 'name': 'Jug Fest 4', 'area_id': 1},
             'route_image': {'path': "route_images/user2_route4_1.jpg", 'thumbnail_path': "route_images/user2_route4_1.jpg",
                             'created_at': '2019-02-04T10:10:10+00:00', 'id': 7, 'route_id': 4, 'user_id': 2},
@@ -177,6 +185,7 @@ def test_predict_with_unknown_image(client, resource_dir, auth_headers_user1):
         {
             'route': {'avg_difficulty': None, 'avg_quality': None, 'category': 'bouldering', 'count_ascents': 0,
                       'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 1,
+                      "colour": "ff55452c",
                       'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1, 'name': 'Jug Fest 1', 'area_id': 1},
             'route_image': {'path': "route_images/user1_route1.jpg", 'thumbnail_path': "route_images/user1_route1.jpg",
                             'created_at': '2019-03-04T10:10:10+00:00', 'id': 1, 'route_id': 1, 'user_id': 1},
@@ -184,6 +193,7 @@ def test_predict_with_unknown_image(client, resource_dir, auth_headers_user1):
         {
             'route': {'avg_difficulty': None, 'avg_quality': None, 'category': 'bouldering', 'count_ascents': 0,
                       'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 3,
+                      "colour": "ff55452c",
                       'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1, 'name': 'Jug Fest 3', 'area_id': 1},
             'route_image': {'path': "route_images/user1_route3.jpg", 'thumbnail_path': "route_images/user1_route3.jpg",
                             'created_at': '2019-03-04T10:10:10+00:00', 'id': 5, 'route_id': 3, 'user_id': 1},
@@ -224,6 +234,7 @@ def test_cbir_predict_with_image(app, client, resource_dir, auth_headers_user1):
         {
             'route': {'avg_difficulty': None, 'avg_quality': None, 'category': 'bouldering', 'count_ascents': 0,
                       'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 2,
+                      "colour": "ff55452c",
                       'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1, 'name': 'Jug Fest 2', 'area_id': 1},
             'route_image': {'path': "route_images/user2_route2_2.jpg", 'thumbnail_path': "route_images/user2_route2_2.jpg",
                             'created_at': '2019-02-04T10:10:10+00:00', 'id': 4, 'route_id': 2, 'user_id': 2},
@@ -231,6 +242,7 @@ def test_cbir_predict_with_image(app, client, resource_dir, auth_headers_user1):
         {
             'route': {'avg_difficulty': None, 'avg_quality': None, 'category': 'bouldering', 'count_ascents': 0,
                       'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 4,
+                      "colour": "ff55452c",
                       'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1, 'name': 'Jug Fest 4', 'area_id': 1},
             'route_image': {'path': "route_images/user2_route4_2.jpg", 'thumbnail_path': "route_images/user2_route4_2.jpg",
                             'created_at': '2019-02-04T10:10:10+00:00', 'id': 8, 'route_id': 4, 'user_id': 2},
@@ -238,6 +250,7 @@ def test_cbir_predict_with_image(app, client, resource_dir, auth_headers_user1):
         {
             'route': {'avg_difficulty': None, 'avg_quality': None, 'category': 'bouldering', 'count_ascents': 0,
                       'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 1,
+                      "colour": "ff55452c",
                       'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1, 'name': 'Jug Fest 1', 'area_id': 1},
             'route_image': {'path': "route_images/user1_route1.jpg", 'thumbnail_path': "route_images/user1_route1.jpg",
                             'created_at': '2019-03-04T10:10:10+00:00', 'id': 1, 'route_id': 1, 'user_id': 1},
@@ -245,6 +258,7 @@ def test_cbir_predict_with_image(app, client, resource_dir, auth_headers_user1):
         {
             'route': {'avg_difficulty': None, 'avg_quality': None, 'category': 'bouldering', 'count_ascents': 0,
                       'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 3,
+                      "colour": "ff55452c",
                       'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1, 'name': 'Jug Fest 3', 'area_id': 1},
             'route_image': {'path': "route_images/user1_route3.jpg", 'thumbnail_path': "route_images/user1_route3.jpg",
                             'created_at': '2019-03-04T10:10:10+00:00', 'id': 5, 'route_id': 3, 'user_id': 1},
@@ -320,6 +334,7 @@ def test_cbir_apply_threshold(app, client, resource_dir, auth_headers_user1):
         {
             'route': {'avg_difficulty': None, 'avg_quality': None, 'category': 'bouldering', 'count_ascents': 0,
                       'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 2,
+                      "colour": "ff55452c",
                       'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1, 'name': 'Jug Fest 2', 'area_id': 1},
             'route_image': {'path': "route_images/user2_route2_2.jpg", 'thumbnail_path': "route_images/user2_route2_2.jpg",
                             'created_at': '2019-02-04T10:10:10+00:00', 'id': 4, 'route_id': 2, 'user_id': 2},
@@ -327,6 +342,7 @@ def test_cbir_apply_threshold(app, client, resource_dir, auth_headers_user1):
         {
             'route': {'avg_difficulty': None, 'avg_quality': None, 'category': 'bouldering', 'count_ascents': 0,
                       'created_at': '2019-03-04T10:10:10+00:00', 'gym_id': 1, 'id': 4,
+                      "colour": "ff55452c",
                       'lower_grade': 'V_V1', 'upper_grade': 'V_V1', 'user_id': 1, 'name': 'Jug Fest 4', 'area_id': 1},
             'route_image': {'path': "route_images/user2_route4_2.jpg", 'thumbnail_path': "route_images/user2_route4_2.jpg",
                             'created_at': '2019-02-04T10:10:10+00:00', 'id': 8,
@@ -350,15 +366,19 @@ def test_with_deleted(app):
     expected_routes = {
         "100": {"avg_difficulty": "fair", "avg_quality": 2.0, "category": "sport", "count_ascents": 10,
                 "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 100, "lower_grade": "Font_7A",
+                "colour": "ff55452c",
                 "upper_grade": "Font_7A", "user_id": 2, "name": "Crimpinator 100", "area_id": 2},
         "101": {"avg_difficulty": "fair", "avg_quality": 2.0, "category": "sport", "count_ascents": 10,
                 "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 101, "lower_grade": "Font_7A",
+                "colour": "ff55452c",
                 "upper_grade": "Font_7A", "user_id": 2, "name": "Crimpinator 101", "area_id": 2},
         "102": {"avg_difficulty": "fair", "avg_quality": 2.0, "category": "sport", "count_ascents": 10,
                 "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 102, "lower_grade": "Font_7A",
+                "colour": "ff55452c",
                 "upper_grade": "Font_7A", "user_id": 2, "name": "Crimpinator 102", "area_id": 2},
         "103": {"avg_difficulty": "fair", "avg_quality": 2.0, "category": "sport", "count_ascents": 10,
                 "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 103, "lower_grade": "Font_8A",
+                "colour": "ff55452c",
                 "upper_grade": "Font_8A", "user_id": 2, "name": "Deleted Route", "area_id": 2,}
     }
 
@@ -381,6 +401,7 @@ def test_only_deleted(app):
     expected_routes = {
         "103": {"avg_difficulty": "fair", "avg_quality": 2.0, "category": "sport", "count_ascents": 10,
                 "created_at": "2019-03-04T10:10:10+00:00", "gym_id": 2, "id": 103, "lower_grade": "Font_8A",
+                "colour": "ff55452c",
                 "upper_grade": "Font_8A", "user_id": 2, "name": "Deleted Route", "area_id": 2}
     }
 
