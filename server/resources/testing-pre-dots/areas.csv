@@ -1,0 +1,8 @@
+gym_id,user_id,name,image_path,thumbnail_image_path,created_at
+1,1,Corner,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/lead1.jpg,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/lead1.jpg,2019-10-10 00:00:00+0
+1,1,Main Wall Upper Tier,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/lead2.jpg,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/lead2.jpg,2019-10-10 00:00:00+0
+1,1,Arrow,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/lead3.jpeg,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/lead3.jpeg,2019-10-10 00:00:00+0
+1,1,45,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/boulder.jpg,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/boulder.jpg,2019-10-10 00:00:00+0
+2,1,Area One,s3://climbicus-dev/area_images/dummy_data/gym_id=2/year=2020/month=02/area.jpg,s3://climbicus-dev/area_images/dummy_data/gym_id=2/year=2020/month=02/area.jpg,2019-10-10 00:00:00+0
+3,1,Forbidden,s3://climbicus-dev/area_images/dummy_data/gym_id=3/year=2020/month=02/area.jpg,s3://climbicus-dev/area_images/dummy_data/gym_id=3/year=2020/month=02/area.jpg,2019-10-10 00:00:00+0
+4,1,Test Area,s3://climbicus-dev/area_images/dummy_data/gym_id=4/year=2020/month=02/area.jpg,s3://climbicus-dev/area_images/dummy_data/gym_id=4/year=2020/month=02/area.jpg,2019-10-10 00:00:00+0
