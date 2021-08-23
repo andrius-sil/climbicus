@@ -51,6 +51,7 @@ def add():
     json_data = json.loads(request.form["json"])
     user_id = json_data["user_id"]
     gym_id = json_data["gym_id"]
+    route_id = json_data.get("route_id", None)
 
     fs_image = request.files.get("image")
     if fs_image is None:
@@ -76,6 +77,7 @@ def add():
 
     route_image = RouteImages(
         user_id=user_id,
+        route_id=route_id,
         model_version="none",
         path=image_path,
         thumbnail_path=thumbnail_path,
