@@ -404,8 +404,13 @@ class RouteNameState extends State<RouteName> {
 class DropdownArea extends StatefulWidget {
   final Map<int, Area> areas;
   final void Function(Area) onChangeCallback;
+  final int? defaultAreaId;
 
-  const DropdownArea({required this.areas, required this.onChangeCallback});
+  const DropdownArea({
+    required this.areas,
+    required this.onChangeCallback,
+    required this.defaultAreaId,
+  });
 
   @override
   DropdownAreaState createState() => DropdownAreaState();
@@ -415,6 +420,15 @@ class DropdownArea extends StatefulWidget {
 class DropdownAreaState extends State<DropdownArea> {
   static Area notSelectedValue = Area(NOT_SELECTED_AREA, 0, 0, NOT_SELECTED, "", "", DateTime.now());
   Area _value = notSelectedValue;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.defaultAreaId != null) {
+      _value = widget.areas[widget.defaultAreaId]!;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
