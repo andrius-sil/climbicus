@@ -1,10 +1,15 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:climbicus/widgets/route_image.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image/image.dart' as i;
 import 'dart:ui' as ui;
+import 'package:path/path.dart' as p;
+
+import 'io.dart';
 
 const JPEG_QUALITY = 75;
 const PAINT_STROKE_WIDTH = 4.0;
@@ -39,6 +44,15 @@ Future<ui.Image> uiImageFromNetworkPath(String imagePath) async {
 }
 
 
+Future<ui.Image> uiImageFromFile(File imageFile) async {
+  final Uint8List data = await imageFile.readAsBytes();
+  final Completer<ui.Image> completer = Completer();
+  ui.decodeImageFromList(data, (ui.Image img) {
+    return completer.complete(img);
+  });
+  return completer.future;
+}
+
 int middleColorByHue(List<int> hexColors) {
   var hsvColors = hexColors.map((c) => HSVColor.fromColor(Color(c)))
       .toList(growable: false)
@@ -56,3 +70,18 @@ int pixelColorFromImage(i.Image iImage, int x, int y) {
   return hexColor;
 }
 
+Future<File> compressJpegImage(File image) async {
+  var dirPath = await routePicturesDir();
+  var compressedImage = await(FlutterImageCompress.compressAndGetFile(
+    image.absolute.path,
+    p.join(dirPath, "compressed_${p.basename(image.path)}"),
+    minWidth: 1024,
+    quality: JPEG_QUALITY,
+  ));
+
+  if (compressedImage == null) {
+    throw "Image compression failed";
+  }
+
+  return compressedImage;
+}

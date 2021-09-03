@@ -10,29 +10,47 @@ import 'package:climbicus/utils/io.dart';
 import 'package:flutter/material.dart';
 
 
+class PaintedRouteImage {
+  final File image;
+  final String hexColor;
+
+  PaintedRouteImage(this.image, this.hexColor);
+}
+
+
 class RoutePainterController {
-  late double canvasHeight;
+  late double availableHeight;
+  late double availableWidth;
 
   ui.Image? uiBgImage;
-  i.Image? iBgImage;
 
   late PathHistory pathHistory;
 
-  int get _imageHeight => uiBgImage!.height;
-  int get _imageWidth => uiBgImage!.width;
+  int get imageWidth => uiBgImage!.width;
+  int get imageHeight => uiBgImage!.height;
 
-  double get _scaleHeight => _imageHeight / canvasHeight;
-  double get _scaleWidth => _imageWidth / canvasWidth;
+  double get _scaleWidth => imageWidth / canvasWidth;
+  double get _scaleHeight => imageHeight / canvasHeight;
 
-  double get _aspectRatio => uiBgImage!.width / uiBgImage!.height;
+  late double canvasWidth;
+  late double canvasHeight;
 
-  double get canvasWidth => canvasHeight * _aspectRatio;
-
-  Future<void> initialize(double cvHeight, String imageNetworkPath) async {
-    canvasHeight = cvHeight;
+  Future<void> initialize(
+      double width,
+      double height,
+      String imageNetworkPath,
+  ) async {
+    availableHeight = height;
+    availableWidth = width;
 
     uiBgImage = await uiImageFromNetworkPath(imageNetworkPath);
-    iBgImage = await imageUiToI(uiBgImage!);
+
+    var imageSize = Size(imageWidth.toDouble(), imageHeight.toDouble());
+    var availableSize = Size(availableWidth, availableHeight);
+    Size canvasSize = applyBoxFit(BoxFit.contain, imageSize, availableSize).destination;
+
+    canvasWidth = canvasSize.width;
+    canvasHeight = canvasSize.height;
 
     pathHistory = PathHistory(paint: _getPaint(), scaleX: _scaleWidth, scaleY: _scaleHeight);
   }
@@ -44,7 +62,9 @@ class RoutePainterController {
       ..style = PaintingStyle.stroke;
   }
 
-  Future<File> save() async {
+  Future<PaintedRouteImage> save() async {
+    i.Image? iBgImage = await imageUiToI(uiBgImage!);
+
     List<int> _pointsColors = pathHistory.pointsScaled.map((point) =>
         pixelColorFromImage(iBgImage!, point.dx.toInt(), point.dy.toInt())).toList();
     var overallColor = middleColorByHue(_pointsColors);
@@ -54,7 +74,7 @@ class RoutePainterController {
 
     paintImage(
       canvas: canvas,
-      rect: Rect.fromLTWH(0, 0, _imageWidth.toDouble(), _imageHeight.toDouble()),
+      rect: Rect.fromLTWH(0, 0, imageWidth.toDouble(), imageHeight.toDouble()),
       image: this.uiBgImage!,
     );
 
@@ -65,14 +85,15 @@ class RoutePainterController {
 
     var picture = recorder.endRecording();
 
-    var recordedImage = picture.toImage(_imageWidth, _imageHeight);
+    var recordedImage = picture.toImage(imageWidth, imageHeight);
     File savedImageFile = await _saveImage(recordedImage);
 
-    // TODO: wrap in a results class
-    print("saved to '${savedImageFile.path}'");
-    print("overall color is '${overallColor.toRadixString(16)}");
+    String overallColorHex = overallColor.toRadixString(16);
 
-    return savedImageFile;
+    print("saved to '${savedImageFile.path}'");
+    print("overall color is '$overallColorHex'");
+
+    return PaintedRouteImage(savedImageFile, overallColorHex);
   }
 
   Future<File> _saveImage(Future<ui.Image> image) async {
@@ -90,12 +111,14 @@ class RoutePainterController {
 
 
 class RoutePainter extends StatefulWidget {
-  final double canvasHeight;
+  final double availableWidth;
+  final double availableHeight;
   final RoutePainterController controller;
   final String imageNetworkPath;
 
   const RoutePainter({
-    required this.canvasHeight,
+    required this.availableWidth,
+    required this.availableHeight,
     required this.controller,
     required this.imageNetworkPath,
     Key? key,
@@ -114,7 +137,11 @@ class _RoutePainterState extends State<RoutePainter> {
   }
 
   Future<void> _initController() async {
-    await widget.controller.initialize(widget.canvasHeight, widget.imageNetworkPath);
+    await widget.controller.initialize(
+      widget.availableWidth,
+      widget.availableHeight,
+      widget.imageNetworkPath,
+    );
 
     setState(() {});
   }
@@ -134,8 +161,8 @@ class _RoutePainterState extends State<RoutePainter> {
 
     return FittedBox(
       child: SizedBox(
-        height: widget.controller.canvasHeight,
         width: widget.controller.canvasWidth,
+        height: widget.controller.canvasHeight,
         child: GestureDetector(
           child: customPaint,
           onTapUp: _onTapUp,
