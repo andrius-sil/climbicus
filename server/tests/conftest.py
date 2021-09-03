@@ -105,7 +105,7 @@ def app(resource_dir):
                 Routes(
                     gym_id=1, user_id=1, area_id=1, category="bouldering", lower_grade="V_V1", upper_grade="V_V1",
                     name=f"Jug Fest {i}", avg_difficulty=None, avg_quality=None, count_ascents=0,
-                    color="ff55452c",
+                    color="ff55452c", points="[(0,0)]",
                     created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
                 )
             )
@@ -114,7 +114,7 @@ def app(resource_dir):
                 Routes(
                     gym_id=2, user_id=2, area_id=2, category="sport", lower_grade="Font_7A", upper_grade="Font_7A",
                     name=f"Crimpinator {i}", avg_difficulty="fair", avg_quality=2.0, count_ascents=10,
-                    color="ff55452c",
+                    color="ff55452c", points="[(0,0)]",
                     created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
                 )
             )
@@ -122,7 +122,7 @@ def app(resource_dir):
             Routes(
                 gym_id=2, user_id=2, area_id=2, category="sport", lower_grade="Font_8A", upper_grade="Font_8A",
                 name=f"Deleted Route", avg_difficulty="fair", avg_quality=2.0, count_ascents=10,
-                color="ff55452c",
+                color="ff55452c", points="[(0,0)]",
                 created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
                 deleted_at=datetime(2020, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
             )
@@ -131,7 +131,7 @@ def app(resource_dir):
             Routes(
                 gym_id=1, user_id=2, area_id=2, category="bouldering", lower_grade="V_V4", upper_grade="V_V4",
                 name=f"Deleted Route", avg_difficulty="fair", avg_quality=2.0, count_ascents=10,
-                color="ff55452c",
+                color="ff55452c", points="[(0,0)]",
                 created_at=datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
                 deleted_at=datetime(2020, 3, 4, 10, 10, 10, tzinfo=pytz.UTC),
             )

@@ -42,10 +42,11 @@ def add():
     category = request.json["category"]
     name = request.json["name"]
     color = request.json["color"]
+    points = request.json["points"]
 
     route = Routes(gym_id=gym_id, user_id=user_id, area_id=area_id, lower_grade=lower_grade, upper_grade=upper_grade,
                    category=category, name=name, created_at=datetime.datetime.utcnow(), count_ascents=0,
-                   color=color)
+                   color=color, points=points)
 
     db.session.add(route)
     db.session.commit()

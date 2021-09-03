@@ -100,6 +100,7 @@ def test_update_votes(client, app, auth_headers_user1):
         "avg_difficulty": "soft",
         "avg_quality": 3.0,
         "color": "ff55452c",
+        "points": "[(0,0)]",
         "created_at": "2019-03-04T10:10:10+00:00",
     }
 
@@ -151,6 +152,7 @@ def test_add_to_votes(client, app, auth_headers_user2):
         "avg_difficulty": "soft",
         "avg_quality": None,
         "color": "ff55452c",
+        "points": "[(0,0)]",
         "created_at": "2019-03-04T10:10:10+00:00",
     }
 
