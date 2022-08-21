@@ -71,7 +71,8 @@ def test_add_route(client, app, auth_headers_user1):
         "lower_grade": "Font_7A",
         "upper_grade": "Font_7A",
         "color": "ff55452c",
-        "points": "[(10.0,15.0),(12.5,17.5)]",
+        # "points": "[(10.0,15.0),(12.5,17.5)]",
+        "points": ["(10.0,15.0)", "(12.5,17.5)"],
     }
     resp = client.post("/routes/", data=json.dumps(data), content_type="application/json", headers=auth_headers_user1)
 

@@ -1,4 +1,5 @@
 gym_id,user_id,name,image_path,thumbnail_image_path,created_at
+1,1,New Area,s3://climbicus-dev/wall_s.jpg,s3://climbicus-dev/wall_s.jpg,2019-10-10 00:00:00+0
 1,1,Corner,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/lead1.jpg,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/lead1.jpg,2019-10-10 00:00:00+0
 1,1,Main Wall Upper Tier,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/lead2.jpg,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/lead2.jpg,2019-10-10 00:00:00+0
 1,1,Arrow,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/lead3.jpeg,s3://climbicus-dev/area_images/dummy_data/gym_id=1/year=2020/month=02/lead3.jpeg,2019-10-10 00:00:00+0

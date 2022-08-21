@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:climbicus/utils/images.dart';
-import 'package:path/path.dart' as p;
 
 import 'package:bloc/bloc.dart';
 import 'package:climbicus/models/route.dart' as jsonmdl;
@@ -9,7 +8,6 @@ import 'package:climbicus/models/route_image.dart';
 import 'package:climbicus/repositories/api_repository.dart';
 import 'package:climbicus/utils/io.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get_it/get_it.dart';
 
 class Prediction {
@@ -72,14 +70,8 @@ class RoutePredictionBloc extends Bloc<RoutePredictionEvent, RoutePredictionStat
       yield RoutePredictionLoading();
 
       try {
-        var dirPath = await routePicturesDir();
-        var compressedImage = await (FlutterImageCompress.compressAndGetFile(
-          event.image.absolute.path,
-          p.join(dirPath, "compressed_${p.basename(event.image.path)}"),
-          minWidth: 1024,
-          quality: JPEG_QUALITY,
-        ));
-        debugPrint("compressed photo size: ${compressedImage!.lengthSync()} bytes");
+        var compressedImage = await compressJpegImage(event.image);
+        debugPrint("compressed photo size: ${compressedImage.lengthSync()} bytes");
 
         var imageAndPredictions = (await getIt<ApiRepository>().routePredictions(compressedImage, event.routeCategory));
         List<dynamic> predictions = imageAndPredictions["sorted_route_and_image_predictions"];

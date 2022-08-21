@@ -1,3 +1,4 @@
+import 'package:climbicus/models/points.dart';
 import 'package:climbicus/utils/route_grades.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -5,7 +6,7 @@ part 'route.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Route {
-  Route(this.id, this.gymId, this.userId, this.areaId, this.category, this.name, this.lowerGrade, this.upperGrade, this.avgDifficulty, this.avgQuality, this.countAscents, this.createdAt);
+  Route(this.id, this.gymId, this.userId, this.areaId, this.category, this.name, this.lowerGrade, this.upperGrade, this.avgDifficulty, this.avgQuality, this.countAscents, this.color, this.points, this.createdAt);
 
   int id;
   int gymId;
@@ -18,6 +19,8 @@ class Route {
   String? avgDifficulty;
   double? avgQuality;
   int countAscents;
+  String color;
+  List<SerializableOffset> points;
   DateTime createdAt;
 
   String get grade {

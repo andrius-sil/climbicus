@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
 import 'package:climbicus/constants.dart';
 import 'package:climbicus/models/app/route_user_meta.dart';
+import 'package:climbicus/models/points.dart';
 import 'package:climbicus/models/route.dart' as jsonmdl;
 import 'package:climbicus/models/route_image.dart';
 import 'package:climbicus/models/user_route_log.dart';
@@ -93,6 +95,9 @@ class AddNewGymRouteWithUserLog extends GymRoutesEvent {
   final int areaId;
   final String category;
   final String grade;
+  final String color;
+  final File image;
+  final List<SerializableOffset> points;
   final String? name;
   final bool completed;
   final int? numAttempts;
@@ -102,6 +107,9 @@ class AddNewGymRouteWithUserLog extends GymRoutesEvent {
     required this.areaId,
     required this.category,
     required this.grade,
+    required this.color,
+    required this.image,
+    required this.points,
     required this.name,
     required this.completed,
     required this.numAttempts,
@@ -220,7 +228,7 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
 
       yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
     } else if (event is AddNewGymRouteWithUserLog) {
-      var results = await getIt<ApiRepository>().routeAdd(event.areaId, event.category, event.grade, event.name);
+      var results = await getIt<ApiRepository>().routeAdd(event.areaId, event.category, event.grade, event.color, event.points, event.name);
       var newRoute = jsonmdl.Route.fromJson(results["route"]);
 
       _entries.addRoute(newRoute);
@@ -238,12 +246,17 @@ class GymRoutesBloc extends Bloc<GymRoutesEvent, GymRoutesState> {
 
       yield GymRoutesLoaded(entries: _entries, entriesFiltered: _entriesFiltered);
 
-      for (var routeImage in event.routeImages) {
-        routeImagesBloc.add(AddNewRouteImage(
-          routeId: newRoute.id,
-          routeImage: routeImage,
-        ));
-      }
+      routeImagesBloc.add(AddNewRouteImage(
+        routeId: newRoute.id,
+        image: event.image,
+      ));
+
+      // for (var routeImage in event.routeImages) {
+      //   routeImagesBloc.add(AddNewRouteImage(
+      //     routeId: newRoute.id,
+      //     routeImage: routeImage,
+      //   ));
+      // }
     } else if (event is DeleteUserLog) {
       var results = await getIt<ApiRepository>().deleteUserRouteLog(event.userRouteLog.id);
 

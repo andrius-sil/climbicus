@@ -30,7 +30,8 @@ class AreaItems {
   Map<int, bool> _isExpandedPrevious = {};
 
   get items => _items;
-  Iterable<MapEntry<int, AreaItem>> get itemsByArea => _itemsByArea.entries.where((e) => e.value.routeItems.isNotEmpty);
+  Iterable<MapEntry<int, AreaItem>> get itemsByArea => _itemsByArea.entries;
+  // Iterable<MapEntry<int, AreaItem>> get itemsByArea => _itemsByArea.entries.where((e) => e.value.routeItems.isNotEmpty);
 
 
   void reset(Map<int, Area> areas) {

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:climbicus/blocs/gym_areas_bloc.dart';
 import 'package:climbicus/blocs/gym_routes_bloc.dart';
 import 'package:climbicus/blocs/route_images_bloc.dart';
@@ -8,16 +10,19 @@ import 'package:climbicus/models/route_image.dart';
 import 'package:climbicus/style.dart';
 import 'package:climbicus/utils/route_grades.dart';
 import 'package:climbicus/widgets/camera_custom.dart';
+import 'package:climbicus/widgets/route_image.dart';
 import 'package:climbicus/widgets/route_image_carousel.dart';
 import 'package:climbicus/widgets/route_log.dart';
+import 'package:climbicus/widgets/route_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddRouteArgs {
-  final ImagePickerData imgPickerData;
+  final Area area;
+  final PaintedRouteImage paintedRouteImage;
   final String routeCategory;
 
-  AddRouteArgs(this.imgPickerData, this.routeCategory);
+  AddRouteArgs(this.area, this.paintedRouteImage, this.routeCategory);
 }
 
 class AddRoutePage extends StatefulWidget {
@@ -56,6 +61,8 @@ class _AddRoutePageState extends State<AddRoutePage> {
   void initState() {
     super.initState();
 
+    _selectedAreaId = widget.args.area.id;
+
     _selectedCategory = widget.args.routeCategory;
     _selectedGradeSystem = DEFAULT_GRADE_SYSTEM[widget.args.routeCategory]!;
 
@@ -63,9 +70,10 @@ class _AddRoutePageState extends State<AddRoutePage> {
     _routeImagesBloc = BlocProvider.of<RouteImagesBloc>(context);
     _routePredictionBloc = BlocProvider.of<RoutePredictionBloc>(context);
 
-    _routeImagesBloc.add(UpdateRouteImage(
-      routeImageId: widget.args.imgPickerData.routeImage.id,
-    ));
+    // TODO
+    // _routeImagesBloc.add(UpdateRouteImage(
+    //   routeImageId: widget.args.imgPickerData.routeImage.id,
+    // ));
   }
 
   @override
@@ -87,28 +95,36 @@ class _AddRoutePageState extends State<AddRoutePage> {
                 children: <Widget>[
                   Text("Your route:"),
                   SizedBox(height: COLUMN_PADDING),
-                  Stack(
-                    alignment: Alignment.center,
-                    children: <Widget>[
-                      BlocBuilder<RoutePredictionBloc, RoutePredictionState>(
-                        builder: (context, state) {
-                          if (state is RoutePredictionLoaded) {
-                            var routeImage = state.imgPickerData.routeImage;
-                            _takenImages[routeImage.id] = routeImage;
-                            return RouteImageCarousel(images: _takenImages);
-                          } else if (state is RoutePredictionError) {
-                            return ErrorWidget.builder(state.errorDetails);
-                          }
-
-                          return Center(child: CircularProgressIndicator());
-                        },
-                      ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: _buildImagePicker(),
-                      ),
-                    ],
+                  // TODO: put code in methods
+                  Container(
+                    height: 200,
+                    child: RouteImageWidget.fromFile(
+                      widget.args.paintedRouteImage.image,
+                      boxFit: BoxFit.contain,
+                    ),
                   ),
+                  // Stack(
+                  //   alignment: Alignment.center,
+                  //   children: <Widget>[
+                  //     BlocBuilder<RoutePredictionBloc, RoutePredictionState>(
+                  //       builder: (context, state) {
+                  //         if (state is RoutePredictionLoaded) {
+                  //           var routeImage = state.imgPickerData.routeImage;
+                  //           _takenImages[routeImage.id] = routeImage;
+                  //           return RouteImageCarousel(images: _takenImages);
+                  //         } else if (state is RoutePredictionError) {
+                  //           return ErrorWidget.builder(state.errorDetails);
+                  //         }
+                  //
+                  //         return Center(child: CircularProgressIndicator());
+                  //       },
+                  //     ),
+                  //     Align(
+                  //       alignment: Alignment.centerRight,
+                  //       child: _buildImagePicker(),
+                  //     ),
+                  //   ],
+                  // ),
                 ],
               ),
               Row(
@@ -152,7 +168,11 @@ class _AddRoutePageState extends State<AddRoutePage> {
     return BlocBuilder<GymAreasBloc, GymAreasState>(
       builder: (context, state) {
         if (state is GymAreasLoaded) {
-          return DropdownArea(areas: state.areas, onChangeCallback: _onAreaChangeCallback);
+          return DropdownArea(
+            areas: state.areas,
+            onChangeCallback: _onAreaChangeCallback,
+            defaultAreaId: widget.args.area.id,
+          );
         } else if (state is GymAreasError) {
           return ErrorWidget.builder(state.errorDetails);
         }
@@ -258,6 +278,9 @@ class _AddRoutePageState extends State<AddRoutePage> {
       areaId: _selectedAreaId,
       category: _selectedCategory,
       grade: "${_selectedGradeSystem}_$_selectedGrade",
+      color: widget.args.paintedRouteImage.hexColor,
+      image: widget.args.paintedRouteImage.image,
+      points: widget.args.paintedRouteImage.points,
       name: routeNameKey.currentState!.value,
       completed: checkboxSentKey.currentState!.value,
       numAttempts: numberAttemptsKey.currentState!.value,

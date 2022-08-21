@@ -1,5 +1,6 @@
 from enum import Enum, auto
 
+import json
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import CheckConstraint, UniqueConstraint
 from sqlalchemy.types import UserDefinedType
@@ -181,6 +182,7 @@ class Routes(SoftDeleteMixin, db.Model):
             "avg_quality": self.avg_quality,
             "count_ascents": self.count_ascents,
             "color": self.color,
+            # "points": json.dumps(self.points),
             "points": self.points,
             "created_at": self.created_at.isoformat(),
         }

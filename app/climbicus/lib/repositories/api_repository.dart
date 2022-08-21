@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 
+import 'package:climbicus/models/points.dart';
 import 'package:climbicus/repositories/user_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
@@ -99,7 +101,9 @@ class ApiRepository {
       throw exception;
     }
 
-    return jsonDecode(await response.stream.bytesToString());
+    // return jsonDecode(await response.stream.bytesToString());
+    var jsonStr = await response.stream.bytesToString();
+    return jsonDecode(jsonStr);
   }
 
   Future<Map> _requestJson(String method, String urlPath, Map requestData,
@@ -189,6 +193,14 @@ class ApiRepository {
     return _requestJson("GET", "route_images/route/$routeId", {});
   }
 
+  Future<Map> routeImagesAdd(File image, int? routeId) async {
+    Map data = {
+      "gym_id": _gymId,
+      "route_id": routeId,
+    };
+    return _requestMultipart(image, "POST", "route_images/", data);
+  }
+
   Future<Map> fetchLogbook() async {
     Map data = {
       "gym_id": _gymId,
@@ -235,7 +247,7 @@ class ApiRepository {
     return _requestJson("GET", "routes/$routeId", data);
   }
 
-  Future<Map> routeAdd(int areaId, String category, String grade, String? name) async {
+  Future<Map> routeAdd(int areaId, String category, String grade, String color, List<SerializableOffset> points, String? name) async {
     Map data = {
       "gym_id": _gymId,
       "area_id": areaId,
@@ -243,6 +255,8 @@ class ApiRepository {
       "name": name,
       "lower_grade": grade,
       "upper_grade": grade,
+      "color": color,
+      "points": points,
     };
 
     return _requestJson("POST", "routes/", data);
@@ -264,6 +278,14 @@ class ApiRepository {
       "gym_id": _gymId,
     };
     return _requestJson("GET", "areas/", data);
+  }
+
+  Future<Map> areasAdd(File image, String? name) async {
+    Map data = {
+      "gym_id": _gymId,
+      "name": name,
+    };
+    return _requestMultipart(image, "POST", "areas/", data);
   }
 
   Future<Map> fetchVotes() async {

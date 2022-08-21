@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:climbicus/models/points.dart';
 import 'package:climbicus/utils/images.dart';
 import 'package:flutter/painting.dart';
 import 'package:image/image.dart' as i;
@@ -13,8 +14,9 @@ import 'package:flutter/material.dart';
 class PaintedRouteImage {
   final File image;
   final String hexColor;
+  final List<SerializableOffset> points;
 
-  PaintedRouteImage(this.image, this.hexColor);
+  PaintedRouteImage(this.image, this.hexColor, this.points);
 }
 
 
@@ -27,7 +29,7 @@ class RoutePainterController {
   late PathHistory pathHistory;
 
   int get imageWidth => uiBgImage!.width;
-  int get imageHeight => uiBgImage!.height;
+  Future<int> get imageHeight async => uiBgImage!.height;
 
   double get _scaleWidth => imageWidth / canvasWidth;
   double get _scaleHeight => imageHeight / canvasHeight;
@@ -93,7 +95,11 @@ class RoutePainterController {
     print("saved to '${savedImageFile.path}'");
     print("overall color is '$overallColorHex'");
 
-    return PaintedRouteImage(savedImageFile, overallColorHex);
+    return PaintedRouteImage(
+        savedImageFile,
+        overallColorHex,
+        pathHistory.pointsScaled,
+    );
   }
 
   Future<File> _saveImage(Future<ui.Image> image) async {
@@ -172,7 +178,7 @@ class _RoutePainterState extends State<RoutePainter> {
   }
 
   void _onTapUp(TapUpDetails details) {
-    widget.controller.pathHistory.add(details.localPosition);
+    widget.controller.pathHistory.add(SerializableOffset.fromOffset(details.localPosition));
 
     setState(() {});
   }
@@ -180,8 +186,8 @@ class _RoutePainterState extends State<RoutePainter> {
 
 
 class PathHistory {
-  List<Offset> _points = [];
-  List<Offset> _pointsScaled = [];
+  List<SerializableOffset> _points = [];
+  List<SerializableOffset> _pointsScaled = [];
 
   var _path = Path();
   var _pathScaled = Path();
@@ -196,8 +202,8 @@ class PathHistory {
 
   PathHistory({required this.paint, required this.scaleX, required this.scaleY});
 
-  void add(Offset loc) {
-    var locScaled = Offset(loc.dx * scaleX, loc.dy * scaleY);
+  void add(SerializableOffset loc) {
+    var locScaled = SerializableOffset(loc.dx * scaleX, loc.dy * scaleY);
 
     _points.add(loc);
     _pointsScaled.add(locScaled);
@@ -216,8 +222,8 @@ class PathHistory {
   Path get path => _path;
   Path get pathScaled => _pathScaled;
 
-  List<Offset> get points => _points;
-  List<Offset> get pointsScaled => _pointsScaled;
+  List<SerializableOffset> get points => _points;
+  List<SerializableOffset> get pointsScaled => _pointsScaled;
 }
 
 

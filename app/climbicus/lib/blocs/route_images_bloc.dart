@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:climbicus/utils/images.dart';
 import 'package:bloc/bloc.dart';
 import 'package:climbicus/models/route_image.dart';
 import 'package:climbicus/repositories/api_repository.dart';
@@ -68,9 +71,9 @@ class FetchRouteImagesAll extends RouteImagesEvent {
 }
 
 class AddNewRouteImage extends RouteImagesEvent {
-  final int routeId;
-  final RouteImage routeImage;
-  const AddNewRouteImage({required this.routeId, required this.routeImage});
+  final int? routeId;
+  final File image;
+  const AddNewRouteImage({required this.routeId, required this.image});
 }
 
 class UpdateRouteImage extends RouteImagesEvent {
@@ -148,13 +151,23 @@ class RouteImagesBloc extends Bloc<RouteImagesEvent, RouteImagesState> {
         yield RouteImagesError(exception: e, stackTrace: st);
       }
     } else if (event is AddNewRouteImage) {
-      // Not uploading image to the database via API because all images are
-      // uploaded as part of predictions at the moment.
-      getIt<ApiRepository>().routeMatch(event.routeImage.id, event.routeId);
+      yield RouteImagesLoading();
 
-      images.addRoutes({event.routeId: event.routeImage});
+      try {
+        var compressedImage = await compressJpegImage(event.image);
+        debugPrint("compressed photo size: ${compressedImage.lengthSync()} bytes");
 
-      yield RouteImagesLoaded(images: images);
+        var results = (await getIt<ApiRepository>().routeImagesAdd(compressedImage, event.routeId));
+        var routeImage = RouteImage.fromJson(results["route_image"]);
+        // getIt<ApiRepository>().routeMatch(routeImage.id, event.routeId);
+
+        if (event.routeId != null) {
+          images.addRoutes({event.routeId!: routeImage});
+        }
+        yield RouteImagesLoaded(images: images);
+      } catch (e, st) {
+        yield RouteImagesError(exception: e, stackTrace: st);
+      }
     } else if (event is UpdateRouteImage) {
       getIt<ApiRepository>().routeMatch(event.routeImageId, event.routeId);
       // TODO: update 'images' in case of no routeId

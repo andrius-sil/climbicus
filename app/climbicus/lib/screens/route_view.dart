@@ -8,7 +8,9 @@ import 'package:climbicus/models/area.dart';
 import 'package:climbicus/models/gym.dart';
 import 'package:climbicus/models/user_route_log.dart';
 import 'package:climbicus/screens/route_detailed.dart';
+import 'package:climbicus/screens/route_mark.dart';
 import 'package:climbicus/screens/route_predictions.dart';
+import 'package:climbicus/widgets/area_image.dart';
 import 'package:climbicus/widgets/camera_custom.dart';
 import 'package:climbicus/widgets/rating_star.dart';
 import 'package:climbicus/widgets/route_image.dart';
@@ -64,7 +66,11 @@ class HeaderListItem extends StatelessWidget {
                 Expanded(
                   child: Container(
                     height: ROUTE_LIST_ITEM_HEIGHT,
-                    child: this.image,
+                    // child: this.image,
+                    decoration: BoxDecoration(
+                      color: Color(int.parse(this.routeWithUserMeta.route.color, radix: 16)),
+                      // color: Color(0xFFBDBDBD),
+                    ),
                   ),
                 ),
                 Expanded(
@@ -237,7 +243,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
           ),
         ],
       ),
-      floatingActionButton: _buildImagePicker(),
+      // floatingActionButton: _buildImagePicker(),
     );
   }
 
@@ -272,8 +278,11 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
           return;
         }
 
-        Navigator.pushNamed(context, RoutePredictionsPage.routeName,
-          arguments: RoutePredictionsArgs(imageFile, widget.routeCategory),
+        // Navigator.pushNamed(context, RoutePredictionsPage.routeName,
+        //   arguments: RoutePredictionsArgs(imageFile, widget.routeCategory),
+        // );
+        Navigator.pushNamed(context, RouteMarkPage.routeName,
+          arguments: RouteMarkArgs(imageFile, widget.routeCategory),
         );
       },
       tooltip: "Add a new route",
@@ -281,6 +290,8 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
       heroTag: "camera-new-route-${widget.routeCategory}",
     );
   }
+
+
 
   Widget _buildRouteFilterTile() {
     return ExpansionTile(
@@ -340,17 +351,17 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
   }
 
   Widget _buildLogbookGrid(Map<int, Area> areas, GymRoutes routes) {
-    if (routes.isEmpty(widget.routeCategory)) {
-      return SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: Center(
-          child: Text(
-            "No routes found..",
-            textAlign: TextAlign.center,
-          ),
-        ),
-      );
-    }
+    // if (routes.isEmpty(widget.routeCategory)) {
+    //   return SingleChildScrollView(
+    //     physics: const AlwaysScrollableScrollPhysics(),
+    //     child: Center(
+    //       child: Text(
+    //         "No routes found..",
+    //         textAlign: TextAlign.center,
+    //       ),
+    //     ),
+    //   );
+    // }
 
     _areaItems.reset(areas);
 
@@ -407,15 +418,37 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
       children: _areaItems.itemsByArea.map((entry) {
         AreaItem areaItem = entry.value;
 
+        var routesList = _routesExpansionList(areaItem.routeItems, scrollController);
+
         return ExpansionPanelRadio(
           headerBuilder: (BuildContext context, bool isExpanded) {
             return _areaHeaderItem(areaItem);
           },
-          body: _routesExpansionList(areaItem.routeItems, scrollController),
+          body: Column(
+            children: [
+              Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.add_circle_outline),
+                    onPressed: () => _onAddNewRoute(areaItem.area),
+                    iconSize: 48,
+                  ),
+                  Text('Add a new route'),
+                ],
+              ),
+              routesList,
+            ],
+          ),
           value: areaItem.area.id,
           canTapOnHeader: true,
         );
       }).toList(),
+    );
+  }
+
+  Future<void> _onAddNewRoute(Area area) async {
+    Navigator.pushNamed(context, RouteMarkPage.routeName,
+      arguments: RouteMarkArgs(area, widget.routeCategory),
     );
   }
 
@@ -445,6 +478,7 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
     );
   }
 
+  // TODO: use new area with routes image
   Widget _areaImagePreview(AreaItem areaItem) {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
@@ -463,7 +497,12 @@ class _RouteViewPageState extends State<RouteViewPage> with AutomaticKeepAliveCl
           },
         );
       },
-      child: RouteImageWidget.fromPath(areaItem.area.thumbnailImagePath),
+      // TODO
+      // child: RouteImageWidget.fromPath(areaItem.area.thumbnailImagePath),
+      child: AreaImageWidget(
+        areaItem.area,
+        areaItem.routeItems.map((e) => e.routeWithUserMeta.route).toList(),
+      ),
     );
   }
 

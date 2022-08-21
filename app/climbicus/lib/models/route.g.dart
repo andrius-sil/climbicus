@@ -19,6 +19,10 @@ Route _$RouteFromJson(Map<String, dynamic> json) {
     json['avg_difficulty'] as String?,
     (json['avg_quality'] as num?)?.toDouble(),
     json['count_ascents'] as int,
+    json['color'] as String,
+    (json['points'] as List<dynamic>)
+        .map((e) => SerializableOffset.fromJson(e as Map<String, dynamic>))
+        .toList(),
     DateTime.parse(json['created_at'] as String),
   );
 }
@@ -35,5 +39,7 @@ Map<String, dynamic> _$RouteToJson(Route instance) => <String, dynamic>{
       'avg_difficulty': instance.avgDifficulty,
       'avg_quality': instance.avgQuality,
       'count_ascents': instance.countAscents,
+      'color': instance.color,
+      'points': instance.points,
       'created_at': instance.createdAt.toIso8601String(),
     };
