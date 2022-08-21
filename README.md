@@ -8,8 +8,8 @@ Community driven app Climbicus to share info and log your indoor climbing.
 - 🧗Log your ascents
 
 <p float="left">
-  <img src="https://github.com/thunderstruck/climbicus/blob/master/assets/googleplay/screenshot1.jpg" width="100" />
-  <img src="https://github.com/thunderstruck/climbicus/blob/master/assets/googleplay/screenshot2.jpg" width="100" />
+  <img src="https://github.com/thunderstruck/climbicus/blob/master/assets/googleplay/screenshot5.jpg" width="100" />
+  <img src="https://github.com/thunderstruck/climbicus/blob/master/assets/googleplay/screenshot6.jpg" width="100" />
 </p>
 
 ## Built With
