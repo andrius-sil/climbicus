@@ -2,6 +2,7 @@ from enum import Enum, auto
 
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import CheckConstraint, UniqueConstraint
+from sqlalchemy.types import UserDefinedType
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app import db
@@ -126,6 +127,24 @@ class RouteDifficulty(Enum):
     hard = 1.0
 
 
+class PostgresGeometry(UserDefinedType):
+    def __init__(self, geom_type):
+        self.geom_type = geom_type
+
+    def get_col_spec(self, **kw):
+        return self.geom_type
+
+    def bind_processor(self, dialect):
+        def process(value):
+            return value
+        return process
+
+    def result_processor(self, dialect, coltype):
+        def process(value):
+            return value
+        return process
+
+
 class Routes(SoftDeleteMixin, db.Model):
     id = db.Column(db.Integer, db.Sequence('route_id_seq'), primary_key=True)
     gym_id = db.Column(db.Integer, db.ForeignKey('gyms.id'), nullable=False)
@@ -138,6 +157,8 @@ class Routes(SoftDeleteMixin, db.Model):
     avg_difficulty = db.Column(db.Enum(RouteDifficulty))
     avg_quality = db.Column(db.Float)
     count_ascents = db.Column(db.Integer, nullable=False)
+    color = db.Column(db.String, nullable=False)
+    points = db.Column(PostgresGeometry("PATH"), nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     __table_args__ = (
@@ -159,6 +180,8 @@ class Routes(SoftDeleteMixin, db.Model):
             "avg_difficulty": self.avg_difficulty_name,
             "avg_quality": self.avg_quality,
             "count_ascents": self.count_ascents,
+            "color": self.color,
+            "points": self.points,
             "created_at": self.created_at.isoformat(),
         }
 

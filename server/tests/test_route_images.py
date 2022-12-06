@@ -1,4 +1,9 @@
-import pytest
+from datetime import datetime
+from unittest import mock
+from unittest.mock import Mock
+from uuid import UUID
+
+import pytz
 
 from app.models import RouteImages
 from app import db
@@ -47,6 +52,77 @@ def test_all_route_images(client, resource_dir, auth_headers_user1):
     ]
 
     assert resp.json["route_images"] == expected_route_images
+
+
+@mock.patch("datetime.datetime", Mock(utcnow=lambda: datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)))
+@mock.patch("uuid.uuid4", lambda: UUID('12345678123456781234567812345678'))
+def test_add_route_image(client, resource_dir, app, auth_headers_user1):
+    json_data = {
+        "user_id": 1,
+        "gym_id": 1,
+        "route_id": 1,
+    }
+    data = {
+        "json": json.dumps(json_data),
+        "image": open(f"{resource_dir}/route_images/green_route.jpg", "rb"),
+    }
+    resp = client.post("/route_images/", data=data, headers=auth_headers_user1)
+
+    assert resp.status_code == 200
+    assert resp.is_json
+    assert resp.json["msg"] == "Route image added"
+    assert resp.json["route_image"] == {'created_at': '2019-03-04T10:10:10+00:00', 'id': 10,
+                                        'path': '/tmp/climbicus_tests/route_images/from_users/gym_id=1/year=2019/month=03/full_size/12345678123456781234567812345678.jpg',
+                                        'thumbnail_path': '/tmp/climbicus_tests/route_images/from_users/gym_id=1/year=2019/month=03/thumbnail/12345678123456781234567812345678.jpg',
+                                        'route_id': 1, 'user_id': 1}
+
+    with app.app_context():
+        route_image = RouteImages.query.filter_by(id=10).one()
+        assert route_image.id == 10
+        assert route_image.user_id == 1
+        assert route_image.route_id == 1
+        assert route_image.route_unmatched == False
+        assert route_image.model_version == "none"
+        assert route_image.path == "/tmp/climbicus_tests/route_images/from_users/gym_id=1/year=2019/month=03" \
+                                    "/full_size/12345678123456781234567812345678.jpg"
+        assert route_image.thumbnail_path == "/tmp/climbicus_tests/route_images/from_users/gym_id=1/year=2019/month" \
+                                              "=03/thumbnail/12345678123456781234567812345678.jpg"
+        assert route_image.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
+
+
+@mock.patch("datetime.datetime", Mock(utcnow=lambda: datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)))
+@mock.patch("uuid.uuid4", lambda: UUID('12345678123456781234567812345678'))
+def test_add_route_image_no_route_id(client, resource_dir, app, auth_headers_user1):
+    json_data = {
+        "user_id": 1,
+        "gym_id": 1,
+    }
+    data = {
+        "json": json.dumps(json_data),
+        "image": open(f"{resource_dir}/route_images/green_route.jpg", "rb"),
+    }
+    resp = client.post("/route_images/", data=data, headers=auth_headers_user1)
+
+    assert resp.status_code == 200
+    assert resp.is_json
+    assert resp.json["msg"] == "Route image added"
+    assert resp.json["route_image"] == {'created_at': '2019-03-04T10:10:10+00:00', 'id': 10,
+                                        'path': '/tmp/climbicus_tests/route_images/from_users/gym_id=1/year=2019/month=03/full_size/12345678123456781234567812345678.jpg',
+                                        'thumbnail_path': '/tmp/climbicus_tests/route_images/from_users/gym_id=1/year=2019/month=03/thumbnail/12345678123456781234567812345678.jpg',
+                                        'route_id': None, 'user_id': 1}
+
+    with app.app_context():
+        route_image = RouteImages.query.filter_by(id=10).one()
+        assert route_image.id == 10
+        assert route_image.user_id == 1
+        assert route_image.route_id is None
+        assert route_image.route_unmatched == False
+        assert route_image.model_version == "none"
+        assert route_image.path == "/tmp/climbicus_tests/route_images/from_users/gym_id=1/year=2019/month=03" \
+                                   "/full_size/12345678123456781234567812345678.jpg"
+        assert route_image.thumbnail_path == "/tmp/climbicus_tests/route_images/from_users/gym_id=1/year=2019/month" \
+                                             "=03/thumbnail/12345678123456781234567812345678.jpg"
+        assert route_image.created_at == datetime(2019, 3, 4, 10, 10, 10, tzinfo=pytz.UTC)
 
 
 def test_route_match(client, app, resource_dir, auth_headers_user2):

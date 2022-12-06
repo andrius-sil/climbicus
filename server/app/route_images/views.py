@@ -1,9 +1,16 @@
+import datetime
+
+import json
 from sqlalchemy import func
 
 from app import db
 from app.models import RouteImages
 
-from flask import request, Blueprint, jsonify
+from flask import request, Blueprint, jsonify, abort
+
+from app.routes.views import MAX_THUMBNAIL_IMG_WIDTH
+from app.tasks import store_image
+from app.utils.image import resize_fbytes_image
 
 blueprint = Blueprint("route_images_blueprint", __name__, url_prefix="/route_images")
 
@@ -37,6 +44,54 @@ def all_route_images(route_id):
 
     images = [route_image.api_model for route_image in q]
     return jsonify({"route_images": images})
+
+
+@blueprint.route("/", methods=["POST"])
+def add():
+    json_data = json.loads(request.form["json"])
+    user_id = json_data["user_id"]
+    gym_id = json_data["gym_id"]
+    route_id = json_data.get("route_id", None)
+
+    fs_image = request.files.get("image")
+    if fs_image is None:
+        abort(400, "image file is missing")
+
+    fbytes_image, file_content_type = fs_image.read(), fs_image.content_type
+
+    image_path = store_image(
+        fbytes_image=fbytes_image,
+        file_content_type=file_content_type,
+        dir_name="route_images",
+        gym_id=gym_id,
+        image_size="full_size"
+    )
+    thumbnail_fbytes_image = resize_fbytes_image(fbytes_image, MAX_THUMBNAIL_IMG_WIDTH)
+    thumbnail_path = store_image(
+        fbytes_image=thumbnail_fbytes_image,
+        file_content_type=file_content_type,
+        dir_name="route_images",
+        gym_id=gym_id,
+        image_size="thumbnail"
+    )
+
+    route_image = RouteImages(
+        user_id=user_id,
+        route_id=route_id,
+        model_version="none",
+        path=image_path,
+        thumbnail_path=thumbnail_path,
+        created_at=datetime.datetime.utcnow(),
+        descriptors=b'\x00',
+    )
+
+    db.session.add(route_image)
+    db.session.commit()
+
+    return jsonify({
+        "msg": "Route image added",
+        "route_image": route_image.api_model,
+    })
 
 
 @blueprint.route("/<int:route_image_id>", methods=["PATCH"])

@@ -46,7 +46,7 @@ class CBIRPredictor:
 
     def process_image(self, fbytes_image):
         """
-        The input image needs to be the right format, colour and size
+        The input image needs to be the right format, color and size
         JPEG compression is left for the app
         """
         img_arr = np.frombuffer(fbytes_image, np.uint8)

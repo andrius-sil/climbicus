@@ -134,9 +134,10 @@ class _RoutePredictionsPageState extends State<RoutePredictionsPage> {
   }
 
   Future<void> noMatch() async {
-    Navigator.pushNamed(context, AddRoutePage.routeName,
-      arguments: AddRouteArgs(_imgPickerData!, widget.args.routeCategory),
-    );
+    print("disabled functionality");
+    // Navigator.pushNamed(context, AddRoutePage.routeName,
+    //   arguments: AddRouteArgs(_imgPickerData!, widget.args.routeCategory),
+    // );
   }
 
   Widget _buildPredictionsComponent(BuildContext context) {

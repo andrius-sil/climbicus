@@ -14,6 +14,7 @@ import 'package:climbicus/screens/gyms.dart';
 import 'package:climbicus/screens/login.dart';
 import 'package:climbicus/screens/register.dart';
 import 'package:climbicus/screens/route_detailed.dart';
+import 'package:climbicus/screens/route_mark.dart';
 import 'package:climbicus/screens/route_match.dart';
 import 'package:climbicus/screens/route_predictions.dart';
 import 'package:climbicus/screens/route_view.dart';
@@ -21,7 +22,6 @@ import 'package:climbicus/screens/settings.dart';
 import 'package:climbicus/screens/verify.dart';
 import 'package:climbicus/style.dart';
 import 'package:climbicus/widgets/camera_custom.dart';
-import 'package:climbicus/widgets/route_painter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -182,6 +182,9 @@ class ClimbicusApp extends StatelessWidget {
         RoutePredictionsPage.routeName: (BuildContext context) => RoutePredictionsPage(
           ModalRoute.of(context)!.settings.arguments as RoutePredictionsArgs,
         ),
+        RouteMarkPage.routeName: (BuildContext context) => RouteMarkPage(
+          ModalRoute.of(context)!.settings.arguments as RouteMarkArgs,
+        ),
         AddRoutePage.routeName: (BuildContext context) => AddRoutePage(
           ModalRoute.of(context)!.settings.arguments as AddRouteArgs,
         ),
@@ -218,11 +221,6 @@ class _HomePageState extends State<HomePage> {
             id: "${getIt<UserRepository>().userId}",
             email: getIt<UserRepository>().email,
           ));
-
-          // return RoutePainter(
-          //   height: 400.0,
-          //   imageNetworkPath: "http://dev-cdn.climbicus.com/white_boulder.jpg",
-          // );
 
           return _buildHomePage();
         } else if (state is AuthenticationUnauthenticated) {

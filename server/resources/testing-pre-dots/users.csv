@@ -1,0 +1,4 @@
+name,email,password,verified,is_admin,created_at
+Tester,t,t,True,False,2019-10-10 00:00:00+0
+Andrius S.,silas04@gmail.com,chorrera,True,True,2019-10-10 00:00:00+0
+Liucija L.,keksainis@gmail.com,masterbates,True,True,2019-10-10 00:00:00+0

@@ -10,122 +10,49 @@ import 'package:climbicus/utils/io.dart';
 import 'package:flutter/material.dart';
 
 
-class RoutePainter extends StatefulWidget {
-  final double height;
-  final String imageNetworkPath;
+class PaintedRouteImage {
+  final File image;
+  final String hexColor;
 
-  const RoutePainter({
-    required this.height,
-    required this.imageNetworkPath,
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  _RoutePainterState createState() => _RoutePainterState();
+  PaintedRouteImage(this.image, this.hexColor);
 }
 
-class _RoutePainterState extends State<RoutePainter> {
+
+class RoutePainterController {
+  late double availableHeight;
+  late double availableWidth;
+
   ui.Image? uiBgImage;
-  i.Image? iBgImage;
 
-  late PathHistory _pathHistory;
+  late PathHistory pathHistory;
 
-  @override
-  void initState() {
-    super.initState();
+  int get imageWidth => uiBgImage!.width;
+  int get imageHeight => uiBgImage!.height;
 
-    _getImage();
-  }
+  double get _scaleWidth => imageWidth / canvasWidth;
+  double get _scaleHeight => imageHeight / canvasHeight;
 
-  Future<void> _getImage() async {
-    uiBgImage = await uiImageFromNetworkPath(widget.imageNetworkPath);
-    iBgImage = await imageUiToI(uiBgImage!);
+  late double canvasWidth;
+  late double canvasHeight;
 
-    _pathHistory = PathHistory(paint: _getPaint(), scaleX: _scaleWidth, scaleY: _scaleHeight);
+  Future<void> initialize(
+      double width,
+      double height,
+      String imageNetworkPath,
+  ) async {
+    availableHeight = height;
+    availableWidth = width;
 
-    setState(() {});
-  }
+    uiBgImage = await uiImageFromNetworkPath(imageNetworkPath);
 
-  @override
-  Widget build(BuildContext context) {
-    if (this.uiBgImage == null) {
-      return Center(child: CircularProgressIndicator());
-    }
+    var imageSize = Size(imageWidth.toDouble(), imageHeight.toDouble());
+    var availableSize = Size(availableWidth, availableHeight);
+    Size canvasSize = applyBoxFit(BoxFit.contain, imageSize, availableSize).destination;
 
-    var customPaint = ClipRect(
-      child: CustomPaint(
-        painter: ImagePainter(image: uiBgImage!, pathHistory: _pathHistory),
-        willChange: true,
-      ),
-    );
+    canvasWidth = canvasSize.width;
+    canvasHeight = canvasSize.height;
 
-    var paintingImage = FittedBox(
-      child: SizedBox(
-        height: _canvasHeight,
-        width: _canvasWidth,
-        child: GestureDetector(
-          child: customPaint,
-          onTapUp: _onTapUp,
-        ),
-      ),
-    );
-
-    return Column(
-      children: [
-        Expanded(child: paintingImage),
-        ElevatedButton(
-          child: Text("save"),
-          onPressed: _onSave,
-        ),
-      ],
-    );
-  }
-
-  Future<void> _onSave() async {
-    List<int> _pointsColors = _pathHistory.pointsScaled.map((point) =>
-      pixelColorFromImage(iBgImage!, point.dx.toInt(), point.dy.toInt())).toList();
-    var overallColor = middleColorByHue(_pointsColors);
-
-    var recorder = ui.PictureRecorder();
-    var canvas = Canvas(recorder);
-
-    paintImage(
-      canvas: canvas,
-      rect: Rect.fromLTWH(0, 0, _imageWidth.toDouble(), _imageHeight.toDouble()),
-      image: this.uiBgImage!,
-    );
-
-    // canvas.drawPath(_pathHistory.pathScaled, _getPaint(scale: _scaleHeight));
-    for (var loc in _pathHistory.pointsScaled) {
-      canvas.drawCircle(loc, PAINT_CIRCLE_RADIUS * _scaleHeight, _getPaint(scale: _scaleHeight));
-    }
-
-    var picture = recorder.endRecording();
-
-    var recordedImage = picture.toImage(_imageWidth, _imageHeight);
-    String savedImagePath = await _saveImage(recordedImage);
-
-    // TODO: wrap in a results class
-    print("saved to '$savedImagePath'");
-    print("overall color is '${overallColor.toRadixString(16)}");
-  }
-
-  Future<String> _saveImage(Future<ui.Image> image) async {
-    var dirPath = await routePicturesDir();
-    var imagePath = p.join(dirPath, "route_image_paint.jpg");
-    File imageFile = File(imagePath);
-
-    ui.Image img = await image;
-    var decodedImg = await imageUiToI(img);
-    imageFile.writeAsBytes(i.encodeJpg(decodedImg!, quality: JPEG_QUALITY));
-
-    return imagePath;
-  }
-
-  void _onTapUp(TapUpDetails details) {
-    _pathHistory.add(details.localPosition);
-
-    setState(() {});
+    pathHistory = PathHistory(paint: _getPaint(), scaleX: _scaleWidth, scaleY: _scaleHeight);
   }
 
   Paint _getPaint({double scale = 1.0}) {
@@ -135,16 +62,120 @@ class _RoutePainterState extends State<RoutePainter> {
       ..style = PaintingStyle.stroke;
   }
 
-  double get _aspectRatio => uiBgImage!.width / uiBgImage!.height;
+  Future<PaintedRouteImage> save() async {
+    i.Image? iBgImage = await imageUiToI(uiBgImage!);
 
-  double get _canvasHeight => widget.height;
-  double get _canvasWidth => widget.height * _aspectRatio;
+    List<int> _pointsColors = pathHistory.pointsScaled.map((point) =>
+        pixelColorFromImage(iBgImage!, point.dx.toInt(), point.dy.toInt())).toList();
+    var overallColor = middleColorByHue(_pointsColors);
 
-  int get _imageHeight => uiBgImage!.height;
-  int get _imageWidth => uiBgImage!.width;
+    var recorder = ui.PictureRecorder();
+    var canvas = Canvas(recorder);
 
-  double get _scaleHeight => _imageHeight / _canvasHeight;
-  double get _scaleWidth => _imageWidth / _canvasWidth;
+    paintImage(
+      canvas: canvas,
+      rect: Rect.fromLTWH(0, 0, imageWidth.toDouble(), imageHeight.toDouble()),
+      image: this.uiBgImage!,
+    );
+
+    // canvas.drawPath(_pathHistory.pathScaled, _getPaint(scale: _scaleHeight));
+    for (var loc in pathHistory.pointsScaled) {
+      canvas.drawCircle(loc, PAINT_CIRCLE_RADIUS * _scaleHeight, _getPaint(scale: _scaleHeight));
+    }
+
+    var picture = recorder.endRecording();
+
+    var recordedImage = picture.toImage(imageWidth, imageHeight);
+    File savedImageFile = await _saveImage(recordedImage);
+
+    String overallColorHex = overallColor.toRadixString(16);
+
+    print("saved to '${savedImageFile.path}'");
+    print("overall color is '$overallColorHex'");
+
+    return PaintedRouteImage(savedImageFile, overallColorHex);
+  }
+
+  Future<File> _saveImage(Future<ui.Image> image) async {
+    var dirPath = await routePicturesDir();
+    var imagePath = p.join(dirPath, "route_image_paint.jpg");
+    File imageFile = File(imagePath);
+
+    ui.Image img = await image;
+    var decodedImg = await imageUiToI(img);
+    imageFile.writeAsBytes(i.encodeJpg(decodedImg!, quality: JPEG_QUALITY));
+
+    return imageFile;
+  }
+}
+
+
+class RoutePainter extends StatefulWidget {
+  final double availableWidth;
+  final double availableHeight;
+  final RoutePainterController controller;
+  final String imageNetworkPath;
+
+  const RoutePainter({
+    required this.availableWidth,
+    required this.availableHeight,
+    required this.controller,
+    required this.imageNetworkPath,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  _RoutePainterState createState() => _RoutePainterState();
+}
+
+class _RoutePainterState extends State<RoutePainter> {
+  @override
+  void initState() {
+    super.initState();
+
+    _initController();
+  }
+
+  Future<void> _initController() async {
+    await widget.controller.initialize(
+      widget.availableWidth,
+      widget.availableHeight,
+      widget.imageNetworkPath,
+    );
+
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.controller.uiBgImage == null) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    var customPaint = ClipRect(
+      child: CustomPaint(
+        painter: ImagePainter(image: widget.controller.uiBgImage!, pathHistory: widget.controller.pathHistory),
+        willChange: true,
+      ),
+    );
+
+    return FittedBox(
+      child: SizedBox(
+        width: widget.controller.canvasWidth,
+        height: widget.controller.canvasHeight,
+        child: GestureDetector(
+          child: customPaint,
+          onTapUp: _onTapUp,
+        ),
+      ),
+    );
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    widget.controller.pathHistory.add(details.localPosition);
+
+    setState(() {});
+  }
 }
 
 
